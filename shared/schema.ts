@@ -72,7 +72,7 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
-export const insertReminderSchema = createInsertSchema(reminders).omit({
+const baseInsertReminderSchema = createInsertSchema(reminders).omit({
   id: true,
   userId: true,
   rudeMessage: true,
@@ -81,13 +81,23 @@ export const insertReminderSchema = createInsertSchema(reminders).omit({
   completedAt: true,
 });
 
+export const insertReminderSchema = baseInsertReminderSchema.refine((data) => {
+  const scheduledDate = new Date(data.scheduledFor);
+  const now = new Date();
+  const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
+}, {
+  message: "Reminder can only be scheduled up to one week in advance",
+  path: ["scheduledFor"],
+});
+
 export const insertRudePhraseSchema = createInsertSchema(rudePhrasesData).omit({
   id: true,
   createdAt: true,
 });
 
 // Update schemas
-export const updateReminderSchema = insertReminderSchema.partial();
+export const updateReminderSchema = baseInsertReminderSchema.partial();
 export const updateUserSchema = insertUserSchema.partial();
 
 // Types

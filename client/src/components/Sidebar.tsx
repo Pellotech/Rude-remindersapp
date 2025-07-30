@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import type { User } from "@shared/schema";
 import {
   Card,
   CardContent,
@@ -20,22 +21,10 @@ import { TestTube } from "lucide-react";
 
 export default function Sidebar() {
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | undefined };
 
   const { data: stats } = useQuery({
     queryKey: ["/api/stats"],
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
   });
 
   const testVoice = () => {
@@ -72,19 +61,19 @@ export default function Sidebar() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Active Reminders</span>
                 <span className="text-lg font-bold text-rude-red-600">
-                  {stats.activeReminders}
+                  {(stats as any).activeReminders}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Completed Today</span>
                 <span className="text-lg font-bold text-green-600">
-                  {stats.completedToday}
+                  {(stats as any).completedToday}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Avg. Rudeness</span>
                 <span className="text-lg font-bold text-orange-600">
-                  {stats.avgRudeness}
+                  {(stats as any).avgRudeness}
                 </span>
               </div>
             </div>

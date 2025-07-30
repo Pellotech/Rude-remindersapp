@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import type { User } from "@shared/schema";
 import {
   Dialog,
   DialogContent,
@@ -43,7 +44,7 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | undefined };
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

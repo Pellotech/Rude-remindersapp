@@ -56,18 +56,6 @@ export default function RemindersList() {
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
   });
 
   const completeReminderMutation = useMutation({
@@ -136,7 +124,7 @@ export default function RemindersList() {
   });
 
   // Filter reminders based on selected filter and search term
-  const filteredReminders = reminders.filter((reminder: Reminder) => {
+  const filteredReminders = (reminders as Reminder[]).filter((reminder: Reminder) => {
     const matchesSearch = reminder.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          reminder.originalMessage.toLowerCase().includes(searchTerm.toLowerCase());
     

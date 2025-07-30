@@ -3,9 +3,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Megaphone, Settings } from "lucide-react";
 import SettingsModal from "./SettingsModal";
+import type { User } from "@shared/schema";
 
 export default function Navigation() {
-  const { user } = useAuth();
+  const { user } = useAuth() as { user: User | undefined };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack web application that helps users manage daily reminders with a humorous "rude" twist. The app takes regular reminder messages and transforms them into brutally honest, motivational (or demotivational) notifications with adjustable rudeness levels. Users can set reminders with different notification types including browser notifications, voice alerts, and email notifications.
+This is a full-stack web application that helps users manage daily reminders with a humorous "rude" twist. The app takes regular reminder messages and transforms them into brutally honest, motivational (or demotivational) notifications with adjustable rudeness levels. Users can set reminders with different notification types including browser notifications, voice alerts, and email notifications. Reminders can only be scheduled up to one week in advance to encourage immediate action.
 
 ## User Preferences
 

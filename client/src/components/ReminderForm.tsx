@@ -24,7 +24,14 @@ import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube } from "lucide-react"
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   originalMessage: z.string().min(1, "Message is required"),
-  scheduledFor: z.string().min(1, "Date and time are required"),
+  scheduledFor: z.string().min(1, "Date and time are required").refine((dateStr) => {
+    const scheduledDate = new Date(dateStr);
+    const now = new Date();
+    const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
+  }, {
+    message: "Reminder can only be scheduled up to one week in advance",
+  }),
   rudenessLevel: z.number().min(1).max(5),
   browserNotification: z.boolean(),
   voiceNotification: z.boolean(),
@@ -70,7 +77,7 @@ export default function ReminderForm() {
 
   // Update preview when message or rudeness level changes
   useEffect(() => {
-    if (originalMessage && phrases && phrases.length > 0) {
+    if (originalMessage && phrases && Array.isArray(phrases) && phrases.length > 0) {
       const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
       setPreviewMessage(`${originalMessage}${randomPhrase.phrase}`);
     } else if (originalMessage) {
@@ -143,7 +150,7 @@ export default function ReminderForm() {
     createReminderMutation.mutate(data);
   };
 
-  // Set default date/time to tomorrow at 9 AM
+  // Set default date/time to tomorrow at 9 AM and calculate max date (one week from now)
   useEffect(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -151,6 +158,11 @@ export default function ReminderForm() {
     const isoString = tomorrow.toISOString().slice(0, 16);
     form.setValue("scheduledFor", isoString);
   }, [form]);
+
+  // Calculate min and max dates for the date input
+  const now = new Date();
+  const minDate = now.toISOString().slice(0, 16);
+  const maxDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
 
   return (
     <Card>
@@ -212,9 +224,14 @@ export default function ReminderForm() {
                   <FormControl>
                     <Input
                       type="datetime-local"
+                      min={minDate}
+                      max={maxDate}
                       {...field}
                     />
                   </FormControl>
+                  <div className="text-xs text-gray-500 mt-1">
+                    You can only schedule reminders up to one week in advance
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
