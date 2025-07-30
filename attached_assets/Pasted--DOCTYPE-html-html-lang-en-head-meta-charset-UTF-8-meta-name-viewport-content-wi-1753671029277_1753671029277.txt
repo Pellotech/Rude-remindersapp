@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rude Daily Reminder App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Rude Daily Reminder App</h1>
+    <div class="mb-4">
+      <label for="reminderText" class="block text-sm font-medium text-gray-700">Reminder Message</label>
+      <input type="text" id="reminderText" class="mt-1 p-2 w-full border rounded-md" placeholder="E.g., Finish that report">
+    </div>
+    <div class="mb-4">
+      <label for="reminderDay" class="block text-sm font-medium text-gray-700">Day</label>
+      <select id="reminderDay" class="mt-1 p-2 w-full border rounded-md">
+        <option value="0">Today</option>
+        <option value="1">Tomorrow</option>
+        <option value="2">Day After Tomorrow</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="reminderTime" class="block text-sm font-medium text-gray-700">Time</label>
+      <input type="time" id="reminderTime" class="mt-1 p-2 w-full border rounded-md">
+    </div>
+    <button onclick="setReminder()" class="w-full bg-red-600 text-white p-2 rounded-md hover:bg-red-700">Set Rude Reminder</button>
+    <div id="reminderList" class="mt-4"></div>
+  </div>
+
+  <script>
+    function translateToRude(message) {
+      const rudePhrases = [
+        ", you lazy slob!",
+        ", get your act together!",
+        ", stop being such a slacker!",
+        ", you absolute dimwit!",
+        ", don't be an idiot about it!"
+      ];
+      const randomRude = rudePhrases[Math.floor(Math.random() * rudePhrases.length)];
+      return `${message}${randomRude}`;
+    }
+
+    function setReminder() {
+      const reminderText = document.getElementById('reminderText').value;
+      const reminderDay = parseInt(document.getElementById('reminderDay').value);
+      const reminderTime = document.getElementById('reminderTime').value;
+
+      if (!reminderText || !reminderTime) {
+        alert("Fill in both fields, you dimwit!");
+        return;
+      }
+
+      // Calculate reminder timestamp
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const [hours, minutes] = reminderTime.split(':').map(Number);
+      const reminderDate = new Date(today.getTime() + reminderDay * 24 * 60 * 60 * 1000);
+      reminderDate.setHours(hours, minutes, 0, 0);
+      const reminderTimestamp = reminderDate.getTime();
+
+      if (reminderTimestamp < now.getTime()) {
+        alert("Don't set reminders in the past, genius!");
+        return;
+      }
+
+      const reminder = {
+        id: Date.now(),
+        text: reminderText,
+        rudeText: translateToRude(reminderText),
+        time: reminderTimestamp
+      };
+
+      let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+      reminders.push(reminder);
+      localStorage.setItem('reminders', JSON.stringify(reminders));
+
+      document.getElementById('reminderText').value = '';
+      document.getElementById('reminderTime').value = '';
+      document.getElementById('reminderDay').value = '0';
+      displayReminders();
+      scheduleReminder(reminder);
+    }
+
+    function displayReminders() {
+      const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+      const reminderList = document.getElementById('reminderList');
+      reminderList.innerHTML = '';
+      reminders.forEach(reminder => {
+        const reminderItem = document.createElement('div');
+        reminderItem.className = 'p-2 border-b';
+        reminderItem.innerHTML = `
+          ${reminder.text} - ${new Date(reminder.time).toLocaleString()}
+          <button onclick="deleteReminder(${reminder.id})" class="ml-2 text-red-600">Delete</button>
+        `;
+        reminderList.appendChild(reminderItem);
+      });
+    }
+
+    function deleteReminder(id) {
+      let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+      reminders = reminders.filter(r => r.id !== id);
+      localStorage.setItem('reminders', JSON.stringify(reminders));
+      displayReminders();
+    }
+
+    function scheduleReminder(reminder) {
+      const now = Date.now();
+      const timeUntil = reminder.time - now;
+      if (timeUntil > 0) {
+        setTimeout(() => {
+          alert(reminder.rudeText);
+          deleteReminder(reminder.id);
+        }, timeUntil);
+      }
+    }
+
+    function checkReminders() {
+      const reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
+      reminders.forEach(reminder => {
+        if (reminder.time <= Date.now()) {
+          alert(reminder.rudeText);
+          deleteReminder(reminder.id);
+        }
+      });
+    }
+
+    window.onload = () => {
+      displayReminders();
+      setInterval(checkReminders, 60000); // Check every minute
+    };
+  </script>
+</body>
+</html>
