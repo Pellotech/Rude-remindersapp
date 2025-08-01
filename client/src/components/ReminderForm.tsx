@@ -20,6 +20,8 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube } from "lucide-react";
+import { CalendarSchedule } from "./CalendarSchedule";
+import { format } from "date-fns";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -68,6 +70,15 @@ export default function ReminderForm() {
 
   const rudenessLevel = form.watch("rudenessLevel");
   const originalMessage = form.watch("originalMessage");
+  
+  // Convert form's scheduledFor string to Date for calendar component
+  const selectedDateTime = form.watch("scheduledFor") ? new Date(form.watch("scheduledFor")) : null;
+
+  // Handle calendar date/time selection
+  const handleDateTimeChange = (dateTime: Date) => {
+    const formattedDateTime = format(dateTime, "yyyy-MM-dd'T'HH:mm");
+    form.setValue("scheduledFor", formattedDateTime);
+  };
 
   // Fetch rude phrases for preview
   const { data: phrases } = useQuery({
@@ -159,11 +170,6 @@ export default function ReminderForm() {
     form.setValue("scheduledFor", isoString);
   }, [form]);
 
-  // Calculate min and max dates for the date input
-  const now = new Date();
-  const minDate = now.toISOString().slice(0, 16);
-  const maxDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
-
   return (
     <Card>
       <CardHeader>
@@ -214,24 +220,19 @@ export default function ReminderForm() {
               )}
             />
 
-            {/* Date and Time */}
+            {/* Calendar Schedule */}
             <FormField
               control={form.control}
               name="scheduledFor"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>When should we remind you?</FormLabel>
                   <FormControl>
-                    <Input
-                      type="datetime-local"
-                      min={minDate}
-                      max={maxDate}
-                      {...field}
+                    <CalendarSchedule
+                      selectedDateTime={selectedDateTime}
+                      onDateTimeChange={handleDateTimeChange}
                     />
                   </FormControl>
-                  <div className="text-xs text-gray-500 mt-1">
-                    You can only schedule reminders up to one week in advance
-                  </div>
                   <FormMessage />
                 </FormItem>
               )}
