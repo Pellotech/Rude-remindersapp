@@ -108,7 +108,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
             </p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {timeSlots.map((slot) => {
                 const isSelected = isTimeSelected(slot.value);
                 
@@ -119,7 +119,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     size="sm"
                     onClick={() => handleTimeSelect(slot.value)}
                     className={cn(
-                      "h-10 text-sm",
+                      "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
                       isSelected && "bg-primary text-primary-foreground"
                     )}
                   >
