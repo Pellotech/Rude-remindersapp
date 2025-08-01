@@ -24,7 +24,6 @@ import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
   originalMessage: z.string().min(1, "Message is required"),
   scheduledFor: z.string().min(1, "Date and time are required").refine((dateStr) => {
     const scheduledDate = new Date(dateStr);
@@ -58,7 +57,6 @@ export default function ReminderForm() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
       originalMessage: "",
       scheduledFor: "",
       rudenessLevel: 3,
@@ -109,6 +107,7 @@ export default function ReminderForm() {
     mutationFn: async (data: FormData) => {
       const response = await apiRequest("POST", "/api/reminders", {
         ...data,
+        title: data.originalMessage, // Use the original message as the title
         scheduledFor: new Date(data.scheduledFor).toISOString(),
       });
       return response.json();
@@ -181,27 +180,6 @@ export default function ReminderForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Title Field */}
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Reminder Title</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="e.g., Finish quarterly report"
-                        {...field}
-                      />
-                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             {/* Message Field */}
             <FormField
               control={form.control}
@@ -210,10 +188,13 @@ export default function ReminderForm() {
                 <FormItem>
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g., Finish that report, Call mom, Go to the gym"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        placeholder="e.g., Finish that report, Call mom, Go to the gym"
+                        {...field}
+                      />
+                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
