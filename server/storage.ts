@@ -288,4 +288,224 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// In-memory storage implementation for development
+class MemoryStorage implements IStorage {
+  private users: Map<string, User> = new Map();
+  private reminders: Map<string, Reminder> = new Map();
+  private rudePhrasesSeeded = false;
+  private rudePhrasesStore: RudePhrase[] = [];
+
+  // User operations
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const user: User = {
+      id: userData.id || `user_${Date.now()}`,
+      email: userData.email || null,
+      firstName: userData.firstName || null,
+      lastName: userData.lastName || null,
+      profileImageUrl: userData.profileImageUrl || null,
+      defaultRudenessLevel: userData.defaultRudenessLevel || 3,
+      voiceNotifications: userData.voiceNotifications ?? true,
+      emailNotifications: userData.emailNotifications ?? false,
+      browserNotifications: userData.browserNotifications ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(user.id, user);
+    return user;
+  }
+
+  async updateUser(id: string, updates: Partial<User>): Promise<User> {
+    const existing = this.users.get(id);
+    if (!existing) throw new Error('User not found');
+    
+    const updated = { ...existing, ...updates, updatedAt: new Date() };
+    this.users.set(id, updated);
+    return updated;
+  }
+
+  // Reminder operations
+  async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
+    const id = `reminder_${Date.now()}_${Math.random()}`;
+    const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    const rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+
+    const newReminder: Reminder = {
+      id,
+      userId,
+      title: reminder.title,
+      originalMessage: reminder.originalMessage,
+      rudenessLevel: reminder.rudenessLevel,
+      scheduledFor: reminder.scheduledFor,
+      browserNotification: reminder.browserNotification ?? true,
+      voiceNotification: reminder.voiceNotification ?? false,
+      emailNotification: reminder.emailNotification ?? false,
+      rudeMessage,
+      completed: false,
+      completedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    
+    this.reminders.set(id, newReminder);
+    return newReminder;
+  }
+
+  async getReminders(userId: string): Promise<Reminder[]> {
+    return Array.from(this.reminders.values())
+      .filter(r => r.userId === userId)
+      .sort((a, b) => b.scheduledFor.getTime() - a.scheduledFor.getTime());
+  }
+
+  async getReminder(id: string, userId: string): Promise<Reminder | undefined> {
+    const reminder = this.reminders.get(id);
+    return reminder && reminder.userId === userId ? reminder : undefined;
+  }
+
+  async updateReminder(id: string, userId: string, updates: UpdateReminder): Promise<Reminder> {
+    const existing = await this.getReminder(id, userId);
+    if (!existing) throw new Error('Reminder not found');
+
+    let rudeMessage = existing.rudeMessage;
+    if (updates.originalMessage || updates.rudenessLevel) {
+      const message = updates.originalMessage || existing.originalMessage;
+      const level = updates.rudenessLevel || existing.rudenessLevel;
+      const phrases = await this.getRudePhrasesForLevel(level);
+      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+      rudeMessage = `${message}${randomPhrase?.phrase || ', get it done!'}`;
+    }
+
+    const updated = { 
+      ...existing, 
+      ...updates, 
+      rudeMessage,
+      updatedAt: new Date() 
+    };
+    this.reminders.set(id, updated);
+    return updated;
+  }
+
+  async deleteReminder(id: string, userId: string): Promise<void> {
+    const reminder = await this.getReminder(id, userId);
+    if (reminder) {
+      this.reminders.delete(id);
+    }
+  }
+
+  async getActiveReminders(userId: string): Promise<Reminder[]> {
+    return Array.from(this.reminders.values())
+      .filter(r => r.userId === userId && !r.completed && r.scheduledFor >= new Date());
+  }
+
+  async getUpcomingReminders(): Promise<Reminder[]> {
+    const now = new Date();
+    const next24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    
+    return Array.from(this.reminders.values())
+      .filter(r => !r.completed && r.scheduledFor >= now && r.scheduledFor <= next24Hours);
+  }
+
+  async completeReminder(id: string, userId: string): Promise<Reminder> {
+    const existing = await this.getReminder(id, userId);
+    if (!existing) throw new Error('Reminder not found');
+
+    const updated = { 
+      ...existing, 
+      completed: true, 
+      completedAt: new Date(),
+      updatedAt: new Date() 
+    };
+    this.reminders.set(id, updated);
+    return updated;
+  }
+
+  // Rude phrases operations
+  async getRudePhrasesForLevel(level: number): Promise<RudePhrase[]> {
+    if (!this.rudePhrasesSeeded) {
+      await this.seedRudePhrases();
+    }
+    return this.rudePhrasesStore.filter(phrase => phrase.rudenessLevel === level);
+  }
+
+  async seedRudePhrases(): Promise<void> {
+    if (this.rudePhrasesSeeded) return;
+
+    const phrases = [
+      // Level 1 - Gentle/Polite
+      { id: '1', rudenessLevel: 1, phrase: ", you've got this! 💪", category: "encouraging", createdAt: new Date() },
+      { id: '2', rudenessLevel: 1, phrase: ", take your time but don't forget! ⏰", category: "gentle", createdAt: new Date() },
+      { id: '3', rudenessLevel: 1, phrase: ", friendly reminder! 😊", category: "polite", createdAt: new Date() },
+      { id: '4', rudenessLevel: 1, phrase: ", just a gentle nudge! 👋", category: "soft", createdAt: new Date() },
+      
+      // Level 2 - Firm
+      { id: '5', rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm", createdAt: new Date() },
+      { id: '6', rudenessLevel: 2, phrase: ", time to get moving!", category: "assertive", createdAt: new Date() },
+      { id: '7', rudenessLevel: 2, phrase: ", no excuses now!", category: "direct", createdAt: new Date() },
+      { id: '8', rudenessLevel: 2, phrase: ", make it happen!", category: "motivational", createdAt: new Date() },
+      
+      // Level 3 - Sarcastic
+      { id: '9', rudenessLevel: 3, phrase: ", because apparently you need reminding...", category: "sarcastic", createdAt: new Date() },
+      { id: '10', rudenessLevel: 3, phrase: ", shocking that you haven't done this yet!", category: "ironic", createdAt: new Date() },
+      { id: '11', rudenessLevel: 3, phrase: ", what a surprise, still not done!", category: "witty", createdAt: new Date() },
+      { id: '12', rudenessLevel: 3, phrase: ", let me guess, you 'forgot' again?", category: "cynical", createdAt: new Date() },
+      
+      // Level 4 - Harsh
+      { id: '13', rudenessLevel: 4, phrase: ", stop procrastinating like a lazy sloth!", category: "harsh", createdAt: new Date() },
+      { id: '14', rudenessLevel: 4, phrase: ", get your act together already!", category: "demanding", createdAt: new Date() },
+      { id: '15', rudenessLevel: 4, phrase: ", quit being such a slacker!", category: "critical", createdAt: new Date() },
+      { id: '16', rudenessLevel: 4, phrase: ", enough with the excuses!", category: "impatient", createdAt: new Date() },
+      
+      // Level 5 - Savage
+      { id: '17', rudenessLevel: 5, phrase: ", you absolute couch potato!", category: "savage", createdAt: new Date() },
+      { id: '18', rudenessLevel: 5, phrase: ", stop being such a useless lump!", category: "brutal", createdAt: new Date() },
+      { id: '19', rudenessLevel: 5, phrase: ", what's wrong with you?!", category: "offensive", createdAt: new Date() },
+      { id: '20', rudenessLevel: 5, phrase: ", you're pathetic at this point!", category: "insulting", createdAt: new Date() },
+    ];
+
+    this.rudePhrasesStore = phrases;
+    this.rudePhrasesSeeded = true;
+  }
+
+  // Statistics
+  async getUserStats(userId: string): Promise<{
+    activeReminders: number;
+    completedToday: number;
+    avgRudeness: number;
+  }> {
+    const userReminders = Array.from(this.reminders.values()).filter(r => r.userId === userId);
+    
+    // Active reminders
+    const activeReminders = userReminders.filter(r => !r.completed && r.scheduledFor >= new Date());
+    
+    // Completed today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const completedToday = userReminders.filter(r => 
+      r.completed && 
+      r.completedAt && 
+      r.completedAt >= today && 
+      r.completedAt < tomorrow
+    );
+
+    // Average rudeness
+    const avgRudeness = userReminders.length > 0
+      ? userReminders.reduce((sum, r) => sum + r.rudenessLevel, 0) / userReminders.length
+      : 0;
+
+    return {
+      activeReminders: activeReminders.length,
+      completedToday: completedToday.length,
+      avgRudeness: Math.round(avgRudeness * 10) / 10,
+    };
+  }
+}
+
+// Use memory storage instead of database storage for now
+export const storage = new MemoryStorage();
