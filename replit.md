@@ -7,6 +7,7 @@ This is a full-stack web application that helps users manage daily reminders wit
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+UI/UX: Remove intro/landing page - direct authentication flow preferred.
 
 ## System Architecture
 
