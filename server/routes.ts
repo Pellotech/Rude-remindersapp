@@ -11,7 +11,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
-  // Seed rude phrases on startup
+  // Initialize storage (will auto-detect database availability)
   await storage.seedRudePhrases();
 
   // Auth routes

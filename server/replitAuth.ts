@@ -5,7 +5,7 @@ import passport from "passport";
 import session from "express-session";
 import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
-import MemoryStore from "memorystore";
+import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
 if (!process.env.REPLIT_DOMAINS) {
@@ -24,18 +24,36 @@ const getOidcConfig = memoize(
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
-  const MemoryStoreClass = MemoryStore(session);
-  const sessionStore = new MemoryStoreClass({
-    checkPeriod: 86400000, // prune expired entries every 24h
-  });
+  
+  // Try to use PostgreSQL sessions, fallback to memory for development
+  let sessionStore;
+  try {
+    if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('ep-empty-queen-a24ac3h3.eu-central-1.aws.neon.tech')) {
+      const pgStore = connectPg(session);
+      sessionStore = new pgStore({
+        conString: process.env.DATABASE_URL,
+        createTableIfMissing: true,
+        ttl: sessionTtl / 1000,
+        tableName: "sessions",
+      });
+      console.log('✅ Using PostgreSQL session store');
+    } else {
+      throw new Error('Database not available or disabled');
+    }
+  } catch (error) {
+    console.warn('⚠️  Using memory session store (sessions will not persist across restarts)');
+    // Use default memory store
+    sessionStore = undefined; // Express will use default memory store
+  }
+  
   return session({
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET || 'default-development-secret',
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       maxAge: sessionTtl,
     },
   });

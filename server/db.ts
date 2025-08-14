@@ -2,23 +2,17 @@ import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
-// Use local PostgreSQL instead of Neon
-const databaseConfig = {
-  host: 'localhost',
-  port: 5432,
-  user: 'postgres',
-  password: 'password',
-  database: 'postgres',
-  ssl: false // Disable SSL for local PostgreSQL
-};
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "DATABASE_URL must be set. Did you forget to provision a database?",
+  );
+}
 
-// Create connection string from individual parts
-const connectionString = `postgresql://${databaseConfig.user}:${databaseConfig.password}@${databaseConfig.host}:${databaseConfig.port}/${databaseConfig.database}`;
-
-console.log('Connecting to database:', `postgresql://${databaseConfig.user}:***@${databaseConfig.host}:${databaseConfig.port}/${databaseConfig.database}`);
+console.log('Connecting to production database...');
 
 export const pool = new Pool({ 
-  ...databaseConfig
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 export const db = drizzle({ client: pool, schema });

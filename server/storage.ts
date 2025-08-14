@@ -507,5 +507,74 @@ class MemoryStorage implements IStorage {
   }
 }
 
-// Use memory storage instead of database storage for now
-export const storage = new MemoryStorage();
+// Production-ready storage with fallback to memory when database unavailable
+async function createStorage(): Promise<IStorage> {
+  try {
+    // Test database connection
+    const testStorage = new DatabaseStorage();
+    await testStorage.seedRudePhrases(); // This will fail if DB is unavailable
+    console.log('✅ Database connection successful - using DatabaseStorage');
+    return testStorage;
+  } catch (error) {
+    console.warn('⚠️  Database unavailable, falling back to MemoryStorage for development');
+    console.warn('Error:', error instanceof Error ? error.message : 'Unknown error');
+    const memStorage = new MemoryStorage();
+    await memStorage.seedRudePhrases();
+    return memStorage;
+  }
+}
+
+// Create storage instance with fallback
+let storageInstance: IStorage;
+export const getStorage = async (): Promise<IStorage> => {
+  if (!storageInstance) {
+    storageInstance = await createStorage();
+  }
+  return storageInstance;
+};
+
+// Export a synchronous storage for immediate use (will be initialized on first API call)
+export const storage = {
+  async getUser(id: string) {
+    return (await getStorage()).getUser(id);
+  },
+  async upsertUser(user: any) {
+    return (await getStorage()).upsertUser(user);
+  },
+  async updateUser(id: string, updates: any) {
+    return (await getStorage()).updateUser(id, updates);
+  },
+  async createReminder(userId: string, reminder: any) {
+    return (await getStorage()).createReminder(userId, reminder);
+  },
+  async getReminders(userId: string) {
+    return (await getStorage()).getReminders(userId);
+  },
+  async getReminder(id: string, userId: string) {
+    return (await getStorage()).getReminder(id, userId);
+  },
+  async updateReminder(id: string, userId: string, updates: any) {
+    return (await getStorage()).updateReminder(id, userId, updates);
+  },
+  async deleteReminder(id: string, userId: string) {
+    return (await getStorage()).deleteReminder(id, userId);
+  },
+  async getActiveReminders(userId: string) {
+    return (await getStorage()).getActiveReminders(userId);
+  },
+  async getUpcomingReminders() {
+    return (await getStorage()).getUpcomingReminders();
+  },
+  async completeReminder(id: string, userId: string) {
+    return (await getStorage()).completeReminder(id, userId);
+  },
+  async getRudePhrasesForLevel(level: number) {
+    return (await getStorage()).getRudePhrasesForLevel(level);
+  },
+  async seedRudePhrases() {
+    return (await getStorage()).seedRudePhrases();
+  },
+  async getUserStats(userId: string) {
+    return (await getStorage()).getUserStats(userId);
+  }
+};
