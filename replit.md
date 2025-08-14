@@ -94,9 +94,15 @@ Preferred communication style: Simple, everyday language.
 
 ### Development Environment
 - **Hot Reload**: Vite development server with HMR
-- **Database**: Connects to Neon Database using environment variables
-- **Session Storage**: PostgreSQL sessions for development consistency
+- **Database**: Currently using in-memory storage for development (switched from disabled Neon database)
+- **Session Storage**: In-memory sessions using memorystore (switched from PostgreSQL for development)
 - **Real-time Features**: WebSocket server runs alongside Express
+
+### Production Deployment Recommendations
+- **Deployment Type**: Autoscale Deployment (recommended for variable traffic and real-time features)
+- **Database**: Need to set up persistent PostgreSQL database for production
+- **Session Storage**: Should use Redis or database sessions for production
+- **Scaling**: Autoscale handles traffic patterns and WebSocket connections automatically
 
 ### Production Build
 - **Frontend**: Vite builds optimized static assets to `dist/public`
