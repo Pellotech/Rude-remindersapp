@@ -248,13 +248,7 @@ export default function ReminderForm() {
                       ))}
                     </div>
                     
-                    {/* Live Preview */}
-                    <div className="mt-4 p-3 bg-white rounded border">
-                      <p className="text-sm text-gray-600 mb-1">Preview:</p>
-                      <p className="text-sm font-medium text-rude-red-700">
-                        "{previewMessage}"
-                      </p>
-                    </div>
+
                   </div>
                   <FormMessage />
                 </FormItem>
