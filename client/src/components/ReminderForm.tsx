@@ -24,6 +24,8 @@ import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, He
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
+import { MobileCamera } from "./MobileCamera";
+import { getPlatformInfo, supportsCamera } from "@/utils/platformDetection";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -179,6 +181,10 @@ export default function ReminderForm() {
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
   const [selectedMotivation, setSelectedMotivation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  
+  // Detect if we're on mobile platform
+  const platformInfo = getPlatformInfo();
+  const isMobileWithCamera = platformInfo.isNative && supportsCamera();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -568,15 +574,25 @@ export default function ReminderForm() {
                 <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
               </div>
               
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={handlePhotoAttachment}
-              >
-                <Camera className="mr-2 h-4 w-4" />
-                Add Photos/Videos ({selectedAttachments.length}/5)
-              </Button>
+              {isMobileWithCamera ? (
+                <MobileCamera
+                  onPhotoCaptured={(photoUrl) => {
+                    setSelectedAttachments(prev => [...prev, photoUrl].slice(0, 5));
+                  }}
+                  maxFiles={5}
+                  currentCount={selectedAttachments.length}
+                />
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={handlePhotoAttachment}
+                >
+                  <Camera className="mr-2 h-4 w-4" />
+                  Add Photos/Videos ({selectedAttachments.length}/5)
+                </Button>
+              )}
 
               {selectedAttachments.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">

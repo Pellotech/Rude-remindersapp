@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Rude Reminders</string>
+    <string name="title_activity_main">Rude Reminders</string>
+    <string name="package_name">com.rudereminders.app</string>
+    <string name="custom_url_scheme">com.rudereminders.app</string>
+</resources>
