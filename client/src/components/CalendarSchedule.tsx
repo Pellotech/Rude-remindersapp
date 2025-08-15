@@ -9,22 +9,36 @@ interface CalendarScheduleProps {
   onDateTimeChange: (dateTime: Date) => void;
 }
 
+interface QuarterState {
+  hour: number | null;
+  minutes: number;
+}
+
 export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: CalendarScheduleProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(selectedDateTime);
+  const [quarterState, setQuarterState] = useState<QuarterState>({ hour: null, minutes: 0 });
   
   // Generate the 7 days of the week starting from today
   const today = new Date();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
   
-  // Time slots from 6 AM to 11 PM in 1-hour increments
-  const timeSlots = Array.from({ length: 18 }, (_, i) => {
-    const hour = i + 6;
+  // Full 24-hour time slots in AM/PM format
+  const timeSlots = Array.from({ length: 24 }, (_, i) => {
+    const hour = i;
     return {
       value: hour,
-      label: hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
-      display: hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+      label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
+      display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
     };
   });
+
+  // Quarter-hour options (15-minute intervals)
+  const quarterSlots = [
+    { value: 0, label: "On the hour", minutes: 0 },
+    { value: 15, label: "Quarter past", minutes: 15 },
+    { value: 30, label: "Half past", minutes: 30 },
+    { value: 45, label: "Quarter to", minutes: 45 }
+  ];
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -39,8 +53,18 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const handleTimeSelect = (hour: number) => {
     if (!selectedDate) return;
     
+    setQuarterState({ hour, minutes: 0 });
     const newDateTime = new Date(selectedDate);
     newDateTime.setHours(hour, 0, 0, 0);
+    onDateTimeChange(newDateTime);
+  };
+
+  const handleQuarterSelect = (minutes: number) => {
+    if (!selectedDate || quarterState.hour === null) return;
+    
+    setQuarterState({ ...quarterState, minutes });
+    const newDateTime = new Date(selectedDate);
+    newDateTime.setHours(quarterState.hour, minutes, 0, 0);
     onDateTimeChange(newDateTime);
   };
 
@@ -53,6 +77,14 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
            selectedDate && 
            isSameDay(selectedDateTime, selectedDate) && 
            selectedDateTime.getHours() === hour;
+  };
+
+  const isQuarterSelected = (minutes: number) => {
+    return selectedDateTime && 
+           selectedDate && 
+           isSameDay(selectedDateTime, selectedDate) && 
+           selectedDateTime.getMinutes() === minutes &&
+           quarterState.hour !== null;
   };
 
   return (
@@ -124,6 +156,40 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     )}
                   >
                     {slot.display}
+                  </Button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Quarter Hour Selection */}
+      {selectedDate && quarterState.hour !== null && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Select Minutes (Optional)</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Fine-tune your reminder time
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              {quarterSlots.map((slot) => {
+                const isSelected = isQuarterSelected(slot.value);
+                
+                return (
+                  <Button
+                    key={slot.value}
+                    variant={isSelected ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleQuarterSelect(slot.value)}
+                    className={cn(
+                      "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
+                      isSelected && "bg-primary text-primary-foreground"
+                    )}
+                  >
+                    {slot.label}
                   </Button>
                 );
               })}

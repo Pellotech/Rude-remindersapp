@@ -111,20 +111,31 @@ export async function setupAuth(app: Express) {
       verify,
     );
     passport.use(strategy);
+    console.log(`Registered auth strategy: replitauth:${domain}`);
   }
 
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    // Handle localhost development and different hostname scenarios
+    const domain = (req.hostname === 'localhost' || req.hostname === '127.0.0.1') ? 
+      process.env.REPLIT_DOMAINS!.split(",")[0] : req.hostname;
+    
+    console.log(`Login attempt: hostname=${req.hostname}, using domain=${domain}`);
+    passport.authenticate(`replitauth:${domain}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    // Handle localhost development and different hostname scenarios
+    const domain = (req.hostname === 'localhost' || req.hostname === '127.0.0.1') ? 
+      process.env.REPLIT_DOMAINS!.split(",")[0] : req.hostname;
+    
+    console.log(`Callback attempt: hostname=${req.hostname}, using domain=${domain}`);
+    passport.authenticate(`replitauth:${domain}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
     })(req, res, next);
