@@ -8,6 +8,7 @@ This is a full-stack web application that helps users manage daily reminders wit
 
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.
+Mobile Development: Interested in converting web app to iOS/Android mobile apps.
 
 ## System Architecture
 
