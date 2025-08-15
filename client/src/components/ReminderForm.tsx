@@ -20,9 +20,10 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
+import { QuotesService } from "@/services/quotesService";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -39,6 +40,8 @@ const formSchema = z.object({
   voiceNotification: z.boolean(),
   emailNotification: z.boolean(),
   voiceCharacter: z.string().optional(),
+  attachments: z.array(z.string()).optional(),
+  motivationalQuote: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -100,11 +103,82 @@ const voiceCharacters = [
   }
 ];
 
+// Historical figures and motivation categories
+const motivationCategories = [
+  {
+    id: "sports",
+    name: "Sports Champions",
+    icon: Zap,
+    description: "Motivation from legendary athletes",
+    figures: ["Muhammad Ali", "Michael Jordan", "Serena Williams", "Tom Brady", "Usain Bolt"]
+  },
+  {
+    id: "historical",
+    name: "Historical Leaders",
+    icon: Crown,
+    description: "Wisdom from great leaders",
+    figures: ["Winston Churchill", "Abraham Lincoln", "Nelson Mandela", "Martin Luther King Jr.", "Theodore Roosevelt"]
+  },
+  {
+    id: "entrepreneurs",
+    name: "Business Innovators", 
+    icon: Bot,
+    description: "Insights from successful entrepreneurs",
+    figures: ["Steve Jobs", "Bill Gates", "Elon Musk", "Oprah Winfrey", "Jeff Bezos"]
+  },
+  {
+    id: "scientists",
+    name: "Great Minds",
+    icon: User,
+    description: "Knowledge from brilliant scientists",
+    figures: ["Albert Einstein", "Marie Curie", "Stephen Hawking", "Nikola Tesla", "Isaac Newton"]
+  },
+  {
+    id: "motivational",
+    name: "Life Coaches",
+    icon: Heart,
+    description: "General motivational wisdom",
+    figures: ["Tony Robbins", "Maya Angelou", "Ralph Waldo Emerson", "Dale Carnegie", "Zig Ziglar"]
+  }
+];
+
+// Sample quotes for different categories
+const sampleQuotes = {
+  sports: [
+    "Float like a butterfly, sting like a bee. - Muhammad Ali",
+    "I've failed over and over again in my life. That's why I succeed. - Michael Jordan",
+    "Champions are made from something they have deep inside them - a desire, a dream, a vision. - Muhammad Ali"
+  ],
+  historical: [
+    "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
+    "The best way to predict the future is to create it. - Abraham Lincoln",
+    "It always seems impossible until it's done. - Nelson Mandela"
+  ],
+  entrepreneurs: [
+    "Innovation distinguishes between a leader and a follower. - Steve Jobs",
+    "Success is a lousy teacher. It seduces smart people into thinking they can't lose. - Bill Gates",
+    "When something is important enough, you do it even if the odds are not in your favor. - Elon Musk"
+  ],
+  scientists: [
+    "Imagination is more important than knowledge. - Albert Einstein",
+    "Nothing in life is to be feared, it is only to be understood. - Marie Curie",
+    "Look up at the stars and not down at your feet. - Stephen Hawking"
+  ],
+  motivational: [
+    "The way to get started is to quit talking and begin doing. - Walt Disney",
+    "Don't be afraid to give up the good to go for the great. - John D. Rockefeller",
+    "Believe you can and you're halfway there. - Theodore Roosevelt"
+  ]
+};
+
 export default function ReminderForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [previewMessage, setPreviewMessage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("default");
+  const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
+  const [selectedMotivation, setSelectedMotivation] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -115,6 +189,9 @@ export default function ReminderForm() {
       browserNotification: true,
       voiceNotification: false,
       emailNotification: false,
+      voiceCharacter: "default",
+      attachments: [],
+      motivationalQuote: "",
     },
   });
 
@@ -225,11 +302,57 @@ export default function ReminderForm() {
     }
   };
 
+  // Photo attachment simulation (for web demo)
+  const handlePhotoAttachment = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*,video/*';
+    input.multiple = true;
+    input.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files) {
+        const newAttachments = Array.from(files).map(file => {
+          return URL.createObjectURL(file);
+        });
+        setSelectedAttachments(prev => [...prev, ...newAttachments].slice(0, 5));
+        toast({
+          title: "Media Added",
+          description: `Added ${files.length} file(s) to your reminder`,
+        });
+      }
+    };
+    input.click();
+  };
+
+  const removeAttachment = (index: number) => {
+    setSelectedAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const getRandomQuote = (category: string) => {
+    const quote = QuotesService.getRandomQuote(category);
+    if (quote) {
+      const formattedQuote = QuotesService.formatQuote(quote);
+      setSelectedMotivation(formattedQuote);
+      toast({
+        title: "Motivation Added",
+        description: `Quote from ${quote.author} selected!`,
+      });
+    } else {
+      toast({
+        title: "No quotes found",
+        description: "Please try a different category",
+        variant: "destructive",
+      });
+    }
+  };
+
   const onSubmit = (data: FormData) => {
-    // Include the selected voice character in the submission
+    // Include all the new features in the submission
     const submissionData = {
       ...data,
-      voiceCharacter: selectedVoice
+      voiceCharacter: selectedVoice,
+      attachments: selectedAttachments,
+      motivationalQuote: selectedMotivation
     };
     createReminderMutation.mutate(submissionData);
   };
@@ -436,6 +559,102 @@ export default function ReminderForm() {
                 <TestTube className="mr-2 h-4 w-4" />
                 Test {voiceCharacters.find(v => v.id === selectedVoice)?.name || "Voice"}
               </Button>
+            </div>
+
+            {/* Photo/Video Attachments */}
+            <div className="space-y-4">
+              <div>
+                <FormLabel className="text-base">Media Attachments</FormLabel>
+                <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
+              </div>
+              
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handlePhotoAttachment}
+              >
+                <Camera className="mr-2 h-4 w-4" />
+                Add Photos/Videos ({selectedAttachments.length}/5)
+              </Button>
+
+              {selectedAttachments.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {selectedAttachments.map((attachment, index) => (
+                    <div key={index} className="relative">
+                      <img 
+                        src={attachment} 
+                        alt={`Attachment ${index + 1}`}
+                        className="w-full h-20 object-cover rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(index)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Motivational Quotes */}
+            <div className="space-y-4">
+              <div>
+                <FormLabel className="text-base">Motivational Boost</FormLabel>
+                <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions</p>
+              </div>
+              
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose motivation category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {motivationCategories.map((category) => {
+                    const IconComponent = category.icon;
+                    return (
+                      <SelectItem key={category.id} value={category.id}>
+                        <div className="flex items-center space-x-2">
+                          <IconComponent className="h-4 w-4 text-rude-red-600" />
+                          <div>
+                            <div className="font-medium">{category.name}</div>
+                            <div className="text-xs text-muted-foreground">{category.description}</div>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+
+              {selectedCategory && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => getRandomQuote(selectedCategory)}
+                >
+                  <Quote className="mr-2 h-4 w-4" />
+                  Get Random Quote
+                </Button>
+              )}
+
+              {selectedMotivation && (
+                <div className="p-4 bg-muted rounded-lg border-l-4 border-rude-red-600">
+                  <p className="text-sm italic">"{selectedMotivation}"</p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedMotivation("")}
+                    className="mt-2 h-auto p-1 text-xs"
+                  >
+                    Remove quote
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}

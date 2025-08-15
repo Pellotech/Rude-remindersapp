@@ -44,7 +44,7 @@ Mobile Development: Interested in converting web app to iOS/Android mobile apps.
 
 ### Database Schema
 - **Users Table**: Stores user profiles with notification preferences and default rudeness settings
-- **Reminders Table**: Contains reminder data including original messages, rude transformations, scheduling, and notification settings
+- **Reminders Table**: Contains reminder data including original messages, rude transformations, scheduling, notification settings, multimedia attachments, and motivational quotes
 - **Rude Phrases Table**: Stores pre-written rude phrases categorized by rudeness levels (1-5)
 - **Sessions Table**: Manages user authentication sessions (required for Replit Auth)
 
@@ -61,8 +61,18 @@ Mobile Development: Interested in converting web app to iOS/Android mobile apps.
 ### Real-time Features
 - **WebSocket Connection**: Enables real-time reminder notifications
 - **Browser Notifications**: Native browser notification API integration
-- **Voice Notifications**: Web Speech API for audio reminders
+- **Voice Notifications**: Web Speech API for audio reminders with character selection
 - **Email Notifications**: Placeholder implementation for email alerts
+
+### Mobile-Ready Enhancement Features
+- **Photo/Video Attachments**: Users can attach up to 5 images or videos to reminders via dropdown interface
+- **Historical Motivational Quotes**: Integration with curated database of quotes from 5 categories:
+  - Sports Champions (Muhammad Ali, Michael Jordan, Serena Williams)
+  - Historical Leaders (Churchill, Lincoln, Mandela, MLK Jr.)
+  - Business Innovators (Steve Jobs, Bill Gates, Elon Musk) 
+  - Great Minds (Einstein, Marie Curie, Stephen Hawking)
+  - Life Coaches (Tony Robbins, Maya Angelou, Walt Disney)
+- **Capacitor-Ready Architecture**: Designed for mobile app conversion with minimal code changes
 
 ## Data Flow
 
