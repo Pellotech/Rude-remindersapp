@@ -66,8 +66,39 @@ export default function Home() {
           // Speak reminder if voice notification is enabled
           if (reminder.voiceNotification && 'speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
-            utterance.rate = 0.9;
-            utterance.pitch = 1;
+            
+            // Apply voice character settings if available
+            if (reminder.voiceCharacter) {
+              switch (reminder.voiceCharacter) {
+                case 'drill-sergeant':
+                  utterance.rate = 1.1;
+                  utterance.pitch = 0.8;
+                  break;
+                case 'robot':
+                  utterance.rate = 0.8;
+                  utterance.pitch = 0.9;
+                  break;
+                case 'british-butler':
+                  utterance.rate = 0.85;
+                  utterance.pitch = 1.1;
+                  // Try to use British voice if available
+                  const voices = speechSynthesis.getVoices();
+                  const britishVoice = voices.find(voice => voice.lang.includes('en-GB') || voice.name.includes('British'));
+                  if (britishVoice) utterance.voice = britishVoice;
+                  break;
+                case 'mom':
+                  utterance.rate = 0.9;
+                  utterance.pitch = 1.2;
+                  break;
+                default:
+                  utterance.rate = 0.9;
+                  utterance.pitch = 1.0;
+              }
+            } else {
+              utterance.rate = 0.9;
+              utterance.pitch = 1.0;
+            }
+            
             speechSynthesis.speak(utterance);
           }
 

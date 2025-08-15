@@ -19,7 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 
@@ -37,6 +38,7 @@ const formSchema = z.object({
   browserNotification: z.boolean(),
   voiceNotification: z.boolean(),
   emailNotification: z.boolean(),
+  voiceCharacter: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -49,10 +51,60 @@ const rudenessLabels = [
   { level: 5, emoji: "🤬", label: "Savage" },
 ];
 
+// Voice character options with different personalities
+const voiceCharacters = [
+  {
+    id: "default",
+    name: "Default Voice",
+    icon: User,
+    personality: "Standard reminder voice",
+    rate: 0.9,
+    pitch: 1.0,
+    testMessage: "This is your standard reminder voice, time to get things done!"
+  },
+  {
+    id: "drill-sergeant",
+    name: "Drill Sergeant",
+    icon: Zap,
+    personality: "Tough, no-nonsense military style",
+    rate: 1.1,
+    pitch: 0.8,
+    testMessage: "Listen up soldier! Drop and give me twenty push-ups, then get back to work!"
+  },
+  {
+    id: "robot",
+    name: "AI Assistant",
+    icon: Bot,
+    personality: "Robotic, systematic approach",
+    rate: 0.8,
+    pitch: 0.9,
+    testMessage: "BEEP BOOP. HUMAN DETECTED. PRODUCTIVITY LEVELS INSUFFICIENT. PLEASE COMPLY."
+  },
+  {
+    id: "british-butler",
+    name: "British Butler",
+    icon: Crown,
+    personality: "Polite but passive-aggressive",
+    rate: 0.85,
+    pitch: 1.1,
+    testMessage: "I do beg your pardon, but perhaps it's time you attended to your responsibilities, wouldn't you agree?"
+  },
+  {
+    id: "mom",
+    name: "Disappointed Mom",
+    icon: Heart,
+    personality: "Guilt-inducing maternal energy",
+    rate: 0.9,
+    pitch: 1.2,
+    testMessage: "I'm not angry, I'm just disappointed. You know how much this means to me, don't you?"
+  }
+];
+
 export default function ReminderForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [previewMessage, setPreviewMessage] = useState("");
+  const [selectedVoice, setSelectedVoice] = useState("default");
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -143,9 +195,26 @@ export default function ReminderForm() {
 
   const testVoice = () => {
     if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(previewMessage);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
+      const character = voiceCharacters.find(v => v.id === selectedVoice) || voiceCharacters[0];
+      const message = previewMessage || character.testMessage;
+      
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.rate = character.rate;
+      utterance.pitch = character.pitch;
+      
+      // Try to find a voice that matches the character
+      const voices = speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        if (character.id === "british-butler") {
+          const britishVoice = voices.find(voice => voice.lang.includes('en-GB') || voice.name.includes('British'));
+          if (britishVoice) utterance.voice = britishVoice;
+        } else if (character.id === "robot") {
+          // Use a more robotic-sounding voice if available
+          const robotVoice = voices.find(voice => voice.name.includes('Microsoft') || voice.name.includes('Daniel'));
+          if (robotVoice) utterance.voice = robotVoice;
+        }
+      }
+      
       speechSynthesis.speak(utterance);
     } else {
       toast({
@@ -157,7 +226,12 @@ export default function ReminderForm() {
   };
 
   const onSubmit = (data: FormData) => {
-    createReminderMutation.mutate(data);
+    // Include the selected voice character in the submission
+    const submissionData = {
+      ...data,
+      voiceCharacter: selectedVoice
+    };
+    createReminderMutation.mutate(submissionData);
   };
 
   // Set default date/time to tomorrow at 9 AM and calculate max date (one week from now)
@@ -324,16 +398,45 @@ export default function ReminderForm() {
               </div>
             </div>
 
-            {/* Test Voice Button */}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={testVoice}
-            >
-              <TestTube className="mr-2 h-4 w-4" />
-              Test Voice Reminder
-            </Button>
+            {/* Voice Character Selection */}
+            <div className="space-y-4">
+              <div>
+                <FormLabel className="text-base">Voice Character</FormLabel>
+                <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
+              </div>
+              
+              <Select value={selectedVoice} onValueChange={setSelectedVoice}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a voice character" />
+                </SelectTrigger>
+                <SelectContent>
+                  {voiceCharacters.map((character) => {
+                    const IconComponent = character.icon;
+                    return (
+                      <SelectItem key={character.id} value={character.id}>
+                        <div className="flex items-center space-x-2">
+                          <IconComponent className="h-4 w-4 text-rude-red-600" />
+                          <div>
+                            <div className="font-medium">{character.name}</div>
+                            <div className="text-xs text-muted-foreground">{character.personality}</div>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={testVoice}
+              >
+                <TestTube className="mr-2 h-4 w-4" />
+                Test {voiceCharacters.find(v => v.id === selectedVoice)?.name || "Voice"}
+              </Button>
+            </div>
 
             {/* Submit Button */}
             <Button

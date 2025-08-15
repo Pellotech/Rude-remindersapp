@@ -53,6 +53,7 @@ export const reminders = pgTable("reminders", {
   browserNotification: boolean("browser_notification").default(true),
   voiceNotification: boolean("voice_notification").default(false),
   emailNotification: boolean("email_notification").default(false),
+  voiceCharacter: varchar("voice_character").default("default"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
