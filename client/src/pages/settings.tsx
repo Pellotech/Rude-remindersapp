@@ -40,6 +40,7 @@ interface UserSettings {
   subscriptionStatus?: string;
   subscriptionPlan?: string;
   subscriptionEndsAt?: string;
+  simplifiedInterface?: boolean;
 }
 
 // Comprehensive list of countries/ethnicities for cultural targeting
@@ -770,6 +771,22 @@ export default function Settings() {
                     <SelectItem value="system">System</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <Separator />
+
+              {/* Simplified Interface */}
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">Simplified Interface</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Hide advanced options on the main page (voice characters, attachments, quotes)
+                  </p>
+                </div>
+                <Switch
+                  checked={currentSettings.simplifiedInterface || false}
+                  onCheckedChange={(checked) => updateSetting("simplifiedInterface", checked)}
+                />
               </div>
             </CardContent>
           </CollapsibleContent>

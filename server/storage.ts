@@ -320,6 +320,7 @@ class MemoryStorage implements IStorage {
       stripeSubscriptionId: userData.stripeSubscriptionId || null,
       subscriptionPlan: userData.subscriptionPlan || "free",
       subscriptionEndsAt: userData.subscriptionEndsAt || null,
+      simplifiedInterface: userData.simplifiedInterface ?? false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

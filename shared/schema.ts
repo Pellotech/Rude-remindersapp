@@ -49,6 +49,9 @@ export const users = pgTable("users", {
   subscriptionPlan: varchar("subscription_plan").default("free"), // free, premium
   subscriptionEndsAt: timestamp("subscription_ends_at"),
   
+  // UI Preferences
+  simplifiedInterface: boolean("simplified_interface").default(false),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

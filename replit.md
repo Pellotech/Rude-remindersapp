@@ -10,6 +10,7 @@ This is a full-stack reminder application that helps users manage daily reminder
 
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.
+✅ NEW: Simplified Interface Option - Hide advanced questions from main page (keep only main concepts, remove everything below rudeness level including voice characters, attachments, quotes).
 Mobile Development: ✅ COMPLETED - Successfully converted to iOS/Android mobile apps using Capacitor.
 Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personalization system with:
 - Gender selection (Male/Female/Other) with gender-specific reminders
@@ -19,9 +20,10 @@ Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personaliza
   * Personal Information (name, email, gender, cultural preferences)
   * Notification Preferences (push, voice, email, summaries, snooze duration)
   * App Behavior (rudeness level, frequency, language, timezone, auto-complete)
-  * Appearance (theme selection: light/dark/system)
-  * Privacy & Security (data retention, danger zone with data clearing)
+  * Appearance (theme selection: light/dark/system, simplified interface toggle)
+  * Privacy & Security (data retention, danger zone with data clearing)  
   * Advanced Settings (data export, app version info)
+  * Payment & Billing (subscription management, payment methods, billing history)
 
 ## System Architecture
 

@@ -179,6 +179,14 @@ export default function ReminderForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+
+  // Get user settings for simplified interface
+  const { data: userSettings } = useQuery({
+    queryKey: ["/api/auth/user"],
+    enabled: !!user,
+  });
+  
+  const isSimplifiedInterface = (userSettings as any)?.simplifiedInterface || false;
   const [previewMessage, setPreviewMessage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("default");
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
@@ -339,12 +347,13 @@ export default function ReminderForm() {
 
   const getRandomQuote = (category: string) => {
     // Check if user has cultural preferences enabled
-    if (user?.ethnicitySpecificQuotes && user?.ethnicity) {
+    const userData = userSettings as any;
+    if (userData?.ethnicitySpecificQuotes && userData?.ethnicity) {
       const culturalQuote = CulturalQuotesService.getPersonalizedQuote(
-        user.ethnicity,
+        userData.ethnicity,
         true,
-        user.gender,
-        user.genderSpecificReminders
+        userData.gender,
+        userData.genderSpecificReminders
       );
       if (culturalQuote) {
         setSelectedMotivation(culturalQuote);
@@ -480,10 +489,13 @@ export default function ReminderForm() {
               )}
             />
 
-            {/* Notification Types */}
-            <div>
-              <FormLabel className="text-base">Notification Types</FormLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
+            {/* Show advanced sections only if not simplified interface */}
+            {!isSimplifiedInterface && (
+              <>
+                {/* Notification Types */}
+                <div>
+                  <FormLabel className="text-base">Notification Types</FormLabel>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
                 <FormField
                   control={form.control}
                   name="browserNotification"
@@ -546,10 +558,10 @@ export default function ReminderForm() {
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            {/* Voice Character Selection */}
+                {/* Voice Character Selection */}
             <div className="space-y-4">
               <div>
                 <FormLabel className="text-base">Voice Character</FormLabel>
@@ -693,7 +705,9 @@ export default function ReminderForm() {
                   </Button>
                 </div>
               )}
-            </div>
+                </div>
+              </>
+            )}
 
             {/* Submit Button */}
             <Button
