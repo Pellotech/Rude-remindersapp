@@ -23,9 +23,7 @@ export default function Sidebar() {
   const { toast } = useToast();
   const { user } = useAuth() as { user: User | undefined };
 
-  const { data: stats } = useQuery({
-    queryKey: ["/api/stats"],
-  });
+
 
   const testVoice = () => {
     if ('speechSynthesis' in window) {
@@ -50,44 +48,7 @@ export default function Sidebar() {
 
   return (
     <div className="space-y-6">
-      {/* Statistics Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Your Stats</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {stats ? (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Active Reminders</span>
-                <span className="text-lg font-bold text-rude-red-600">
-                  {(stats as any).activeReminders}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Completed Today</span>
-                <span className="text-lg font-bold text-green-600">
-                  {(stats as any).completedToday}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Avg. Rudeness</span>
-                <span className="text-lg font-bold text-orange-600">
-                  {(stats as any).avgRudeness}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
 
       {/* Quick Settings */}
       <Card>

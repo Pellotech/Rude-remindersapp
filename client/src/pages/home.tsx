@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
-import RemindersList from "@/components/RemindersList";
+
 import Sidebar from "@/components/Sidebar";
 
 export default function Home() {
@@ -159,10 +159,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Reminders List */}
-        <div className="mt-8">
-          <RemindersList />
-        </div>
+
       </div>
     </div>
   );

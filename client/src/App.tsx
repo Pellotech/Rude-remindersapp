@@ -10,6 +10,7 @@ import PersonalInfo from "@/pages/settings/PersonalInfo";
 import Notifications from "@/pages/settings/Notifications";
 import Appearance from "@/pages/settings/Appearance";
 import Billing from "@/pages/settings/Billing";
+import ReminderHistory from "@/pages/settings/ReminderHistory";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/settings/notifications" component={Notifications} />
       <Route path="/settings/appearance" component={Appearance} />
       <Route path="/settings/billing" component={Billing} />
+      <Route path="/settings/reminder-history" component={ReminderHistory} />
         </>
       ) : null}
       <Route component={NotFound} />
