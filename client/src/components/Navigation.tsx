@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Megaphone, Settings } from "lucide-react";
 import SettingsModal from "./SettingsModal";
+import { HelpMenu } from "./HelpMenu";
 import { Link } from "wouter";
 import type { User } from "@shared/schema";
 
@@ -20,6 +21,7 @@ export default function Navigation() {
               <h1 className="text-xl font-bold text-gray-900">Rude Reminder</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <HelpMenu />
               <Link href="/settings">
                 <Button
                   variant="ghost"

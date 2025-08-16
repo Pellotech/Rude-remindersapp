@@ -51,6 +51,7 @@ export const users = pgTable("users", {
   
   // UI Preferences
   simplifiedInterface: boolean("simplified_interface").default(false),
+  alarmSound: text("alarm_sound").default("gentle-chime"),
   
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

@@ -41,6 +41,7 @@ interface UserSettings {
   subscriptionPlan?: string;
   subscriptionEndsAt?: string;
   simplifiedInterface?: boolean;
+  alarmSound?: string;
 }
 
 // Comprehensive list of countries/ethnicities for cultural targeting
@@ -72,12 +73,12 @@ export default function Settings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  const { data: user, isLoading } = useQuery<UserSettings>({
+  const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
 
   const updateSettingsMutation = useMutation({
-    mutationFn: (settings: Partial<UserSettings>) =>
+    mutationFn: (settings: any) =>
       apiRequest("/api/settings", "PUT", settings),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -95,7 +96,7 @@ export default function Settings() {
     },
   });
 
-  const [localSettings, setLocalSettings] = useState<Partial<UserSettings>>({});
+  const [localSettings, setLocalSettings] = useState<any>({});
   
   // Collapsible section states
   const [openSections, setOpenSections] = useState({
@@ -128,9 +129,64 @@ export default function Settings() {
 
   const currentSettings = { ...user, ...localSettings };
 
-  const updateSetting = (key: keyof UserSettings, value: any) => {
+  const updateSetting = (key: string, value: any) => {
     const newSettings = { ...localSettings, [key]: value };
     setLocalSettings(newSettings);
+  };
+
+  const playAlarmPreview = (soundName: string) => {
+    // Create a gentle audio context for preview
+    if ('AudioContext' in window || 'webkitAudioContext' in window) {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const audioContext = new AudioContextClass();
+      
+      // Generate different tones for different sounds
+      const frequency = getSoundFrequency(soundName);
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+      oscillator.type = getSoundWaveType(soundName);
+      
+      // Gentle volume and fade
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 1);
+    }
+  };
+
+  const getSoundFrequency = (soundName: string): number => {
+    const frequencies: { [key: string]: number } = {
+      'gentle-chime': 523.25, // C5
+      'soft-bell': 659.25,    // E5
+      'water-drop': 783.99,   // G5
+      'wind-chimes': 440,     // A4
+      'bird-chirp': 880,      // A5
+      'soft-piano': 523.25,   // C5
+      'music-box': 659.25,    // E5
+      'ocean-wave': 220,      // A3
+    };
+    return frequencies[soundName] || 523.25;
+  };
+
+  const getSoundWaveType = (soundName: string): OscillatorType => {
+    const waveTypes: { [key: string]: OscillatorType } = {
+      'gentle-chime': 'sine',
+      'soft-bell': 'triangle',
+      'water-drop': 'sine',
+      'wind-chimes': 'triangle',
+      'bird-chirp': 'square',
+      'soft-piano': 'triangle',
+      'music-box': 'square',
+      'ocean-wave': 'sine',
+    };
+    return waveTypes[soundName] || 'sine';
   };
 
   const saveSettings = () => {
@@ -771,6 +827,44 @@ export default function Settings() {
                     <SelectItem value="system">System</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <Separator />
+
+              {/* Alarm Sound */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Alarm Sound</Label>
+                <p className="text-xs text-muted-foreground">
+                  Choose a playful, non-jarring sound for your reminders
+                </p>
+                <Select
+                  value={currentSettings.alarmSound || "gentle-chime"}
+                  onValueChange={(value) => updateSetting("alarmSound", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select alarm sound" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gentle-chime">🎵 Gentle Chime</SelectItem>
+                    <SelectItem value="soft-bell">🔔 Soft Bell</SelectItem>
+                    <SelectItem value="water-drop">💧 Water Drop</SelectItem>
+                    <SelectItem value="wind-chimes">🎐 Wind Chimes</SelectItem>
+                    <SelectItem value="bird-chirp">🐦 Bird Chirp</SelectItem>
+                    <SelectItem value="soft-piano">🎹 Soft Piano</SelectItem>
+                    <SelectItem value="music-box">📦 Music Box</SelectItem>
+                    <SelectItem value="ocean-wave">🌊 Ocean Wave</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => playAlarmPreview(currentSettings.alarmSound || "gentle-chime")}
+                  >
+                    Play Preview
+                  </Button>
+                </div>
               </div>
 
               <Separator />

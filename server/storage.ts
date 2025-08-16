@@ -321,6 +321,7 @@ class MemoryStorage implements IStorage {
       subscriptionPlan: userData.subscriptionPlan || "free",
       subscriptionEndsAt: userData.subscriptionEndsAt || null,
       simplifiedInterface: userData.simplifiedInterface ?? false,
+      alarmSound: userData.alarmSound || "gentle-chime",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
