@@ -73,6 +73,11 @@ export const reminders = pgTable("reminders", {
   voiceCharacter: varchar("voice_character").default("default"),
   attachments: text("attachments").array().default(sql`'{}'::text[]`),
   motivationalQuote: text("motivational_quote"),
+  // Weekly recurring functionality
+  isRecurring: boolean("is_recurring").default(false),
+  recurringDays: text("recurring_days").array().default(sql`'{}'::text[]`), // ["monday", "wednesday", "friday"]
+  recurringTime: text("recurring_time"), // "09:30" format
+  parentReminderId: varchar("parent_reminder_id"), // for generated reminders from recurring template
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

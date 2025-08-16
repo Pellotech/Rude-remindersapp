@@ -21,7 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings, Calendar, Clock, Repeat } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -47,6 +47,10 @@ const formSchema = z.object({
   voiceCharacter: z.string().optional(),
   attachments: z.array(z.string()).optional(),
   motivationalQuote: z.string().optional(),
+  // Weekly recurring fields
+  isRecurring: z.boolean(),
+  recurringDays: z.array(z.string()).optional(),
+  recurringTime: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -200,6 +204,12 @@ export default function ReminderForm() {
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [motivationalOpen, setMotivationalOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
+  const [recurringOpen, setRecurringOpen] = useState(false);
+  
+  // Weekly recurring state
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [recurringTime, setRecurringTime] = useState("09:00");
   
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -217,6 +227,9 @@ export default function ReminderForm() {
       voiceCharacter: "default",
       attachments: [],
       motivationalQuote: "",
+      isRecurring: false,
+      recurringDays: [],
+      recurringTime: "09:00",
     },
   });
 
@@ -353,6 +366,36 @@ export default function ReminderForm() {
     setSelectedAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Weekly recurring helper functions
+  const daysOfWeek = [
+    { id: "monday", label: "Mon", full: "Monday" },
+    { id: "tuesday", label: "Tue", full: "Tuesday" },
+    { id: "wednesday", label: "Wed", full: "Wednesday" },
+    { id: "thursday", label: "Thu", full: "Thursday" },
+    { id: "friday", label: "Fri", full: "Friday" },
+    { id: "saturday", label: "Sat", full: "Saturday" },
+    { id: "sunday", label: "Sun", full: "Sunday" },
+  ];
+
+  const toggleDay = (dayId: string) => {
+    setSelectedDays(prev => {
+      const newDays = prev.includes(dayId) 
+        ? prev.filter(d => d !== dayId)
+        : [...prev, dayId];
+      form.setValue("recurringDays", newDays);
+      return newDays;
+    });
+  };
+
+  const handleRecurringToggle = (checked: boolean) => {
+    setIsRecurring(checked);
+    form.setValue("isRecurring", checked);
+    if (!checked) {
+      setSelectedDays([]);
+      form.setValue("recurringDays", []);
+    }
+  };
+
   const getRandomQuote = (category: string) => {
     // Check if user has cultural preferences enabled
     const userData = userSettings as any;
@@ -397,7 +440,10 @@ export default function ReminderForm() {
       ...data,
       voiceCharacter: selectedVoice,
       attachments: selectedAttachments,
-      motivationalQuote: selectedMotivation
+      motivationalQuote: selectedMotivation,
+      isRecurring: isRecurring,
+      recurringDays: isRecurring ? selectedDays : [],
+      recurringTime: isRecurring ? recurringTime : undefined
     };
     createReminderMutation.mutate(submissionData);
   };
@@ -456,7 +502,9 @@ export default function ReminderForm() {
               name="scheduledFor"
               render={() => (
                 <FormItem>
-                  <FormLabel>When should we remind you?</FormLabel>
+                  <FormLabel>
+                    {isRecurring ? "First occurrence date & time" : "When should we remind you?"}
+                  </FormLabel>
                   <FormControl>
                     <CalendarSchedule
                       selectedDateTime={selectedDateTime}
@@ -467,6 +515,118 @@ export default function ReminderForm() {
                 </FormItem>
               )}
             />
+
+            {/* Weekly Recurring Section - Hide in simplified interface */}
+            {!isSimplifiedInterface && (
+              <Collapsible open={recurringOpen} onOpenChange={setRecurringOpen}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-between"
+                  type="button"
+                >
+                  <div className="flex items-center">
+                    <Repeat className="mr-2 h-4 w-4 text-blue-600" />
+                    Weekly Recurring Schedule
+                    {isRecurring && selectedDays.length > 0 && (
+                      <span className="ml-2 text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                        {selectedDays.length} days selected
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${recurringOpen ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3 space-y-4 p-4 border rounded-lg bg-blue-50">
+                <p className="text-sm text-muted-foreground">
+                  Create recurring reminders for multiple days of the week at the same time
+                </p>
+                
+                {/* Enable Recurring Toggle */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium">Enable Weekly Recurring</span>
+                  </div>
+                  <Switch
+                    checked={isRecurring}
+                    onCheckedChange={handleRecurringToggle}
+                  />
+                </div>
+
+                {isRecurring && (
+                  <>
+                    {/* Days of Week Selection */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm font-medium">Select Days of Week</span>
+                      </div>
+                      <div className="grid grid-cols-7 gap-2">
+                        {daysOfWeek.map((day) => (
+                          <Button
+                            key={day.id}
+                            type="button"
+                            variant={selectedDays.includes(day.id) ? "default" : "outline"}
+                            size="sm"
+                            className={`text-xs h-10 ${
+                              selectedDays.includes(day.id) 
+                                ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                                : "hover:bg-blue-100"
+                            }`}
+                            onClick={() => toggleDay(day.id)}
+                          >
+                            <div className="flex flex-col items-center">
+                              <span className="font-semibold">{day.label}</span>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                      {selectedDays.length > 0 && (
+                        <p className="text-xs text-blue-600 mt-2">
+                          Selected: {selectedDays.map(dayId => 
+                            daysOfWeek.find(d => d.id === dayId)?.full
+                          ).join(", ")}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Time Selection */}
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm font-medium">Recurring Time</span>
+                      </div>
+                      <Input
+                        type="time"
+                        value={recurringTime}
+                        onChange={(e) => {
+                          setRecurringTime(e.target.value);
+                          form.setValue("recurringTime", e.target.value);
+                        }}
+                        className="w-32"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        This time will be used for all selected days
+                      </p>
+                    </div>
+
+                    {/* Recurring Summary */}
+                    {selectedDays.length > 0 && (
+                      <div className="bg-blue-100 p-3 rounded-md">
+                        <p className="text-sm font-medium text-blue-800">Recurring Schedule Summary:</p>
+                        <p className="text-xs text-blue-700 mt-1">
+                          Your reminder will repeat every <strong>{selectedDays.map(dayId => 
+                            daysOfWeek.find(d => d.id === dayId)?.full
+                          ).join(", ")}</strong> at <strong>{recurringTime}</strong>
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+            )}
 
             {/* Rudeness Level Slider */}
             <FormField
