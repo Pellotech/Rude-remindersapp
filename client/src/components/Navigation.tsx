@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Settings } from "lucide-react";
+import { Megaphone, Settings, Home } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import { HelpMenu } from "./HelpMenu";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import type { User } from "@shared/schema";
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | undefined };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [location] = useLocation();
 
   return (
     <>
@@ -22,11 +23,25 @@ export default function Navigation() {
             </div>
             <div className="flex items-center space-x-4">
               <HelpMenu />
+              
+              {/* Show Home button when not on home page */}
+              {location !== "/" && (
+                <Link href="/">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <Home className="h-5 w-5" />
+                  </Button>
+                </Link>
+              )}
+              
               <Link href="/settings">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-gray-500 hover:text-gray-700"
+                  className={`text-gray-500 hover:text-gray-700 ${location === "/settings" ? "bg-gray-100 text-gray-900" : ""}`}
                 >
                   <Settings className="h-5 w-5" />
                 </Button>

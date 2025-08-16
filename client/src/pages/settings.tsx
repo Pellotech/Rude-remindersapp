@@ -12,7 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon, CreditCard, Crown, Check, X } from "lucide-react";
+import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon, CreditCard, Crown, Check, X, ArrowLeft, Home } from "lucide-react";
+import { Link } from "wouter";
+import { BackNavigation } from "@/components/BackNavigation";
 
 interface UserSettings {
   id: string;
@@ -198,6 +200,8 @@ export default function Settings() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <BackNavigation customBackLabel="Back to Home" />
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
