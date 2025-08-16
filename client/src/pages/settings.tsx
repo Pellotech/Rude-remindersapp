@@ -7,9 +7,12 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart } from "lucide-react";
+import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon } from "lucide-react";
 
 interface UserSettings {
   id: string;
@@ -21,6 +24,18 @@ interface UserSettings {
   genderSpecificReminders: boolean;
   ethnicity?: string;
   ethnicitySpecificQuotes: boolean;
+  // Additional settings
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  timezone?: string;
+  language?: string;
+  theme?: string;
+  reminderFrequency?: string;
+  snoozeTime?: number;
+  autoCompleteReminders?: boolean;
+  emailSummary?: boolean;
+  dataRetention?: number;
 }
 
 // Comprehensive list of countries/ethnicities for cultural targeting
@@ -76,6 +91,23 @@ export default function Settings() {
   });
 
   const [localSettings, setLocalSettings] = useState<Partial<UserSettings>>({});
+  
+  // Collapsible section states
+  const [openSections, setOpenSections] = useState({
+    personal: true,
+    notifications: false,
+    behavior: false,
+    appearance: false,
+    privacy: false,
+    advanced: false,
+  });
+
+  const toggleSection = (section: keyof typeof openSections) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -122,185 +154,524 @@ export default function Settings() {
 
       {/* Personal Information */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserCircle className="h-5 w-5" />
-            Personal Information
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Help us personalize your reminders and motivational content
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Gender Selection */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">Gender Identity</Label>
-            <Select
-              value={currentSettings.gender || ""}
-              onValueChange={(value) => updateSetting("gender", value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select your gender identity" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-                <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            {currentSettings.gender && currentSettings.gender !== "prefer-not-to-say" && (
-              <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                <div className="space-y-1">
-                  <Label className="text-sm font-medium">Gender-specific reminders</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Receive reminders tailored to your gender identity
-                  </p>
+        <Collapsible open={openSections.personal} onOpenChange={() => toggleSection('personal')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <UserCircle className="h-5 w-5" />
+                  Personal Information
                 </div>
-                <Switch
-                  checked={currentSettings.genderSpecificReminders || false}
-                  onCheckedChange={(checked) => updateSetting("genderSpecificReminders", checked)}
+                {openSections.personal ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Help us personalize your reminders and motivational content
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">First Name</Label>
+                  <Input
+                    value={currentSettings.firstName || ""}
+                    onChange={(e) => updateSetting("firstName", e.target.value)}
+                    placeholder="Enter your first name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Last Name</Label>
+                  <Input
+                    value={currentSettings.lastName || ""}
+                    onChange={(e) => updateSetting("lastName", e.target.value)}
+                    placeholder="Enter your last name"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Email Address</Label>
+                <Input
+                  value={currentSettings.email || ""}
+                  onChange={(e) => updateSetting("email", e.target.value)}
+                  placeholder="Enter your email address"
+                  type="email"
                 />
               </div>
-            )}
-          </div>
 
-          <Separator />
+              <Separator />
 
-          {/* Cultural Background */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">Cultural Background</Label>
-            <p className="text-sm text-muted-foreground">
-              Choose your cultural background to receive motivational quotes from relevant historical figures and leaders
-            </p>
-            <Select
-              value={currentSettings.ethnicity || ""}
-              onValueChange={(value) => updateSetting("ethnicity", value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select your cultural background" />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                {ethnicityOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {currentSettings.ethnicity && (
-              <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                <div className="space-y-1">
-                  <Label className="text-sm font-medium">Cultural-specific motivational quotes</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Receive quotes from historical figures and leaders from your cultural background
-                  </p>
-                </div>
-                <Switch
-                  checked={currentSettings.ethnicitySpecificQuotes || false}
-                  onCheckedChange={(checked) => updateSetting("ethnicitySpecificQuotes", checked)}
-                />
+              {/* Gender Selection */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Gender Identity</Label>
+                <Select
+                  value={currentSettings.gender || ""}
+                  onValueChange={(value) => updateSetting("gender", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your gender identity" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {currentSettings.gender && currentSettings.gender !== "prefer-not-to-say" && (
+                  <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Gender-specific reminders</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Receive reminders tailored to your gender identity
+                      </p>
+                    </div>
+                    <Switch
+                      checked={currentSettings.genderSpecificReminders || false}
+                      onCheckedChange={(checked) => updateSetting("genderSpecificReminders", checked)}
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </CardContent>
+
+              <Separator />
+
+              {/* Cultural Background */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Cultural Background</Label>
+                <p className="text-sm text-muted-foreground">
+                  Choose your cultural background to receive motivational quotes from relevant historical figures and leaders
+                </p>
+                <Select
+                  value={currentSettings.ethnicity || ""}
+                  onValueChange={(value) => updateSetting("ethnicity", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your cultural background" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {ethnicityOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                {currentSettings.ethnicity && (
+                  <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Cultural-specific motivational quotes</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Receive quotes from historical figures and leaders from your cultural background
+                      </p>
+                    </div>
+                    <Switch
+                      checked={currentSettings.ethnicitySpecificQuotes || false}
+                      onCheckedChange={(checked) => updateSetting("ethnicitySpecificQuotes", checked)}
+                    />
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
       {/* Notification Preferences */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Notification Preferences
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Control how and when you receive reminder notifications
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                Browser Notifications
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                Desktop and mobile push notifications
+        <Collapsible open={openSections.notifications} onOpenChange={() => toggleSection('notifications')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bell className="h-5 w-5" />
+                  Notification Preferences
+                </div>
+                {openSections.notifications ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Control how and when you receive reminder notifications
               </p>
-            </div>
-            <Switch
-              checked={currentSettings.browserNotifications || false}
-              onCheckedChange={(checked) => updateSetting("browserNotifications", checked)}
-            />
-          </div>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Bell className="h-4 w-4" />
+                    Browser Notifications
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Desktop and mobile push notifications
+                  </p>
+                </div>
+                <Switch
+                  checked={currentSettings.browserNotifications || false}
+                  onCheckedChange={(checked) => updateSetting("browserNotifications", checked)}
+                />
+              </div>
 
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Volume2 className="h-4 w-4" />
-                Voice Notifications
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                Spoken reminders with character voices
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.voiceNotifications || false}
-              onCheckedChange={(checked) => updateSetting("voiceNotifications", checked)}
-            />
-          </div>
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Volume2 className="h-4 w-4" />
+                    Voice Notifications
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Spoken reminders with character voices
+                  </p>
+                </div>
+                <Switch
+                  checked={currentSettings.voiceNotifications || false}
+                  onCheckedChange={(checked) => updateSetting("voiceNotifications", checked)}
+                />
+              </div>
 
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email Notifications
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                Backup email reminders
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.emailNotifications || false}
-              onCheckedChange={(checked) => updateSetting("emailNotifications", checked)}
-            />
-          </div>
-        </CardContent>
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    Email Notifications
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Backup email reminders
+                  </p>
+                </div>
+                <Switch
+                  checked={currentSettings.emailNotifications || false}
+                  onCheckedChange={(checked) => updateSetting("emailNotifications", checked)}
+                />
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    Daily Email Summary
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Receive a daily summary of completed and upcoming reminders
+                  </p>
+                </div>
+                <Switch
+                  checked={currentSettings.emailSummary || false}
+                  onCheckedChange={(checked) => updateSetting("emailSummary", checked)}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Snooze Duration</Label>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>5 minutes</span>
+                  <span>30 minutes</span>
+                </div>
+                <Slider
+                  value={[currentSettings.snoozeTime || 10]}
+                  onValueChange={([value]) => updateSetting("snoozeTime", value)}
+                  max={30}
+                  min={5}
+                  step={5}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground text-center">
+                  How long to snooze reminders when dismissed: {currentSettings.snoozeTime || 10} minutes
+                </p>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
-      {/* Rudeness Level */}
+      {/* App Behavior */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5" />
-            Default Rudeness Level
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Set how brutally honest your reminders should be by default
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span>Gentle</span>
-              <span className="font-medium">Level {currentSettings.defaultRudenessLevel || 3}</span>
-              <span>Brutal</span>
-            </div>
-            <Slider
-              value={[currentSettings.defaultRudenessLevel || 3]}
-              onValueChange={([value]) => updateSetting("defaultRudenessLevel", value)}
-              max={5}
-              min={1}
-              step={1}
-              className="w-full"
-            />
-            <div className="text-xs text-muted-foreground text-center">
-              This will be the default level for new reminders (you can still adjust each reminder individually)
-            </div>
-          </div>
-        </CardContent>
+        <Collapsible open={openSections.behavior} onOpenChange={() => toggleSection('behavior')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Heart className="h-5 w-5" />
+                  App Behavior
+                </div>
+                {openSections.behavior ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Customize how the app behaves and interacts with you
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              {/* Default Rudeness Level */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Default Rudeness Level</Label>
+                <p className="text-sm text-muted-foreground">
+                  Set how brutally honest your reminders should be by default
+                </p>
+                <div className="flex justify-between text-sm">
+                  <span>Gentle</span>
+                  <span className="font-medium">Level {currentSettings.defaultRudenessLevel || 3}</span>
+                  <span>Brutal</span>
+                </div>
+                <Slider
+                  value={[currentSettings.defaultRudenessLevel || 3]}
+                  onValueChange={([value]) => updateSetting("defaultRudenessLevel", value)}
+                  max={5}
+                  min={1}
+                  step={1}
+                  className="w-full"
+                />
+                <div className="text-xs text-muted-foreground text-center">
+                  This will be the default level for new reminders (you can still adjust each reminder individually)
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Auto-complete */}
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">Auto-complete reminders</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Automatically mark reminders as complete when interacted with
+                  </p>
+                </div>
+                <Switch
+                  checked={currentSettings.autoCompleteReminders || false}
+                  onCheckedChange={(checked) => updateSetting("autoCompleteReminders", checked)}
+                />
+              </div>
+
+              {/* Reminder Frequency */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Default Reminder Frequency</Label>
+                <Select
+                  value={currentSettings.reminderFrequency || "once"}
+                  onValueChange={(value) => updateSetting("reminderFrequency", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="once">Once</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Language */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Language</Label>
+                <Select
+                  value={currentSettings.language || "en"}
+                  onValueChange={(value) => updateSetting("language", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="es">Español</SelectItem>
+                    <SelectItem value="fr">Français</SelectItem>
+                    <SelectItem value="de">Deutsch</SelectItem>
+                    <SelectItem value="it">Italiano</SelectItem>
+                    <SelectItem value="pt">Português</SelectItem>
+                    <SelectItem value="zh">中文</SelectItem>
+                    <SelectItem value="ja">日本語</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Timezone */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Timezone</Label>
+                <Select
+                  value={currentSettings.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
+                  onValueChange={(value) => updateSetting("timezone", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select timezone" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
+                    <SelectItem value="America/Chicago">Central Time</SelectItem>
+                    <SelectItem value="America/Denver">Mountain Time</SelectItem>
+                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
+                    <SelectItem value="Europe/London">GMT (London)</SelectItem>
+                    <SelectItem value="Europe/Paris">CET (Paris)</SelectItem>
+                    <SelectItem value="Asia/Tokyo">JST (Tokyo)</SelectItem>
+                    <SelectItem value="Asia/Shanghai">CST (Shanghai)</SelectItem>
+                    <SelectItem value="Australia/Sydney">AEST (Sydney)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Appearance */}
+      <Card>
+        <Collapsible open={openSections.appearance} onOpenChange={() => toggleSection('appearance')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-5 w-5" />
+                  Appearance
+                </div>
+                {openSections.appearance ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Customize the look and feel of your app
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              {/* Theme */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Theme</Label>
+                <Select
+                  value={currentSettings.theme || "system"}
+                  onValueChange={(value) => updateSetting("theme", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="light">Light</SelectItem>
+                    <SelectItem value="dark">Dark</SelectItem>
+                    <SelectItem value="system">System</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Privacy & Security */}
+      <Card>
+        <Collapsible open={openSections.privacy} onOpenChange={() => toggleSection('privacy')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Privacy & Security
+                </div>
+                {openSections.privacy ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Control your data privacy and security settings
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              {/* Data Retention */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Data Retention Period</Label>
+                <p className="text-sm text-muted-foreground">
+                  How long to keep completed reminders and analytics data
+                </p>
+                <Select
+                  value={currentSettings.dataRetention?.toString() || "90"}
+                  onValueChange={(value) => updateSetting("dataRetention", parseInt(value))}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select retention period" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="90">90 days</SelectItem>
+                    <SelectItem value="180">6 months</SelectItem>
+                    <SelectItem value="365">1 year</SelectItem>
+                    <SelectItem value="-1">Keep forever</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-red-600 dark:text-red-400">Danger Zone</h3>
+                <div className="space-y-3 p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/20">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Clear All Data</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Permanently delete all your reminders and settings
+                      </p>
+                    </div>
+                    <Button variant="destructive" size="sm">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Clear Data
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Advanced Settings */}
+      <Card>
+        <Collapsible open={openSections.advanced} onOpenChange={() => toggleSection('advanced')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <SettingsIcon className="h-5 w-5" />
+                  Advanced Settings
+                </div>
+                {openSections.advanced ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Technical settings and data management
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              {/* Export Data */}
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">Export Data</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Download all your reminder data and settings as JSON
+                  </p>
+                </div>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+              </div>
+
+              <Separator />
+
+              {/* App Version */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">App Information</Label>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>Version: 2.1.0</p>
+                  <p>Build: Mobile-Ready with Cultural Personalization</p>
+                  <p>Platform: Web/iOS/Android</p>
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
       </Card>
 
       {/* Information Panel */}
