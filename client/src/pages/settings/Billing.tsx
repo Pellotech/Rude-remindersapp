@@ -44,7 +44,7 @@ export default function Billing() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" />
+      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" showMainPageButton={true} />
 
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Payment & Billing</h1>

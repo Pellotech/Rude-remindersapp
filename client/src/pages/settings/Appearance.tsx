@@ -112,7 +112,7 @@ export default function Appearance() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" />
+      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" showMainPageButton={true} />
 
       <div className="flex items-center justify-between">
         <div>
