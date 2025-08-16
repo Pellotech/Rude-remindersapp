@@ -202,20 +202,9 @@ export default function Settings() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <BackNavigation customBackLabel="Back to Home" />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
-          <p className="text-muted-foreground">Customize your reminder experience</p>
-        </div>
-        {hasChanges && (
-          <Button 
-            onClick={saveSettings} 
-            disabled={updateSettingsMutation.isPending}
-            className="bg-rude-red hover:bg-rude-red/90"
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        )}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
+        <p className="text-muted-foreground">Choose a category to customize your experience</p>
       </div>
 
       {/* Personal Information */}

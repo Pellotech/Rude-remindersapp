@@ -5,7 +5,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/home";
-import Settings from "@/pages/settings";
+import Settings from "@/pages/SettingsLanding";
+import PersonalInfo from "@/pages/settings/PersonalInfo";
+import Notifications from "@/pages/settings/Notifications";
+import Appearance from "@/pages/settings/Appearance";
+import Billing from "@/pages/settings/Billing";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 
@@ -37,6 +41,10 @@ function Router() {
         <>
           <Route path="/" component={Home} />
           <Route path="/settings" component={Settings} />
+      <Route path="/settings/personal" component={PersonalInfo} />
+      <Route path="/settings/notifications" component={Notifications} />
+      <Route path="/settings/appearance" component={Appearance} />
+      <Route path="/settings/billing" component={Billing} />
         </>
       ) : null}
       <Route component={NotFound} />
