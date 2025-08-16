@@ -41,6 +41,14 @@ export const users = pgTable("users", {
   genderSpecificReminders: boolean("gender_specific_reminders").default(false),
   ethnicity: varchar("ethnicity"), // Country/cultural background
   ethnicitySpecificQuotes: boolean("ethnicity_specific_quotes").default(false),
+  
+  // Subscription fields
+  subscriptionStatus: varchar("subscription_status").default("free"), // free, active, canceled, past_due
+  stripeCustomerId: varchar("stripe_customer_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  subscriptionPlan: varchar("subscription_plan").default("free"), // free, premium
+  subscriptionEndsAt: timestamp("subscription_ends_at"),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

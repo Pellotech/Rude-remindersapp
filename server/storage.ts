@@ -315,6 +315,11 @@ class MemoryStorage implements IStorage {
       genderSpecificReminders: userData.genderSpecificReminders ?? false,
       ethnicity: userData.ethnicity || null,
       ethnicitySpecificQuotes: userData.ethnicitySpecificQuotes ?? false,
+      subscriptionStatus: userData.subscriptionStatus || "free",
+      stripeCustomerId: userData.stripeCustomerId || null,
+      stripeSubscriptionId: userData.stripeSubscriptionId || null,
+      subscriptionPlan: userData.subscriptionPlan || "free",
+      subscriptionEndsAt: userData.subscriptionEndsAt || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

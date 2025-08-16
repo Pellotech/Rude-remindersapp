@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon } from "lucide-react";
+import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon, CreditCard, Crown, Check, X } from "lucide-react";
 
 interface UserSettings {
   id: string;
@@ -36,6 +36,10 @@ interface UserSettings {
   autoCompleteReminders?: boolean;
   emailSummary?: boolean;
   dataRetention?: number;
+  // Subscription fields
+  subscriptionStatus?: string;
+  subscriptionPlan?: string;
+  subscriptionEndsAt?: string;
 }
 
 // Comprehensive list of countries/ethnicities for cultural targeting
@@ -95,6 +99,7 @@ export default function Settings() {
   // Collapsible section states
   const [openSections, setOpenSections] = useState({
     personal: true,
+    billing: false,
     notifications: false,
     behavior: false,
     appearance: false,
@@ -275,6 +280,218 @@ export default function Settings() {
                     />
                   </div>
                 )}
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Billing & Subscription */}
+      <Card>
+        <Collapsible open={openSections.billing} onOpenChange={() => toggleSection('billing')}>
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Billing & Subscription
+                </div>
+                {openSections.billing ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground text-left">
+                Manage your subscription and billing preferences
+              </p>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-6">
+              {/* Current Plan */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full">
+                      <Crown className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">
+                        {currentSettings.subscriptionPlan === "premium" ? "Premium Plan" : "Free Plan"}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {currentSettings.subscriptionPlan === "premium" 
+                          ? "Full access to all premium features" 
+                          : "Basic reminders with limited features"
+                        }
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-lg">
+                      {currentSettings.subscriptionPlan === "premium" ? "$9.99" : "$0"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">per month</p>
+                  </div>
+                </div>
+
+                {/* Plan Features */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Current Plan Includes:</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Up to 10 reminders per month</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Basic notifications</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <X className="h-4 w-4 text-red-500" />
+                        <span>Limited voice characters</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <X className="h-4 w-4 text-red-500" />
+                        <span>No multimedia attachments</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Premium Plan Includes:</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Unlimited reminders</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>All notification types</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Premium voice characters</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Photo & video attachments</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Cultural motivational quotes</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span>Priority support</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upgrade/Manage Section */}
+                {currentSettings.subscriptionPlan !== "premium" ? (
+                  <div className="p-4 border-2 border-dashed border-blue-200 dark:border-blue-800 rounded-lg bg-blue-50/50 dark:bg-blue-950/10">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-blue-900 dark:text-blue-100">Upgrade to Premium</h3>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                          Get unlimited reminders and premium features
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-xl text-blue-900 dark:text-blue-100">$9.99</p>
+                        <p className="text-xs text-blue-700 dark:text-blue-300">per month</p>
+                      </div>
+                    </div>
+                    <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700">
+                      <Crown className="h-4 w-4 mr-2" />
+                      Upgrade to Premium
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="p-4 border border-green-200 dark:border-green-800 rounded-lg bg-green-50/50 dark:bg-green-950/10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-green-100 dark:bg-green-900 rounded-full">
+                          <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-green-900 dark:text-green-100">Premium Active</h3>
+                          <p className="text-sm text-green-700 dark:text-green-300">
+                            {currentSettings.subscriptionEndsAt && `Renews ${new Date(currentSettings.subscriptionEndsAt).toLocaleDateString()}`}
+                          </p>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        Manage Subscription
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Payment Method */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Payment Method</h3>
+                <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <CreditCard className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">No payment method added</p>
+                        <p className="text-xs text-muted-foreground">Add a payment method to upgrade</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      Add Payment Method
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Billing History */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Billing History</h3>
+                <div className="p-4 border rounded-lg text-center text-muted-foreground">
+                  <p className="text-sm">No billing history available</p>
+                  <p className="text-xs">Invoices will appear here after your first payment</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Billing Settings */}
+              <div className="space-y-4">
+                <h3 className="font-medium">Billing Settings</h3>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium">Auto-renewal</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Automatically renew your subscription each month
+                    </p>
+                  </div>
+                  <Switch
+                    checked={true}
+                    disabled={true}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <Label className="text-sm font-medium">Email receipts</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Send payment receipts to your email address
+                    </p>
+                  </div>
+                  <Switch
+                    checked={currentSettings.emailNotifications || false}
+                    onCheckedChange={(checked) => updateSetting("emailNotifications", checked)}
+                  />
+                </div>
               </div>
             </CardContent>
           </CollapsibleContent>
