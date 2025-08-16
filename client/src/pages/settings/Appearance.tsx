@@ -34,6 +34,8 @@ export default function Appearance() {
       apiRequest("/api/settings", "PUT", settings),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      // Also invalidate any cached user data
+      queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Appearance settings updated",
         description: "Your preferences have been saved successfully.",
@@ -174,7 +176,15 @@ export default function Appearance() {
             </div>
             <Switch
               checked={currentSettings.simplifiedInterface || false}
-              onCheckedChange={(checked) => updateSetting("simplifiedInterface", checked)}
+              onCheckedChange={(checked) => {
+                updateSetting("simplifiedInterface", checked);
+                toast({
+                  title: checked ? "Simplified Mode Enabled" : "Full Mode Enabled",
+                  description: checked 
+                    ? "Advanced features will be hidden on the main page" 
+                    : "All features are now visible on the main page",
+                });
+              }}
             />
           </div>
         </CardContent>

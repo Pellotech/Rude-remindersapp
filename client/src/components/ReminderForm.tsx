@@ -406,9 +406,16 @@ export default function ReminderForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <PlusCircle className="text-rude-red-600 mr-3" />
-          Create New Reminder
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center">
+            <PlusCircle className="text-rude-red-600 mr-3" />
+            Create New Reminder
+          </div>
+          {isSimplifiedInterface && (
+            <span className="text-sm text-muted-foreground bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-md">
+              Simplified Mode
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>

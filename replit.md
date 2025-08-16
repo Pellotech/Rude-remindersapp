@@ -10,7 +10,7 @@ This is a full-stack reminder application that helps users manage daily reminder
 
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.
-✅ NEW: Simplified Interface Option - Hide advanced questions from main page (keep only main concepts, remove everything below rudeness level including voice characters, attachments, quotes).
+✅ NEW: Simplified Interface Option - FIXED: Now properly hides advanced features (voice characters, attachments, quotes) when enabled, with visual feedback.
 ✅ NEW: Comprehensive Help System - Interactive help menu with detailed guides, troubleshooting, and feature explanations.
 ✅ NEW: Smart Navigation - Back buttons, home navigation, and current page highlighting for seamless app navigation.
 ✅ NEW: Alarm Sound Options - 8 playful, non-jarring alarm sounds with preview functionality for gentle reminders.
