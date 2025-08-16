@@ -19,8 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -192,6 +193,13 @@ export default function ReminderForm() {
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
   const [selectedMotivation, setSelectedMotivation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  
+  // Collapsible states for advanced sections
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
+  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [motivationalOpen, setMotivationalOpen] = useState(false);
+  const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
   
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -499,220 +507,308 @@ export default function ReminderForm() {
             {/* Show advanced sections only if not simplified interface */}
             {!isSimplifiedInterface && (
               <>
-                {/* Notification Types */}
-                <div>
-                  <FormLabel className="text-base">Notification Types</FormLabel>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">
-                <FormField
-                  control={form.control}
-                  name="browserNotification"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                {/* Quick Settings */}
+                <Collapsible open={quickSettingsOpen} onOpenChange={setQuickSettingsOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                      type="button"
+                    >
                       <div className="flex items-center">
-                        <Bell className="text-rude-red-600 mr-2 h-4 w-4" />
-                        <FormLabel className="text-sm font-medium cursor-pointer">
-                          Browser
-                        </FormLabel>
+                        <Settings className="mr-2 h-4 w-4 text-rude-red-600" />
+                        Quick Settings
                       </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="voiceNotification"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center">
-                        <Volume2 className="text-rude-red-600 mr-2 h-4 w-4" />
-                        <FormLabel className="text-sm font-medium cursor-pointer">
-                          Voice
-                        </FormLabel>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="emailNotification"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
-                      <div className="flex items-center">
-                        <Mail className="text-rude-red-600 mr-2 h-4 w-4" />
-                        <FormLabel className="text-sm font-medium cursor-pointer">
-                          Email
-                        </FormLabel>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                  </div>
-                </div>
-
-                {/* Voice Character Selection */}
-            <div className="space-y-4">
-              <div>
-                <FormLabel className="text-base">Voice Character</FormLabel>
-                <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
-              </div>
-              
-              <Select value={selectedVoice} onValueChange={setSelectedVoice}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a voice character" />
-                </SelectTrigger>
-                <SelectContent>
-                  {voiceCharacters.map((character) => {
-                    const IconComponent = character.icon;
-                    return (
-                      <SelectItem key={character.id} value={character.id}>
-                        <div className="flex items-center space-x-2">
-                          <IconComponent className="h-4 w-4 text-rude-red-600" />
-                          <div>
-                            <div className="font-medium">{character.name}</div>
-                            <div className="text-xs text-muted-foreground">{character.personality}</div>
-                          </div>
-                        </div>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={testVoice}
-              >
-                <TestTube className="mr-2 h-4 w-4" />
-                Test {voiceCharacters.find(v => v.id === selectedVoice)?.name || "Voice"}
-              </Button>
-            </div>
-
-            {/* Photo/Video Attachments */}
-            <div className="space-y-4">
-              <div>
-                <FormLabel className="text-base">Media Attachments</FormLabel>
-                <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
-              </div>
-              
-              {isMobileWithCamera ? (
-                <MobileCamera
-                  onPhotoCaptured={(photoUrl) => {
-                    setSelectedAttachments(prev => [...prev, photoUrl].slice(0, 5));
-                  }}
-                  maxFiles={5}
-                  currentCount={selectedAttachments.length}
-                />
-              ) : (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={handlePhotoAttachment}
-                >
-                  <Camera className="mr-2 h-4 w-4" />
-                  Add Photos/Videos ({selectedAttachments.length}/5)
-                </Button>
-              )}
-
-              {selectedAttachments.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {selectedAttachments.map((attachment, index) => (
-                    <div key={index} className="relative">
-                      <img 
-                        src={attachment} 
-                        alt={`Attachment ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-md"
-                      />
-                      <button
+                      <ChevronDown className={`h-4 w-4 transition-transform ${quickSettingsOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm text-muted-foreground">Quickly adjust common reminder settings</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
                         type="button"
-                        onClick={() => removeAttachment(index)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => form.setValue("rudenessLevel", 1)}
                       >
-                        ×
-                      </button>
+                        Be Nice
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => form.setValue("rudenessLevel", 5)}
+                      >
+                        Be Savage
+                      </Button>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                  </CollapsibleContent>
+                </Collapsible>
 
-            {/* Motivational Quotes */}
-            <div className="space-y-4">
-              <div>
-                <FormLabel className="text-base">Motivational Boost</FormLabel>
-                <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions</p>
-              </div>
-              
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose motivation category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {motivationCategories.map((category) => {
-                    const IconComponent = category.icon;
-                    return (
-                      <SelectItem key={category.id} value={category.id}>
-                        <div className="flex items-center space-x-2">
-                          <IconComponent className="h-4 w-4 text-rude-red-600" />
-                          <div>
-                            <div className="font-medium">{category.name}</div>
-                            <div className="text-xs text-muted-foreground">{category.description}</div>
+                {/* Notification Options */}
+                <Collapsible open={notificationOpen} onOpenChange={setNotificationOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                      type="button"
+                    >
+                      <div className="flex items-center">
+                        <Bell className="mr-2 h-4 w-4 text-rude-red-600" />
+                        Notification Options
+                      </div>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${notificationOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm text-muted-foreground">Choose how you want to be notified</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="browserNotification"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
+                            <div className="flex items-center">
+                              <Bell className="text-rude-red-600 mr-2 h-4 w-4" />
+                              <FormLabel className="text-sm font-medium cursor-pointer">
+                                Browser
+                              </FormLabel>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="voiceNotification"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
+                            <div className="flex items-center">
+                              <Volume2 className="text-rude-red-600 mr-2 h-4 w-4" />
+                              <FormLabel className="text-sm font-medium cursor-pointer">
+                                Voice
+                              </FormLabel>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="emailNotification"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
+                            <div className="flex items-center">
+                              <Mail className="text-rude-red-600 mr-2 h-4 w-4" />
+                              <FormLabel className="text-sm font-medium cursor-pointer">
+                                Email
+                              </FormLabel>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Voice Characters */}
+                <Collapsible open={voiceCharacterOpen} onOpenChange={setVoiceCharacterOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                      type="button"
+                    >
+                      <div className="flex items-center">
+                        <Volume2 className="mr-2 h-4 w-4 text-rude-red-600" />
+                        Voice Characters
+                      </div>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${voiceCharacterOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
+                    <Select value={selectedVoice} onValueChange={setSelectedVoice}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a voice character" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {voiceCharacters.map((character) => {
+                          const IconComponent = character.icon;
+                          return (
+                            <SelectItem key={character.id} value={character.id}>
+                              <div className="flex items-center space-x-2">
+                                <IconComponent className="h-4 w-4 text-rude-red-600" />
+                                <div>
+                                  <div className="font-medium">{character.name}</div>
+                                  <div className="text-xs text-muted-foreground">{character.personality}</div>
+                                </div>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={testVoice}
+                    >
+                      <TestTube className="mr-2 h-4 w-4" />
+                      Test {voiceCharacters.find(v => v.id === selectedVoice)?.name || "Voice"}
+                    </Button>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Media Attachments */}
+                <Collapsible open={attachmentsOpen} onOpenChange={setAttachmentsOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                      type="button"
+                    >
+                      <div className="flex items-center">
+                        <Camera className="mr-2 h-4 w-4 text-rude-red-600" />
+                        Media Attachments
+                      </div>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${attachmentsOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
+                    
+                    {isMobileWithCamera ? (
+                      <MobileCamera
+                        onPhotoCaptured={(photoUrl) => {
+                          setSelectedAttachments(prev => [...prev, photoUrl].slice(0, 5));
+                        }}
+                        maxFiles={5}
+                        currentCount={selectedAttachments.length}
+                      />
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={handlePhotoAttachment}
+                      >
+                        <Camera className="mr-2 h-4 w-4" />
+                        Add Photos/Videos ({selectedAttachments.length}/5)
+                      </Button>
+                    )}
+
+                    {selectedAttachments.length > 0 && (
+                      <div className="grid grid-cols-3 gap-2">
+                        {selectedAttachments.map((attachment, index) => (
+                          <div key={index} className="relative">
+                            <img 
+                              src={attachment} 
+                              alt={`Attachment ${index + 1}`}
+                              className="w-full h-20 object-cover rounded-md"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeAttachment(index)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                              ×
+                            </button>
                           </div>
-                        </div>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
+                        ))}
+                      </div>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
 
-              {selectedCategory && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => getRandomQuote(selectedCategory)}
-                >
-                  <Quote className="mr-2 h-4 w-4" />
-                  Get Random Quote
-                </Button>
-              )}
+                {/* Motivational Quotes */}
+                <Collapsible open={motivationalOpen} onOpenChange={setMotivationalOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between"
+                      type="button"
+                    >
+                      <div className="flex items-center">
+                        <Quote className="mr-2 h-4 w-4 text-rude-red-600" />
+                        Motivational Quotes
+                      </div>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${motivationalOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions</p>
+                    
+                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose motivation category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {motivationCategories.map((category) => {
+                          const IconComponent = category.icon;
+                          return (
+                            <SelectItem key={category.id} value={category.id}>
+                              <div className="flex items-center space-x-2">
+                                <IconComponent className="h-4 w-4 text-rude-red-600" />
+                                <div>
+                                  <div className="font-medium">{category.name}</div>
+                                  <div className="text-xs text-muted-foreground">{category.description}</div>
+                                </div>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
 
-              {selectedMotivation && (
-                <div className="p-4 bg-muted rounded-lg border-l-4 border-rude-red-600">
-                  <p className="text-sm italic">"{selectedMotivation}"</p>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedMotivation("")}
-                    className="mt-2 h-auto p-1 text-xs"
-                  >
-                    Remove quote
-                  </Button>
-                </div>
-              )}
-                </div>
+                    {selectedCategory && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => getRandomQuote(selectedCategory)}
+                      >
+                        <Quote className="mr-2 h-4 w-4" />
+                        Get Random Quote
+                      </Button>
+                    )}
+
+                    {selectedMotivation && (
+                      <div className="p-4 bg-white rounded-lg border-l-4 border-rude-red-600">
+                        <p className="text-sm italic">"{selectedMotivation}"</p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedMotivation("")}
+                          className="mt-2 h-auto p-1 text-xs"
+                        >
+                          Remove quote
+                        </Button>
+                      </div>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
               </>
             )}
 
