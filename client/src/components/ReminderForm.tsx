@@ -24,8 +24,10 @@ import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, He
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
+import { CulturalQuotesService } from "@/services/culturalQuotesService";
 import { MobileCamera } from "./MobileCamera";
 import { getPlatformInfo, supportsCamera } from "@/utils/platformDetection";
+import { useAuth } from "@/hooks/useAuth";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -176,6 +178,7 @@ const sampleQuotes = {
 export default function ReminderForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [previewMessage, setPreviewMessage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("default");
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
@@ -335,6 +338,25 @@ export default function ReminderForm() {
   };
 
   const getRandomQuote = (category: string) => {
+    // Check if user has cultural preferences enabled
+    if (user?.ethnicitySpecificQuotes && user?.ethnicity) {
+      const culturalQuote = CulturalQuotesService.getPersonalizedQuote(
+        user.ethnicity,
+        true,
+        user.gender,
+        user.genderSpecificReminders
+      );
+      if (culturalQuote) {
+        setSelectedMotivation(culturalQuote);
+        toast({
+          title: "Cultural Motivation Added",
+          description: "Personalized quote based on your cultural background!",
+        });
+        return;
+      }
+    }
+    
+    // Fallback to general quotes
     const quote = QuotesService.getRandomQuote(category);
     if (quote) {
       const formattedQuote = QuotesService.formatQuote(quote);

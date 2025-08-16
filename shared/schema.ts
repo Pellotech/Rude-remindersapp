@@ -36,6 +36,11 @@ export const users = pgTable("users", {
   voiceNotifications: boolean("voice_notifications").default(true),
   emailNotifications: boolean("email_notifications").default(false),
   browserNotifications: boolean("browser_notifications").default(true),
+  // Enhanced user preferences
+  gender: varchar("gender"), // "male", "female", "other"
+  genderSpecificReminders: boolean("gender_specific_reminders").default(false),
+  ethnicity: varchar("ethnicity"), // Country/cultural background
+  ethnicitySpecificQuotes: boolean("ethnicity_specific_quotes").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

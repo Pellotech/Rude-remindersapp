@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/home";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 
@@ -33,7 +34,10 @@ function Router() {
   return (
     <Switch>
       {isAuthenticated ? (
-        <Route path="/" component={Home} />
+        <>
+          <Route path="/" component={Home} />
+          <Route path="/settings" component={Settings} />
+        </>
       ) : null}
       <Route component={NotFound} />
     </Switch>

@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Megaphone, Settings } from "lucide-react";
 import SettingsModal from "./SettingsModal";
+import { Link } from "wouter";
 import type { User } from "@shared/schema";
 
 export default function Navigation() {
@@ -19,14 +20,15 @@ export default function Navigation() {
               <h1 className="text-xl font-bold text-gray-900">Rude Reminder</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsSettingsOpen(true)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
+              <Link href="/settings">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </Link>
               <div className="flex items-center space-x-3">
                 {user?.profileImageUrl && (
                   <img

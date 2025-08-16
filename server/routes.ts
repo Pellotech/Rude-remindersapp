@@ -39,6 +39,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Settings route (alias for user settings)
+  app.put('/api/settings', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const updates = req.body;
+      const user = await storage.updateUser(userId, updates);
+      res.json(user);
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      res.status(500).json({ message: "Failed to update settings" });
+    }
+  });
+
   // Reminder routes
   app.get('/api/reminders', isAuthenticated, async (req: any, res) => {
     try {

@@ -11,7 +11,11 @@ This is a full-stack reminder application that helps users manage daily reminder
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.
 Mobile Development: ✅ COMPLETED - Successfully converted to iOS/Android mobile apps using Capacitor.
-Enhancement Features: Implemented dropdown interfaces for photo/video attachments and historical motivational quotes.
+Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personalization system with:
+- Gender selection (Male/Female/Other) with gender-specific reminders
+- Cultural background selection (20+ ethnicities/countries) 
+- Cultural-specific motivational quotes from relevant historical figures
+- Enhanced settings page with detailed preference controls
 
 ## System Architecture
 
@@ -46,8 +50,8 @@ Enhancement Features: Implemented dropdown interfaces for photo/video attachment
 ## Key Components
 
 ### Database Schema
-- **Users Table**: Stores user profiles with notification preferences and default rudeness settings
-- **Reminders Table**: Contains reminder data including original messages, rude transformations, scheduling, notification settings, multimedia attachments, and motivational quotes
+- **Users Table**: Stores user profiles with notification preferences, default rudeness settings, gender identity, cultural background, and personalization preferences
+- **Reminders Table**: Contains reminder data including original messages, rude transformations, scheduling, notification settings, multimedia attachments, and culturally-relevant motivational quotes
 - **Rude Phrases Table**: Stores pre-written rude phrases categorized by rudeness levels (1-5)
 - **Sessions Table**: Manages user authentication sessions (required for Replit Auth)
 
@@ -70,12 +74,12 @@ Enhancement Features: Implemented dropdown interfaces for photo/video attachment
 
 ### Mobile-Ready Enhancement Features
 - **Photo/Video Attachments**: Users can attach up to 5 images or videos to reminders via dropdown interface
-- **Historical Motivational Quotes**: Integration with curated database of quotes from 5 categories:
-  - Sports Champions (Muhammad Ali, Michael Jordan, Serena Williams)
-  - Historical Leaders (Churchill, Lincoln, Mandela, MLK Jr.)
-  - Business Innovators (Steve Jobs, Bill Gates, Elon Musk) 
-  - Great Minds (Einstein, Marie Curie, Stephen Hawking)
-  - Life Coaches (Tony Robbins, Maya Angelou, Walt Disney)
+- **Cultural Motivational Quotes**: Integration with 25+ diverse quotes from historical figures across different cultural backgrounds:
+  - American leaders (Steve Jobs, MLK Jr., Walt Disney)
+  - African American icons (Muhammad Ali, Maya Angelou)
+  - International figures (Gandhi, Mandela, Confucius)
+  - Gender-diverse representation (Eleanor Roosevelt, Marie Curie)
+- **✅ Comprehensive User Personalization COMPLETE**: Gender identity and cultural background preferences with targeted content delivery
 - **✅ Capacitor Mobile Conversion COMPLETE**: Native iOS and Android apps ready for App Store deployment
 - **Native Camera Integration**: Direct camera access and gallery picker for mobile devices
 - **Mobile-Optimized Notifications**: Rich push notifications with multimedia and motivational content
