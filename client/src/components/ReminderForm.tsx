@@ -493,34 +493,26 @@ export default function ReminderForm() {
               )}
             />
 
-            {/* Unified Scheduling Section */}
+            {/* Select Date Section */}
             <FormField
               control={form.control}
               name="scheduledFor"
               render={() => (
                 <FormItem>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <FormLabel>{isMultiDay ? "Set time for all selected days" : "When should we remind you?"}</FormLabel>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-muted-foreground">Multiple Days</span>
-                        <Switch
-                          checked={isMultiDay}
-                          onCheckedChange={handleMultiDayToggle}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Calendar/Time Picker */}
-                    <FormControl>
-                      <CalendarSchedule
-                        selectedDateTime={selectedDateTime}
-                        onDateTimeChange={handleDateTimeChange}
+                  <div className="flex items-center justify-between">
+                    <FormLabel>{isMultiDay ? "Set time for all selected days" : "When should we remind you?"}</FormLabel>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-muted-foreground">Multiple Days</span>
+                      <Switch
+                        checked={isMultiDay}
+                        onCheckedChange={handleMultiDayToggle}
                       />
-                    </FormControl>
-
-                    {/* Multi-Day Selection Grid */}
-                    {isMultiDay && (
+                    </div>
+                  </div>
+                  
+                  <FormControl>
+                    {isMultiDay ? (
+                      /* Multi-Day Selection Grid */
                       <div className="space-y-3 p-4 border rounded-lg bg-red-50">
                         <div className="flex items-center space-x-2">
                           <Calendar className="h-4 w-4 text-red-600" />
@@ -571,8 +563,14 @@ export default function ReminderForm() {
                           </>
                         )}
                       </div>
+                    ) : (
+                      /* Regular Calendar/Time Picker */
+                      <CalendarSchedule
+                        selectedDateTime={selectedDateTime}
+                        onDateTimeChange={handleDateTimeChange}
+                      />
                     )}
-                  </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
