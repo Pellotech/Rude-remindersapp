@@ -67,7 +67,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/reminders', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const validatedData = insertReminderSchema.parse(req.body);
+      // Convert string date to Date object before validation
+      const requestData = {
+        ...req.body,
+        scheduledFor: new Date(req.body.scheduledFor)
+      };
+      const validatedData = insertReminderSchema.parse(requestData);
       const reminder = await storage.createReminder(userId, validatedData);
       
       // Schedule the reminder

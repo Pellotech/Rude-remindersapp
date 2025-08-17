@@ -17,6 +17,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 ✅ NEW: Settings Page Restructure - Converted dropdown categories to dedicated pages with complete navigation flow for better mobile UX.
 ✅ NEW: Advanced Features Organization - Organized voice characters, attachments, motivational quotes, notification options, and quick settings into individual collapsible dropdowns in reminder form.
 ✅ NEW: Reminder History Migration - Moved "Your Stats" and "Your Reminders History" from main page to dedicated settings category "YOUR REMINDER HISTORY" for cleaner main interface.
+✅ NEW: Multi-Day Scheduling Integration - Added toggle switch to main scheduling section enabling multi-day selection with red highlighting and unique responses per day.
 Mobile Development: ✅ COMPLETED - Successfully converted to iOS/Android mobile apps using Capacitor.
 Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personalization system with:
 - Gender selection (Male/Female/Other) with gender-specific reminders
