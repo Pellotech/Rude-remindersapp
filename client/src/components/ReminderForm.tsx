@@ -207,8 +207,6 @@ export default function ReminderForm() {
   // Multi-day selection state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [isMultiDay, setIsMultiDay] = useState(false);
-  const [multiDayHour, setMultiDayHour] = useState(9); // Default 9 AM
-  const [multiDayMinute, setMultiDayMinute] = useState(0); // Default :00
   
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -435,23 +433,9 @@ export default function ReminderForm() {
   };
 
   const onSubmit = (data: FormData) => {
-    let scheduledDateTime;
-    
-    if (isMultiDay) {
-      // For multi-day reminders, create a date with the selected hour and minute
-      // Use tomorrow as base date for multi-day scheduling
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(multiDayHour, multiDayMinute, 0, 0);
-      scheduledDateTime = tomorrow.toISOString();
-    } else {
-      scheduledDateTime = data.scheduledFor;
-    }
-
     // Include all the new features in the submission
     const submissionData = {
       ...data,
-      scheduledFor: scheduledDateTime,
       voiceCharacter: selectedVoice,
       attachments: selectedAttachments,
       motivationalQuote: selectedMotivation,
@@ -568,46 +552,10 @@ export default function ReminderForm() {
                             <span className="text-sm font-medium text-red-800">Set Time</span>
                           </div>
                           
-                          <div className="flex items-center space-x-4">
-                            {/* Hour Selection */}
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-600">Hour:</span>
-                              <Select value={multiDayHour.toString()} onValueChange={(value) => setMultiDayHour(parseInt(value))}>
-                                <SelectTrigger className="w-20">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {Array.from({ length: 24 }, (_, i) => (
-                                    <SelectItem key={i} value={i.toString()}>
-                                      {i.toString().padStart(2, '0')}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            {/* Minute Selection */}
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-600">Min:</span>
-                              <Select value={multiDayMinute.toString()} onValueChange={(value) => setMultiDayMinute(parseInt(value))}>
-                                <SelectTrigger className="w-20">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {[0, 15, 30, 45].map((minute) => (
-                                    <SelectItem key={minute} value={minute.toString()}>
-                                      {minute.toString().padStart(2, '0')}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            {/* Time Display */}
-                            <div className="text-sm font-medium text-red-800">
-                              {multiDayHour.toString().padStart(2, '0')}:{multiDayMinute.toString().padStart(2, '0')}
-                            </div>
-                          </div>
+                          <CalendarSchedule
+                            selectedDateTime={selectedDateTime}
+                            onDateTimeChange={handleDateTimeChange}
+                          />
                         </div>
 
                         {selectedDays.length > 0 && (
@@ -615,14 +563,16 @@ export default function ReminderForm() {
                             <p className="text-xs text-red-600 mt-2">
                               Selected: {selectedDays.map(dayId => 
                                 daysOfWeek.find(d => d.id === dayId)?.full
-                              ).join(", ")} at {multiDayHour.toString().padStart(2, '0')}:{multiDayMinute.toString().padStart(2, '0')}
+                              ).join(", ")} {selectedDateTime && `at ${format(selectedDateTime, "HH:mm")}`}
                             </p>
                             <div className="bg-red-100 p-3 rounded-md mt-3">
                               <p className="text-sm font-medium text-red-800">Multi-Day Summary:</p>
                               <p className="text-xs text-red-700 mt-1">
                                 Your reminder will be sent on <strong>{selectedDays.map(dayId => 
                                   daysOfWeek.find(d => d.id === dayId)?.full
-                                ).join(", ")}</strong> at <strong>{multiDayHour.toString().padStart(2, '0')}:{multiDayMinute.toString().padStart(2, '0')}</strong> with <strong>different responses</strong> for each day to keep it fresh!
+                                ).join(", ")}</strong> {selectedDateTime && (
+                                  <>at <strong>{format(selectedDateTime, "HH:mm")}</strong></>
+                                )} with <strong>different responses</strong> for each day to keep it fresh!
                               </p>
                             </div>
                           </>
