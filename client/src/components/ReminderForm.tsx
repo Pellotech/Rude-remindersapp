@@ -569,38 +569,58 @@ export default function ReminderForm() {
                           </div>
                           
                           <div className="flex items-center space-x-4">
-                            {/* Hour Selection */}
+                            {/* Hour Selection - Scrollable */}
                             <div className="flex items-center space-x-2">
                               <span className="text-sm text-gray-600">Hour:</span>
-                              <Select value={multiDayHour.toString()} onValueChange={(value) => setMultiDayHour(parseInt(value))}>
-                                <SelectTrigger className="w-20">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {Array.from({ length: 24 }, (_, i) => (
-                                    <SelectItem key={i} value={i.toString()}>
-                                      {i.toString().padStart(2, '0')}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              <div className="relative">
+                                <div className="w-16 h-10 border border-gray-300 rounded-md overflow-hidden bg-white">
+                                  <div 
+                                    className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+                                    style={{ scrollbarWidth: 'thin' }}
+                                  >
+                                    <div className="py-1">
+                                      {Array.from({ length: 24 }, (_, i) => (
+                                        <div
+                                          key={i}
+                                          className={`px-3 py-1 text-sm cursor-pointer hover:bg-red-50 text-center ${
+                                            multiDayHour === i ? 'bg-red-100 text-red-800 font-medium' : 'text-gray-700'
+                                          }`}
+                                          onClick={() => setMultiDayHour(i)}
+                                        >
+                                          {i.toString().padStart(2, '0')}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
 
-                            {/* Minute Selection */}
+                            {/* Minute Selection - Scrollable */}
                             <div className="flex items-center space-x-2">
                               <span className="text-sm text-gray-600">Min:</span>
-                              <Select value={multiDayMinute.toString()} onValueChange={(value) => setMultiDayMinute(parseInt(value))}>
-                                <SelectTrigger className="w-20">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {[0, 15, 30, 45].map((minute) => (
-                                    <SelectItem key={minute} value={minute.toString()}>
-                                      {minute.toString().padStart(2, '0')}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              <div className="relative">
+                                <div className="w-16 h-10 border border-gray-300 rounded-md overflow-hidden bg-white">
+                                  <div 
+                                    className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+                                    style={{ scrollbarWidth: 'thin' }}
+                                  >
+                                    <div className="py-1">
+                                      {[0, 15, 30, 45].map((minute) => (
+                                        <div
+                                          key={minute}
+                                          className={`px-3 py-1 text-sm cursor-pointer hover:bg-red-50 text-center ${
+                                            multiDayMinute === minute ? 'bg-red-100 text-red-800 font-medium' : 'text-gray-700'
+                                          }`}
+                                          onClick={() => setMultiDayMinute(minute)}
+                                        >
+                                          {minute.toString().padStart(2, '0')}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
 
                             {/* Time Display */}
