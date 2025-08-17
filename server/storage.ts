@@ -78,10 +78,29 @@ export class DatabaseStorage implements IStorage {
 
   // Reminder operations
   async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
-    // Get a random rude phrase for the specified rudeness level
-    const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
-    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-    const rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+    // Handle multi-day functionality
+    let rudeMessage = '';
+    let daySpecificMessages = null;
+
+    if (reminder.isMultiDay && reminder.selectedDays && reminder.selectedDays.length > 0) {
+      // Generate different rude messages for each selected day
+      const dayMessages: { [key: string]: string } = {};
+      
+      for (const day of reminder.selectedDays) {
+        const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+        const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+        dayMessages[day] = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+      }
+      
+      daySpecificMessages = JSON.stringify(dayMessages);
+      // Use the first day's message as the default rudeMessage
+      rudeMessage = dayMessages[reminder.selectedDays[0]] || reminder.originalMessage;
+    } else {
+      // Standard single-day reminder
+      const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+      rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+    }
 
     const [newReminder] = await db
       .insert(reminders)
@@ -89,6 +108,7 @@ export class DatabaseStorage implements IStorage {
         ...reminder,
         userId,
         rudeMessage,
+        daySpecificMessages,
       })
       .returning();
     return newReminder;
@@ -341,9 +361,30 @@ class MemoryStorage implements IStorage {
   // Reminder operations
   async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
     const id = `reminder_${Date.now()}_${Math.random()}`;
-    const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
-    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-    const rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+    
+    // Handle multi-day functionality
+    let rudeMessage = '';
+    let daySpecificMessages = null;
+
+    if (reminder.isMultiDay && reminder.selectedDays && reminder.selectedDays.length > 0) {
+      // Generate different rude messages for each selected day
+      const dayMessages: { [key: string]: string } = {};
+      
+      for (const day of reminder.selectedDays) {
+        const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+        const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+        dayMessages[day] = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+      }
+      
+      daySpecificMessages = JSON.stringify(dayMessages);
+      // Use the first day's message as the default rudeMessage
+      rudeMessage = dayMessages[reminder.selectedDays[0]] || reminder.originalMessage;
+    } else {
+      // Standard single-day reminder
+      const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+      rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+    }
 
     const newReminder: Reminder = {
       id,
@@ -358,6 +399,10 @@ class MemoryStorage implements IStorage {
       voiceCharacter: reminder.voiceCharacter || 'default',
       attachments: reminder.attachments || [],
       motivationalQuote: reminder.motivationalQuote || null,
+      // Multi-day fields
+      isMultiDay: reminder.isMultiDay ?? false,
+      selectedDays: reminder.selectedDays || [],
+      daySpecificMessages: daySpecificMessages,
       rudeMessage,
       completed: false,
       completedAt: null,

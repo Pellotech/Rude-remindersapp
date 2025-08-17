@@ -21,7 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings, Calendar, Clock } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -47,6 +47,8 @@ const formSchema = z.object({
   voiceCharacter: z.string().optional(),
   attachments: z.array(z.string()).optional(),
   motivationalQuote: z.string().optional(),
+  selectedDays: z.array(z.string()).optional(),
+  isMultiDay: z.boolean().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -200,6 +202,11 @@ export default function ReminderForm() {
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [motivationalOpen, setMotivationalOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
+  const [multiDayOpen, setMultiDayOpen] = useState(false);
+  
+  // Multi-day selection state
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [isMultiDay, setIsMultiDay] = useState(false);
   
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -217,6 +224,8 @@ export default function ReminderForm() {
       voiceCharacter: "default",
       attachments: [],
       motivationalQuote: "",
+      selectedDays: [],
+      isMultiDay: false,
     },
   });
 
@@ -353,6 +362,36 @@ export default function ReminderForm() {
     setSelectedAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Multi-day selection helper functions
+  const daysOfWeek = [
+    { id: "monday", label: "Mon", full: "Monday" },
+    { id: "tuesday", label: "Tue", full: "Tuesday" },
+    { id: "wednesday", label: "Wed", full: "Wednesday" },
+    { id: "thursday", label: "Thu", full: "Thursday" },
+    { id: "friday", label: "Fri", full: "Friday" },
+    { id: "saturday", label: "Sat", full: "Saturday" },
+    { id: "sunday", label: "Sun", full: "Sunday" },
+  ];
+
+  const toggleDay = (dayId: string) => {
+    setSelectedDays(prev => {
+      const newDays = prev.includes(dayId) 
+        ? prev.filter(d => d !== dayId)
+        : [...prev, dayId];
+      form.setValue("selectedDays", newDays);
+      return newDays;
+    });
+  };
+
+  const handleMultiDayToggle = (checked: boolean) => {
+    setIsMultiDay(checked);
+    form.setValue("isMultiDay", checked);
+    if (!checked) {
+      setSelectedDays([]);
+      form.setValue("selectedDays", []);
+    }
+  };
+
 
 
   const getRandomQuote = (category: string) => {
@@ -399,7 +438,9 @@ export default function ReminderForm() {
       ...data,
       voiceCharacter: selectedVoice,
       attachments: selectedAttachments,
-      motivationalQuote: selectedMotivation
+      motivationalQuote: selectedMotivation,
+      selectedDays: isMultiDay ? selectedDays : [],
+      isMultiDay: isMultiDay
     };
     createReminderMutation.mutate(submissionData);
   };
@@ -458,7 +499,7 @@ export default function ReminderForm() {
               name="scheduledFor"
               render={() => (
                 <FormItem>
-                  <FormLabel>When should we remind you?</FormLabel>
+                  <FormLabel>{isMultiDay ? "Set time for all selected days" : "When should we remind you?"}</FormLabel>
                   <FormControl>
                     <CalendarSchedule
                       selectedDateTime={selectedDateTime}
@@ -469,6 +510,96 @@ export default function ReminderForm() {
                 </FormItem>
               )}
             />
+
+            {/* Multi-Day Selection - Show for all users, but different styling in simplified mode */}
+            <Collapsible open={multiDayOpen} onOpenChange={setMultiDayOpen}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-between"
+                  type="button"
+                >
+                  <div className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4 text-red-600" />
+                    Multiple Days Selection
+                    {isMultiDay && selectedDays.length > 0 && (
+                      <span className="ml-2 text-sm text-red-600 bg-red-100 px-2 py-1 rounded">
+                        {selectedDays.length} days selected
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${multiDayOpen ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-3 space-y-4 p-4 border rounded-lg bg-red-50">
+                <p className="text-sm text-muted-foreground">
+                  Select multiple days for the same reminder with different responses for each day
+                </p>
+                
+                {/* Enable Multi-Day Toggle */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-red-600" />
+                    <span className="text-sm font-medium">Enable Multiple Days</span>
+                  </div>
+                  <Switch
+                    checked={isMultiDay}
+                    onCheckedChange={handleMultiDayToggle}
+                  />
+                </div>
+
+                {isMultiDay && (
+                  <>
+                    {/* Days of Week Selection */}
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-red-600" />
+                        <span className="text-sm font-medium">Select Days of Week</span>
+                      </div>
+                      <div className="grid grid-cols-7 gap-2">
+                        {daysOfWeek.map((day) => (
+                          <Button
+                            key={day.id}
+                            type="button"
+                            variant={selectedDays.includes(day.id) ? "default" : "outline"}
+                            size="sm"
+                            className={`text-xs h-12 ${
+                              selectedDays.includes(day.id) 
+                                ? "bg-red-600 hover:bg-red-700 text-white border-red-600" 
+                                : "hover:bg-red-100 border-gray-300"
+                            }`}
+                            onClick={() => toggleDay(day.id)}
+                          >
+                            <div className="flex flex-col items-center">
+                              <span className="font-semibold">{day.label}</span>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                      {selectedDays.length > 0 && (
+                        <p className="text-xs text-red-600 mt-2">
+                          Selected: {selectedDays.map(dayId => 
+                            daysOfWeek.find(d => d.id === dayId)?.full
+                          ).join(", ")}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Multi-Day Summary */}
+                    {selectedDays.length > 0 && (
+                      <div className="bg-red-100 p-3 rounded-md">
+                        <p className="text-sm font-medium text-red-800">Multi-Day Reminder Summary:</p>
+                        <p className="text-xs text-red-700 mt-1">
+                          Your reminder will be sent on <strong>{selectedDays.map(dayId => 
+                            daysOfWeek.find(d => d.id === dayId)?.full
+                          ).join(", ")}</strong> with <strong>different responses</strong> for each day to keep it fresh!
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
 
             {/* Rudeness Level Slider */}
             <FormField
