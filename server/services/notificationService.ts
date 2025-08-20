@@ -100,13 +100,33 @@ class NotificationService {
         }
         
         console.log(`Unreal Speech notification generated for ${user.email}: ${reminder.rudeMessage}`);
-      } else {
-        // Fallback to client-side speech synthesis
-        console.log(`Fallback to Web Speech API for ${user.email}: ${reminder.rudeMessage}`);
+        return; // Success, exit early
       }
     } catch (error) {
       console.error('Error with Unreal Speech, falling back to client-side synthesis:', error);
     }
+
+    // Fallback: Send voice notification without audio data (triggers Web Speech API on client)
+    if (this.wss) {
+      const fallbackData = {
+        type: 'voice-notification-fallback',
+        reminder: {
+          id: reminder.id,
+          title: reminder.title,
+          rudeMessage: reminder.rudeMessage,
+          voiceCharacter: reminder.voiceCharacter,
+        },
+        userId: user.id,
+      };
+
+      this.wss.clients.forEach((client) => {
+        if (client.readyState === client.OPEN) {
+          client.send(JSON.stringify(fallbackData));
+        }
+      });
+    }
+    
+    console.log(`Fallback Web Speech API notification sent for ${user.email}: ${reminder.rudeMessage}`);
   }
 
   async sendEmailNotification(reminder: Reminder, user: User) {

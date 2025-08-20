@@ -133,7 +133,51 @@ export default function Home() {
               });
             } catch (error) {
               console.error('Error processing Unreal Speech audio:', error);
+              // Fallback to Web Speech API
+              const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+              speechSynthesis.speak(utterance);
             }
+          }
+          
+          // Show toast notification
+          toast({
+            title: `Reminder: ${reminder.title}`,
+            description: reminder.rudeMessage,
+            variant: reminder.rudenessLevel >= 4 ? "destructive" : "default",
+          });
+        } else if (data.type === 'voice-notification-fallback') {
+          const { reminder } = data;
+          
+          // Use Web Speech API directly
+          if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+            
+            // Apply voice character settings
+            if (reminder.voiceCharacter) {
+              switch (reminder.voiceCharacter) {
+                case 'drill-sergeant':
+                  utterance.rate = 1.1;
+                  utterance.pitch = 0.8;
+                  break;
+                case 'robot':
+                  utterance.rate = 0.8;
+                  utterance.pitch = 0.9;
+                  break;
+                case 'british-butler':
+                  utterance.rate = 0.85;
+                  utterance.pitch = 1.1;
+                  break;
+                case 'mom':
+                  utterance.rate = 0.9;
+                  utterance.pitch = 1.2;
+                  break;
+                default:
+                  utterance.rate = 0.9;
+                  utterance.pitch = 1.0;
+              }
+            }
+            
+            speechSynthesis.speak(utterance);
           }
           
           // Show toast notification
