@@ -67,10 +67,7 @@ class NotificationService {
       'drill-sergeant': 'Caleb',
       'robot': 'Oliver',
       'british-butler': 'Edward',
-      'mom': 'Charlotte',
-      'life-coach': 'Emily',
-      'sarcastic-friend': 'Benjamin',
-      'motivational-speaker': 'Noah'
+      'mom': 'Charlotte'
     };
 
     return voiceMapping[voiceCharacter] || 'Eleanor';
