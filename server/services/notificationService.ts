@@ -1,76 +1,11 @@
 import type { WebSocketServer } from "ws";
 import type { Reminder, User } from "@shared/schema";
-import fetch from 'node-fetch';
 
 class NotificationService {
   private wss: WebSocketServer | null = null;
 
   setWebSocketServer(wss: WebSocketServer) {
     this.wss = wss;
-  }
-
-  async generateUnrealSpeech(text: string, voiceId: string = 'Scarlett'): Promise<Buffer | null> {
-    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
-    
-    if (!apiKey) {
-      console.error('UNREAL_SPEECH_API_KEY not found in environment variables');
-      return null;
-    }
-
-    // Log the request details for debugging
-    console.log('Unreal Speech API Request:');
-    console.log('- API Key present:', !!apiKey);
-    console.log('- Text:', text);
-    console.log('- Voice ID:', voiceId);
-
-    const requestBody = {
-      Text: text,
-      VoiceId: voiceId,
-      Bitrate: '192k',
-      Speed: '0',
-      Pitch: '1',
-      Codec: 'libmp3lame',
-      Temperature: 0.25
-    };
-
-    try {
-      const response = await fetch('https://api.v8.unrealspeech.com/stream', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      console.log('Unreal Speech API Response Status:', response.status);
-
-      if (!response.ok) {
-        // Log the full error response
-        const errorBody = await response.text();
-        console.error('Unreal Speech API Error Response:', errorBody);
-        throw new Error(`Unreal Speech API error: ${response.status} ${response.statusText} - ${errorBody}`);
-      }
-
-      const audioBuffer = await response.buffer();
-      console.log('Successfully generated audio buffer, size:', audioBuffer.length, 'bytes');
-      return audioBuffer;
-    } catch (error) {
-      console.error('Error generating speech with Unreal Speech:', error);
-      return null;
-    }
-  }
-
-  getUnrealVoiceId(voiceCharacter: string): string {
-    const voiceMapping: { [key: string]: string } = {
-      'default': 'Eleanor',
-      'drill-sergeant': 'Caleb',
-      'robot': 'Oliver',
-      'british-butler': 'Edward',
-      'mom': 'Charlotte'
-    };
-
-    return voiceMapping[voiceCharacter] || 'Eleanor';
   }
 
   async sendBrowserNotification(reminder: Reminder, user: User) {
@@ -80,64 +15,9 @@ class NotificationService {
   }
 
   async sendVoiceNotification(reminder: Reminder, user: User) {
-    const voiceId = this.getUnrealVoiceId(reminder.voiceCharacter || 'default');
-    
-    try {
-      const audioBuffer = await this.generateUnrealSpeech(reminder.rudeMessage, voiceId);
-      
-      if (audioBuffer) {
-        // Convert audio buffer to base64 for transmission
-        const audioBase64 = audioBuffer.toString('base64');
-        
-        // Send audio data via WebSocket
-        if (this.wss) {
-          const audioData = {
-            type: 'voice-notification',
-            reminder: {
-              id: reminder.id,
-              title: reminder.title,
-              rudeMessage: reminder.rudeMessage,
-              voiceCharacter: reminder.voiceCharacter,
-            },
-            audioData: audioBase64,
-            userId: user.id,
-          };
-
-          this.wss.clients.forEach((client) => {
-            if (client.readyState === client.OPEN) {
-              client.send(JSON.stringify(audioData));
-            }
-          });
-        }
-        
-        console.log(`Unreal Speech notification generated for ${user.email}: ${reminder.rudeMessage}`);
-        return; // Success, exit early
-      }
-    } catch (error) {
-      console.error('Error with Unreal Speech, falling back to client-side synthesis:', error);
-    }
-
-    // Fallback: Send voice notification without audio data (triggers Web Speech API on client)
-    if (this.wss) {
-      const fallbackData = {
-        type: 'voice-notification-fallback',
-        reminder: {
-          id: reminder.id,
-          title: reminder.title,
-          rudeMessage: reminder.rudeMessage,
-          voiceCharacter: reminder.voiceCharacter,
-        },
-        userId: user.id,
-      };
-
-      this.wss.clients.forEach((client) => {
-        if (client.readyState === client.OPEN) {
-          client.send(JSON.stringify(fallbackData));
-        }
-      });
-    }
-    
-    console.log(`Fallback Web Speech API notification sent for ${user.email}: ${reminder.rudeMessage}`);
+    // Voice notifications are handled on the client side via Web Speech API
+    // We send the command via WebSocket
+    console.log(`Voice notification for ${user.email}: ${reminder.rudeMessage}`);
   }
 
   async sendEmailNotification(reminder: Reminder, user: User) {

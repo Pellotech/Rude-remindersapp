@@ -12,7 +12,6 @@ import Appearance from "@/pages/settings/Appearance";
 import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import NotFound from "@/pages/not-found";
-import DevPreview from "@/pages/DevPreview";
 import { useEffect } from "react";
 
 function Router() {
@@ -48,7 +47,6 @@ function Router() {
       <Route path="/settings/appearance" component={Appearance} />
       <Route path="/settings/billing" component={Billing} />
       <Route path="/settings/reminder-history" component={ReminderHistory} />
-      <Route path="/dev-preview" component={DevPreview} />
         </>
       ) : null}
       <Route component={NotFound} />

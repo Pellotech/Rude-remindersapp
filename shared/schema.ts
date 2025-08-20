@@ -108,17 +108,10 @@ const baseInsertReminderSchema = createInsertSchema(reminders).omit({
 export const insertReminderSchema = baseInsertReminderSchema.refine((data) => {
   const scheduledDate = new Date(data.scheduledFor);
   const now = new Date();
-  
-  // Set to start of current day to avoid time zone issues
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  
-  // Calculate exactly 7 days from today (including today, so 6 days ahead)
-  const oneWeekFromToday = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-  
-  // Must be after now but within 7 days from today
-  return scheduledDate >= now && scheduledDate < oneWeekFromToday;
+  const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
 }, {
-  message: "Reminders can only be scheduled up to 7 days in advance",
+  message: "Reminder can only be scheduled up to one week in advance",
   path: ["scheduledFor"],
 });
 

@@ -35,17 +35,10 @@ const formSchema = z.object({
   scheduledFor: z.string().min(1, "Date and time are required").refine((dateStr) => {
     const scheduledDate = new Date(dateStr);
     const now = new Date();
-    
-    // Set to start of current day
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    // Calculate exactly 7 days from today
-    const oneWeekFromToday = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-    
-    // Must be after now but within 7 days from today
-    return scheduledDate >= now && scheduledDate < oneWeekFromToday;
+    const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
   }, {
-    message: "Reminders can only be scheduled up to 7 days in advance",
+    message: "Reminder can only be scheduled up to one week in advance",
   }),
   rudenessLevel: z.number().min(1).max(5),
   browserNotification: z.boolean(),
@@ -247,11 +240,7 @@ export default function ReminderForm() {
   // Handle calendar date/time selection
   const handleDateTimeChange = (dateTime: Date) => {
     const formattedDateTime = format(dateTime, "yyyy-MM-dd'T'HH:mm");
-    form.setValue("scheduledFor", formattedDateTime, { 
-      shouldValidate: false,
-      shouldDirty: true,
-      shouldTouch: false
-    });
+    form.setValue("scheduledFor", formattedDateTime);
   };
 
   // Fetch rude phrases for preview
@@ -485,22 +474,7 @@ export default function ReminderForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div 
-            className="flex items-center cursor-pointer hover:text-rude-red-700 transition-colors"
-            onClick={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              
-              // Validate form first
-              const isValid = await form.trigger();
-              if (isValid) {
-                const formData = form.getValues();
-                if (formData.originalMessage && formData.scheduledFor) {
-                  onSubmit(formData);
-                }
-              }
-            }}
-          >
+          <div className="flex items-center">
             <PlusCircle className="text-rude-red-600 mr-3" />
             Create New Reminder
           </div>
@@ -513,11 +487,7 @@ export default function ReminderForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            // Only submit if explicitly triggered
-            return false;
-          }} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Message Field */}
             <FormField
               control={form.control}
@@ -1035,7 +1005,21 @@ export default function ReminderForm() {
               </>
             )}
 
-            
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="w-full bg-rude-red-600 hover:bg-rude-red-700"
+              disabled={createReminderMutation.isPending}
+            >
+              {createReminderMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Creating...
+                </>
+              ) : (
+                "Create Rude Reminder"
+              )}
+            </Button>
           </form>
         </Form>
       </CardContent>
