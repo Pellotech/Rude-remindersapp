@@ -11,6 +11,7 @@ import Notifications from "@/pages/settings/Notifications";
 import Appearance from "@/pages/settings/Appearance";
 import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
+import DevPreview from "@/pages/DevPreview";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 
@@ -41,12 +42,14 @@ function Router() {
       {isAuthenticated ? (
         <>
           <Route path="/" component={Home} />
+          <Route path="/dev-preview" component={DevPreview} />
           <Route path="/settings" component={Settings} />
       <Route path="/settings/personal" component={PersonalInfo} />
       <Route path="/settings/notifications" component={Notifications} />
       <Route path="/settings/appearance" component={Appearance} />
       <Route path="/settings/billing" component={Billing} />
       <Route path="/settings/reminder-history" component={ReminderHistory} />
+          <Route path="/dev-preview" component={() => import("@/pages/DevPreview").then(m => m.default)} /></Route>
         </>
       ) : null}
       <Route component={NotFound} />
