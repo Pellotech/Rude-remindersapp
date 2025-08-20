@@ -474,7 +474,10 @@ export default function ReminderForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center">
+          <div 
+            className="flex items-center cursor-pointer hover:text-rude-red-700 transition-colors"
+            onClick={() => form.handleSubmit(onSubmit)()}
+          >
             <PlusCircle className="text-rude-red-600 mr-3" />
             Create New Reminder
           </div>
@@ -1017,7 +1020,7 @@ export default function ReminderForm() {
                   Creating...
                 </>
               ) : (
-                "Create Rude Reminder"
+                "Create"
               )}
             </Button>
           </form>
