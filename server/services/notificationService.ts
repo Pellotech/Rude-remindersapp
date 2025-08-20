@@ -18,7 +18,7 @@ class NotificationService {
     }
 
     try {
-      const response = await fetch('https://api.v6.unrealspeech.com/stream', {
+      const response = await fetch('https://api.v8.unrealspeech.com/stream', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
