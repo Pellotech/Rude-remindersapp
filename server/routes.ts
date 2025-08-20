@@ -74,10 +74,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const validatedData = insertReminderSchema.parse(requestData);
       const reminder = await storage.createReminder(userId, validatedData);
-      
+
       // Schedule the reminder
       reminderService.scheduleReminder(reminder);
-      
+
       res.status(201).json(reminder);
     } catch (error) {
       console.error("Error creating reminder:", error);
@@ -104,13 +104,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const validatedData = updateReminderSchema.parse(req.body);
       const reminder = await storage.updateReminder(req.params.id, userId, validatedData);
-      
+
       // Reschedule if needed
       reminderService.unscheduleReminder(req.params.id);
       if (!reminder.completed) {
         reminderService.scheduleReminder(reminder);
       }
-      
+
       res.json(reminder);
     } catch (error) {
       console.error("Error updating reminder:", error);
@@ -169,14 +169,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Developer preview endpoint
+  app.post('/api/dev/preview', async (req, res) => {
+    try {
+      const { title, rudenessLevel, voiceCharacter, motivationalQuote } = req.body;
+
+      // Validate input
+      if (rudenessLevel && (rudenessLevel < 1 || rudenessLevel > 5)) {
+        return res.status(400).json({ message: "Rudeness level must be between 1 and 5" });
+      }
+
+      // Get a sample rude phrase for the level
+      const phrases = await storage.getRudePhrasesForLevel(rudenessLevel || 3).catch(err => {
+        console.error('Error fetching phrases:', err);
+        return [{ phrase: 'Get your act together!' }]; // Fallback
+      });
+
+      const randomPhrase = phrases && phrases.length > 0 
+        ? phrases[Math.floor(Math.random() * phrases.length)]
+        : { phrase: 'Get your act together!' };
+
+      const sampleReminder = {
+        id: 'preview',
+        title: title || 'Sample Reminder',
+        rudeMessage: randomPhrase?.phrase || 'Get your act together!',
+        rudenessLevel: rudenessLevel || 3,
+        voiceCharacter: voiceCharacter || 'Scarlett',
+        motivationalQuote: motivationalQuote || null,
+        scheduledFor: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes from now
+        userId: 'preview',
+        completed: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Generate preview data
+      const previewData = {
+        reminder: sampleReminder,
+        notifications: {
+          browser: {
+            title: `Reminder: ${sampleReminder.title}`,
+            body: sampleReminder.motivationalQuote 
+              ? `${sampleReminder.rudeMessage}\n\n💪 ${sampleReminder.motivationalQuote}`
+              : sampleReminder.rudeMessage,
+            icon: '/favicon.ico'
+          },
+          voice: {
+            text: sampleReminder.rudeMessage,
+            character: sampleReminder.voiceCharacter,
+          }
+        }
+      };
+
+      res.json(previewData);
+    } catch (error) {
+      console.error("Error generating preview:", error);
+      res.status(500).json({ 
+        message: "Failed to generate preview",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket setup for real-time notifications
   const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
+
   wss.on('connection', (ws) => {
     console.log('Client connected to WebSocket');
-    
+
     ws.on('close', () => {
       console.log('Client disconnected from WebSocket');
     });
