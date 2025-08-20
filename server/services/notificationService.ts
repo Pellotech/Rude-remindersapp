@@ -63,17 +63,17 @@ class NotificationService {
 
   getUnrealVoiceId(voiceCharacter: string): string {
     const voiceMapping: { [key: string]: string } = {
-      'default': 'Scarlett',
-      'drill-sergeant': 'Dan',
-      'robot': 'Will',
-      'british-butler': 'Amy',
-      'mom': 'Scarlett',
-      'life-coach': 'Liv',
-      'sarcastic-friend': 'Dan',
-      'motivational-speaker': 'Will'
+      'default': 'Eleanor',
+      'drill-sergeant': 'Caleb',
+      'robot': 'Oliver',
+      'british-butler': 'Edward',
+      'mom': 'Charlotte',
+      'life-coach': 'Emily',
+      'sarcastic-friend': 'Benjamin',
+      'motivational-speaker': 'Noah'
     };
 
-    return voiceMapping[voiceCharacter] || 'Scarlett';
+    return voiceMapping[voiceCharacter] || 'Eleanor';
   }
 
   async sendBrowserNotification(reminder: Reminder, user: User) {
