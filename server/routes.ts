@@ -250,6 +250,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
       const rudeMessage = `${message || 'Sample reminder'}${randomPhrase?.phrase || ', get it done!'}`;
 
+      console.log('Generating audio for rude message:', rudeMessage);
+
       const audioBuffer = await notificationService.generateUnrealSpeech(
         rudeMessage, 
         notificationService.getUnrealVoiceId(voiceCharacter || 'default')

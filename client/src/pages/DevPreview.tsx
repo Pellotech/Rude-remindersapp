@@ -109,8 +109,8 @@ export default function DevPreview() {
     // Fallback to Web Speech API
     try {
       if ('speechSynthesis' in window) {
-        // Generate the rude message
-        const rudeMessage = `${message}, shocking that you haven't done this yet!`; // Sample fallback
+        // Use the actual rude message from preview data if available
+        const rudeMessage = previewData?.reminder?.rudeMessage || `${message}, shocking that you haven't done this yet!`;
         
         const utterance = new SpeechSynthesisUtterance(rudeMessage);
         
