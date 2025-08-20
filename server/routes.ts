@@ -169,6 +169,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test Unreal Speech endpoint
+  app.post('/api/test-speech', isAuthenticated, async (req: any, res) => {
+    try {
+      const { text, voiceCharacter } = req.body;
+      if (!text) {
+        return res.status(400).json({ message: "Text is required" });
+      }
+
+      const audioBuffer = await notificationService.generateUnrealSpeech(text, 
+        notificationService.getUnrealVoiceId(voiceCharacter || 'default'));
+      
+      if (audioBuffer) {
+        res.set({
+          'Content-Type': 'audio/mpeg',
+          'Content-Length': audioBuffer.length.toString(),
+        });
+        res.send(audioBuffer);
+      } else {
+        res.status(500).json({ message: "Failed to generate speech" });
+      }
+    } catch (error) {
+      console.error("Error testing speech:", error);
+      res.status(500).json({ message: "Failed to test speech" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket setup for real-time notifications

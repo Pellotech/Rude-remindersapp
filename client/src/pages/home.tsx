@@ -108,6 +108,40 @@ export default function Home() {
             description: reminder.rudeMessage,
             variant: reminder.rudenessLevel >= 4 ? "destructive" : "default",
           });
+        } else if (data.type === 'voice-notification') {
+          const { reminder, audioData } = data;
+          
+          // Play Unreal Speech audio if available
+          if (audioData) {
+            try {
+              const audioBlob = new Blob([
+                Uint8Array.from(atob(audioData), c => c.charCodeAt(0))
+              ], { type: 'audio/mpeg' });
+              
+              const audioUrl = URL.createObjectURL(audioBlob);
+              const audio = new Audio(audioUrl);
+              
+              audio.onended = () => {
+                URL.revokeObjectURL(audioUrl);
+              };
+              
+              audio.play().catch(error => {
+                console.error('Error playing Unreal Speech audio:', error);
+                // Fallback to Web Speech API
+                const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+                speechSynthesis.speak(utterance);
+              });
+            } catch (error) {
+              console.error('Error processing Unreal Speech audio:', error);
+            }
+          }
+          
+          // Show toast notification
+          toast({
+            title: `Reminder: ${reminder.title}`,
+            description: reminder.rudeMessage,
+            variant: reminder.rudenessLevel >= 4 ? "destructive" : "default",
+          });
         }
       } catch (error) {
         console.error('Error parsing WebSocket message:', error);
