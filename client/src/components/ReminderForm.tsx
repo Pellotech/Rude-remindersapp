@@ -524,10 +524,26 @@ export default function ReminderForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center">
+          <Button
+            type="button"
+            variant="ghost"
+            className="flex items-center text-lg font-semibold p-0 h-auto hover:bg-transparent hover:text-blue-600"
+            onClick={() => {
+              // Scroll to the submit button to focus user's attention on creating the reminder
+              const submitButton = document.querySelector('button[type="submit"]');
+              if (submitButton) {
+                submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Add a subtle highlight effect
+                submitButton.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+                setTimeout(() => {
+                  submitButton.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
+                }, 2000);
+              }
+            }}
+          >
             <PlusCircle className="text-rude-red-600 mr-3" />
             Create New Reminder
-          </div>
+          </Button>
           {isSimplifiedInterface && (
             <span className="text-sm text-muted-foreground bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-md">
               Simplified Mode
