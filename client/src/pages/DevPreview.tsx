@@ -51,7 +51,10 @@ export default function DevPreview() {
       });
 
       const response = await fetch(`/api/dev/preview-reminder?${params}`);
-      if (!response.ok) throw new Error('Failed to generate preview');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to generate preview: ${response.status} ${errorText}`);
+      }
       
       const data = await response.json();
       setPreviewData(data);
@@ -84,7 +87,10 @@ export default function DevPreview() {
         })
       });
 
-      if (!response.ok) throw new Error('Failed to generate audio');
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to generate audio: ${response.status} ${errorText}`);
+      }
 
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);

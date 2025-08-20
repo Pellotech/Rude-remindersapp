@@ -74,10 +74,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const validatedData = insertReminderSchema.parse(requestData);
       const reminder = await storage.createReminder(userId, validatedData);
-      
+
       // Schedule the reminder
       reminderService.scheduleReminder(reminder);
-      
+
       res.status(201).json(reminder);
     } catch (error) {
       console.error("Error creating reminder:", error);
@@ -104,13 +104,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const validatedData = updateReminderSchema.parse(req.body);
       const reminder = await storage.updateReminder(req.params.id, userId, validatedData);
-      
+
       // Reschedule if needed
       reminderService.unscheduleReminder(req.params.id);
       if (!reminder.completed) {
         reminderService.scheduleReminder(reminder);
       }
-      
+
       res.json(reminder);
     } catch (error) {
       console.error("Error updating reminder:", error);
@@ -177,104 +177,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Text is required" });
       }
 
+      // Developer preview route (not accessible to regular users)
+      app.get('/api/dev/preview-reminder', async (req, res) => {
+        try {
+          // Create a sample reminder for preview
+          const sampleReminder = {
+            id: 'preview-123',
+            userId: 'dev-user',
+            title: 'Sample Reminder',
+            originalMessage: req.query.message || 'Take your vitamins',
+            rudeMessage: `${req.query.message || 'Take your vitamins'}, you absolute couch potato!`,
+            rudenessLevel: parseInt(req.query.level as string) || 3,
+            scheduledFor: new Date(),
+            voiceCharacter: req.query.voice || 'default',
+            attachments: [],
+            motivationalQuote: req.query.quote || null,
+            browserNotification: true,
+            voiceNotification: true,
+            emailNotification: false,
+            completed: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
 
+          const sampleUser = {
+            id: 'dev-user',
+            email: 'developer@preview.com',
+            firstName: 'Dev',
+            lastName: 'User',
+            defaultRudenessLevel: 3,
+            voiceNotifications: true,
+            browserNotifications: true,
+            emailNotifications: false
+          };
 
-  // Developer preview route (not accessible to regular users)
-  app.get('/api/dev/preview-reminder', async (req, res) => {
-    try {
-      // Create a sample reminder for preview
-      const sampleReminder = {
-        id: 'preview-123',
-        userId: 'dev-user',
-        title: 'Sample Reminder',
-        originalMessage: req.query.message || 'Take your vitamins',
-        rudeMessage: `${req.query.message || 'Take your vitamins'}, you absolute couch potato!`,
-        rudenessLevel: parseInt(req.query.level as string) || 3,
-        scheduledFor: new Date(),
-        voiceCharacter: req.query.voice || 'default',
-        attachments: [],
-        motivationalQuote: req.query.quote || null,
-        browserNotification: true,
-        voiceNotification: true,
-        emailNotification: false,
-        completed: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-
-      const sampleUser = {
-        id: 'dev-user',
-        email: 'developer@preview.com',
-        firstName: 'Dev',
-        lastName: 'User',
-        defaultRudenessLevel: 3,
-        voiceNotifications: true,
-        browserNotifications: true,
-        emailNotifications: false
-      };
-
-      // Generate preview data
-      const previewData = {
-        reminder: sampleReminder,
-        user: sampleUser,
-        notifications: {
-          browser: {
-            title: `Reminder: ${sampleReminder.title}`,
-            body: sampleReminder.rudeMessage,
-            icon: '/favicon.ico'
-          },
-          voice: {
-            text: sampleReminder.rudeMessage,
-            character: sampleReminder.voiceCharacter
-          },
-          realtime: {
-            type: 'reminder',
+          // Generate preview data
+          const previewData = {
             reminder: sampleReminder,
-            timestamp: new Date()
-          }
+            user: sampleUser,
+            notifications: {
+              browser: {
+                title: `Reminder: ${sampleReminder.title}`,
+                body: sampleReminder.rudeMessage,
+                icon: '/favicon.ico'
+              },
+              voice: {
+                text: sampleReminder.rudeMessage,
+                character: sampleReminder.voiceCharacter
+              },
+              realtime: {
+                type: 'reminder',
+                reminder: sampleReminder,
+                timestamp: new Date()
+              }
+            }
+          };
+
+          res.json(previewData);
+        } catch (error) {
+          console.error("Error generating preview:", error);
+          res.status(500).json({ message: "Failed to generate preview" });
         }
-      };
+      });
 
-      res.json(previewData);
-    } catch (error) {
-      console.error("Error generating preview:", error);
-      res.status(500).json({ message: "Failed to generate preview" });
-    }
-  });
+      // Developer audio preview route
+      app.post('/api/dev/preview-audio', async (req, res) => {
+        try {
+          const { message, voiceCharacter, rudenessLevel } = req.body;
 
-  // Developer audio preview route
-  app.post('/api/dev/preview-audio', async (req, res) => {
-    try {
-      const { message, voiceCharacter, rudenessLevel } = req.body;
-      
-      // Get rude phrase for the level
-      const phrases = await storage.getRudePhrasesForLevel(rudenessLevel || 3);
-      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-      const rudeMessage = `${message || 'Sample reminder'}${randomPhrase?.phrase || ', get it done!'}`;
+          // Get rude phrase for the level
+          const phrases = await storage.getRudePhrasesForLevel(rudenessLevel || 3);
+          const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+          const rudeMessage = `${message || 'Sample reminder'}${randomPhrase?.phrase || ', get it done!'}`;
 
-      const audioBuffer = await notificationService.generateUnrealSpeech(
-        rudeMessage, 
-        notificationService.getUnrealVoiceId(voiceCharacter || 'default')
-      );
-      
-      if (audioBuffer) {
-        res.set({
-          'Content-Type': 'audio/mpeg',
-          'Content-Length': audioBuffer.length.toString(),
-        });
-        res.send(audioBuffer);
-      } else {
-        res.status(500).json({ message: "Failed to generate preview audio" });
-      }
-    } catch (error) {
-      console.error("Error generating preview audio:", error);
-      res.status(500).json({ message: "Failed to generate preview audio" });
-    }
-  });
+          const audioBuffer = await notificationService.generateUnrealSpeech(
+            rudeMessage, 
+            notificationService.getUnrealVoiceId(voiceCharacter || 'default')
+          );
+
+          if (audioBuffer) {
+            res.set({
+              'Content-Type': 'audio/mpeg',
+              'Content-Length': audioBuffer.length.toString(),
+            });
+            res.send(audioBuffer);
+          } else {
+            res.status(500).json({ message: "Failed to generate preview audio" });
+          }
+        } catch (error) {
+          console.error("Error generating preview audio:", error);
+          res.status(500).json({ message: "Failed to generate preview audio" });
+        }
+      });
 
       const audioBuffer = await notificationService.generateUnrealSpeech(text, 
         notificationService.getUnrealVoiceId(voiceCharacter || 'default'));
-      
+
       if (audioBuffer) {
         res.set({
           'Content-Type': 'audio/mpeg',
@@ -294,10 +292,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // WebSocket setup for real-time notifications
   const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
+
   wss.on('connection', (ws) => {
     console.log('Client connected to WebSocket');
-    
+
     ws.on('close', () => {
       console.log('Client disconnected from WebSocket');
     });
