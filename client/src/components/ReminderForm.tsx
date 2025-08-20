@@ -487,13 +487,17 @@ export default function ReminderForm() {
         <CardTitle className="flex items-center justify-between">
           <div 
             className="flex items-center cursor-pointer hover:text-rude-red-700 transition-colors"
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();
-              const formData = form.getValues();
-              // Only submit if form has required fields
-              if (formData.originalMessage && formData.scheduledFor) {
-                form.handleSubmit(onSubmit)();
+              
+              // Validate form first
+              const isValid = await form.trigger();
+              if (isValid) {
+                const formData = form.getValues();
+                if (formData.originalMessage && formData.scheduledFor) {
+                  onSubmit(formData);
+                }
               }
             }}
           >
@@ -509,7 +513,11 @@ export default function ReminderForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            // Only submit if explicitly triggered
+            return false;
+          }} className="space-y-6">
             {/* Message Field */}
             <FormField
               control={form.control}
