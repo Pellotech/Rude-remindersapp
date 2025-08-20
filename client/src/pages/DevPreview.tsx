@@ -284,6 +284,9 @@ export default function DevPreview() {
                   <div><strong>Rude Message:</strong> <span className="text-rude-red-600">{previewData.reminder.rudeMessage}</span></div>
                   <div><strong>Level:</strong> <Badge variant="outline">{previewData.reminder.rudenessLevel}/5</Badge></div>
                   <div><strong>Voice:</strong> {previewData.reminder.voiceCharacter}</div>
+                  {previewData.reminder.motivationalQuote && (
+                    <div><strong>Motivational Quote:</strong> <span className="text-blue-600 italic">"{previewData.reminder.motivationalQuote}"</span></div>
+                  )}
                 </div>
               </div>
 

@@ -218,7 +218,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notifications: {
           browser: {
             title: `Reminder: ${sampleReminder.title}`,
-            body: sampleReminder.rudeMessage,
+            body: sampleReminder.motivationalQuote 
+              ? `${sampleReminder.rudeMessage}\n\n💪 ${sampleReminder.motivationalQuote}`
+              : sampleReminder.rudeMessage,
             icon: '/favicon.ico'
           },
           voice: {
