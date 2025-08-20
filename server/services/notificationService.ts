@@ -31,6 +31,7 @@ class NotificationService {
           Speed: '0',
           Pitch: '1',
           Codec: 'libmp3lame',
+          Temperature: 0.25
         }),
       });
 
