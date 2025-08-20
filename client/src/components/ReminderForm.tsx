@@ -247,7 +247,11 @@ export default function ReminderForm() {
   // Handle calendar date/time selection
   const handleDateTimeChange = (dateTime: Date) => {
     const formattedDateTime = format(dateTime, "yyyy-MM-dd'T'HH:mm");
-    form.setValue("scheduledFor", formattedDateTime);
+    form.setValue("scheduledFor", formattedDateTime, { 
+      shouldValidate: false,
+      shouldDirty: true,
+      shouldTouch: false
+    });
   };
 
   // Fetch rude phrases for preview
@@ -483,7 +487,15 @@ export default function ReminderForm() {
         <CardTitle className="flex items-center justify-between">
           <div 
             className="flex items-center cursor-pointer hover:text-rude-red-700 transition-colors"
-            onClick={() => form.handleSubmit(onSubmit)()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const formData = form.getValues();
+              // Only submit if form has required fields
+              if (formData.originalMessage && formData.scheduledFor) {
+                form.handleSubmit(onSubmit)();
+              }
+            }}
           >
             <PlusCircle className="text-rude-red-600 mr-3" />
             Create New Reminder
