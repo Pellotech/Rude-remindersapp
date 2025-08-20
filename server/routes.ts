@@ -242,6 +242,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Developer actual reminder preview route
+  app.get('/api/dev/preview-actual-reminder/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reminder = await storage.getReminder(req.params.id, userId);
+      
+      if (!reminder) {
+        return res.status(404).json({ message: "Reminder not found" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Generate preview data for the actual reminder
+      const previewData = {
+        reminder: reminder,
+        user: user,
+        notifications: {
+          browser: {
+            title: `Reminder: ${reminder.title}`,
+            body: reminder.motivationalQuote 
+              ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
+              : reminder.rudeMessage,
+            icon: '/favicon.ico'
+          },
+          voice: {
+            text: reminder.rudeMessage,
+            character: reminder.voiceCharacter
+          },
+          realtime: {
+            type: 'reminder',
+            reminder: reminder,
+            timestamp: new Date()
+          }
+        }
+      };
+
+      res.json(previewData);
+    } catch (error) {
+      console.error("Error generating actual reminder preview:", error);
+      res.status(500).json({ message: "Failed to generate actual reminder preview", error: error.message });
+    }
+  });
+
   // Developer audio preview route
   app.post('/api/dev/preview-audio', async (req, res) => {
     try {

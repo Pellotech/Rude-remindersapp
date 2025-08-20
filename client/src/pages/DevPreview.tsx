@@ -8,8 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Play, Eye, Volume2, Bell, Mail, Monitor } from 'lucide-react';
+import { Play, Eye, Volume2, Bell, Mail, Monitor, Clock, List } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import type { Reminder } from '@shared/schema';
 
 const RUDENESS_LEVELS = [
   { level: 1, emoji: "😊", label: "Gentle" },
@@ -33,31 +35,50 @@ export default function DevPreview() {
   const [previewData, setPreviewData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
+  const [viewMode, setViewMode] = useState<'custom' | 'actual'>('custom');
 
-  // Form state
+  // Form state for custom preview
   const [message, setMessage] = useState("Take your vitamins");
   const [rudenessLevel, setRudenessLevel] = useState(3);
   const [voiceCharacter, setVoiceCharacter] = useState("default");
   const [motivationalQuote, setMotivationalQuote] = useState("");
 
+  // Fetch actual user reminders
+  const { data: reminders = [], isLoading: remindersLoading } = useQuery({
+    queryKey: ["/api/reminders"],
+  });
+
   const generatePreview = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        message,
-        level: rudenessLevel.toString(),
-        voice: voiceCharacter,
-        ...(motivationalQuote && { quote: motivationalQuote })
-      });
+      if (viewMode === 'custom') {
+        const params = new URLSearchParams({
+          message,
+          level: rudenessLevel.toString(),
+          voice: voiceCharacter,
+          ...(motivationalQuote && { quote: motivationalQuote })
+        });
 
-      const response = await fetch(`/api/dev/preview-reminder?${params}`);
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to generate preview: ${response.status} ${errorText}`);
+        const response = await fetch(`/api/dev/preview-reminder?${params}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to generate preview: ${response.status} ${errorText}`);
+        }
+        
+        const data = await response.json();
+        setPreviewData(data);
+      } else if (selectedReminder) {
+        // Preview actual reminder
+        const response = await fetch(`/api/dev/preview-actual-reminder/${selectedReminder.id}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to generate actual reminder preview: ${response.status} ${errorText}`);
+        }
+        
+        const data = await response.json();
+        setPreviewData(data);
       }
-      
-      const data = await response.json();
-      setPreviewData(data);
       
       toast({
         title: "Preview Generated",
@@ -72,6 +93,13 @@ export default function DevPreview() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const previewActualReminder = (reminder: Reminder) => {
+    setSelectedReminder(reminder);
+    setViewMode('actual');
+    // Auto-generate preview when selecting a reminder
+    setTimeout(() => generatePreview(), 100);
   };
 
   const playAudioPreview = async () => {
@@ -186,15 +214,40 @@ export default function DevPreview() {
         </p>
       </div>
 
+      {/* View Mode Toggle */}
+      <div className="flex justify-center mb-6">
+        <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+          <Button
+            variant={viewMode === 'custom' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('custom')}
+            className="rounded-md"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Custom Preview
+          </Button>
+          <Button
+            variant={viewMode === 'actual' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('actual')}
+            className="rounded-md"
+          >
+            <List className="h-4 w-4 mr-2" />
+            Actual Reminders
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Configuration Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5" />
-              Preview Configuration
-            </CardTitle>
-          </CardHeader>
+        {viewMode === 'custom' ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5" />
+                Custom Preview Configuration
+              </CardTitle>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="message">Reminder Message</Label>
@@ -265,6 +318,78 @@ export default function DevPreview() {
             </div>
           </CardContent>
         </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <List className="h-5 w-5" />
+                Your Actual Reminders
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {remindersLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="p-3 border rounded-lg animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : reminders.length === 0 ? (
+                <div className="text-center py-8">
+                  <Bell className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Reminders Yet</h3>
+                  <p className="text-gray-500">Create some reminders from the main page first!</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {(reminders as Reminder[]).map((reminder: Reminder) => (
+                    <div
+                      key={reminder.id}
+                      className={`p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
+                        selectedReminder?.id === reminder.id ? 'border-blue-500 bg-blue-50' : ''
+                      }`}
+                      onClick={() => previewActualReminder(reminder)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm truncate">{reminder.title}</h4>
+                          <p className="text-xs text-gray-500 truncate">{reminder.originalMessage}</p>
+                          <div className="flex items-center mt-1 space-x-2">
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs"
+                            >
+                              Level {reminder.rudenessLevel}
+                            </Badge>
+                            <div className="flex items-center text-xs text-gray-400">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {new Date(reminder.scheduledFor).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                        {selectedReminder?.id === reminder.id && (
+                          <div className="ml-2">
+                            <Badge variant="default" className="text-xs">Selected</Badge>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {selectedReminder && (
+                <div className="mt-4 pt-4 border-t">
+                  <Button onClick={generatePreview} disabled={loading} className="w-full">
+                    {loading ? "Generating Preview..." : "Generate Preview"}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Preview Results */}
         {previewData && (
