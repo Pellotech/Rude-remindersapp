@@ -17,6 +17,22 @@ class NotificationService {
       return null;
     }
 
+    // Log the request details for debugging
+    console.log('Unreal Speech API Request:');
+    console.log('- API Key present:', !!apiKey);
+    console.log('- Text:', text);
+    console.log('- Voice ID:', voiceId);
+
+    const requestBody = {
+      Text: text,
+      VoiceId: voiceId,
+      Bitrate: '192k',
+      Speed: '0',
+      Pitch: '1',
+      Codec: 'libmp3lame',
+      Temperature: 0.25
+    };
+
     try {
       const response = await fetch('https://api.v8.unrealspeech.com/stream', {
         method: 'POST',
@@ -24,22 +40,20 @@ class NotificationService {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          Text: text,
-          VoiceId: voiceId,
-          Bitrate: '192k',
-          Speed: '0',
-          Pitch: '1',
-          Codec: 'libmp3lame',
-          Temperature: 0.25
-        }),
+        body: JSON.stringify(requestBody),
       });
 
+      console.log('Unreal Speech API Response Status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+        // Log the full error response
+        const errorBody = await response.text();
+        console.error('Unreal Speech API Error Response:', errorBody);
+        throw new Error(`Unreal Speech API error: ${response.status} ${response.statusText} - ${errorBody}`);
       }
 
       const audioBuffer = await response.buffer();
+      console.log('Successfully generated audio buffer, size:', audioBuffer.length, 'bytes');
       return audioBuffer;
     } catch (error) {
       console.error('Error generating speech with Unreal Speech:', error);

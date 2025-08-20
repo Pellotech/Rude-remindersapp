@@ -331,6 +331,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test API key endpoint
+  app.get('/api/dev/test-api-key', async (req, res) => {
+    try {
+      const hasApiKey = !!process.env.UNREAL_SPEECH_API_KEY;
+      const keyLength = process.env.UNREAL_SPEECH_API_KEY?.length || 0;
+      
+      res.json({
+        hasApiKey,
+        keyLength,
+        keyStart: process.env.UNREAL_SPEECH_API_KEY?.substring(0, 8) + '...' || 'none',
+        message: hasApiKey ? 'API key is configured' : 'No API key found'
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Error checking API key" });
+    }
+  });
+
   // Test Unreal Speech endpoint
   app.post('/api/test-speech', isAuthenticated, async (req: any, res) => {
     try {
