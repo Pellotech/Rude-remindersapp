@@ -35,10 +35,11 @@ const formSchema = z.object({
   scheduledFor: z.string().min(1, "Date and time are required").refine((dateStr) => {
     const scheduledDate = new Date(dateStr);
     const now = new Date();
+    // Allow scheduling from now until 7 days in the future
     const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
   }, {
-    message: "Reminder can only be scheduled up to one week in advance",
+    message: "Reminder must be scheduled between now and one week from now",
   }),
   rudenessLevel: z.number().min(1).max(5),
   browserNotification: z.boolean(),
