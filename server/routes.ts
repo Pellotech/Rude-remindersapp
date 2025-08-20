@@ -169,6 +169,114 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Voice characters endpoint
+  app.get('/api/voices', async (req, res) => {
+    try {
+      const voiceCharacters = [
+        {
+          id: "default",
+          name: "Scarlett",
+          unrealId: "Scarlett",
+          personality: "Professional and clear",
+          testMessage: "This is Scarlett, your professional reminder voice."
+        },
+        {
+          id: "drill-sergeant", 
+          name: "Dan (Drill Sergeant)",
+          unrealId: "Dan",
+          personality: "Tough, no-nonsense military style",
+          testMessage: "Listen up! Time to get moving and complete your mission!"
+        },
+        {
+          id: "robot",
+          name: "Will (AI Assistant)", 
+          unrealId: "Will",
+          personality: "Robotic, systematic approach",
+          testMessage: "System notification: Your productivity levels require immediate attention."
+        },
+        {
+          id: "british-butler",
+          name: "Amy (British Butler)",
+          unrealId: "Amy", 
+          personality: "Polite but passive-aggressive",
+          testMessage: "I do beg your pardon, but perhaps it's time you attended to your responsibilities."
+        },
+        {
+          id: "mom",
+          name: "Scarlett (Disappointed Mom)",
+          unrealId: "Scarlett",
+          personality: "Guilt-inducing maternal energy", 
+          testMessage: "I'm not angry, I'm just disappointed. You know how much this means to me."
+        },
+        {
+          id: "motivational-coach",
+          name: "Dan (Motivational Coach)",
+          unrealId: "Dan",
+          personality: "High-energy motivational speaker",
+          testMessage: "You've got this! Let's crush those goals and make it happen!"
+        },
+        {
+          id: "wise-teacher",
+          name: "Amy (Wise Teacher)",
+          unrealId: "Amy",
+          personality: "Patient but firm educator",
+          testMessage: "Remember, every small step forward is progress towards your goal."
+        },
+        {
+          id: "confident-leader",
+          name: "Will (Confident Leader)", 
+          unrealId: "Will",
+          personality: "Executive leadership style",
+          testMessage: "Let's execute this plan efficiently and deliver results."
+        },
+        {
+          id: "calm-narrator",
+          name: "Scarlett (Calm Narrator)",
+          unrealId: "Scarlett", 
+          personality: "Soothing and reassuring",
+          testMessage: "Take a deep breath and focus on what needs to be accomplished."
+        },
+        {
+          id: "energetic-trainer",
+          name: "Dan (Energetic Trainer)",
+          unrealId: "Dan",
+          personality: "Fitness coach energy",
+          testMessage: "Come on! Push through and show me what you're made of!"
+        }
+      ];
+      
+      res.json(voiceCharacters);
+    } catch (error) {
+      console.error("Error fetching voice characters:", error);
+      res.status(500).json({ message: "Failed to fetch voice characters" });
+    }
+  });
+
+  // Test voice endpoint
+  app.post('/api/voices/test', async (req, res) => {
+    try {
+      const { voiceCharacter, testMessage } = req.body;
+      
+      if (!voiceCharacter) {
+        return res.status(400).json({ message: "Voice character is required" });
+      }
+
+      const voiceId = notificationService.getUnrealVoiceId(voiceCharacter);
+      const message = testMessage || "This is a test of your selected voice character.";
+      
+      const audioUrl = await notificationService.generateUnrealSpeech(message, voiceId);
+      
+      if (audioUrl) {
+        res.json({ audioUrl, voiceId, message });
+      } else {
+        res.status(500).json({ message: "Failed to generate voice test" });
+      }
+    } catch (error) {
+      console.error("Error testing voice:", error);
+      res.status(500).json({ message: "Failed to test voice" });
+    }
+  });
+
   // Developer preview endpoint
   app.post('/api/dev/preview', async (req, res) => {
     try {
@@ -194,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title: title || 'Sample Reminder',
         rudeMessage: randomPhrase?.phrase || 'Get your act together!',
         rudenessLevel: rudenessLevel || 3,
-        voiceCharacter: voiceCharacter || 'Scarlett',
+        voiceCharacter: voiceCharacter || 'default',
         motivationalQuote: motivationalQuote || null,
         scheduledFor: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes from now
         userId: 'preview',
@@ -203,9 +311,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updatedAt: new Date(),
       };
 
-      // Generate preview data
+      // Generate preview data with Unreal Speech audio
+      let audioUrl = null;
+      if (sampleReminder.voiceCharacter) {
+        const voiceId = notificationService.getUnrealVoiceId(sampleReminder.voiceCharacter);
+        audioUrl = await notificationService.generateUnrealSpeech(sampleReminder.rudeMessage, voiceId);
+      }
+
       const previewData = {
         reminder: sampleReminder,
+        audioUrl,
         notifications: {
           browser: {
             title: `Reminder: ${sampleReminder.title}`,
@@ -217,6 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           voice: {
             text: sampleReminder.rudeMessage,
             character: sampleReminder.voiceCharacter,
+            audioUrl
           }
         }
       };

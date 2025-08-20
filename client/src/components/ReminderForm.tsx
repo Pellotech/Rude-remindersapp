@@ -61,54 +61,22 @@ const rudenessLabels = [
   { level: 5, emoji: "🤬", label: "Savage" },
 ];
 
-// Voice character options with different personalities
-const voiceCharacters = [
-  {
-    id: "default",
-    name: "Default Voice",
-    icon: User,
-    personality: "Standard reminder voice",
-    rate: 0.9,
-    pitch: 1.0,
-    testMessage: "This is your standard reminder voice, time to get things done!"
-  },
-  {
-    id: "drill-sergeant",
-    name: "Drill Sergeant",
-    icon: Zap,
-    personality: "Tough, no-nonsense military style",
-    rate: 1.1,
-    pitch: 0.8,
-    testMessage: "Listen up soldier! Drop and give me twenty push-ups, then get back to work!"
-  },
-  {
-    id: "robot",
-    name: "AI Assistant",
-    icon: Bot,
-    personality: "Robotic, systematic approach",
-    rate: 0.8,
-    pitch: 0.9,
-    testMessage: "BEEP BOOP. HUMAN DETECTED. PRODUCTIVITY LEVELS INSUFFICIENT. PLEASE COMPLY."
-  },
-  {
-    id: "british-butler",
-    name: "British Butler",
-    icon: Crown,
-    personality: "Polite but passive-aggressive",
-    rate: 0.85,
-    pitch: 1.1,
-    testMessage: "I do beg your pardon, but perhaps it's time you attended to your responsibilities, wouldn't you agree?"
-  },
-  {
-    id: "mom",
-    name: "Disappointed Mom",
-    icon: Heart,
-    personality: "Guilt-inducing maternal energy",
-    rate: 0.9,
-    pitch: 1.2,
-    testMessage: "I'm not angry, I'm just disappointed. You know how much this means to me, don't you?"
-  }
-];
+// Voice character icon mapping
+const getVoiceIcon = (id: string) => {
+  const iconMap: Record<string, any> = {
+    "default": User,
+    "drill-sergeant": Zap,
+    "robot": Bot,
+    "british-butler": Crown,
+    "mom": Heart,
+    "motivational-coach": Zap,
+    "wise-teacher": User,
+    "confident-leader": Crown,
+    "calm-narrator": Heart,
+    "energetic-trainer": Zap
+  };
+  return iconMap[id] || User;
+};
 
 // Historical figures and motivation categories
 const motivationCategories = [
@@ -249,6 +217,16 @@ export default function ReminderForm() {
     enabled: rudenessLevel >= 1 && rudenessLevel <= 5,
   });
 
+  // Fetch voice characters from backend
+  const { data: voiceCharacters = [], isLoading: voicesLoading } = useQuery({
+    queryKey: ["/api/voices"],
+    queryFn: async () => {
+      const response = await fetch("/api/voices");
+      if (!response.ok) throw new Error("Failed to fetch voices");
+      return response.json();
+    }
+  });
+
   // Update preview when message or rudeness level changes
   useEffect(() => {
     if (originalMessage && phrases && Array.isArray(phrases) && phrases.length > 0) {
@@ -306,33 +284,48 @@ export default function ReminderForm() {
     },
   });
 
-  const testVoice = () => {
-    if ('speechSynthesis' in window) {
-      const character = voiceCharacters.find(v => v.id === selectedVoice) || voiceCharacters[0];
-      const message = previewMessage || character.testMessage;
-      
-      const utterance = new SpeechSynthesisUtterance(message);
-      utterance.rate = character.rate;
-      utterance.pitch = character.pitch;
-      
-      // Try to find a voice that matches the character
-      const voices = speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        if (character.id === "british-butler") {
-          const britishVoice = voices.find(voice => voice.lang.includes('en-GB') || voice.name.includes('British'));
-          if (britishVoice) utterance.voice = britishVoice;
-        } else if (character.id === "robot") {
-          // Use a more robotic-sounding voice if available
-          const robotVoice = voices.find(voice => voice.name.includes('Microsoft') || voice.name.includes('Daniel'));
-          if (robotVoice) utterance.voice = robotVoice;
+  const testVoice = async () => {
+    const selectedVoiceId = form.watch("voiceCharacter");
+    const character = voiceCharacters.find((v: any) => v.id === selectedVoiceId) || voiceCharacters[0];
+    if (!character) return;
+
+    const message = previewMessage || character.testMessage;
+
+    try {
+      const response = await fetch("/api/voices/test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          voiceCharacter: selectedVoiceId,
+          testMessage: message,
+        }),
+      });
+
+      if (response.ok) {
+        const { audioUrl } = await response.json();
+        if (audioUrl) {
+          const audio = new Audio(audioUrl);
+          audio.play();
+          toast({
+            title: "Voice Test",
+            description: `Playing ${character.name} voice sample`,
+          });
+        }
+      } else {
+        // Fallback to Web Speech API
+        if ('speechSynthesis' in window) {
+          speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(message);
+          speechSynthesis.speak(utterance);
         }
       }
-      
-      speechSynthesis.speak(utterance);
-    } else {
+    } catch (error) {
+      console.error("Voice test error:", error);
       toast({
-        title: "Not Supported",
-        description: "Voice synthesis is not supported in your browser.",
+        title: "Voice Test Failed",
+        description: "Unable to test voice. Please try again.",
         variant: "destructive",
       });
     }
@@ -839,27 +832,35 @@ export default function ReminderForm() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
-                    <Select value={selectedVoice} onValueChange={setSelectedVoice}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a voice character" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {voiceCharacters.map((character) => {
-                          const IconComponent = character.icon;
-                          return (
-                            <SelectItem key={character.id} value={character.id}>
-                              <div className="flex items-center space-x-2">
-                                <IconComponent className="h-4 w-4 text-rude-red-600" />
-                                <div>
-                                  <div className="font-medium">{character.name}</div>
-                                  <div className="text-xs text-muted-foreground">{character.personality}</div>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
+                    <FormField
+                      control={form.control}
+                      name="voiceCharacter"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select value={field.value} onValueChange={field.onChange}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a voice character" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {voiceCharacters.map((character: any) => {
+                                const IconComponent = getVoiceIcon(character.id);
+                                return (
+                                  <SelectItem key={character.id} value={character.id}>
+                                    <div className="flex items-center space-x-2">
+                                      <IconComponent className="h-4 w-4 text-rude-red-600" />
+                                      <div>
+                                        <div className="font-medium">{character.name}</div>
+                                        <div className="text-xs text-muted-foreground">{character.personality}</div>
+                                      </div>
+                                    </div>
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
 
                     <Button
                       type="button"
@@ -868,7 +869,7 @@ export default function ReminderForm() {
                       onClick={testVoice}
                     >
                       <TestTube className="mr-2 h-4 w-4" />
-                      Test {voiceCharacters.find(v => v.id === selectedVoice)?.name || "Voice"}
+                      Test {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Voice"}
                     </Button>
                   </CollapsibleContent>
                 </Collapsible>

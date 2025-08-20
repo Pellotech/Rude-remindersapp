@@ -50,6 +50,7 @@ Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personaliza
 - **Authentication**: Replit Auth with OpenID Connect
 - **Session Management**: Express sessions with PostgreSQL store
 - **Real-time Communication**: WebSocket support for live notifications
+- **✅ NEW: Voice Integration**: Unreal Speech API with synchronized voice character mapping
 
 ### Key Design Decisions
 
@@ -84,7 +85,11 @@ Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personaliza
 ### Real-time Features
 - **WebSocket Connection**: Enables real-time reminder notifications
 - **Browser Notifications**: Native browser notification API integration
-- **Voice Notifications**: Web Speech API for audio reminders with character selection
+- **✅ Voice Notifications**: Unreal Speech API integration with 10 synchronized voice characters
+  - Backend API endpoints for voice character management (/api/voices)
+  - Voice testing capability with real audio generation (/api/voices/test)
+  - Character mapping: default→Scarlett, drill-sergeant→Dan, robot→Will, british-butler→Amy, mom→Scarlett
+  - Dynamic frontend fetching of voice options from backend
 - **Email Notifications**: Placeholder implementation for email alerts
 
 ### Mobile-Ready Enhancement Features

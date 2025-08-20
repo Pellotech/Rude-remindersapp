@@ -8,6 +8,64 @@ class NotificationService {
     this.wss = wss;
   }
 
+  // Unreal Speech API integration
+  async generateUnrealSpeech(text: string, voiceId: string = "Scarlett"): Promise<string | null> {
+    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
+    if (!apiKey) {
+      console.error("UNREAL_SPEECH_API_KEY not found");
+      return null;
+    }
+
+    try {
+      const response = await fetch("https://api.v6.unrealspeech.com/stream", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          Text: text,
+          VoiceId: voiceId,
+          Bitrate: "192k",
+          Speed: "0",
+          Pitch: "1",
+          Codec: "libmp3lame"
+        })
+      });
+
+      if (!response.ok) {
+        console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      // Return the audio stream URL or base64 data
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      return audioUrl;
+    } catch (error) {
+      console.error("Error generating Unreal Speech:", error);
+      return null;
+    }
+  }
+
+  // Map voice characters to Unreal Speech voice IDs
+  getUnrealVoiceId(voiceCharacter: string): string {
+    const voiceMap: Record<string, string> = {
+      "default": "Scarlett",
+      "drill-sergeant": "Dan", 
+      "robot": "Will",
+      "british-butler": "Amy",
+      "mom": "Scarlett",
+      "motivational-coach": "Dan",
+      "wise-teacher": "Amy",
+      "confident-leader": "Will",
+      "calm-narrator": "Scarlett",
+      "energetic-trainer": "Dan"
+    };
+
+    return voiceMap[voiceCharacter] || "Scarlett";
+  }
+
   async sendBrowserNotification(reminder: Reminder, user: User) {
     // Browser notifications are handled on the client side
     // We just send the data via WebSocket
@@ -15,8 +73,23 @@ class NotificationService {
   }
 
   async sendVoiceNotification(reminder: Reminder, user: User) {
-    // Voice notifications are handled on the client side via Web Speech API
-    // We send the command via WebSocket
+    // Generate Unreal Speech audio if voice character is specified
+    if (reminder.voiceCharacter) {
+      const voiceId = this.getUnrealVoiceId(reminder.voiceCharacter);
+      const audioUrl = await this.generateUnrealSpeech(reminder.rudeMessage, voiceId);
+      
+      if (audioUrl) {
+        // Send audio URL via WebSocket for client-side playback
+        this.sendRealtimeNotification({
+          ...reminder,
+          audioUrl
+        } as any, user);
+        console.log(`Unreal Speech audio generated for ${user.email}: ${voiceId}`);
+        return;
+      }
+    }
+
+    // Fallback to client-side Web Speech API
     console.log(`Voice notification for ${user.email}: ${reminder.rudeMessage}`);
   }
 
