@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { format, addDays, startOfWeek, isSameDay, isBefore } from "date-fns";
+import { format, addDays, startOfWeek, isSameDay, isBefore, isPast } from "date-fns";
 
 interface CalendarScheduleProps {
   selectedDateTime: Date | null;
