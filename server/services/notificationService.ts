@@ -8,7 +8,7 @@ class NotificationService {
     this.wss = wss;
   }
 
-  // Unreal Speech API integration
+  // Unreal Speech API integration - returns base64 data URL for client
   async generateUnrealSpeech(text: string, voiceId: string = "Scarlett"): Promise<string | null> {
     const apiKey = process.env.UNREAL_SPEECH_API_KEY;
     if (!apiKey) {
@@ -38,10 +38,48 @@ class NotificationService {
         return null;
       }
 
-      // Return the audio stream URL or base64 data
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      return audioUrl;
+      // Convert to base64 data URL for client-side audio playback
+      const audioBuffer = await response.arrayBuffer();
+      const base64Audio = Buffer.from(audioBuffer).toString('base64');
+      return `data:audio/mpeg;base64,${base64Audio}`;
+    } catch (error) {
+      console.error("Error generating Unreal Speech:", error);
+      return null;
+    }
+  }
+
+  // Generate Unreal Speech and return raw buffer for streaming
+  async generateUnrealSpeechBuffer(text: string, voiceId: string = "Scarlett"): Promise<Buffer | null> {
+    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
+    if (!apiKey) {
+      console.error("UNREAL_SPEECH_API_KEY not found");
+      return null;
+    }
+
+    try {
+      const response = await fetch("https://api.v6.unrealspeech.com/stream", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          Text: text,
+          VoiceId: voiceId,
+          Bitrate: "192k",
+          Speed: "0",
+          Pitch: "1",
+          Codec: "libmp3lame"
+        })
+      });
+
+      if (!response.ok) {
+        console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      const audioBuffer = await response.arrayBuffer();
+      return Buffer.from(audioBuffer);
     } catch (error) {
       console.error("Error generating Unreal Speech:", error);
       return null;

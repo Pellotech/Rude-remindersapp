@@ -291,6 +291,16 @@ export default function ReminderForm() {
 
     const message = previewMessage || character.testMessage;
 
+    // Request audio permissions first for better user experience
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {
+        // Permission not granted, but we can still try to play audio
+        console.log("Audio permission not explicitly granted, but proceeding with audio playback");
+      });
+    } catch (e) {
+      // Ignore permission errors and continue
+    }
+
     try {
       const response = await fetch("/api/voices/test", {
         method: "POST",
@@ -307,25 +317,80 @@ export default function ReminderForm() {
         const { audioUrl } = await response.json();
         if (audioUrl) {
           const audio = new Audio(audioUrl);
-          audio.play();
-          toast({
-            title: "Voice Test",
-            description: `Playing ${character.name} voice sample`,
+          
+          // Enhanced error handling for audio playback
+          audio.addEventListener('canplaythrough', () => {
+            audio.play().then(() => {
+              toast({
+                title: "Voice Test",
+                description: `Playing ${character.name} voice sample`,
+              });
+            }).catch((playError) => {
+              console.error("Audio play error:", playError);
+              // Try fallback
+              useFallbackSpeech(message);
+            });
           });
+
+          audio.addEventListener('error', (audioError) => {
+            console.error("Audio loading error:", audioError);
+            useFallbackSpeech(message);
+          });
+
+          // Load the audio
+          audio.load();
+        } else {
+          useFallbackSpeech(message);
         }
       } else {
-        // Fallback to Web Speech API
-        if ('speechSynthesis' in window) {
-          speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(message);
-          speechSynthesis.speak(utterance);
-        }
+        console.warn("Voice API failed, using fallback speech");
+        useFallbackSpeech(message);
       }
     } catch (error) {
       console.error("Voice test error:", error);
+      useFallbackSpeech(message);
+    }
+  };
+
+  const useFallbackSpeech = (message: string) => {
+    // Fallback to Web Speech API
+    if ('speechSynthesis' in window) {
+      try {
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.8;
+        
+        utterance.onstart = () => {
+          toast({
+            title: "Voice Test (Browser Speech)",
+            description: "Playing voice sample using browser speech",
+          });
+        };
+
+        utterance.onerror = (event) => {
+          console.error("Speech synthesis error:", event);
+          toast({
+            title: "Voice Test Failed",
+            description: "Unable to play voice. Check your browser's audio settings.",
+            variant: "destructive",
+          });
+        };
+
+        speechSynthesis.speak(utterance);
+      } catch (speechError) {
+        console.error("Speech synthesis error:", speechError);
+        toast({
+          title: "Voice Test Failed",
+          description: "Voice playback is not available in your browser.",
+          variant: "destructive",
+        });
+      }
+    } else {
       toast({
-        title: "Voice Test Failed",
-        description: "Unable to test voice. Please try again.",
+        title: "Voice Test Not Available",
+        description: "Voice playback is not supported in your browser.",
         variant: "destructive",
       });
     }

@@ -277,6 +277,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test speech endpoint for DevPreview compatibility  
+  app.post('/api/test-speech', async (req, res) => {
+    try {
+      const { text, voiceId } = req.body;
+      
+      if (!text) {
+        return res.status(400).json({ message: "Text is required" });
+      }
+
+      // Use the voiceId directly or map from character name
+      const actualVoiceId = voiceId || "Scarlett";
+      const finalVoiceId = notificationService.getUnrealVoiceId(actualVoiceId);
+      
+      // Generate audio using Unreal Speech
+      const audioBuffer = await notificationService.generateUnrealSpeechBuffer(text, finalVoiceId);
+      
+      if (audioBuffer) {
+        res.setHeader('Content-Type', 'audio/mpeg');
+        res.setHeader('Content-Length', audioBuffer.length);
+        res.send(audioBuffer);
+      } else {
+        res.status(500).json({ message: "Failed to generate speech" });
+      }
+    } catch (error) {
+      console.error("Error in test speech:", error);
+      res.status(500).json({ message: "Failed to generate speech" });
+    }
+  });
+
   // Developer preview endpoint
   app.post('/api/dev/preview', async (req, res) => {
     try {
