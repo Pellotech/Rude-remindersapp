@@ -114,7 +114,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleDateSelect(date)}
-                    disabled={isPast}
+                    disabled={isPast(date)}
                     className={cn(
                       "w-full h-12 flex flex-col items-center justify-center p-1",
                       isToday && !isSelected && "border-primary text-primary",
