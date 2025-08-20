@@ -15,8 +15,10 @@ interface QuarterState {
 }
 
 export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: CalendarScheduleProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(selectedDateTime);
-  const [quarterState, setQuarterState] = useState<QuarterState>({ hour: null, minutes: 0 });
+  // Use selectedDateTime prop directly instead of local state to prevent conflicts
+  const selectedDate = selectedDateTime ? new Date(selectedDateTime.getFullYear(), selectedDateTime.getMonth(), selectedDateTime.getDate()) : null;
+  const selectedHour = selectedDateTime?.getHours() ?? null;
+  const selectedMinutes = selectedDateTime?.getMinutes() ?? 0;
 
   // Generate the 7 days of the week starting from today
   const today = new Date();
@@ -41,28 +43,31 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   ];
 
   const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-    // If there's already a selected time, combine it with the new date
+    // Create new datetime preserving existing time or defaulting to 9:00 AM
+    const newDateTime = new Date(date);
     if (selectedDateTime) {
-      const newDateTime = new Date(date);
-      newDateTime.setHours(selectedDateTime.getHours(), selectedDateTime.getMinutes());
-      onDateTimeChange(newDateTime);
+      newDateTime.setHours(selectedDateTime.getHours(), selectedDateTime.getMinutes(), 0, 0);
+    } else {
+      newDateTime.setHours(9, 0, 0, 0);
     }
+    onDateTimeChange(newDateTime);
   };
 
   const handleTimeSelect = (hour: number) => {
-    if (!selectedDate || isPastHour(hour)) return;
-    setQuarterState({ hour, minutes: 0 });
+    if (!selectedDate) return;
+    
+    // Check if this hour is in the past for today
+    if (isPastHour(hour, selectedDate)) return;
+    
     const newDateTime = new Date(selectedDate);
-    newDateTime.setHours(hour, 0, 0, 0);
+    newDateTime.setHours(hour, selectedMinutes, 0, 0);
     onDateTimeChange(newDateTime);
   };
 
   // Check if a time slot is in the past (only for today)
-  const isPastHour = (hour: number) => {
-    if (!selectedDate) return false;
+  const isPastHour = (hour: number, dateToCheck: Date) => {
     const today = new Date();
-    const isToday = isSameDay(selectedDate, today);
+    const isToday = isSameDay(dateToCheck, today);
     if (!isToday) return false;
 
     const currentHour = today.getHours();
@@ -70,23 +75,25 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   };
 
   const handleQuarterSelect = (minutes: number) => {
-    if (!selectedDate || quarterState.hour === null) return;
+    if (!selectedDate || selectedHour === null) return;
 
     // Check if this specific time is in the past
-    const today = new Date();
-    const isToday = isSameDay(selectedDate, today);
-    if (isToday) {
-      const currentHour = today.getHours();
-      const currentMinutes = today.getMinutes();
-      if (quarterState.hour < currentHour || (quarterState.hour === currentHour && minutes <= currentMinutes)) {
-        return; // Don't allow selection of past times
-      }
-    }
+    if (isPastQuarter(minutes, selectedDate, selectedHour)) return;
 
-    setQuarterState({ ...quarterState, minutes });
     const newDateTime = new Date(selectedDate);
-    newDateTime.setHours(quarterState.hour, minutes, 0, 0);
+    newDateTime.setHours(selectedHour, minutes, 0, 0);
     onDateTimeChange(newDateTime);
+  };
+
+  // Check if a quarter-hour slot is in the past
+  const isPastQuarter = (minutes: number, dateToCheck: Date, hour: number) => {
+    const today = new Date();
+    const isToday = isSameDay(dateToCheck, today);
+    if (!isToday) return false;
+
+    const currentHour = today.getHours();
+    const currentMinutes = today.getMinutes();
+    return hour < currentHour || (hour === currentHour && minutes <= currentMinutes);
   };
 
   const isDateSelected = (date: Date) => {
@@ -94,24 +101,11 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   };
 
   const isTimeSelected = (hour: number) => {
-    return selectedDateTime &&
-           selectedDate &&
-           isSameDay(selectedDateTime, selectedDate) &&
-           selectedDateTime.getHours() === hour;
+    return selectedDateTime && selectedHour === hour;
   };
 
-  const isQuarterSelected = (minutes: number) => selectedDateTime && selectedDate && isSameDay(selectedDateTime, selectedDate) && selectedDateTime.getMinutes() === minutes && quarterState.hour !== null;
-
-  // Check if a quarter-hour slot is in the past
-  const isPastQuarter = (minutes: number) => {
-    if (!selectedDate || quarterState.hour === null) return false;
-    const today = new Date();
-    const isToday = isSameDay(selectedDate, today);
-    if (!isToday) return false;
-
-    const currentHour = today.getHours();
-    const currentMinutes = today.getMinutes();
-    return quarterState.hour < currentHour || (quarterState.hour === currentHour && minutes <= currentMinutes);
+  const isQuarterSelected = (minutes: number) => {
+    return selectedDateTime && selectedMinutes === minutes && selectedHour !== null;
   };
 
   return (
@@ -170,7 +164,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {timeSlots.map((slot) => {
                 const isSelected = isTimeSelected(slot.value);
-                const isDisabled = isPastHour(slot.value);
+                const isDisabled = selectedDate ? isPastHour(slot.value, selectedDate) : false;
 
                 return (
                   <Button
@@ -182,7 +176,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     className={cn(
                       "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
                       isSelected && "bg-primary text-primary-foreground",
-                      isDisabled && "opacity-50 cursor-not-allowed bg-gray-200 text-gray-700"
+                      isDisabled && "opacity-50 cursor-not-allowed bg-gray-200 text-gray-400"
                     )}
                   >
                     {slot.display}
@@ -195,7 +189,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       )}
 
       {/* Quarter Hour Selection */}
-      {selectedDate && quarterState.hour !== null && (
+      {selectedDate && selectedHour !== null && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Select Minutes (Optional)</CardTitle>
@@ -207,7 +201,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {quarterSlots.map((slot) => {
                 const isSelected = isQuarterSelected(slot.value);
-                const isDisabled = isPastQuarter(slot.value);
+                const isDisabled = selectedDate && selectedHour !== null ? isPastQuarter(slot.value, selectedDate, selectedHour) : false;
 
                 return (
                   <Button
@@ -219,7 +213,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     className={cn(
                       "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
                       isSelected && "bg-primary text-primary-foreground",
-                      isDisabled && "opacity-50 cursor-not-allowed bg-gray-200 text-gray-700"
+                      isDisabled && "opacity-50 cursor-not-allowed bg-gray-200 text-gray-400"
                     )}
                   >
                     {slot.label}
