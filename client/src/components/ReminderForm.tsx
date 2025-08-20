@@ -291,15 +291,7 @@ export default function ReminderForm() {
 
     const message = previewMessage || character.testMessage;
 
-    // Request audio permissions first for better user experience
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {
-        // Permission not granted, but we can still try to play audio
-        console.log("Audio permission not explicitly granted, but proceeding with audio playback");
-      });
-    } catch (e) {
-      // Ignore permission errors and continue
-    }
+    // Audio playback doesn't require microphone permissions
 
     try {
       const response = await fetch("/api/voices/test", {
