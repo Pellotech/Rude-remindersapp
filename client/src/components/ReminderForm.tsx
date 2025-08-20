@@ -1027,21 +1027,7 @@ export default function ReminderForm() {
               </>
             )}
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full bg-rude-red-600 hover:bg-rude-red-700"
-              disabled={createReminderMutation.isPending}
-            >
-              {createReminderMutation.isPending ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Creating...
-                </>
-              ) : (
-                "Create"
-              )}
-            </Button>
+            
           </form>
         </Form>
       </CardContent>
