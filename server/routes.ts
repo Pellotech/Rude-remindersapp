@@ -293,12 +293,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { message, voiceCharacter, rudenessLevel } = req.body;
 
+      // Check if API key exists
+      if (!process.env.UNREAL_SPEECH_API_KEY) {
+        console.error('UNREAL_SPEECH_API_KEY not found in environment variables');
+        return res.status(500).json({ 
+          message: "Unreal Speech API key not configured. Please add UNREAL_SPEECH_API_KEY to your environment variables." 
+        });
+      }
+
       // Get rude phrase for the level
       const phrases = await storage.getRudePhrasesForLevel(rudenessLevel || 3);
       const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
       const rudeMessage = `${message || 'Sample reminder'}${randomPhrase?.phrase || ', get it done!'}`;
 
       console.log('Generating audio for rude message:', rudeMessage);
+      console.log('Using voice character:', voiceCharacter, '-> Voice ID:', notificationService.getUnrealVoiceId(voiceCharacter || 'default'));
 
       const audioBuffer = await notificationService.generateUnrealSpeech(
         rudeMessage, 
@@ -306,13 +315,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       if (audioBuffer) {
+        console.log('Successfully generated audio buffer of size:', audioBuffer.length);
         res.set({
           'Content-Type': 'audio/mpeg',
           'Content-Length': audioBuffer.length.toString(),
         });
         res.send(audioBuffer);
       } else {
-        res.status(500).json({ message: "Failed to generate preview audio" });
+        console.error('Unreal Speech API returned null/empty audio buffer');
+        res.status(500).json({ message: "Failed to generate preview audio - API returned empty response" });
       }
     } catch (error) {
       console.error("Error generating preview audio:", error);

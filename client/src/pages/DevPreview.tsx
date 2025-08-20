@@ -110,9 +110,15 @@ export default function DevPreview() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message,
-          voiceCharacter,
-          rudenessLevel
+          message: viewMode === 'actual' && selectedReminder 
+            ? selectedReminder.originalMessage 
+            : message,
+          voiceCharacter: viewMode === 'actual' && selectedReminder 
+            ? selectedReminder.voiceCharacter 
+            : voiceCharacter,
+          rudenessLevel: viewMode === 'actual' && selectedReminder 
+            ? selectedReminder.rudenessLevel 
+            : rudenessLevel
         })
       });
 
@@ -129,9 +135,25 @@ export default function DevPreview() {
           description: "Playing Unreal Speech voice preview..."
         });
         return;
+      } else {
+        // Log the error response
+        const errorText = await response.text();
+        console.error('Unreal Speech API failed:', response.status, errorText);
+        
+        toast({
+          title: "Unreal Speech API Issue",
+          description: `API returned ${response.status}. Check console for details.`,
+          variant: "destructive"
+        });
       }
     } catch (error) {
-      console.log('Unreal Speech failed, falling back to Web Speech API:', error);
+      console.error('Unreal Speech failed, falling back to Web Speech API:', error);
+      
+      toast({
+        title: "Unreal Speech Error",
+        description: "API connection failed. Using fallback voice...",
+        variant: "destructive"
+      });
     }
 
     // Fallback to Web Speech API
