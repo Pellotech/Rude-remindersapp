@@ -768,22 +768,18 @@ export default function ReminderForm() {
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Quickly adjust common reminder settings</p>
                     <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
+                      <div 
+                        className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
                         onClick={() => form.setValue("rudenessLevel", 1)}
                       >
-                        Be Nice
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
+                        😊 Be Nice
+                      </div>
+                      <div 
+                        className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
                         onClick={() => form.setValue("rudenessLevel", 5)}
                       >
-                        Be Savage
-                      </Button>
+                        🤬 Be Savage
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
