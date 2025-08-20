@@ -77,6 +77,7 @@ export default function DevPreview() {
   const playAudioPreview = async () => {
     setAudioLoading(true);
     try {
+      // First try Unreal Speech API
       const response = await fetch('/api/dev/preview-audio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,26 +88,68 @@ export default function DevPreview() {
         })
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to generate audio: ${response.status} ${errorText}`);
+      if (response.ok) {
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        
+        audio.onended = () => URL.revokeObjectURL(audioUrl);
+        await audio.play();
+
+        toast({
+          title: "Audio Preview",
+          description: "Playing Unreal Speech voice preview..."
+        });
+        return;
       }
+    } catch (error) {
+      console.log('Unreal Speech failed, falling back to Web Speech API:', error);
+    }
 
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      
-      audio.onended = () => URL.revokeObjectURL(audioUrl);
-      await audio.play();
+    // Fallback to Web Speech API
+    try {
+      if ('speechSynthesis' in window) {
+        // Generate the rude message
+        const rudeMessage = `${message}, shocking that you haven't done this yet!`; // Sample fallback
+        
+        const utterance = new SpeechSynthesisUtterance(rudeMessage);
+        
+        // Apply voice character settings
+        switch (voiceCharacter) {
+          case 'drill-sergeant':
+            utterance.rate = 1.1;
+            utterance.pitch = 0.8;
+            break;
+          case 'robot':
+            utterance.rate = 0.8;
+            utterance.pitch = 0.9;
+            break;
+          case 'british-butler':
+            utterance.rate = 0.85;
+            utterance.pitch = 1.1;
+            break;
+          case 'mom':
+            utterance.rate = 0.9;
+            utterance.pitch = 1.2;
+            break;
+          default:
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+        }
+        
+        speechSynthesis.speak(utterance);
 
-      toast({
-        title: "Audio Preview",
-        description: "Playing voice reminder preview..."
-      });
+        toast({
+          title: "Audio Preview",
+          description: "Playing Web Speech API fallback preview..."
+        });
+      } else {
+        throw new Error('Speech synthesis not supported');
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to play audio preview",
+        description: "Voice preview not available in this browser",
         variant: "destructive"
       });
     } finally {
