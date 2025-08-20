@@ -44,12 +44,11 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/settings" component={Settings} />
-      <Route path="/settings/personal" component={PersonalInfo} />
-      <Route path="/settings/notifications" component={Notifications} />
-      <Route path="/settings/appearance" component={Appearance} />
-      <Route path="/settings/billing" component={Billing} />
-      <Route path="/settings/reminder-history" component={ReminderHistory} />
-          <Route path="/dev-preview" component={() => import("@/pages/DevPreview").then(m => m.default)} /></Route>
+          <Route path="/settings/personal" component={PersonalInfo} />
+          <Route path="/settings/notifications" component={Notifications} />
+          <Route path="/settings/appearance" component={Appearance} />
+          <Route path="/settings/billing" component={Billing} />
+          <Route path="/settings/reminder-history" component={ReminderHistory} />
         </>
       ) : null}
       <Route component={NotFound} />

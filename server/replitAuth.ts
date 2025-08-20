@@ -154,6 +154,41 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  // Development mode bypass
+  if (process.env.NODE_ENV === 'development') {
+    // Create a mock user for development
+    if (!req.user) {
+      req.user = {
+        claims: {
+          sub: "dev-user-001",
+          email: "developer@example.com",
+          first_name: "Dev",
+          last_name: "User",
+          profile_image_url: "",
+          exp: Math.floor(Date.now() / 1000) + 3600 // 1 hour from now
+        },
+        access_token: "dev-token",
+        refresh_token: "dev-refresh-token",
+        expires_at: Math.floor(Date.now() / 1000) + 3600
+      };
+      
+      // Ensure the dev user exists in storage
+      try {
+        await storage.upsertUser({
+          id: "dev-user-001",
+          email: "developer@example.com",
+          firstName: "Dev",
+          lastName: "User",
+          profileImageUrl: ""
+        });
+      } catch (error) {
+        console.error("Error creating dev user:", error);
+      }
+    }
+    return next();
+  }
+
+  // Production authentication flow
   const user = req.user as any;
 
   if (!req.isAuthenticated() || !user.expires_at) {
