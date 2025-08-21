@@ -630,10 +630,14 @@ export default function ReminderForm() {
                                       onClick={() => toggleDay(day.id)}
                                       className={cn(
                                         "w-full h-12 flex flex-col items-center justify-center p-1",
+                                        day.isToday && !isSelected && "border-primary text-primary",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
                                       <span className="text-lg font-semibold">{day.short}</span>
+                                      {day.isToday && (
+                                        <span className="text-xs">Today</span>
+                                      )}
                                     </Button>
                                   </div>
                                 );
