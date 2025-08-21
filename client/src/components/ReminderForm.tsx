@@ -351,25 +351,26 @@ export default function ReminderForm() {
     if ('speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
-        
+
         // Fetch voice settings from backend for the selected character
         fetch('/api/voices/test', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            voiceCharacter: selectedVoiceId,
+            voiceCharacter: form.watch("voiceCharacter"), // Use form.watch here
             testMessage: message
           })
         })
         .then(response => response.json())
         .then(data => {
           const utterance = new SpeechSynthesisUtterance(message);
-          
+          const currentVoiceId = form.watch("voiceCharacter"); // Define currentVoiceId here
+
           if (data.voiceSettings) {
             utterance.rate = data.voiceSettings.rate;
             utterance.pitch = data.voiceSettings.pitch;
             utterance.volume = 0.8;
-            
+
             const voices = speechSynthesis.getVoices();
             let selectedVoice = null;
 
@@ -419,7 +420,7 @@ export default function ReminderForm() {
           utterance.onstart = () => {
             toast({
               title: "Voice Test",
-              description: `Playing ${voiceCharacters.find(v => v.id === selectedVoiceId)?.name || 'voice'} sample`,
+              description: `Playing ${voiceCharacters.find((v: any) => v.id === currentVoiceId)?.name || 'voice'} sample`,
             });
           };
 
@@ -441,9 +442,26 @@ export default function ReminderForm() {
           utterance.rate = 0.9;
           utterance.pitch = 1.0;
           utterance.volume = 0.8;
+
+          utterance.onstart = () => {
+            toast({
+              title: "Voice Test",
+              description: "Playing voice sample",
+            });
+          };
+
+          utterance.onerror = (event) => {
+            console.error("Speech synthesis error:", event);
+            toast({
+              title: "Voice Test Failed",
+              description: "Unable to play voice. Check your browser's audio settings.",
+              variant: "destructive",
+            });
+          };
+
           speechSynthesis.speak(utterance);
         });
-        
+
       } catch (speechError) {
         console.error("Speech synthesis error:", speechError);
         toast({
