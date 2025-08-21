@@ -165,6 +165,9 @@ export default function ReminderForm() {
 
   // Collapsible states for advanced sections
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
+  const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
+  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [motivationalOpen, setMotivationalOpen] = useState(false);
 
 
   // Multi-day selection state
