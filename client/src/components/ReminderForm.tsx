@@ -347,32 +347,103 @@ export default function ReminderForm() {
   };
 
   const useFallbackSpeech = (message: string) => {
-    // Fallback to Web Speech API
+    // Use browser speech with backend voice settings
     if ('speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(message);
-        utterance.rate = 0.9;
-        utterance.pitch = 1.0;
-        utterance.volume = 0.8;
+        
+        // Fetch voice settings from backend for the selected character
+        fetch('/api/voices/test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            voiceCharacter: selectedVoiceId,
+            testMessage: message
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          const utterance = new SpeechSynthesisUtterance(message);
+          
+          if (data.voiceSettings) {
+            utterance.rate = data.voiceSettings.rate;
+            utterance.pitch = data.voiceSettings.pitch;
+            utterance.volume = 0.8;
+            
+            const voices = speechSynthesis.getVoices();
+            let selectedVoice = null;
 
-        utterance.onstart = () => {
-          toast({
-            title: "Voice Test (Browser Speech)",
-            description: "Playing voice sample using browser speech",
-          });
-        };
+            // Map voice types from backend to browser voices
+            switch (data.voiceSettings.voiceType) {
+              case 'male':
+              case 'upbeat-male':
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Male') || 
+                  voice.name.includes('David') ||
+                  voice.name.includes('Daniel') ||
+                  voice.gender === 'male'
+                );
+                break;
+              case 'british-male':
+                selectedVoice = voices.find(voice => 
+                  voice.lang.includes('en-GB') || 
+                  voice.name.includes('British') ||
+                  voice.name.includes('Oliver')
+                );
+                break;
+              case 'female':
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Female') ||
+                  voice.name.includes('Samantha') ||
+                  voice.name.includes('Victoria') ||
+                  voice.gender === 'female'
+                );
+                break;
+              case 'robotic':
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Microsoft') || 
+                  voice.name.includes('Computer')
+                );
+                break;
+            }
 
-        utterance.onerror = (event) => {
-          console.error("Speech synthesis error:", event);
-          toast({
-            title: "Voice Test Failed",
-            description: "Unable to play voice. Check your browser's audio settings.",
-            variant: "destructive",
-          });
-        };
+            if (selectedVoice) {
+              utterance.voice = selectedVoice;
+            }
+          } else {
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 0.8;
+          }
 
-        speechSynthesis.speak(utterance);
+          utterance.onstart = () => {
+            toast({
+              title: "Voice Test",
+              description: `Playing ${voiceCharacters.find(v => v.id === selectedVoiceId)?.name || 'voice'} sample`,
+            });
+          };
+
+          utterance.onerror = (event) => {
+            console.error("Speech synthesis error:", event);
+            toast({
+              title: "Voice Test Failed",
+              description: "Unable to play voice. Check your browser's audio settings.",
+              variant: "destructive",
+            });
+          };
+
+          speechSynthesis.speak(utterance);
+        })
+        .catch(error => {
+          console.error("Backend voice settings error:", error);
+          // Pure fallback
+          const utterance = new SpeechSynthesisUtterance(message);
+          utterance.rate = 0.9;
+          utterance.pitch = 1.0;
+          utterance.volume = 0.8;
+          speechSynthesis.speak(utterance);
+        });
+        
       } catch (speechError) {
         console.error("Speech synthesis error:", speechError);
         toast({

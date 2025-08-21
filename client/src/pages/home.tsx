@@ -63,86 +63,82 @@ export default function Home() {
             }
           }
 
-          // Speak reminder if voice notification is enabled
+          // Handle voice notification from WebSocket
           if (reminder.voiceNotification && 'speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
             
-            // Apply voice character settings if available
+            // Fetch voice settings from backend for consistency
             if (reminder.voiceCharacter) {
-              const voices = speechSynthesis.getVoices();
-              let selectedVoice = null;
+              fetch('/api/voices/test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  voiceCharacter: reminder.voiceCharacter,
+                  testMessage: reminder.rudeMessage
+                })
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.voiceSettings) {
+                  utterance.rate = data.voiceSettings.rate;
+                  utterance.pitch = data.voiceSettings.pitch;
+                  
+                  const voices = speechSynthesis.getVoices();
+                  let selectedVoice = null;
 
-              switch (reminder.voiceCharacter) {
-                case 'drill-sergeant':
-                  utterance.rate = 1.3;
-                  utterance.pitch = 0.7;
-                  // Select male voice for drill sergeant (Dan)
-                  selectedVoice = voices.find(voice => 
-                    voice.name.includes('Male') || 
-                    voice.name.includes('David') ||
-                    voice.name.includes('Mark') ||
-                    voice.gender === 'male'
-                  );
-                  break;
-                
-                case 'motivational-coach':
-                  utterance.rate = 1.4;
-                  utterance.pitch = 0.9;
-                  // Select upbeat male voice for coach (Dan)
-                  selectedVoice = voices.find(voice => 
-                    voice.name.includes('Male') || 
-                    voice.name.includes('Daniel') ||
-                    voice.gender === 'male'
-                  );
-                  break;
-                
-                case 'robot':
-                  utterance.rate = 0.8;
-                  utterance.pitch = 0.6;
-                  selectedVoice = voices.find(voice => 
-                    voice.name.includes('Microsoft') || 
-                    voice.name.includes('Computer')
-                  );
-                  break;
-                
-                case 'british-butler':
-                  utterance.rate = 0.85;
-                  utterance.pitch = 0.8;
-                  // British man voice
-                  selectedVoice = voices.find(voice => 
-                    voice.lang.includes('en-GB') || 
-                    voice.name.includes('British') ||
-                    voice.name.includes('Oliver')
-                  );
-                  break;
-                
-                case 'default':
-                case 'mom':
-                  utterance.rate = 1.0;
-                  utterance.pitch = 1.2;
-                  // Middle-aged woman voice (Scarlett)
-                  selectedVoice = voices.find(voice => 
-                    voice.name.includes('Female') ||
-                    voice.name.includes('Samantha') ||
-                    voice.name.includes('Victoria') ||
-                    voice.gender === 'female'
-                  );
-                  break;
-                
-                default:
-                  utterance.rate = 1.0;
-                  utterance.pitch = 1.0;
-              }
+                  // Map voice types to actual browser voices
+                  switch (data.voiceSettings.voiceType) {
+                    case 'male':
+                    case 'upbeat-male':
+                      selectedVoice = voices.find(voice => 
+                        voice.name.includes('Male') || 
+                        voice.name.includes('David') ||
+                        voice.name.includes('Daniel') ||
+                        voice.name.includes('Mark') ||
+                        voice.gender === 'male'
+                      );
+                      break;
+                    case 'british-male':
+                      selectedVoice = voices.find(voice => 
+                        voice.lang.includes('en-GB') || 
+                        voice.name.includes('British') ||
+                        voice.name.includes('Oliver')
+                      );
+                      break;
+                    case 'female':
+                      selectedVoice = voices.find(voice => 
+                        voice.name.includes('Female') ||
+                        voice.name.includes('Samantha') ||
+                        voice.name.includes('Victoria') ||
+                        voice.gender === 'female'
+                      );
+                      break;
+                    case 'robotic':
+                      selectedVoice = voices.find(voice => 
+                        voice.name.includes('Microsoft') || 
+                        voice.name.includes('Computer') ||
+                        voice.name.includes('Robot')
+                      );
+                      break;
+                  }
 
-              if (selectedVoice) {
-                utterance.voice = selectedVoice;
-              }
+                  if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                  }
+                }
+                speechSynthesis.speak(utterance);
+              })
+              .catch(() => {
+                // Fallback to default voice
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                speechSynthesis.speak(utterance);
+              });
             } else {
               utterance.rate = 1.0;
               utterance.pitch = 1.0;
+              speechSynthesis.speak(utterance);
             }
-            
-            speechSynthesis.speak(utterance);
           }
 
           // Show toast notification
