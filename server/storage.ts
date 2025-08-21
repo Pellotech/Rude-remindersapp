@@ -20,7 +20,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
-  
+
   // Reminder operations
   createReminder(userId: string, reminder: InsertReminder): Promise<Reminder>;
   getReminders(userId: string): Promise<Reminder[]>;
@@ -30,11 +30,11 @@ export interface IStorage {
   getActiveReminders(userId: string): Promise<Reminder[]>;
   getUpcomingReminders(): Promise<Reminder[]>;
   completeReminder(id: string, userId: string): Promise<Reminder>;
-  
+
   // Rude phrases operations
   getRudePhrasesForLevel(level: number): Promise<RudePhrase[]>;
   seedRudePhrases(): Promise<void>;
-  
+
   // Statistics
   getUserStats(userId: string): Promise<{
     activeReminders: number;
@@ -78,28 +78,36 @@ export class DatabaseStorage implements IStorage {
 
   // Reminder operations
   async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
-    // Handle multi-day functionality
-    let rudeMessage = '';
-    let daySpecificMessages = null;
+    // Generate rude message with multiple variations
+    let rudeMessage: string;
+    let daySpecificMessages: string | null = null;
+    let responseVariations: string[] = [];
+
+    const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+
+    // Generate 3-5 different response variations
+    const numVariations = Math.min(phrases.length, 5);
+    const shuffledPhrases = phrases.sort(() => 0.5 - Math.random()).slice(0, numVariations);
+
+    responseVariations = shuffledPhrases.map(phrase => 
+      `${reminder.originalMessage}${phrase?.phrase || ', get it done!'}`
+    );
 
     if (reminder.isMultiDay && reminder.selectedDays && reminder.selectedDays.length > 0) {
       // Generate different rude messages for each selected day
       const dayMessages: { [key: string]: string } = {};
-      
+
       for (const day of reminder.selectedDays) {
-        const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
         const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
         dayMessages[day] = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
       }
-      
+
       daySpecificMessages = JSON.stringify(dayMessages);
       // Use the first day's message as the default rudeMessage
       rudeMessage = dayMessages[reminder.selectedDays[0]] || reminder.originalMessage;
     } else {
       // Standard single-day reminder
-      const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
-      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-      rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+      rudeMessage = responseVariations[0];
     }
 
     const [newReminder] = await db
@@ -108,7 +116,9 @@ export class DatabaseStorage implements IStorage {
         ...reminder,
         userId,
         rudeMessage,
+        responseVariations: JSON.stringify(responseVariations),
         daySpecificMessages,
+        rudenessLevel: reminder.rudenessLevel,
       })
       .returning();
     return newReminder;
@@ -132,7 +142,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateReminder(id: string, userId: string, updates: UpdateReminder): Promise<Reminder> {
     let rudeMessage = undefined;
-    
+
     // Regenerate rude message if originalMessage or rudenessLevel changed
     if (updates.originalMessage || updates.rudenessLevel) {
       const currentReminder = await this.getReminder(id, userId);
@@ -177,10 +187,10 @@ export class DatabaseStorage implements IStorage {
       .orderBy(reminders.scheduledFor);
   }
 
-  async getUpcomingReminders(): Promise<Reminder[]> {
+  async getUpcomingReminders(): Promise<Reminder[]>{
     const now = new Date();
     const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
-    
+
     return await db
       .select()
       .from(reminders)
@@ -221,25 +231,25 @@ export class DatabaseStorage implements IStorage {
       { rudenessLevel: 1, phrase: ", take your time but don't forget! ⏰", category: "gentle" },
       { rudenessLevel: 1, phrase: ", friendly reminder! 😊", category: "polite" },
       { rudenessLevel: 1, phrase: ", just a gentle nudge! 👋", category: "soft" },
-      
+
       // Level 2 - Firm
       { rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm" },
       { rudenessLevel: 2, phrase: ", time to get moving!", category: "assertive" },
       { rudenessLevel: 2, phrase: ", no excuses now!", category: "direct" },
       { rudenessLevel: 2, phrase: ", make it happen!", category: "motivational" },
-      
+
       // Level 3 - Sarcastic
       { rudenessLevel: 3, phrase: ", because apparently you need reminding...", category: "sarcastic" },
       { rudenessLevel: 3, phrase: ", shocking that you haven't done this yet!", category: "ironic" },
       { rudenessLevel: 3, phrase: ", what a surprise, still not done!", category: "witty" },
       { rudenessLevel: 3, phrase: ", let me guess, you 'forgot' again?", category: "cynical" },
-      
+
       // Level 4 - Harsh
       { rudenessLevel: 4, phrase: ", stop procrastinating like a lazy sloth!", category: "harsh" },
       { rudenessLevel: 4, phrase: ", get your act together already!", category: "demanding" },
       { rudenessLevel: 4, phrase: ", quit being such a slacker!", category: "critical" },
       { rudenessLevel: 4, phrase: ", enough with the excuses!", category: "impatient" },
-      
+
       // Level 5 - Savage
       { rudenessLevel: 5, phrase: ", you absolute couch potato!", category: "savage" },
       { rudenessLevel: 5, phrase: ", stop being such a useless lump!", category: "brutal" },
@@ -352,7 +362,7 @@ class MemoryStorage implements IStorage {
   async updateUser(id: string, updates: Partial<User>): Promise<User> {
     const existing = this.users.get(id);
     if (!existing) throw new Error('User not found');
-    
+
     const updated = { ...existing, ...updates, updatedAt: new Date() };
     this.users.set(id, updated);
     return updated;
@@ -361,29 +371,37 @@ class MemoryStorage implements IStorage {
   // Reminder operations
   async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
     const id = `reminder_${Date.now()}_${Math.random()}`;
-    
-    // Handle multi-day functionality
-    let rudeMessage = '';
+
+    // Generate rude message with multiple variations
+    let rudeMessage: string;
     let daySpecificMessages = null;
+    let responseVariations: string[] = [];
+
+    const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
+
+    // Generate 3-5 different response variations
+    const numVariations = Math.min(phrases.length, 5);
+    const shuffledPhrases = phrases.sort(() => 0.5 - Math.random()).slice(0, numVariations);
+
+    responseVariations = shuffledPhrases.map(phrase => 
+      `${reminder.originalMessage}${phrase?.phrase || ', get it done!'}`
+    );
 
     if (reminder.isMultiDay && reminder.selectedDays && reminder.selectedDays.length > 0) {
       // Generate different rude messages for each selected day
       const dayMessages: { [key: string]: string } = {};
-      
+
       for (const day of reminder.selectedDays) {
-        const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
         const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
         dayMessages[day] = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
       }
-      
+
       daySpecificMessages = JSON.stringify(dayMessages);
       // Use the first day's message as the default rudeMessage
       rudeMessage = dayMessages[reminder.selectedDays[0]] || reminder.originalMessage;
     } else {
       // Standard single-day reminder
-      const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
-      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-      rudeMessage = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
+      rudeMessage = responseVariations[0];
     }
 
     const newReminder: Reminder = {
@@ -404,12 +422,13 @@ class MemoryStorage implements IStorage {
       selectedDays: reminder.selectedDays || [],
       daySpecificMessages: daySpecificMessages,
       rudeMessage,
+      responseVariations: JSON.stringify(responseVariations),
       completed: false,
       completedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
+
     this.reminders.set(id, newReminder);
     return newReminder;
   }
@@ -460,10 +479,10 @@ class MemoryStorage implements IStorage {
       .filter(r => r.userId === userId && !r.completed && r.scheduledFor >= new Date());
   }
 
-  async getUpcomingReminders(): Promise<Reminder[]> {
+  async getUpcomingReminders(): Promise<Reminder[]>{
     const now = new Date();
     const next24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    
+
     return Array.from(this.reminders.values())
       .filter(r => !r.completed && r.scheduledFor >= now && r.scheduledFor <= next24Hours);
   }
@@ -499,25 +518,25 @@ class MemoryStorage implements IStorage {
       { id: '2', rudenessLevel: 1, phrase: ", take your time but don't forget! ⏰", category: "gentle", createdAt: new Date() },
       { id: '3', rudenessLevel: 1, phrase: ", friendly reminder! 😊", category: "polite", createdAt: new Date() },
       { id: '4', rudenessLevel: 1, phrase: ", just a gentle nudge! 👋", category: "soft", createdAt: new Date() },
-      
+
       // Level 2 - Firm
       { id: '5', rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm", createdAt: new Date() },
       { id: '6', rudenessLevel: 2, phrase: ", time to get moving!", category: "assertive", createdAt: new Date() },
       { id: '7', rudenessLevel: 2, phrase: ", no excuses now!", category: "direct", createdAt: new Date() },
       { id: '8', rudenessLevel: 2, phrase: ", make it happen!", category: "motivational", createdAt: new Date() },
-      
+
       // Level 3 - Sarcastic
       { id: '9', rudenessLevel: 3, phrase: ", because apparently you need reminding...", category: "sarcastic", createdAt: new Date() },
       { id: '10', rudenessLevel: 3, phrase: ", shocking that you haven't done this yet!", category: "ironic", createdAt: new Date() },
       { id: '11', rudenessLevel: 3, phrase: ", what a surprise, still not done!", category: "witty", createdAt: new Date() },
       { id: '12', rudenessLevel: 3, phrase: ", let me guess, you 'forgot' again?", category: "cynical", createdAt: new Date() },
-      
+
       // Level 4 - Harsh
       { id: '13', rudenessLevel: 4, phrase: ", stop procrastinating like a lazy sloth!", category: "harsh", createdAt: new Date() },
       { id: '14', rudenessLevel: 4, phrase: ", get your act together already!", category: "demanding", createdAt: new Date() },
       { id: '15', rudenessLevel: 4, phrase: ", quit being such a slacker!", category: "critical", createdAt: new Date() },
       { id: '16', rudenessLevel: 4, phrase: ", enough with the excuses!", category: "impatient", createdAt: new Date() },
-      
+
       // Level 5 - Savage
       { id: '17', rudenessLevel: 5, phrase: ", you absolute couch potato!", category: "savage", createdAt: new Date() },
       { id: '18', rudenessLevel: 5, phrase: ", stop being such a useless lump!", category: "brutal", createdAt: new Date() },
@@ -536,16 +555,16 @@ class MemoryStorage implements IStorage {
     avgRudeness: number;
   }> {
     const userReminders = Array.from(this.reminders.values()).filter(r => r.userId === userId);
-    
+
     // Active reminders
     const activeReminders = userReminders.filter(r => !r.completed && r.scheduledFor >= new Date());
-    
+
     // Completed today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     const completedToday = userReminders.filter(r => 
       r.completed && 
       r.completedAt && 

@@ -118,6 +118,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get additional responses for a reminder
+  app.get('/api/reminders/:id/more-responses', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reminder = await storage.getReminder(req.params.id, userId);
+      
+      if (!reminder) {
+        return res.status(404).json({ message: "Reminder not found" });
+      }
+
+      const { smartResponseService } = await import('./services/smartResponseService');
+      
+      // Generate fresh responses
+      const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
+      const contextualRemarks = await smartResponseService.getContextualRemarks(reminder);
+      
+      // Get additional rude phrases for variety
+      const phrases = await storage.getRudePhrasesForLevel(reminder.rudenessLevel);
+      const additionalResponses = phrases
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 5)
+        .map(phrase => `${reminder.originalMessage}${phrase.phrase}`);
+
+      res.json({
+        personalizedResponses,
+        contextualRemarks,
+        additionalResponses,
+        totalCount: personalizedResponses.length + contextualRemarks.length + additionalResponses.length
+      });
+    } catch (error) {
+      console.error("Error getting more responses:", error);
+      res.status(500).json({ message: "Failed to get more responses" });
+    }
+  });
+
   app.delete('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;

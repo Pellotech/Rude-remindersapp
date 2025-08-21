@@ -51,21 +51,40 @@ class ReminderService {
       const user = await storage.getUser(reminder.userId);
       if (!user) return;
 
+      // Import smart response service
+      const { smartResponseService } = await import('./smartResponseService');
+      const { followUpService } = await import('./followupService');
+
+      // Get personalized and contextual responses
+      const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
+      const contextualRemarks = await smartResponseService.getContextualRemarks(reminder);
+      
+      // Create enhanced reminder with multiple response options
+      const enhancedReminder = {
+        ...reminder,
+        responseVariations: personalizedResponses,
+        contextualRemarks: contextualRemarks,
+        currentResponse: personalizedResponses[0] || reminder.rudeMessage
+      };
+
       // Send notifications based on reminder and user preferences
       if (reminder.browserNotification && user.browserNotifications) {
-        await notificationService.sendBrowserNotification(reminder, user);
+        await notificationService.sendBrowserNotification(enhancedReminder, user);
       }
 
       if (reminder.voiceNotification && user.voiceNotifications) {
-        await notificationService.sendVoiceNotification(reminder, user);
+        await notificationService.sendVoiceNotification(enhancedReminder, user);
       }
 
       if (reminder.emailNotification && user.emailNotifications && user.email) {
-        await notificationService.sendEmailNotification(reminder, user);
+        await notificationService.sendEmailNotification(enhancedReminder, user);
       }
 
       // Send real-time notification via WebSocket
-      await notificationService.sendRealtimeNotification(reminder, user);
+      await notificationService.sendRealtimeNotification(enhancedReminder, user);
+
+      // Schedule follow-up responses
+      await followUpService.scheduleFollowUps(reminder);
 
     } catch (error) {
       console.error(`Error triggering reminder ${reminder.id}:`, error);
