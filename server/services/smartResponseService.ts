@@ -96,24 +96,24 @@ class SmartResponseService {
     
     const intensityTemplates = {
       health: [
-        `Seriously? You're still putting off ${task}? Your body deserves better than your excuses!`,
-        `${task} isn't going to happen by itself. Stop making your future self pay for today's laziness!`,
-        `Every minute you delay ${task}, you're choosing comfort over your wellbeing. Choose better!`
+        `Seriously? You're still avoiding "${task}"? Your body deserves better than your excuses!`,
+        `Time to ${task} - it won't happen by itself. Stop making your future self pay for today's laziness!`,
+        `Every minute you delay "${task}", you're choosing comfort over your wellbeing. Choose better!`
       ],
       work: [
-        `${task} is literally your job! Stop scrolling and start doing what you're paid for!`,
-        `Your career depends on completing ${task}. Procrastination isn't a professional strategy!`,
-        `That promotion you want? It starts with finishing ${task} today, not tomorrow!`
+        `Time to ${task} - this is literally your job! Stop scrolling and start doing what you're paid for!`,
+        `Your career depends on you taking time to ${task}. Procrastination isn't a professional strategy!`,
+        `That promotion you want? It starts with you actually doing "${task}" today, not tomorrow!`
       ],
       personal: [
-        `${task} matters to people who matter to you. Stop letting them down!`,
-        `You committed to ${task}. Your word should mean something, even to yourself!`,
-        `${task} isn't optional if you value your relationships. Make it happen!`
+        `Time to ${task} - this matters to people who matter to you. Stop letting them down!`,
+        `You committed to "${task}". Your word should mean something, even to yourself!`,
+        `Time to ${task} - it's not optional if you value your relationships. Make it happen!`
       ],
       general: [
-        `${task} has been on your list long enough. Either do it or admit you don't actually want to achieve anything!`,
-        `Stop pretending ${task} will magically complete itself. You know what needs to be done!`,
-        `${task} is your responsibility. Own it, do it, move on!`
+        `"${task}" has been on your list long enough. Either do it or admit you don't actually want to achieve anything!`,
+        `Stop pretending "${task}" will magically complete itself. You know what needs to be done!`,
+        `Time to ${task} - it's your responsibility. Own it, do it, move on!`
       ]
     };
     
@@ -230,8 +230,8 @@ class SmartResponseService {
         `${task} takes 20 minutes but improves your whole week. Start now!`
       ],
       'study': [
-        `${task} is an investment in your future self. Start earning those returns!`,
-        `Knowledge compounds daily. ${task} is today's deposit in your mental bank!`
+        `Time to ${task}! This is an investment in your future self - start earning those returns!`,
+        `Knowledge compounds daily - time to ${task} and make today's deposit in your mental bank!`
       ]
     };
     
@@ -252,30 +252,30 @@ class SmartResponseService {
     
     const categoryInsights: Record<string, string[]> = {
       health: [
-        `${task} is literally about keeping yourself alive and thriving. Priority level: MAXIMUM!`,
-        `Your health is your wealth. ${task} is a deposit, not an expense!`
+        `Time to ${task} - this is literally about keeping yourself alive and thriving. Priority level: MAXIMUM!`,
+        `Your health is your wealth. Taking time to ${task} is a deposit, not an expense!`
       ],
       work: [
-        `${task} affects your professional reputation. People notice who delivers!`,
-        `Career momentum starts with completing ${task}. Build that momentum!`
+        `Time to ${task} - this affects your professional reputation. People notice who delivers!`,
+        `Career momentum starts with actually doing "${task}". Build that momentum!`
       ],
       personal: [
-        `${task} strengthens the relationships that matter. Show up for people who show up for you!`,
-        `Personal commitments like ${task} define who you are when no one's watching!`
+        `Time to ${task} - this strengthens the relationships that matter. Show up for people who show up for you!`,
+        `Personal commitments like "${task}" define who you are when no one's watching!`
       ],
       finance: [
-        `${task} is about securing your future. Financial stress isn't worth the procrastination!`,
-        `Money problems compound with neglect. ${task} is damage control and growth strategy!`
+        `Time to ${task} - this is about securing your future. Financial stress isn't worth the procrastination!`,
+        `Money problems compound with neglect. Taking time to ${task} is damage control and growth strategy!`
       ],
       household: [
-        `${task} creates the environment for your success. Chaotic space = chaotic mind!`,
-        `${task} is self-care disguised as chores. Take care of your space, take care of yourself!`
+        `Time to ${task} - this creates the environment for your success. Chaotic space = chaotic mind!`,
+        `"${task}" is self-care disguised as chores. Take care of your space, take care of yourself!`
       ]
     };
     
     const insights = categoryInsights[category] || [
-      `${task} matters because you put it on your list. Honor your own priorities!`,
-      `${task} is your commitment to yourself. Keep your word, especially to you!`
+      `Time to ${task} - this matters because you put it on your list. Honor your own priorities!`,
+      `"${task}" is your commitment to yourself. Keep your word, especially to you!`
     ];
     
     responses.push(insights[seed % insights.length]);
@@ -287,10 +287,10 @@ class SmartResponseService {
     const responses: string[] = [];
     
     const consequenceFrames = [
-      `If you don't complete ${task} today, what excuse will you give tomorrow?`,
-      `${task} delayed is confidence eroded. Build yourself up instead!`,
-      `The cost of avoiding ${task} is higher than the effort to do it. Pay now, not later!`,
-      `Future you is either grateful for today's action on ${task} or frustrated by today's inaction!`
+      `If you don't ${task} today, what excuse will you give tomorrow?`,
+      `Delaying "${task}" erodes your confidence. Build yourself up instead!`,
+      `The cost of avoiding "${task}" is higher than the effort to do it. Pay now, not later!`,
+      `Future you is either grateful for taking time to ${task} today or frustrated by today's inaction!`
     ];
     
     responses.push(consequenceFrames[seed % consequenceFrames.length]);
@@ -300,10 +300,10 @@ class SmartResponseService {
   // Generate motivational context
   private generateMotivationalContext(task: string, category: string, seed: number): string[] {
     const contexts = [
-      `${task} is your chance to prove your commitment to yourself!`,
-      `Every completed ${task} builds the habit of following through!`,
-      `${task} completed = promise kept to yourself. That's how trust is built!`,
-      `${task} is small but significant. Small actions, big character!`
+      `Time to ${task} - this is your chance to prove your commitment to yourself!`,
+      `Taking time to ${task} builds the habit of following through!`,
+      `Completing "${task}" = promise kept to yourself. That's how trust is built!`,
+      `"${task}" might seem small but it's significant. Small actions, big character!`
     ];
     
     return [contexts[seed % contexts.length]];
@@ -517,52 +517,52 @@ class SmartResponseService {
   private generateContextAwareResponses(task: string, context: string, urgencyLevel: string, seedNum: number): string[] {
     const responses: string[] = [];
     
-    // Map category IDs to response generators
+    // Map category IDs to response generators - treating task as an action to do
     const categoryResponses = {
       work: () => [
-        `Time to handle ${task} - your professional reputation depends on it!`,
-        `${task} isn't going to complete itself. Your career deserves better than procrastination!`,
-        `Every minute you delay ${task}, you're choosing comfort over career advancement. Choose wisely!`
+        `Time to ${task} - your professional reputation depends on it!`,
+        `Get moving on "${task}" - your career deserves better than procrastination!`,
+        `Every minute you delay "${task}", you're choosing comfort over career advancement. Choose wisely!`
       ],
       family: () => [
-        `${task} matters to the people who matter most. Don't let your loved ones down!`,
-        `Family commitments like ${task} show who you really are. Be someone they can count on!`,
-        `${task} is about more than just you - your relationships depend on following through!`
+        `Time to ${task} - this matters to the people who matter most!`,
+        `"${task}" shows who you really are. Be someone they can count on!`,
+        `Don't put off "${task}" - your relationships depend on following through!`
       ],
       health: () => [
-        `Your body is your temple, and ${task} is part of maintaining it. No excuses!`,
-        `${task} is an investment in your future self. Stop sabotaging your own wellbeing!`,
-        `Health isn't optional - ${task} is exactly what your body needs right now!`
+        `Your body is calling - time to ${task}! No excuses!`,
+        `Time to ${task} and invest in your future self. Stop sabotaging your own wellbeing!`,
+        `Health isn't optional - "${task}" is exactly what your body needs right now!`
       ],
       meditation: () => [
-        `Your mental peace depends on completing ${task}. Give yourself this gift!`,
-        `${task} is your path to inner clarity. Stop avoiding what your soul needs!`,
-        `Self-reflection through ${task} isn't selfish - it's essential for your growth!`
+        `Your mental peace depends on taking time to ${task}. Give yourself this gift!`,
+        `Time to ${task} and find your inner clarity. Stop avoiding what your soul needs!`,
+        `Self-care time! "${task}" isn't selfish - it's essential for your growth!`
       ],
       learning: () => [
-        `Knowledge is power, and ${task} is your next level up. Don't stay stuck!`,
-        `${task} is an investment in your future intelligence. Smart people take action!`,
-        `Every day you postpone ${task}, you're choosing ignorance over growth!`
+        `Knowledge is power - time to ${task} and level up!`,
+        `Smart people take action! Time to ${task} and invest in your future intelligence!`,
+        `Every day you postpone "${task}", you're choosing ignorance over growth!`
       ],
       cooking: () => [
-        `Good nutrition starts with ${task}. Your body deserves better than takeout excuses!`,
-        `${task} is self-care disguised as a chore. Feed yourself with intention!`,
-        `Cooking ${task} is an act of love - for yourself and anyone you're feeding!`
+        `Time to ${task} and nourish yourself properly! Your body deserves better than takeout excuses!`,
+        `"${task}" is self-care disguised as a chore. Feed yourself with intention!`,
+        `Time to ${task} - it's an act of love for yourself and anyone you're feeding!`
       ],
       household: () => [
-        `A clean space creates a clear mind. ${task} is more important than you think!`,
-        `${task} isn't just maintenance - it's creating the environment you deserve!`,
-        `Stop living in chaos! ${task} will transform your entire day!`
+        `A clean space creates a clear mind - time to ${task}!`,
+        `"${task}" isn't just maintenance - it's creating the environment you deserve!`,
+        `Stop living in chaos! Time to ${task} and transform your entire day!`
       ],
       finance: () => [
-        `Your future financial freedom depends on completing ${task} today!`,
-        `Money doesn't manage itself - ${task} is your responsibility to your future self!`,
-        `${task} might seem boring, but financial security is anything but boring!`
+        `Your future financial freedom depends on taking time to ${task} today!`,
+        `Money doesn't manage itself - time to ${task} and take responsibility for your future!`,
+        `"${task}" might seem boring, but financial security is anything but boring!`
       ],
       entertainment: () => [
-        `Life's too short for boring! ${task} is your ticket to the fun you deserve!`,
-        `${task} isn't just entertainment - it's essential for your mental health and happiness!`,
-        `Stop putting off joy! ${task} is exactly the break your soul needs!`
+        `Life's too short for boring! Time to ${task} and enjoy what you deserve!`,
+        `"${task}" isn't just entertainment - it's essential for your mental health and happiness!`,
+        `Stop putting off joy! Time to ${task} and give your soul the break it needs!`
       ]
     };
 
