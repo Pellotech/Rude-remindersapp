@@ -63,6 +63,7 @@ export const reminders = pgTable("reminders", {
   title: text("title").notNull(),
   rudeMessage: text("rude_message").notNull(),
   originalMessage: text("original_message").notNull(),
+  context: text("context"), // Optional user-provided context about what the reminder is for
   rudenessLevel: integer("rudeness_level").notNull(),
   scheduledFor: timestamp("scheduled_for").notNull(),
   completed: boolean("completed").default(false),

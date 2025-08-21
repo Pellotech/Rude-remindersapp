@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
+  context: z.string().optional(),
   scheduledFor: z.string().min(1, "Date and time are required").refine((dateStr) => {
     const scheduledDate = new Date(dateStr);
     const now = new Date();
@@ -184,6 +185,7 @@ export default function ReminderForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       originalMessage: "",
+      context: "",
       scheduledFor: "",
       rudenessLevel: 3,
       browserNotification: true,
@@ -676,6 +678,30 @@ export default function ReminderForm() {
                         {...field}
                       />
                       <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Context Field for Better AI Responses */}
+            <FormField
+              control={form.control}
+              name="context"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center">
+                    <span>Why is this important to you?</span>
+                    <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        placeholder="e.g., It's for an important client, My health depends on it, I promised my family"
+                        {...field}
+                      />
+                      <Bot className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     </div>
                   </FormControl>
                   <FormMessage />

@@ -60,12 +60,18 @@ class SmartResponseService {
   // Generate task-specific responses based on reminder content
   private generateTaskSpecificResponses(reminder: Reminder, category: string, seed: string): string[] {
     const task = reminder.originalMessage.toLowerCase();
+    const context = reminder.context?.toLowerCase() || "";
     const responses: string[] = [];
     const seedNum = parseInt(seed, 16) || Date.now();
     
     // Extract key action words from the task
     const actionWords = this.extractActionWords(task);
     const urgencyLevel = this.determineUrgencyLevel(reminder);
+    
+    // If we have context, generate context-aware responses first (these are higher quality)
+    if (context) {
+      responses.push(...this.generateContextAwareResponses(reminder.originalMessage, context, urgencyLevel, seedNum));
+    }
     
     // Generate contextually relevant responses based on the specific task
     if (actionWords.length > 0) {
@@ -505,6 +511,72 @@ class SmartResponseService {
     }
     
     return remarks;
+  }
+
+  // Generate high-quality context-aware responses using user's provided context
+  private generateContextAwareResponses(task: string, context: string, urgencyLevel: string, seedNum: number): string[] {
+    const responses: string[] = [];
+    
+    // Analyze the context to understand why this task matters
+    const contextIndicators = {
+      important: /important|crucial|critical|vital|urgent|deadline|client|boss|meeting/i.test(context),
+      health: /health|doctor|medicine|exercise|diet|medical|fitness|wellbeing/i.test(context),
+      family: /family|mom|dad|kids|children|spouse|wife|husband|parents|relatives/i.test(context),
+      work: /work|job|career|promotion|client|project|business|professional/i.test(context),
+      financial: /money|bills|finance|budget|payment|debt|savings|investment/i.test(context),
+      social: /friends|social|promise|commitment|event|party|celebration/i.test(context),
+      personal: /promised|committed|goal|dream|resolution|habit|self-improvement/i.test(context)
+    };
+
+    // Generate responses that directly reference the user's context
+    if (contextIndicators.important) {
+      responses.push(`${task} - this is clearly important to you because ${context}. Don't let yourself down!`);
+      responses.push(`You know ${context} - that's exactly why ${task} can't wait any longer!`);
+    }
+
+    if (contextIndicators.health) {
+      responses.push(`Your health is on the line here! ${task} matters because ${context}. Take care of yourself!`);
+      responses.push(`${context}? Then ${task} isn't optional - it's essential for your wellbeing!`);
+    }
+
+    if (contextIndicators.family) {
+      responses.push(`${task} affects the people you love most. Since ${context}, this really matters!`);
+      responses.push(`Family first! ${task} is important because ${context} - don't let them down!`);
+    }
+
+    if (contextIndicators.work) {
+      responses.push(`Your professional reputation depends on this! ${task} is crucial because ${context}.`);
+      responses.push(`Career advancement starts with completing ${task}. You said ${context} - prove it!`);
+    }
+
+    if (contextIndicators.financial) {
+      responses.push(`Money talks, and right now it's saying: complete ${task}! You know ${context}.`);
+      responses.push(`Financial security requires action. ${task} is important because ${context} - secure your future!`);
+    }
+
+    if (contextIndicators.social) {
+      responses.push(`Your relationships matter! ${task} is on your list because ${context} - honor your commitments!`);
+      responses.push(`${context}? Then ${task} isn't just about you - keep your word!`);
+    }
+
+    if (contextIndicators.personal) {
+      responses.push(`You made a commitment to yourself: ${task}. Remember, ${context} - stay true to your goals!`);
+      responses.push(`Personal growth requires follow-through. ${task} matters because ${context} - be who you want to be!`);
+    }
+
+    // If context doesn't match patterns, create general but personalized responses
+    if (responses.length === 0) {
+      responses.push(`${task} is on your list for a reason: ${context}. That reason still matters!`);
+      responses.push(`You told me ${context} - that's exactly why ${task} deserves your attention right now!`);
+      responses.push(`Don't ignore what you said matters: ${context}. Complete ${task} and honor your priorities!`);
+    }
+
+    // Add urgency based on context
+    if (urgencyLevel === 'high' || contextIndicators.important) {
+      responses.push(`URGENT: ${context} means ${task} can't be postponed. Act now!`);
+    }
+
+    return responses.slice(0, 3); // Return top 3 context-aware responses
   }
 }
 
