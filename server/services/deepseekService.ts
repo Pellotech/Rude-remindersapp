@@ -90,9 +90,9 @@ export class DeepSeekService {
     const rudenessMap = {
       1: 'gentle and encouraging',
       2: 'friendly but motivating',
-      3: 'direct and no-nonsense',
-      4: 'tough love and brutally honest',
-      5: 'harshly motivating and unfiltered'
+      3: 'direct and no-nonsense with sarcastic humor - be witty and clever',
+      4: 'tough love and brutally honest with joking tone at the end - roast them but make them laugh',
+      5: 'harshly motivating and unfiltered with humor at the end - be savage but hilarious'
     };
 
     const tone = rudenessMap[rudenessLevel as keyof typeof rudenessMap] || 'motivating';
@@ -110,9 +110,10 @@ Requirements:
 1. Each message should start with "Time to" or similar action-oriented phrasing
 2. Make each response unique and fresh - no repetitive patterns
 3. Consider the specific category context (${category})
-4. Match the requested tone level
+4. Match the requested tone level - for levels 3-5, include humor/jokes/wit but keep it motivational
 5. Keep responses concise but impactful (1-2 sentences max)
 6. Make it feel personal and motivational, not generic
+7. For sarcastic/joking tones: Use clever wordplay, witty observations, or playful roasts that make people smile while pushing them to act
 
 Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
   }
