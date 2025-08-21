@@ -23,7 +23,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings, Calendar, Clock } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
 import { CulturalQuotesService } from "@/services/culturalQuotesService";
 import { MobileCamera } from "./MobileCamera";
@@ -158,14 +158,14 @@ export default function ReminderForm() {
     queryKey: ["/api/auth/user"],
     enabled: !!user,
   });
-  
+
   const isSimplifiedInterface = (userSettings as any)?.simplifiedInterface || false;
   const [previewMessage, setPreviewMessage] = useState("");
   const [selectedVoice, setSelectedVoice] = useState("default");
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
   const [selectedMotivation, setSelectedMotivation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  
+
   // Collapsible states for advanced sections
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
@@ -173,13 +173,13 @@ export default function ReminderForm() {
   const [motivationalOpen, setMotivationalOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
 
-  
+
   // Multi-day selection state
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [isMultiDay, setIsMultiDay] = useState(false);
   const [multiDayHour, setMultiDayHour] = useState(9); // Default 9 AM
   const [multiDayMinute, setMultiDayMinute] = useState(0); // Default :00
-  
+
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
   const isMobileWithCamera = platformInfo.isNative && supportsCamera();
@@ -203,7 +203,7 @@ export default function ReminderForm() {
 
   const rudenessLevel = form.watch("rudenessLevel");
   const originalMessage = form.watch("originalMessage");
-  
+
   // Convert form's scheduledFor string to Date for calendar component
   const selectedDateTime = form.watch("scheduledFor") ? new Date(form.watch("scheduledFor")) : null;
 
@@ -311,7 +311,7 @@ export default function ReminderForm() {
         const { audioUrl } = await response.json();
         if (audioUrl) {
           const audio = new Audio(audioUrl);
-          
+
           // Enhanced error handling for audio playback
           audio.addEventListener('canplaythrough', () => {
             audio.play().then(() => {
@@ -355,7 +355,7 @@ export default function ReminderForm() {
         utterance.rate = 0.9;
         utterance.pitch = 1.0;
         utterance.volume = 0.8;
-        
+
         utterance.onstart = () => {
           toast({
             title: "Voice Test (Browser Speech)",
@@ -417,15 +417,25 @@ export default function ReminderForm() {
   };
 
   // Multi-day selection helper functions
-  const daysOfWeek = [
-    { id: "monday", label: "Mon", short: "M", full: "Monday" },
-    { id: "tuesday", label: "Tue", short: "T", full: "Tuesday" },
-    { id: "wednesday", label: "Wed", short: "W", full: "Wednesday" },
-    { id: "thursday", label: "Thu", short: "T", full: "Thursday" },
-    { id: "friday", label: "Fri", short: "F", full: "Friday" },
-    { id: "saturday", label: "Sat", short: "S", full: "Saturday" },
-    { id: "sunday", label: "Sun", short: "S", full: "Sunday" },
-  ];
+  const getWeekDays = () => {
+    const today = new Date();
+    // Generate the 7 days starting from today, just like single day interface
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+      return {
+        id: dayNames[date.getDay()],
+        label: format(date, 'EEE'), // Mon, Tue, Wed, etc.
+        short: format(date, 'd'), // Date number
+        full: format(date, 'EEEE'), // Full day name
+        date: date,
+        isToday: isSameDay(date, today)
+      };
+    });
+  };
+
+  const daysOfWeek = getWeekDays();
 
   const toggleDay = (dayId: string) => {
     setSelectedDays(prev => {
@@ -467,7 +477,7 @@ export default function ReminderForm() {
         return;
       }
     }
-    
+
     // Fallback to general quotes
     const quote = QuotesService.getRandomQuote(category);
     if (quote) {
@@ -488,7 +498,7 @@ export default function ReminderForm() {
 
   const onSubmit = (data: FormData) => {
     let scheduledDateTime;
-    
+
     if (isMultiDay) {
       // For multi-day reminders, create a date with the selected hour and minute
       // Use tomorrow as base date for multi-day scheduling
@@ -593,7 +603,7 @@ export default function ReminderForm() {
                       />
                     </div>
                   </div>
-                  
+
                   <FormControl>
                     {isMultiDay ? (
                       /* Multi-Day Selection - Card Layout like Single Day */
@@ -648,7 +658,7 @@ export default function ReminderForm() {
                                   const hour = i;
                                   const isSelected = multiDayHour === hour;
                                   const display = hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
-                                  
+
                                   return (
                                     <Button
                                       key={hour}
@@ -688,7 +698,7 @@ export default function ReminderForm() {
                                   { value: 45, label: "Quarter to" }
                                 ].map((slot) => {
                                   const isSelected = multiDayMinute === slot.value;
-                                  
+
                                   return (
                                     <Button
                                       key={slot.value}
@@ -755,7 +765,7 @@ export default function ReminderForm() {
                         className="rudeness-slider"
                       />
                     </FormControl>
-                    
+
                     {/* Slider Labels */}
                     <div className="flex justify-between mt-3 text-xs text-gray-500">
                       {rudenessLabels.map((item) => (
@@ -765,7 +775,7 @@ export default function ReminderForm() {
                         </div>
                       ))}
                     </div>
-                    
+
 
                   </div>
                   <FormMessage />
@@ -970,7 +980,7 @@ export default function ReminderForm() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
-                    
+
                     {isMobileWithCamera ? (
                       <MobileCamera
                         onPhotoCaptured={(photoUrl) => {
@@ -1031,7 +1041,7 @@ export default function ReminderForm() {
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions</p>
-                    
+
                     <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Choose motivation category" />
