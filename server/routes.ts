@@ -388,6 +388,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test DeepSeek API integration
+  app.post('/api/test-deepseek', async (req, res) => {
+    try {
+      const { DeepSeekService } = await import('./services/deepseekService.js');
+      const deepseekService = new DeepSeekService();
+      
+      const testContext = {
+        task: req.body.task || 'study for exam',
+        category: req.body.category || 'learning',
+        rudenessLevel: req.body.rudenessLevel || 3,
+        timeOfDay: 'evening'
+      };
+      
+      const responses = await deepseekService.generatePersonalizedResponses(testContext, 3);
+      
+      res.json({ 
+        success: true,
+        context: testContext,
+        responses,
+        generatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('DeepSeek test failed:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message,
+        fallbackMessage: 'DeepSeek API integration failed - check API key and network connection'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket setup for real-time notifications

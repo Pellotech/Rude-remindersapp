@@ -1,5 +1,6 @@
 import { storage } from "../storage";
 import type { Reminder } from "@shared/schema";
+import { DeepSeekService } from './deepseekService.js';
 
 interface UserBehaviorData {
   userId: string;
@@ -11,9 +12,51 @@ interface UserBehaviorData {
 
 class SmartResponseService {
   private responseVersion = Date.now(); // Cache-busting version
+  private deepseekService: DeepSeekService | null = null;
   
-  // Generate truly personalized AI responses that correlate with the specific task
+  constructor() {
+    try {
+      this.deepseekService = new DeepSeekService();
+    } catch (error) {
+      console.warn('DeepSeek service not available:', error);
+      this.deepseekService = null;
+    }
+  }
+  
+  // Generate truly personalized AI responses using DeepSeek API for maximum freshness
   async getPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
+    // Try DeepSeek first for truly fresh, personalized responses
+    if (this.deepseekService) {
+      try {
+        const user = await storage.getUser(reminder.userId);
+        const now = new Date();
+        const timeOfDay = this.getTimeOfDay(now);
+        
+        const context = {
+          task: reminder.originalMessage,
+          category: reminder.context || this.categorizeReminder(reminder.originalMessage),
+          rudenessLevel: reminder.rudenessLevel,
+          gender: user?.gender || undefined,
+          culturalBackground: user?.ethnicity || undefined,
+          timeOfDay
+        };
+        
+        const deepseekResponses = await this.deepseekService.generatePersonalizedResponses(context, 4);
+        if (deepseekResponses.length > 0) {
+          console.log(`Generated ${deepseekResponses.length} fresh DeepSeek responses for "${reminder.originalMessage}"`);
+          return deepseekResponses;
+        }
+      } catch (error) {
+        console.error('DeepSeek generation failed, falling back to templates:', error);
+      }
+    }
+    
+    // Fallback to existing logic if DeepSeek is unavailable
+    return this.getLegacyPersonalizedResponse(reminder, forceRefresh);
+  }
+  
+  // Existing logic as fallback
+  private async getLegacyPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
     const userBehavior = await this.getUserBehaviorData(reminder.userId);
     const responses: string[] = [];
     
@@ -45,6 +88,16 @@ class SmartResponseService {
     
     // Ensure we always return varied, task-correlated responses
     return this.ensureTaskCorrelatedVariety(responses, reminder, randomSeed);
+  }
+
+  // Helper method to determine time of day for context
+  private getTimeOfDay(date: Date): string {
+    const hour = date.getHours();
+    if (hour < 6) return 'early morning';
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    if (hour < 21) return 'evening';
+    return 'night';
   }
 
   private shuffleArray(array: any[], seed: string): any[] {
