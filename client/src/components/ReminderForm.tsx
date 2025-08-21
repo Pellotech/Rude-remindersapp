@@ -259,6 +259,17 @@ export default function ReminderForm() {
         description: "Your rude reminder has been created.",
       });
       form.reset();
+      
+      // Reset all custom state variables
+      setSelectedVoice("default");
+      setSelectedAttachments([]);
+      setSelectedMotivation("");
+      setSelectedCategory("");
+      setSelectedDays([]);
+      setIsMultiDay(false);
+      setMultiDayHour(9);
+      setMultiDayMinute(0);
+      
       queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
     },
