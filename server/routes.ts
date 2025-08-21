@@ -236,7 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         {
           id: "british-butler",
-          name: "Amy (British Butler)",
+          name: "Gerald (British Butler)",
           unrealId: "Amy", 
           personality: "Polite but passive-aggressive",
           testMessage: "I do beg your pardon, but perhaps it's time you attended to your responsibilities."
