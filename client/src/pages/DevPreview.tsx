@@ -16,7 +16,10 @@ export default function DevPreview() {
   // Fetch all reminders
   const { data: reminders, isLoading } = useQuery({
     queryKey: ['/api/reminders'],
-    queryFn: () => apiRequest('/api/reminders'),
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/reminders');
+      return response.json();
+    },
   });
 
   const handleVoicePreview = async () => {
