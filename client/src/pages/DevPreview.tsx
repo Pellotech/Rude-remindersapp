@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { PlayCircle, Loader2, Clock, User, Volume2, RefreshCw } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
@@ -129,8 +129,8 @@ export default function DevPreview() {
     }
   };
 
-  const formatDateTime = (dateString: string, reminder?: Reminder) => {
-    const date = new Date(dateString);
+  const formatDateTime = (dateInput: string | Date, reminder?: Reminder) => {
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     const formatted = date.toLocaleString();
 
     // If it's a multi-day reminder, show the selected days
