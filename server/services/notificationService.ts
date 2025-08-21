@@ -19,17 +19,17 @@ class NotificationService {
 
   // Map character names to browser speech synthesis settings
   getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voice?: string } {
-    const voiceSettings: Record<string, { rate: number, pitch: number, voice?: string }> = {
-      'default': { rate: 1.0, pitch: 1.0 },
-      'drill-sergeant': { rate: 1.2, pitch: 0.8 },
-      'robot': { rate: 0.8, pitch: 0.6 }, // More robotic
-      'british-butler': { rate: 0.9, pitch: 1.1 },
-      'mom': { rate: 1.0, pitch: 1.2 },
-      'motivational-coach': { rate: 1.3, pitch: 1.1 },
-      'wise-teacher': { rate: 0.9, pitch: 1.0 },
-      'confident-leader': { rate: 1.1, pitch: 0.9 },
-      'calm-narrator': { rate: 0.8, pitch: 1.0 },
-      'energetic-trainer': { rate: 1.4, pitch: 1.2 }
+    const voiceSettings: Record<string, { rate: number, pitch: pitch, voiceType: string }> = {
+      'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' }, // Scarlett - middle-aged woman
+      'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' }, // Dan - tough man
+      'robot': { rate: 0.8, pitch: 0.6, voiceType: 'robotic' }, // More robotic
+      'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'british-male' }, // British man
+      'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' }, // Scarlett - disappointed mom
+      'motivational-coach': { rate: 1.4, pitch: 0.9, voiceType: 'upbeat-male' }, // Dan - upbeat man
+      'wise-teacher': { rate: 0.9, pitch: 1.0, voiceType: 'female' },
+      'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
+      'calm-narrator': { rate: 0.8, pitch: 1.1, voiceType: 'female' },
+      'energetic-trainer': { rate: 1.4, pitch: 0.9, voiceType: 'male' }
     };
 
     return voiceSettings[character] || voiceSettings.default;

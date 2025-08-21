@@ -86,18 +86,59 @@ export default function DevPreview() {
           utterance.rate = data.voiceSettings.rate;
           utterance.pitch = data.voiceSettings.pitch;
 
-          // Try to select a more robotic voice
+          // Select appropriate voice based on character
           const voices = speechSynthesis.getVoices();
           if (voices.length > 0) {
-            // Look for Microsoft voices or other robotic-sounding options
-            const roboticVoice = voices.find(voice => 
-              voice.name.includes('Microsoft') || 
-              voice.name.includes('Robot') ||
-              voice.name.includes('Daniel') ||
-              voice.name.includes('Computer')
-            );
-            if (roboticVoice) {
-              utterance.voice = roboticVoice;
+            let selectedVoice = null;
+
+            switch (selectedReminder.voiceCharacter) {
+              case 'drill-sergeant':
+              case 'motivational-coach':
+                // Look for male voices
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Male') || 
+                  voice.name.includes('David') ||
+                  voice.name.includes('Mark') ||
+                  voice.name.includes('Daniel') ||
+                  voice.gender === 'male'
+                );
+                break;
+              
+              case 'british-butler':
+                // Look for British male voices
+                selectedVoice = voices.find(voice => 
+                  voice.lang.includes('en-GB') || 
+                  voice.name.includes('British') ||
+                  voice.name.includes('Oliver') ||
+                  voice.name.includes('Arthur')
+                );
+                break;
+              
+              case 'default':
+              case 'mom':
+                // Look for female voices (Scarlett - middle-aged woman)
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Female') ||
+                  voice.name.includes('Samantha') ||
+                  voice.name.includes('Victoria') ||
+                  voice.name.includes('Susan') ||
+                  voice.gender === 'female'
+                );
+                break;
+              
+              case 'robot':
+                // Look for robotic/computer voices
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Microsoft') || 
+                  voice.name.includes('Robot') ||
+                  voice.name.includes('Computer') ||
+                  voice.name.includes('Zira')
+                );
+                break;
+            }
+
+            if (selectedVoice) {
+              utterance.voice = selectedVoice;
             }
           }
 

@@ -69,33 +69,76 @@ export default function Home() {
             
             // Apply voice character settings if available
             if (reminder.voiceCharacter) {
+              const voices = speechSynthesis.getVoices();
+              let selectedVoice = null;
+
               switch (reminder.voiceCharacter) {
                 case 'drill-sergeant':
-                  utterance.rate = 1.1;
-                  utterance.pitch = 0.8;
+                  utterance.rate = 1.3;
+                  utterance.pitch = 0.7;
+                  // Select male voice for drill sergeant (Dan)
+                  selectedVoice = voices.find(voice => 
+                    voice.name.includes('Male') || 
+                    voice.name.includes('David') ||
+                    voice.name.includes('Mark') ||
+                    voice.gender === 'male'
+                  );
                   break;
+                
+                case 'motivational-coach':
+                  utterance.rate = 1.4;
+                  utterance.pitch = 0.9;
+                  // Select upbeat male voice for coach (Dan)
+                  selectedVoice = voices.find(voice => 
+                    voice.name.includes('Male') || 
+                    voice.name.includes('Daniel') ||
+                    voice.gender === 'male'
+                  );
+                  break;
+                
                 case 'robot':
                   utterance.rate = 0.8;
-                  utterance.pitch = 0.9;
+                  utterance.pitch = 0.6;
+                  selectedVoice = voices.find(voice => 
+                    voice.name.includes('Microsoft') || 
+                    voice.name.includes('Computer')
+                  );
                   break;
+                
                 case 'british-butler':
                   utterance.rate = 0.85;
-                  utterance.pitch = 1.1;
-                  // Try to use British voice if available
-                  const voices = speechSynthesis.getVoices();
-                  const britishVoice = voices.find(voice => voice.lang.includes('en-GB') || voice.name.includes('British'));
-                  if (britishVoice) utterance.voice = britishVoice;
+                  utterance.pitch = 0.8;
+                  // British man voice
+                  selectedVoice = voices.find(voice => 
+                    voice.lang.includes('en-GB') || 
+                    voice.name.includes('British') ||
+                    voice.name.includes('Oliver')
+                  );
                   break;
+                
+                case 'default':
                 case 'mom':
-                  utterance.rate = 0.9;
+                  utterance.rate = 1.0;
                   utterance.pitch = 1.2;
+                  // Middle-aged woman voice (Scarlett)
+                  selectedVoice = voices.find(voice => 
+                    voice.name.includes('Female') ||
+                    voice.name.includes('Samantha') ||
+                    voice.name.includes('Victoria') ||
+                    voice.gender === 'female'
+                  );
                   break;
+                
                 default:
-                  utterance.rate = 0.9;
+                  utterance.rate = 1.0;
                   utterance.pitch = 1.0;
               }
+
+              if (selectedVoice) {
+                utterance.voice = selectedVoice;
+              }
             } else {
-              utterance.rate = 0.9;
+              utterance.rate = 1.0;
               utterance.pitch = 1.0;
             }
             
