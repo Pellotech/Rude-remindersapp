@@ -301,16 +301,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Voice character is required" });
       }
 
-      const voiceId = notificationService.getUnrealVoiceId(voiceCharacter);
+      const voiceSettings = notificationService.getBrowserVoiceSettings(voiceCharacter);
       const message = testMessage || "This is a test of your selected voice character.";
+      const speechData = notificationService.generateBrowserSpeech(message, voiceCharacter);
       
-      const audioUrl = await notificationService.generateUnrealSpeech(message, voiceId);
-      
-      if (audioUrl) {
-        res.json({ audioUrl, voiceId, message });
-      } else {
-        res.status(500).json({ message: "Failed to generate voice test" });
-      }
+      res.json({ 
+        speechData, 
+        voiceSettings, 
+        message,
+        useBrowserSpeech: true 
+      });
     } catch (error) {
       console.error("Error testing voice:", error);
       res.status(500).json({ message: "Failed to test voice" });
@@ -326,20 +326,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Text is required" });
       }
 
-      // Use the voiceId directly or map from character name
-      const actualVoiceId = voiceId || "Scarlett";
-      const finalVoiceId = notificationService.getUnrealVoiceId(actualVoiceId);
+      // Use browser speech synthesis instead of external API
+      const character = voiceId || "default";
+      const voiceSettings = notificationService.getBrowserVoiceSettings(character);
+      const speechData = notificationService.generateBrowserSpeech(text, character);
       
-      // Generate audio using Unreal Speech
-      const audioBuffer = await notificationService.generateUnrealSpeechBuffer(text, finalVoiceId);
-      
-      if (audioBuffer) {
-        res.setHeader('Content-Type', 'audio/mpeg');
-        res.setHeader('Content-Length', audioBuffer.length);
-        res.send(audioBuffer);
-      } else {
-        res.status(500).json({ message: "Failed to generate speech" });
-      }
+      res.json({
+        speechData,
+        voiceSettings,
+        useBrowserSpeech: true
+      });
     } catch (error) {
       console.error("Error in test speech:", error);
       res.status(500).json({ message: "Failed to generate speech" });
@@ -380,16 +376,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updatedAt: new Date(),
       };
 
-      // Generate preview data with Unreal Speech audio
-      let audioUrl = null;
+      // Generate preview data with browser speech synthesis
+      let speechData = null;
+      let voiceSettings = null;
       if (sampleReminder.voiceCharacter) {
-        const voiceId = notificationService.getUnrealVoiceId(sampleReminder.voiceCharacter);
-        audioUrl = await notificationService.generateUnrealSpeech(sampleReminder.rudeMessage, voiceId);
+        voiceSettings = notificationService.getBrowserVoiceSettings(sampleReminder.voiceCharacter);
+        speechData = notificationService.generateBrowserSpeech(sampleReminder.rudeMessage, sampleReminder.voiceCharacter);
       }
 
       const previewData = {
         reminder: sampleReminder,
-        audioUrl,
+        speechData,
+        voiceSettings,
+        useBrowserSpeech: true,
         notifications: {
           browser: {
             title: `Reminder: ${sampleReminder.title}`,
@@ -401,7 +400,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           voice: {
             text: sampleReminder.rudeMessage,
             character: sampleReminder.voiceCharacter,
-            audioUrl
+            speechData,
+            voiceSettings
           }
         }
       };

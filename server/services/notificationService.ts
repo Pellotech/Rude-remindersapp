@@ -8,127 +8,62 @@ class NotificationService {
     this.wss = wss;
   }
 
-  // Unreal Speech API integration - returns base64 data URL for client
-  async generateUnrealSpeech(text: string, voiceId: string = "Scarlett"): Promise<string | null> {
-    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
-    if (!apiKey) {
-      console.error("UNREAL_SPEECH_API_KEY not found");
-      return null;
-    }
-
-    try {
-      const response = await fetch("https://api.v6.unrealspeech.com/stream", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          Text: text,
-          VoiceId: voiceId,
-          Bitrate: "192k",
-          Speed: "0",
-          Pitch: "1",
-          Codec: "libmp3lame"
-        })
-      });
-
-      if (!response.ok) {
-        console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
-        return null;
-      }
-
-      // Convert to base64 data URL for client-side audio playback
-      const audioBuffer = await response.arrayBuffer();
-      const base64Audio = Buffer.from(audioBuffer).toString('base64');
-      return `data:audio/mpeg;base64,${base64Audio}`;
-    } catch (error) {
-      console.error("Error generating Unreal Speech:", error);
-      return null;
-    }
+  // Generate speech using browser's built-in speech synthesis (more robotic)
+  generateBrowserSpeech(text: string, character: string = "default"): { text: string, character: string } {
+    // Return data for client-side speech synthesis
+    return {
+      text: text,
+      character: character
+    };
   }
 
-  // Generate Unreal Speech and return raw buffer for streaming
-  async generateUnrealSpeechBuffer(text: string, voiceId: string = "Scarlett"): Promise<Buffer | null> {
-    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
-    if (!apiKey) {
-      console.error("UNREAL_SPEECH_API_KEY not found");
-      return null;
-    }
-
-    try {
-      const response = await fetch("https://api.v6.unrealspeech.com/stream", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          Text: text,
-          VoiceId: voiceId,
-          Bitrate: "192k",
-          Speed: "0",
-          Pitch: "1",
-          Codec: "libmp3lame"
-        })
-      });
-
-      if (!response.ok) {
-        console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
-        return null;
-      }
-
-      const audioBuffer = await response.arrayBuffer();
-      return Buffer.from(audioBuffer);
-    } catch (error) {
-      console.error("Error generating Unreal Speech:", error);
-      return null;
-    }
-  }
-
-  // Map voice characters to Unreal Speech voice IDs
-  getUnrealVoiceId(voiceCharacter: string): string {
-    const voiceMap: Record<string, string> = {
-      "default": "Scarlett",
-      "drill-sergeant": "Dan", 
-      "robot": "Will",
-      "british-butler": "Amy",
-      "mom": "Scarlett",
-      "motivational-coach": "Dan",
-      "wise-teacher": "Amy",
-      "confident-leader": "Will",
-      "calm-narrator": "Scarlett",
-      "energetic-trainer": "Dan"
+  // Map character names to browser speech synthesis settings
+  getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voice?: string } {
+    const voiceSettings: Record<string, { rate: number, pitch: number, voice?: string }> = {
+      'default': { rate: 1.0, pitch: 1.0 },
+      'drill-sergeant': { rate: 1.2, pitch: 0.8 },
+      'robot': { rate: 0.8, pitch: 0.6 }, // More robotic
+      'british-butler': { rate: 0.9, pitch: 1.1 },
+      'mom': { rate: 1.0, pitch: 1.2 },
+      'motivational-coach': { rate: 1.3, pitch: 1.1 },
+      'wise-teacher': { rate: 0.9, pitch: 1.0 },
+      'confident-leader': { rate: 1.1, pitch: 0.9 },
+      'calm-narrator': { rate: 0.8, pitch: 1.0 },
+      'energetic-trainer': { rate: 1.4, pitch: 1.2 }
     };
 
-    return voiceMap[voiceCharacter] || "Scarlett";
+    return voiceSettings[character] || voiceSettings.default;
   }
 
-  async sendBrowserNotification(reminder: Reminder, user: User) {
+  sendBrowserNotification(reminder: Reminder, user: User) {
     // Browser notifications are handled on the client side
     // We just send the data via WebSocket
     console.log(`Browser notification for ${user.email}: ${reminder.rudeMessage}`);
   }
 
   async sendVoiceNotification(reminder: Reminder, user: User) {
-    // Generate Unreal Speech audio if voice character is specified
-    if (reminder.voiceCharacter) {
-      const voiceId = this.getUnrealVoiceId(reminder.voiceCharacter);
-      const audioUrl = await this.generateUnrealSpeech(reminder.rudeMessage, voiceId);
-      
-      if (audioUrl) {
-        // Send audio URL via WebSocket for client-side playback
-        this.sendRealtimeNotification({
-          ...reminder,
-          audioUrl
-        } as any, user);
-        console.log(`Unreal Speech audio generated for ${user.email}: ${voiceId}`);
-        return;
-      }
-    }
+    try {
+      if (!reminder.voiceCharacter) return;
 
-    // Fallback to client-side Web Speech API
-    console.log(`Voice notification for ${user.email}: ${reminder.rudeMessage}`);
+      const voiceSettings = this.getBrowserVoiceSettings(reminder.voiceCharacter);
+      const speechData = this.generateBrowserSpeech(reminder.currentResponse || reminder.rudeMessage, reminder.voiceCharacter);
+
+      if (this.wss) {
+        this.wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              type: 'voice_notification',
+              reminder,
+              speechData,
+              voiceSettings,
+              voiceCharacter: reminder.voiceCharacter
+            }));
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error sending voice notification:', error);
+    }
   }
 
   async sendEmailNotification(reminder: Reminder, user: User) {
@@ -138,7 +73,7 @@ class NotificationService {
     console.log(`Subject: Rude Reminder: ${reminder.title}`);
     console.log(`Body: ${reminder.rudeMessage}`);
     console.log(`Scheduled for: ${reminder.scheduledFor}`);
-    
+
     // TODO: Implement actual email sending with Nodemailer
     // const transporter = nodemailer.createTransporter({...});
     // await transporter.sendMail({

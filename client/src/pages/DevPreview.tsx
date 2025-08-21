@@ -71,61 +71,61 @@ export default function DevPreview() {
           text: selectedReminder.rudeMessage,
           voiceId: selectedReminder.voiceCharacter,
         }),
-      }).catch(err => {
-        console.error('Voice API network error:', err);
-        throw new Error('Network error');
       });
 
-      if (response.ok) {
-        const audioBlob = await response.blob().catch(err => {
-          console.error('Audio blob error:', err);
-          throw new Error('Audio processing error');
-        });
-
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-
-        audio.onended = () => {
-          setIsPlayingVoice(false);
-          URL.revokeObjectURL(audioUrl);
-        };
-
-        audio.onerror = (err) => {
-          console.error('Audio playback error:', err);
-          setIsPlayingVoice(false);
-          URL.revokeObjectURL(audioUrl);
-        };
-
-        await audio.play().catch(err => {
-          console.error('Audio play error:', err);
-          throw new Error('Audio playback failed');
-        });
-      } else {
-        console.warn('Voice API failed, using fallback');
-        throw new Error('Voice API failed');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
-      console.error('Voice preview error:', error);
-      setIsPlayingVoice(false);
 
-      // Fallback to Web Speech API
-      if ('speechSynthesis' in window) {
-        try {
-          const utterance = new SpeechSynthesisUtterance(selectedReminder.rudeMessage);
+      const data = await response.json();
+
+      if (data.useBrowserSpeech && data.speechData && data.voiceSettings) {
+        // Use browser's speech synthesis
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(data.speechData.text);
+          utterance.rate = data.voiceSettings.rate;
+          utterance.pitch = data.voiceSettings.pitch;
+
+          // Try to select a more robotic voice
+          const voices = speechSynthesis.getVoices();
+          if (voices.length > 0) {
+            // Look for Microsoft voices or other robotic-sounding options
+            const roboticVoice = voices.find(voice => 
+              voice.name.includes('Microsoft') || 
+              voice.name.includes('Robot') ||
+              voice.name.includes('Daniel') ||
+              voice.name.includes('Computer')
+            );
+            if (roboticVoice) {
+              utterance.voice = roboticVoice;
+            }
+          }
+
           utterance.onend = () => setIsPlayingVoice(false);
-          utterance.onerror = (err) => {
-            console.error('Speech synthesis error:', err);
+          utterance.onerror = () => {
             setIsPlayingVoice(false);
+            toast({
+              title: "Speech Error",
+              description: "Failed to play speech",
+              variant: "destructive",
+            });
           };
+
           speechSynthesis.speak(utterance);
-        } catch (fallbackError) {
-          console.error('Fallback speech error:', fallbackError);
-          setIsPlayingVoice(false);
+        } else {
+          throw new Error('Speech synthesis not supported');
         }
       } else {
-        console.error('No speech synthesis available');
-        setIsPlayingVoice(false);
+        throw new Error('Invalid response format');
       }
+    } catch (error) {
+      setIsPlayingVoice(false);
+      console.error('Voice preview error:', error);
+      toast({
+        title: "Voice Preview Failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
     }
   };
 
