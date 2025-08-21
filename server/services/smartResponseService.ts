@@ -513,67 +513,75 @@ class SmartResponseService {
     return remarks;
   }
 
-  // Generate high-quality context-aware responses using user's provided context
+  // Generate high-quality context-aware responses using user's selected category
   private generateContextAwareResponses(task: string, context: string, urgencyLevel: string, seedNum: number): string[] {
     const responses: string[] = [];
     
-    // Analyze the context to understand why this task matters
-    const contextIndicators = {
-      important: /important|crucial|critical|vital|urgent|deadline|client|boss|meeting/i.test(context),
-      health: /health|doctor|medicine|exercise|diet|medical|fitness|wellbeing/i.test(context),
-      family: /family|mom|dad|kids|children|spouse|wife|husband|parents|relatives/i.test(context),
-      work: /work|job|career|promotion|client|project|business|professional/i.test(context),
-      financial: /money|bills|finance|budget|payment|debt|savings|investment/i.test(context),
-      social: /friends|social|promise|commitment|event|party|celebration/i.test(context),
-      personal: /promised|committed|goal|dream|resolution|habit|self-improvement/i.test(context)
+    // Map category IDs to response generators
+    const categoryResponses = {
+      work: () => [
+        `Time to handle ${task} - your professional reputation depends on it!`,
+        `${task} isn't going to complete itself. Your career deserves better than procrastination!`,
+        `Every minute you delay ${task}, you're choosing comfort over career advancement. Choose wisely!`
+      ],
+      family: () => [
+        `${task} matters to the people who matter most. Don't let your loved ones down!`,
+        `Family commitments like ${task} show who you really are. Be someone they can count on!`,
+        `${task} is about more than just you - your relationships depend on following through!`
+      ],
+      health: () => [
+        `Your body is your temple, and ${task} is part of maintaining it. No excuses!`,
+        `${task} is an investment in your future self. Stop sabotaging your own wellbeing!`,
+        `Health isn't optional - ${task} is exactly what your body needs right now!`
+      ],
+      meditation: () => [
+        `Your mental peace depends on completing ${task}. Give yourself this gift!`,
+        `${task} is your path to inner clarity. Stop avoiding what your soul needs!`,
+        `Self-reflection through ${task} isn't selfish - it's essential for your growth!`
+      ],
+      learning: () => [
+        `Knowledge is power, and ${task} is your next level up. Don't stay stuck!`,
+        `${task} is an investment in your future intelligence. Smart people take action!`,
+        `Every day you postpone ${task}, you're choosing ignorance over growth!`
+      ],
+      cooking: () => [
+        `Good nutrition starts with ${task}. Your body deserves better than takeout excuses!`,
+        `${task} is self-care disguised as a chore. Feed yourself with intention!`,
+        `Cooking ${task} is an act of love - for yourself and anyone you're feeding!`
+      ],
+      household: () => [
+        `A clean space creates a clear mind. ${task} is more important than you think!`,
+        `${task} isn't just maintenance - it's creating the environment you deserve!`,
+        `Stop living in chaos! ${task} will transform your entire day!`
+      ],
+      finance: () => [
+        `Your future financial freedom depends on completing ${task} today!`,
+        `Money doesn't manage itself - ${task} is your responsibility to your future self!`,
+        `${task} might seem boring, but financial security is anything but boring!`
+      ],
+      entertainment: () => [
+        `Life's too short for boring! ${task} is your ticket to the fun you deserve!`,
+        `${task} isn't just entertainment - it's essential for your mental health and happiness!`,
+        `Stop putting off joy! ${task} is exactly the break your soul needs!`
+      ]
     };
 
-    // Generate responses that directly reference the user's context
-    if (contextIndicators.important) {
-      responses.push(`${task} - this is clearly important to you because ${context}. Don't let yourself down!`);
-      responses.push(`You know ${context} - that's exactly why ${task} can't wait any longer!`);
+    // Generate responses based on selected category
+    if (context && categoryResponses[context as keyof typeof categoryResponses]) {
+      const categoryGenerator = categoryResponses[context as keyof typeof categoryResponses];
+      responses.push(...categoryGenerator());
     }
 
-    if (contextIndicators.health) {
-      responses.push(`Your health is on the line here! ${task} matters because ${context}. Take care of yourself!`);
-      responses.push(`${context}? Then ${task} isn't optional - it's essential for your wellbeing!`);
-    }
-
-    if (contextIndicators.family) {
-      responses.push(`${task} affects the people you love most. Since ${context}, this really matters!`);
-      responses.push(`Family first! ${task} is important because ${context} - don't let them down!`);
-    }
-
-    if (contextIndicators.work) {
-      responses.push(`Your professional reputation depends on this! ${task} is crucial because ${context}.`);
-      responses.push(`Career advancement starts with completing ${task}. You said ${context} - prove it!`);
-    }
-
-    if (contextIndicators.financial) {
-      responses.push(`Money talks, and right now it's saying: complete ${task}! You know ${context}.`);
-      responses.push(`Financial security requires action. ${task} is important because ${context} - secure your future!`);
-    }
-
-    if (contextIndicators.social) {
-      responses.push(`Your relationships matter! ${task} is on your list because ${context} - honor your commitments!`);
-      responses.push(`${context}? Then ${task} isn't just about you - keep your word!`);
-    }
-
-    if (contextIndicators.personal) {
-      responses.push(`You made a commitment to yourself: ${task}. Remember, ${context} - stay true to your goals!`);
-      responses.push(`Personal growth requires follow-through. ${task} matters because ${context} - be who you want to be!`);
-    }
-
-    // If context doesn't match patterns, create general but personalized responses
+    // Add general fallback if no category selected
     if (responses.length === 0) {
-      responses.push(`${task} is on your list for a reason: ${context}. That reason still matters!`);
-      responses.push(`You told me ${context} - that's exactly why ${task} deserves your attention right now!`);
-      responses.push(`Don't ignore what you said matters: ${context}. Complete ${task} and honor your priorities!`);
+      responses.push(`${task} is waiting for your attention. Time to make it happen!`);
+      responses.push(`Stop putting off ${task} - your future self will thank you!`);
+      responses.push(`${task} won't complete itself. Take action now!`);
     }
 
-    // Add urgency based on context
-    if (urgencyLevel === 'high' || contextIndicators.important) {
-      responses.push(`URGENT: ${context} means ${task} can't be postponed. Act now!`);
+    // Add urgency if needed
+    if (urgencyLevel === 'high') {
+      responses.push(`URGENT: ${task} can't wait any longer. Act now!`);
     }
 
     return responses.slice(0, 3); // Return top 3 context-aware responses

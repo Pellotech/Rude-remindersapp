@@ -529,9 +529,16 @@ export default function ReminderForm() {
 
   // Handle context category selection
   const handleContextCategorySelect = (category: typeof contextCategories[0]) => {
-    setSelectedContextCategory(category.id);
-    // Set the context field with the category description
-    form.setValue("context", category.description);
+    if (selectedContextCategory === category.id) {
+      // Deselect if already selected
+      setSelectedContextCategory("");
+      form.setValue("context", "");
+    } else {
+      // Select new category
+      setSelectedContextCategory(category.id);
+      // Set the context field with the category ID for AI analysis
+      form.setValue("context", category.id);
+    }
   };
 
   // Multi-day selection helper functions
@@ -705,19 +712,19 @@ export default function ReminderForm() {
               )}
             />
 
-            {/* Context Field for Better AI Responses */}
+            {/* Context Categories for Better AI Responses */}
             <FormField
               control={form.control}
               name="context"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex items-center">
-                    <span>Why is this important to you?</span>
+                    <span>What type of reminder is this?</span>
                     <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
                   </FormLabel>
                   
                   {/* Quick Context Categories - Horizontal Scrolling */}
-                  <div className="mb-3">
+                  <div className="space-y-2">
                     <div className="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
                       {contextCategories.map((category) => {
                         const IconComponent = category.icon;
@@ -742,19 +749,16 @@ export default function ReminderForm() {
                         );
                       })}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      👆 Tap a category above or type your own reason below
-                    </p>
+                    {selectedContextCategory && (
+                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        Selected: {contextCategories.find(c => c.id === selectedContextCategory)?.description}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Hidden input to store the selected context */}
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="e.g., It's for an important client, My health depends on it, I promised my family"
-                        {...field}
-                      />
-                      <Bot className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    </div>
+                    <input type="hidden" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
