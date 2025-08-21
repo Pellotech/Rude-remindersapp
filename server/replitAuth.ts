@@ -162,7 +162,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
         claims: {
           sub: "dev-user-001",
           email: "developer@example.com",
-          first_name: "Dev",
+          first_name: "Developer",
           last_name: "User",
           profile_image_url: "",
           exp: Math.floor(Date.now() / 1000) + 3600 // 1 hour from now
@@ -177,7 +177,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
         await storage.upsertUser({
           id: "dev-user-001",
           email: "developer@example.com",
-          firstName: "Dev",
+          firstName: "Developer",
           lastName: "User",
           profileImageUrl: ""
         });
