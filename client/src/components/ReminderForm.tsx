@@ -29,6 +29,7 @@ import { CulturalQuotesService } from "@/services/culturalQuotesService";
 import { MobileCamera } from "./MobileCamera";
 import { getPlatformInfo, supportsCamera } from "@/utils/platformDetection";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -417,13 +418,13 @@ export default function ReminderForm() {
 
   // Multi-day selection helper functions
   const daysOfWeek = [
-    { id: "monday", label: "Mon", full: "Monday" },
-    { id: "tuesday", label: "Tue", full: "Tuesday" },
-    { id: "wednesday", label: "Wed", full: "Wednesday" },
-    { id: "thursday", label: "Thu", full: "Thursday" },
-    { id: "friday", label: "Fri", full: "Friday" },
-    { id: "saturday", label: "Sat", full: "Saturday" },
-    { id: "sunday", label: "Sun", full: "Sunday" },
+    { id: "monday", label: "Mon", short: "M", full: "Monday" },
+    { id: "tuesday", label: "Tue", short: "T", full: "Tuesday" },
+    { id: "wednesday", label: "Wed", short: "W", full: "Wednesday" },
+    { id: "thursday", label: "Thu", short: "T", full: "Thursday" },
+    { id: "friday", label: "Fri", short: "F", full: "Friday" },
+    { id: "saturday", label: "Sat", short: "S", full: "Saturday" },
+    { id: "sunday", label: "Sun", short: "S", full: "Sunday" },
   ];
 
   const toggleDay = (dayId: string) => {
@@ -595,124 +596,132 @@ export default function ReminderForm() {
                   
                   <FormControl>
                     {isMultiDay ? (
-                      /* Multi-Day Selection Grid */
-                      <div className="space-y-3 p-4 border rounded-lg bg-red-50">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4 text-red-600" />
-                          <span className="text-sm font-medium text-red-800">Select Days of Week</span>
-                          {selectedDays.length > 0 && (
-                            <span className="ml-2 text-xs text-red-600 bg-red-100 px-2 py-1 rounded">
-                              {selectedDays.length} days selected
-                            </span>
-                          )}
-                        </div>
-                        
-                        <div className="grid grid-cols-7 gap-2">
-                          {daysOfWeek.map((day) => (
-                            <Button
-                              key={day.id}
-                              type="button"
-                              variant={selectedDays.includes(day.id) ? "default" : "outline"}
-                              size="sm"
-                              className={`text-xs h-12 ${
-                                selectedDays.includes(day.id) 
-                                  ? "bg-red-600 hover:bg-red-700 text-white border-red-600" 
-                                  : "hover:bg-red-100 border-gray-300"
-                              }`}
-                              onClick={() => toggleDay(day.id)}
-                            >
-                              <div className="flex flex-col items-center">
-                                <span className="font-semibold">{day.label}</span>
-                              </div>
-                            </Button>
-                          ))}
-                        </div>
-
-                        {/* Time Selection for Multi-Day */}
-                        <div className="space-y-3">
-                          <div className="flex items-center space-x-2">
-                            <Clock className="h-4 w-4 text-red-600" />
-                            <span className="text-sm font-medium text-red-800">Set Time</span>
-                          </div>
-                          
-                          <div className="flex items-center space-x-4">
-                            {/* Hour Selection - Scrollable */}
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-600">Hour:</span>
-                              <div className="relative">
-                                <div className="w-16 h-10 border border-gray-300 rounded-md overflow-hidden bg-white">
-                                  <div 
-                                    className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
-                                    style={{ scrollbarWidth: 'thin' }}
-                                  >
-                                    <div className="py-1">
-                                      {Array.from({ length: 24 }, (_, i) => (
-                                        <div
-                                          key={i}
-                                          className={`px-3 py-1 text-sm cursor-pointer hover:bg-red-50 text-center ${
-                                            multiDayHour === i ? 'bg-red-100 text-red-800 font-medium' : 'text-gray-700'
-                                          }`}
-                                          onClick={() => setMultiDayHour(i)}
-                                        >
-                                          {i.toString().padStart(2, '0')}
-                                        </div>
-                                      ))}
+                      /* Multi-Day Selection - Card Layout like Single Day */
+                      <div className="space-y-4">
+                        {/* Days Selection Card */}
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="text-lg">Select Days</CardTitle>
+                            <p className="text-sm text-muted-foreground">Choose which days of the week to repeat</p>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="grid grid-cols-7 gap-2">
+                              {daysOfWeek.map((day) => {
+                                const isSelected = selectedDays.includes(day.id);
+                                return (
+                                  <div key={day.id} className="text-center">
+                                    <div className="text-xs font-medium text-muted-foreground mb-1">
+                                      {day.label}
                                     </div>
+                                    <Button
+                                      type="button"
+                                      variant={isSelected ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => toggleDay(day.id)}
+                                      className={cn(
+                                        "w-full h-12 flex flex-col items-center justify-center p-1",
+                                        isSelected && "bg-primary text-primary-foreground"
+                                      )}
+                                    >
+                                      <span className="text-lg font-semibold">{day.short}</span>
+                                    </Button>
                                   </div>
-                                </div>
-                              </div>
+                                );
+                              })}
                             </div>
+                          </CardContent>
+                        </Card>
 
-                            {/* Minute Selection - Scrollable */}
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-600">Min:</span>
-                              <div className="relative">
-                                <div className="w-16 h-10 border border-gray-300 rounded-md overflow-hidden bg-white">
-                                  <div 
-                                    className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
-                                    style={{ scrollbarWidth: 'thin' }}
-                                  >
-                                    <div className="py-1">
-                                      {[0, 15, 30, 45].map((minute) => (
-                                        <div
-                                          key={minute}
-                                          className={`px-3 py-1 text-sm cursor-pointer hover:bg-red-50 text-center ${
-                                            multiDayMinute === minute ? 'bg-red-100 text-red-800 font-medium' : 'text-gray-700'
-                                          }`}
-                                          onClick={() => setMultiDayMinute(minute)}
-                                        >
-                                          {minute.toString().padStart(2, '0')}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Time Display */}
-                            <div className="text-sm font-medium text-red-800">
-                              {multiDayHour.toString().padStart(2, '0')}:{multiDayMinute.toString().padStart(2, '0')}
-                            </div>
-                          </div>
-                        </div>
-
+                        {/* Time Selection Card */}
                         {selectedDays.length > 0 && (
-                          <>
-                            <p className="text-xs text-red-600 mt-2">
-                              Selected: {selectedDays.map(dayId => 
-                                daysOfWeek.find(d => d.id === dayId)?.full
-                              ).join(", ")} at {multiDayHour.toString().padStart(2, '0')}:{multiDayMinute.toString().padStart(2, '0')}
-                            </p>
-                            <div className="bg-red-100 p-3 rounded-md mt-3">
-                              <p className="text-sm font-medium text-red-800">Multi-Day Summary:</p>
-                              <p className="text-xs text-red-700 mt-1">
-                                Your reminder will be sent on <strong>{selectedDays.map(dayId => 
-                                  daysOfWeek.find(d => d.id === dayId)?.full
-                                ).join(", ")}</strong> at <strong>{multiDayHour.toString().padStart(2, '0')}:{multiDayMinute.toString().padStart(2, '0')}</strong> with <strong>different responses</strong> for each day to keep it fresh!
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg">Select Time</CardTitle>
+                              <p className="text-sm text-muted-foreground">
+                                Choose a time for your recurring reminders
                               </p>
-                            </div>
-                          </>
+                            </CardHeader>
+                            <CardContent>
+                              {/* Hour Selection */}
+                              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                {Array.from({ length: 24 }, (_, i) => {
+                                  const hour = i;
+                                  const isSelected = multiDayHour === hour;
+                                  const display = hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
+                                  
+                                  return (
+                                    <Button
+                                      key={hour}
+                                      type="button"
+                                      variant={isSelected ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setMultiDayHour(hour)}
+                                      className={cn(
+                                        "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
+                                        isSelected && "bg-primary text-primary-foreground"
+                                      )}
+                                    >
+                                      {display}
+                                    </Button>
+                                  );
+                                })}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
+
+                        {/* Minutes Selection Card */}
+                        {selectedDays.length > 0 && (
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-lg">Select Minutes (Optional)</CardTitle>
+                              <p className="text-sm text-muted-foreground">
+                                Fine-tune your reminder time
+                              </p>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                {[
+                                  { value: 0, label: "On the hour" },
+                                  { value: 15, label: "Quarter past" },
+                                  { value: 30, label: "Half past" },
+                                  { value: 45, label: "Quarter to" }
+                                ].map((slot) => {
+                                  const isSelected = multiDayMinute === slot.value;
+                                  
+                                  return (
+                                    <Button
+                                      key={slot.value}
+                                      type="button"
+                                      variant={isSelected ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setMultiDayMinute(slot.value)}
+                                      className={cn(
+                                        "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
+                                        isSelected && "bg-primary text-primary-foreground"
+                                      )}
+                                    >
+                                      {slot.label}
+                                    </Button>
+                                  );
+                                })}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
+
+                        {/* Selected Summary Display */}
+                        {selectedDays.length > 0 && (
+                          <div className="text-center p-3 bg-muted rounded-lg">
+                            <p className="text-sm text-muted-foreground">Selected recurring reminder:</p>
+                            <p className="font-medium">
+                              {selectedDays.map(dayId => 
+                                daysOfWeek.find(d => d.id === dayId)?.full
+                              ).join(", ")} at {
+                                multiDayHour === 0 ? "12" : multiDayHour === 12 ? "12" : multiDayHour > 12 ? `${multiDayHour - 12}` : `${multiDayHour}`
+                              }:{multiDayMinute.toString().padStart(2, '0')} {multiDayHour >= 12 ? "PM" : "AM"}
+                            </p>
+                          </div>
                         )}
                       </div>
                     ) : (
