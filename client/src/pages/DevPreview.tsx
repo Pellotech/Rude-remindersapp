@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { PlayCircle, Loader2, Clock, User, Volume2, RefreshCw } from 'lucide-react';
+import { PlayCircle, Loader2, Clock, User, Volume2, RefreshCw, ArrowUpDown } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +14,7 @@ export default function DevPreview() {
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [moreResponses, setMoreResponses] = useState<any>(null); // State to store more responses
   const [loadingMore, setLoadingMore] = useState(false); // State for loading more responses
+  const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('scheduled'); // New state for sorting
   const { toast } = useToast();
 
   // Fetch all reminders
@@ -25,6 +26,15 @@ export default function DevPreview() {
     },
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
+  });
+
+  // Sort reminders based on selected criteria
+  const sortedReminders = [...reminders].sort((a: Reminder, b: Reminder) => {
+    if (sortBy === 'scheduled') {
+      return new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime();
+    } else {
+      return new Date(a.createdAt || a.scheduledFor).getTime() - new Date(b.createdAt || b.scheduledFor).getTime();
+    }
   });
 
   const fetchMoreResponses = async (reminderId: string, forceRefresh = false) => {
@@ -190,9 +200,13 @@ export default function DevPreview() {
     }
   };
 
-  const formatDateTime = (dateInput: string | Date, reminder?: Reminder) => {
+  const formatDateTime = (dateInput: string | Date, reminder?: Reminder, isCreatedDate = false) => {
     const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     const formatted = date.toLocaleString();
+
+    if (isCreatedDate) {
+      return `Created: ${formatted}`;
+    }
 
     // If it's a multi-day reminder, show the selected days
     if (reminder?.isMultiDay && reminder?.selectedDays && reminder.selectedDays.length > 0) {
@@ -245,18 +259,31 @@ export default function DevPreview() {
         {/* Reminders List */}
         <Card>
           <CardHeader>
-            <CardTitle>Your Reminders</CardTitle>
-            <CardDescription>Click a reminder to preview it</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Your Reminders</CardTitle>
+                <CardDescription>Click a reminder to preview it</CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSortBy(sortBy === 'scheduled' ? 'created' : 'scheduled')}
+                className="flex items-center gap-2"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+                Sort by {sortBy === 'scheduled' ? 'Date Created' : 'Date Scheduled'}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            {!reminders || reminders.length === 0 ? (
+            {!sortedReminders || sortedReminders.length === 0 ? (
               <div className="text-center text-gray-500 py-8">
                 <p>No reminders found.</p>
                 <p className="text-sm mt-2">Create a reminder from the main page first!</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {reminders.map((reminder: Reminder) => (
+                {sortedReminders.map((reminder: Reminder) => (
                   <div
                     key={reminder.id}
                     className={`p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
@@ -272,7 +299,10 @@ export default function DevPreview() {
                         <h4 className="font-medium text-sm">{reminder.title}</h4>
                         <p className="text-xs text-gray-500 mt-1">
                           <Clock className="inline h-3 w-3 mr-1" />
-                          {formatDateTime(reminder.scheduledFor, reminder)}
+                          {sortBy === 'scheduled' 
+                            ? formatDateTime(reminder.scheduledFor, reminder)
+                            : formatDateTime(reminder.createdAt || reminder.scheduledFor, reminder, true)
+                          }
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1">
