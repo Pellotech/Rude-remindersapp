@@ -30,6 +30,7 @@ import { MobileCamera } from "./MobileCamera";
 import { getPlatformInfo, supportsCamera } from "@/utils/platformDetection";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -163,10 +164,6 @@ export default function ReminderForm() {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   // Collapsible states for advanced sections
-  const [notificationOpen, setNotificationOpen] = useState(false);
-  const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
-  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
-  const [motivationalOpen, setMotivationalOpen] = useState(false);
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
 
 
@@ -875,6 +872,78 @@ export default function ReminderForm() {
             {/* Show advanced sections only if not simplified interface */}
             {!isSimplifiedInterface && (
               <>
+                {/* Notification Options */}
+                <div className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
+                  <p className="text-sm text-muted-foreground">Choose how you want to be notified</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="browserNotification"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
+                          <div className="flex items-center">
+                            <Bell className="text-rude-red-600 mr-2 h-4 w-4" />
+                            <Label className="text-sm font-medium cursor-pointer" htmlFor="browser-notification">
+                              Browser
+                            </Label>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              id="browser-notification"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="voiceNotification"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
+                          <div className="flex items-center">
+                            <Volume2 className="text-rude-red-600 mr-2 h-4 w-4" />
+                            <Label className="text-sm font-medium cursor-pointer" htmlFor="voice-notification">
+                              Voice
+                            </Label>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              id="voice-notification"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="emailNotification"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
+                          <div className="flex items-center">
+                            <Mail className="text-rude-red-600 mr-2 h-4 w-4" />
+                            <Label className="text-sm font-medium cursor-pointer" htmlFor="email-notification">
+                              Email
+                            </Label>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              id="email-notification"
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
                 {/* Quick Settings */}
                 <Collapsible open={quickSettingsOpen} onOpenChange={setQuickSettingsOpen}>
                   <CollapsibleTrigger asChild>
@@ -893,13 +962,13 @@ export default function ReminderForm() {
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Quickly adjust common reminder settings</p>
                     <div className="grid grid-cols-2 gap-3">
-                      <div 
+                      <div
                         className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
                         onClick={() => form.setValue("rudenessLevel", 1)}
                       >
                         😊 Be Nice
                       </div>
-                      <div 
+                      <div
                         className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
                         onClick={() => form.setValue("rudenessLevel", 5)}
                       >
@@ -909,89 +978,6 @@ export default function ReminderForm() {
                   </CollapsibleContent>
                 </Collapsible>
 
-                {/* Notification Options */}
-                <Collapsible open={notificationOpen} onOpenChange={setNotificationOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                      type="button"
-                    >
-                      <div className="flex items-center">
-                        <Bell className="mr-2 h-4 w-4 text-rude-red-600" />
-                        Notification Options
-                      </div>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${notificationOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Choose how you want to be notified</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="browserNotification"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
-                            <div className="flex items-center">
-                              <Bell className="text-rude-red-600 mr-2 h-4 w-4" />
-                              <FormLabel className="text-sm font-medium cursor-pointer">
-                                Browser
-                              </FormLabel>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="voiceNotification"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
-                            <div className="flex items-center">
-                              <Volume2 className="text-rude-red-600 mr-2 h-4 w-4" />
-                              <FormLabel className="text-sm font-medium cursor-pointer">
-                                Voice
-                              </FormLabel>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="emailNotification"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
-                            <div className="flex items-center">
-                              <Mail className="text-rude-red-600 mr-2 h-4 w-4" />
-                              <FormLabel className="text-sm font-medium cursor-pointer">
-                                Email
-                              </FormLabel>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
 
                 {/* Voice Characters */}
                 <Collapsible open={voiceCharacterOpen} onOpenChange={setVoiceCharacterOpen}>
@@ -1094,8 +1080,8 @@ export default function ReminderForm() {
                       <div className="grid grid-cols-3 gap-2">
                         {selectedAttachments.map((attachment, index) => (
                           <div key={index} className="relative">
-                            <img 
-                              src={attachment} 
+                            <img
+                              src={attachment}
                               alt={`Attachment ${index + 1}`}
                               className="w-full h-20 object-cover rounded-md"
                             />
