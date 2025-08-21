@@ -95,8 +95,26 @@ export default function DevPreview() {
     }
   };
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
+  const formatDateTime = (dateString: string, reminder?: Reminder) => {
+    const date = new Date(dateString);
+    const formatted = date.toLocaleString();
+    
+    // If it's a multi-day reminder, show the selected days
+    if (reminder?.isMultiDay && reminder?.selectedDays && reminder.selectedDays.length > 0) {
+      const dayNames = {
+        'monday': 'Mon',
+        'tuesday': 'Tue', 
+        'wednesday': 'Wed',
+        'thursday': 'Thu',
+        'friday': 'Fri',
+        'saturday': 'Sat',
+        'sunday': 'Sun'
+      };
+      const selectedDayNames = reminder.selectedDays.map(day => dayNames[day as keyof typeof dayNames]).join(', ');
+      return `${formatted} (Repeats: ${selectedDayNames})`;
+    }
+    
+    return formatted;
   };
 
   const getRudenessColor = (level: number) => {
@@ -156,13 +174,18 @@ export default function DevPreview() {
                         <h4 className="font-medium text-sm">{reminder.title}</h4>
                         <p className="text-xs text-gray-500 mt-1">
                           <Clock className="inline h-3 w-3 mr-1" />
-                          {formatDateTime(reminder.scheduledFor)}
+                          {formatDateTime(reminder.scheduledFor, reminder)}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <Badge className={`text-xs ${getRudenessColor(reminder.rudenessLevel)}`}>
                           Level {reminder.rudenessLevel}
                         </Badge>
+                        {reminder.isMultiDay && (
+                          <Badge variant="secondary" className="text-xs">
+                            Multi-Day
+                          </Badge>
+                        )}
                         {reminder.completed && (
                           <Badge variant="outline" className="text-xs">
                             Completed
@@ -229,7 +252,19 @@ export default function DevPreview() {
 
                 <div>
                   <h4 className="font-medium mb-1">Scheduled For</h4>
-                  <p className="text-sm text-gray-600">{formatDateTime(selectedReminder.scheduledFor)}</p>
+                  <p className="text-sm text-gray-600">{formatDateTime(selectedReminder.scheduledFor, selectedReminder)}</p>
+                  {selectedReminder.isMultiDay && selectedReminder.selectedDays && (
+                    <div className="mt-2">
+                      <h5 className="text-sm font-medium text-gray-700">Repeating Days:</h5>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {selectedReminder.selectedDays.map((day) => (
+                          <Badge key={day} variant="outline" className="text-xs capitalize">
+                            {day}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {selectedReminder.motivationalQuote && (
