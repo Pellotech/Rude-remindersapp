@@ -108,8 +108,7 @@ export default function DevPreview() {
                   voice.name.includes('Male') || 
                   voice.name.includes('David') ||
                   voice.name.includes('Mark') ||
-                  voice.name.includes('Daniel') ||
-                  voice.gender === 'male'
+                  voice.name.includes('Daniel')
                 );
                 break;
               
@@ -129,8 +128,7 @@ export default function DevPreview() {
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
                   voice.name.includes('Victoria') ||
-                  voice.name.includes('Susan') ||
-                  voice.gender === 'female'
+                  voice.name.includes('Susan')
                 );
                 break;
 
@@ -140,8 +138,7 @@ export default function DevPreview() {
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
                   voice.name.includes('Victoria') ||
-                  voice.name.includes('Susan') ||
-                  voice.gender === 'female'
+                  voice.name.includes('Susan')
                 );
                 break;
               
@@ -161,8 +158,7 @@ export default function DevPreview() {
                   voice.name.includes('Male') || 
                   voice.name.includes('David') ||
                   voice.name.includes('Mark') ||
-                  voice.name.includes('Daniel') ||
-                  voice.gender === 'male'
+                  voice.name.includes('Daniel')
                 );
                 break;
             }
@@ -442,10 +438,57 @@ export default function DevPreview() {
                 {selectedReminder && (
                   <div className="mt-4">
                     {moreResponses && (
-                      <div className="mb-4 p-3 border rounded-lg bg-gray-50">
-                        <h5 className="font-medium mb-2">More AI Responses:</h5>
-                        <p className="text-sm text-gray-700">{moreResponses.rudeMessage}</p>
-                        <p className="text-xs text-gray-500 mt-1">Generated at: {new Date(moreResponses.timestamp).toLocaleString()}</p>
+                      <div className="mb-4 space-y-3">
+                        <div className="p-3 border rounded-lg bg-blue-50">
+                          <h5 className="font-medium mb-2 text-blue-800">🎯 Personalized AI Responses:</h5>
+                          {moreResponses.personalizedResponses && moreResponses.personalizedResponses.length > 0 ? (
+                            <div className="space-y-2">
+                              {moreResponses.personalizedResponses.map((response: string, index: number) => (
+                                <p key={index} className="text-sm text-blue-700 bg-white p-2 rounded border-l-2 border-blue-300">
+                                  {response}
+                                </p>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-blue-600 italic">No personalized responses available.</p>
+                          )}
+                        </div>
+
+                        <div className="p-3 border rounded-lg bg-green-50">
+                          <h5 className="font-medium mb-2 text-green-800">💡 Contextual Remarks:</h5>
+                          {moreResponses.contextualRemarks && moreResponses.contextualRemarks.length > 0 ? (
+                            <div className="space-y-2">
+                              {moreResponses.contextualRemarks.map((remark: string, index: number) => (
+                                <p key={index} className="text-sm text-green-700 bg-white p-2 rounded border-l-2 border-green-300">
+                                  {remark}
+                                </p>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-green-600 italic">No contextual remarks available.</p>
+                          )}
+                        </div>
+
+                        <div className="p-3 border rounded-lg bg-orange-50">
+                          <h5 className="font-medium mb-2 text-orange-800">🔥 Additional Variations:</h5>
+                          {moreResponses.additionalResponses && moreResponses.additionalResponses.length > 0 ? (
+                            <div className="space-y-2">
+                              {moreResponses.additionalResponses.map((response: string, index: number) => (
+                                <p key={index} className="text-sm text-orange-700 bg-white p-2 rounded border-l-2 border-orange-300">
+                                  {response}
+                                </p>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-orange-600 italic">No additional variations available.</p>
+                          )}
+                        </div>
+
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">
+                            Generated {moreResponses.totalCount} responses at {new Date(moreResponses.generatedAt).toLocaleString()}
+                          </p>
+                        </div>
                       </div>
                     )}
                     <div className="flex gap-2">

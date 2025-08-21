@@ -1,4 +1,3 @@
-
 import { storage } from "../storage";
 import type { Reminder } from "@shared/schema";
 
@@ -13,38 +12,39 @@ interface UserBehaviorData {
 class SmartResponseService {
   private responseVersion = Date.now(); // Cache-busting version
   
-  // Analyze user behavior and suggest better responses
+  // Generate truly personalized AI responses that correlate with the specific task
   async getPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
     const userBehavior = await this.getUserBehaviorData(reminder.userId);
     const responses: string[] = [];
     
     // Add randomization to ensure variety even with same inputs
-    const randomSeed = forceRefresh ? Date.now() : reminder.id.slice(-8);
+    const randomSeed = forceRefresh ? Date.now().toString() : reminder.id.slice(-8);
+    const category = this.categorizeReminder(reminder.originalMessage);
     
-    // Get base response variations with shuffling
-    const phrases = await storage.getRudePhrasesForLevel(reminder.rudenessLevel);
-    const shuffledPhrases = this.shuffleArray([...phrases], randomSeed);
+    // Generate task-specific AI responses based on the reminder content
+    const taskSpecificResponses = this.generateTaskSpecificResponses(reminder, category, randomSeed);
+    responses.push(...taskSpecificResponses);
     
-    // Adapt responses based on user behavior
+    // Add behavior-adapted responses if we have user data
     if (userBehavior) {
-      // If user responds better to higher rudeness, make it spicier
+      // If user responds better to higher rudeness, make responses more direct
       if (userBehavior.responseToRudenessLevel[reminder.rudenessLevel] < 50) {
-        const harshPhrases = await storage.getRudePhrasesForLevel(Math.min(5, reminder.rudenessLevel + 1));
-        const shuffledHarsh = this.shuffleArray([...harshPhrases], randomSeed);
-        responses.push(...shuffledHarsh.slice(0, 2).map(p => `${reminder.originalMessage} ${p.phrase}`));
+        const intensifiedResponses = this.intensifyResponsesForTask(reminder, category, randomSeed);
+        responses.push(...intensifiedResponses);
       }
       
       // Add motivational style based on preference
       responses.push(...this.getStyleBasedResponses(reminder, userBehavior.preferredMotivationStyle, randomSeed));
     }
     
-    // Fallback to standard responses with variety
-    if (responses.length === 0) {
-      responses.push(...shuffledPhrases.slice(0, 3).map(p => `${reminder.originalMessage} ${p.phrase}`));
+    // Fallback to context-aware responses if we still need more
+    if (responses.length < 3) {
+      const contextualResponses = this.generateContextualResponses(reminder, category, randomSeed);
+      responses.push(...contextualResponses);
     }
     
-    // Ensure we always return different responses by adding variation
-    return this.ensureResponseVariety(responses, reminder, randomSeed);
+    // Ensure we always return varied, task-correlated responses
+    return this.ensureTaskCorrelatedVariety(responses, reminder, randomSeed);
   }
 
   private shuffleArray(array: any[], seed: string): any[] {
@@ -57,23 +57,250 @@ class SmartResponseService {
     return shuffled;
   }
 
-  private ensureResponseVariety(responses: string[], reminder: Reminder, seed: string): string[] {
-    // Add timestamp-based variations to make responses unique
-    const timeVariations = [
-      "Right now, no excuses!",
-      "Time's ticking!",
-      "Clock's judging you!",
-      "Deadline approaching!",
-      "Your future self is watching!"
+  // Generate task-specific responses based on reminder content
+  private generateTaskSpecificResponses(reminder: Reminder, category: string, seed: string): string[] {
+    const task = reminder.originalMessage.toLowerCase();
+    const responses: string[] = [];
+    const seedNum = parseInt(seed, 16) || Date.now();
+    
+    // Extract key action words from the task
+    const actionWords = this.extractActionWords(task);
+    const urgencyLevel = this.determineUrgencyLevel(reminder);
+    
+    // Generate contextually relevant responses based on the specific task
+    if (actionWords.length > 0) {
+      const primaryAction = actionWords[0];
+      responses.push(...this.generateActionSpecificResponses(primaryAction, task, urgencyLevel, seedNum));
+    }
+    
+    // Add category-specific intelligent responses
+    responses.push(...this.generateCategoryIntelligentResponses(category, task, urgencyLevel, seedNum));
+    
+    // Add consequence-based responses specific to the task
+    responses.push(...this.generateConsequenceBasedResponses(task, category, seedNum));
+    
+    return responses.slice(0, 4); // Return top 4 most relevant
+  }
+
+  // Generate intensified responses for users who respond better to higher rudeness
+  private intensifyResponsesForTask(reminder: Reminder, category: string, seed: string): string[] {
+    const task = reminder.originalMessage.toLowerCase();
+    const responses: string[] = [];
+    const seedNum = parseInt(seed, 16) || Date.now();
+    
+    const intensityTemplates = {
+      health: [
+        `Seriously? You're still putting off ${task}? Your body deserves better than your excuses!`,
+        `${task} isn't going to happen by itself. Stop making your future self pay for today's laziness!`,
+        `Every minute you delay ${task}, you're choosing comfort over your wellbeing. Choose better!`
+      ],
+      work: [
+        `${task} is literally your job! Stop scrolling and start doing what you're paid for!`,
+        `Your career depends on completing ${task}. Procrastination isn't a professional strategy!`,
+        `That promotion you want? It starts with finishing ${task} today, not tomorrow!`
+      ],
+      personal: [
+        `${task} matters to people who matter to you. Stop letting them down!`,
+        `You committed to ${task}. Your word should mean something, even to yourself!`,
+        `${task} isn't optional if you value your relationships. Make it happen!`
+      ],
+      general: [
+        `${task} has been on your list long enough. Either do it or admit you don't actually want to achieve anything!`,
+        `Stop pretending ${task} will magically complete itself. You know what needs to be done!`,
+        `${task} is your responsibility. Own it, do it, move on!`
+      ]
+    };
+    
+    const templates = intensityTemplates[category as keyof typeof intensityTemplates] || intensityTemplates.general;
+    const selectedTemplate = templates[seedNum % templates.length];
+    responses.push(selectedTemplate);
+    
+    return responses;
+  }
+
+  // Generate contextual responses when we need more variety
+  private generateContextualResponses(reminder: Reminder, category: string, seed: string): string[] {
+    const task = reminder.originalMessage;
+    const responses: string[] = [];
+    const seedNum = parseInt(seed, 16) || Date.now();
+    const hour = new Date().getHours();
+    
+    // Time-aware responses
+    if (hour < 9) {
+      responses.push(`Start your day right with ${task}. Morning momentum is everything!`);
+    } else if (hour > 18) {
+      responses.push(`End your day strong by completing ${task}. You'll sleep better knowing it's done!`);
+    } else {
+      responses.push(`Perfect timing to tackle ${task}. The day is yours to conquer!`);
+    }
+    
+    // Add motivational context based on task category
+    const motivationalContext = this.generateMotivationalContext(task, category, seedNum);
+    responses.push(...motivationalContext);
+    
+    return responses;
+  }
+
+  // Replace the old ensureResponseVariety with task-correlated variety
+  private ensureTaskCorrelatedVariety(responses: string[], reminder: Reminder, seed: string): string[] {
+    const task = reminder.originalMessage;
+    const uniqueResponses = Array.from(new Set(responses)); // Remove duplicates
+    
+    // Add task-specific urgency cues
+    const urgencyCues = [
+      `Don't let ${task} become tomorrow's regret.`,
+      `${task} is calling your name. Answer it!`,
+      `Your future self is counting on you to complete ${task} today.`,
+      `${task} won't get easier by waiting. Start now!`,
+      `Every completed ${task} is a win. Collect your victory!`
     ];
     
-    const seedIndex = parseInt(seed, 16) % timeVariations.length;
-    const uniqueResponses = responses.map((response, index) => {
-      const variation = timeVariations[(seedIndex + index) % timeVariations.length];
-      return `${response} ${variation}`;
+    const seedIndex = parseInt(seed, 16) % urgencyCues.length;
+    const finalResponses = uniqueResponses.slice(0, 5).map((response, index) => {
+      const cue = urgencyCues[(seedIndex + index) % urgencyCues.length];
+      return `${response} ${cue}`;
     });
     
-    return uniqueResponses;
+    return finalResponses;
+  }
+
+  // Helper method to extract action words from task description
+  private extractActionWords(task: string): string[] {
+    const actionPatterns = [
+      /\b(call|email|text|message|contact)\b/g,
+      /\b(go to|visit|attend|meet)\b/g,
+      /\b(finish|complete|submit|send)\b/g,
+      /\b(buy|purchase|get|pick up)\b/g,
+      /\b(clean|wash|organize|tidy)\b/g,
+      /\b(exercise|workout|run|gym)\b/g,
+      /\b(study|read|learn|practice)\b/g,
+      /\b(cook|prepare|make)\b/g,
+      /\b(fix|repair|replace)\b/g,
+      /\b(plan|schedule|book)\b/g
+    ];
+    
+    const foundActions: string[] = [];
+    actionPatterns.forEach(pattern => {
+      const matches = task.match(pattern);
+      if (matches) {
+        foundActions.push(...matches);
+      }
+    });
+    
+    return Array.from(new Set(foundActions)); // Remove duplicates
+  }
+
+  // Helper method to determine urgency level
+  private determineUrgencyLevel(reminder: Reminder): 'low' | 'medium' | 'high' {
+    const scheduledDate = new Date(reminder.scheduledFor);
+    const now = new Date();
+    const timeDiff = scheduledDate.getTime() - now.getTime();
+    const hoursDiff = timeDiff / (1000 * 60 * 60);
+    
+    if (hoursDiff < 2) return 'high';
+    if (hoursDiff < 24) return 'medium';
+    return 'low';
+  }
+
+  // Generate action-specific responses
+  private generateActionSpecificResponses(action: string, task: string, urgency: string, seed: number): string[] {
+    const responses: string[] = [];
+    
+    const actionTemplates: Record<string, string[]> = {
+      'call': [
+        `That ${task} conversation isn't getting easier to start. Dial the number and get it over with!`,
+        `${task} requires actual human connection. Put down the phone, pick up the phone, and make it happen!`
+      ],
+      'email': [
+        `${task} needs to leave your drafts folder and enter the real world. Hit send!`,
+        `Stop overthinking ${task}. Write it, review it once, send it. Done!`
+      ],
+      'exercise': [
+        `${task} is your body's way of asking for respect. Give it what it deserves!`,
+        `Every day you skip ${task}, you're choosing weakness over strength. Choose differently!`
+      ],
+      'clean': [
+        `${task} isn't going to happen by itself. Your space affects your mindspace!`,
+        `${task} takes 20 minutes but improves your whole week. Start now!`
+      ],
+      'study': [
+        `${task} is an investment in your future self. Start earning those returns!`,
+        `Knowledge compounds daily. ${task} is today's deposit in your mental bank!`
+      ]
+    };
+    
+    // Find matching templates for the action
+    Object.keys(actionTemplates).forEach(key => {
+      if (action.includes(key)) {
+        const templates = actionTemplates[key];
+        responses.push(templates[seed % templates.length]);
+      }
+    });
+    
+    return responses;
+  }
+
+  // Generate category-intelligent responses
+  private generateCategoryIntelligentResponses(category: string, task: string, urgency: string, seed: number): string[] {
+    const responses: string[] = [];
+    
+    const categoryInsights: Record<string, string[]> = {
+      health: [
+        `${task} is literally about keeping yourself alive and thriving. Priority level: MAXIMUM!`,
+        `Your health is your wealth. ${task} is a deposit, not an expense!`
+      ],
+      work: [
+        `${task} affects your professional reputation. People notice who delivers!`,
+        `Career momentum starts with completing ${task}. Build that momentum!`
+      ],
+      personal: [
+        `${task} strengthens the relationships that matter. Show up for people who show up for you!`,
+        `Personal commitments like ${task} define who you are when no one's watching!`
+      ],
+      finance: [
+        `${task} is about securing your future. Financial stress isn't worth the procrastination!`,
+        `Money problems compound with neglect. ${task} is damage control and growth strategy!`
+      ],
+      household: [
+        `${task} creates the environment for your success. Chaotic space = chaotic mind!`,
+        `${task} is self-care disguised as chores. Take care of your space, take care of yourself!`
+      ]
+    };
+    
+    const insights = categoryInsights[category] || [
+      `${task} matters because you put it on your list. Honor your own priorities!`,
+      `${task} is your commitment to yourself. Keep your word, especially to you!`
+    ];
+    
+    responses.push(insights[seed % insights.length]);
+    return responses;
+  }
+
+  // Generate consequence-based responses
+  private generateConsequenceBasedResponses(task: string, category: string, seed: number): string[] {
+    const responses: string[] = [];
+    
+    const consequenceFrames = [
+      `If you don't complete ${task} today, what excuse will you give tomorrow?`,
+      `${task} delayed is confidence eroded. Build yourself up instead!`,
+      `The cost of avoiding ${task} is higher than the effort to do it. Pay now, not later!`,
+      `Future you is either grateful for today's action on ${task} or frustrated by today's inaction!`
+    ];
+    
+    responses.push(consequenceFrames[seed % consequenceFrames.length]);
+    return responses;
+  }
+
+  // Generate motivational context
+  private generateMotivationalContext(task: string, category: string, seed: number): string[] {
+    const contexts = [
+      `${task} is your chance to prove your commitment to yourself!`,
+      `Every completed ${task} builds the habit of following through!`,
+      `${task} completed = promise kept to yourself. That's how trust is built!`,
+      `${task} is small but significant. Small actions, big character!`
+    ];
+    
+    return [contexts[seed % contexts.length]];
   }
 
   private getStyleBasedResponses(reminder: Reminder, style: string, seed: string): string[] {
@@ -115,19 +342,19 @@ class SmartResponseService {
   private getEncouragingResponses(baseMessage: string, category: string): string[] {
     const base = [
       `${baseMessage} - You've got this! One step at a time.`,
-      `${baseMessage} - Every small step counts. Let's go!`,
-      `${baseMessage} - Believe in yourself and make it happen!`
+      `${baseMessage} - Every small action counts towards your bigger goals.`,
+      `${baseMessage} - Believe in yourself, you're capable of amazing things.`
     ];
 
     switch (category) {
       case 'health':
-        base.push(`${baseMessage} - Your health journey is inspiring!`);
+        base.push(`${baseMessage} - Your body will thank you for this care!`);
         break;
-      case 'education':
-        base.push(`${baseMessage} - Every moment of learning makes you stronger!`);
+      case 'work':
+        base.push(`${baseMessage} - Great careers are built one task at a time!`);
         break;
-      case 'creative':
-        base.push(`${baseMessage} - Your creativity is a gift to the world!`);
+      case 'personal':
+        base.push(`${baseMessage} - Relationships bloom with consistent attention!`);
         break;
     }
     return base;
@@ -135,20 +362,20 @@ class SmartResponseService {
 
   private getHumorousResponses(baseMessage: string, category: string): string[] {
     const base = [
-      `${baseMessage} - Your couch is getting too comfortable with you!`,
-      `${baseMessage} - Even your coffee is judging your productivity!`,
-      `${baseMessage} - Time to adult harder than you've ever adulted before!`
+      `${baseMessage} - Your procrastination skills are impressive, but maybe try productivity instead?`,
+      `${baseMessage} - Even your cat is judging your task-avoidance techniques.`,
+      `${baseMessage} - Netflix will still be there after you finish this!`
     ];
 
     switch (category) {
-      case 'household':
-        base.push(`${baseMessage} - The dishes are plotting their revenge!`);
+      case 'health':
+        base.push(`${baseMessage} - Your body called, it wants its maintenance back!`);
         break;
       case 'work':
-        base.push(`${baseMessage} - Your inbox is laughing at your procrastination!`);
+        base.push(`${baseMessage} - Work hard, nap harder... but work first!`);
         break;
-      case 'finance':
-        base.push(`${baseMessage} - Your wallet is crying for attention!`);
+      case 'personal':
+        base.push(`${baseMessage} - Social battery low? This will charge it right up!`);
         break;
     }
     return base;
@@ -156,19 +383,17 @@ class SmartResponseService {
 
   private getDirectResponses(baseMessage: string, category: string): string[] {
     return [
-      `${baseMessage} - Clear goal. Clear action. Get it done.`,
-      `${baseMessage} - Simple task. Simple execution. Now.`,
-      `${baseMessage} - Less thinking. More doing. Go.`
+      `${baseMessage} - Do it now.`,
+      `${baseMessage} - Complete this task.`,
+      `${baseMessage} - Take action immediately.`
     ];
   }
 
   private async getUserBehaviorData(userId: string): Promise<UserBehaviorData | null> {
-    // This would analyze user's past reminder completion patterns
-    // For now, return null - would be implemented with actual analytics
+    // Mock behavior data - in a real app this would come from analytics
     return null;
   }
 
-  // Categorize reminder type for better personalization
   private categorizeReminder(message: string): string {
     const lowerMessage = message.toLowerCase();
     
@@ -210,7 +435,6 @@ class SmartResponseService {
     return 'general';
   }
 
-  // Generate contextual remarks based on time of day, task type, etc.
   async getContextualRemarks(reminder: Reminder): Promise<string[]> {
     const remarks: string[] = [];
     const now = new Date();
