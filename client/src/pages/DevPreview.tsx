@@ -8,6 +8,7 @@ import { PlayCircle, Loader2, Clock, User, Volume2, RefreshCw, ArrowUpDown } fro
 import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
 
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
@@ -111,7 +112,7 @@ export default function DevPreview() {
                   voice.name.includes('Daniel')
                 );
                 break;
-              
+
               case 'british-butler':
                 // Look for British male voices (Gerald - British man)
                 selectedVoice = voices.find(voice => 
@@ -121,7 +122,7 @@ export default function DevPreview() {
                   voice.name.includes('Arthur')
                 );
                 break;
-              
+
               case 'default':
                 // Look for female voices (Scarlett - professional)
                 selectedVoice = voices.find(voice => 
@@ -141,7 +142,7 @@ export default function DevPreview() {
                   voice.name.includes('Susan')
                 );
                 break;
-              
+
               case 'robot':
                 // Look for robotic/computer voices (Will - AI Assistant)
                 selectedVoice = voices.find(voice => 
@@ -340,80 +341,51 @@ export default function DevPreview() {
             {selectedReminder ? (
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Title</h4>
-                  <p className="text-sm text-gray-700">{selectedReminder.title}</p>
+                  <Label className="text-sm font-medium">Original Message</Label>
+                  <p className="text-sm text-muted-foreground mt-1">{selectedReminder.originalMessage}</p>
                 </div>
-
                 <div>
-                  <h4 className="font-medium mb-2">Original Message</h4>
-                  <p className="text-sm text-gray-600 italic">{selectedReminder.originalMessage}</p>
+                  <Label className="text-sm font-medium">Generated Response</Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {selectedReminder.responses && selectedReminder.responses.length > 0 
+                      ? selectedReminder.responses[0] 
+                      : "No response generated yet"}
+                  </p>
                 </div>
-
                 <div>
-                  <h4 className="font-medium mb-2">Rude Message</h4>
-                  <Textarea
-                    value={selectedReminder.rudeMessage}
-                    readOnly
-                    className="resize-none"
-                    rows={3}
-                  />
+                  <Label className="text-sm font-medium">Voice Character</Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {selectedReminder.voiceCharacter || "Default"}
+                  </p>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-medium mb-1">Rudeness Level</h4>
-                    <Badge className={getRudenessColor(selectedReminder.rudenessLevel)}>
-                      Level {selectedReminder.rudenessLevel}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-1">Voice Character</h4>
-                    <p className="text-sm text-gray-600 capitalize">
-                      {selectedReminder.voiceCharacter?.replace('-', ' ') || 'Default'}
-                    </p>
-                  </div>
-                </div>
-
                 <div>
-                  <h4 className="font-medium mb-1">Scheduled For</h4>
-                  <p className="text-sm text-gray-600">{formatDateTime(selectedReminder.scheduledFor, selectedReminder)}</p>
-                  {selectedReminder.isMultiDay && selectedReminder.selectedDays && (
-                    <div className="mt-2">
-                      <h5 className="text-sm font-medium text-gray-700">Repeating Days:</h5>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {selectedReminder.selectedDays.map((day) => (
-                          <Badge key={day} variant="outline" className="text-xs capitalize">
-                            {day}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <Label className="text-sm font-medium">Scheduled Time</Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {new Date(selectedReminder.scheduledFor).toLocaleString()}
+                  </p>
                 </div>
-
-                {selectedReminder.motivationalQuote && (
+                <div>
+                  <Label className="text-sm font-medium">Status</Label>
+                  <p className="text-sm text-muted-foreground mt-1 capitalize">
+                    {selectedReminder.status}
+                  </p>
+                </div>
+                {selectedReminder.context && (
                   <div>
-                    <h4 className="font-medium mb-2">Motivational Quote</h4>
-                    <p className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded">
-                      "{selectedReminder.motivationalQuote}"
+                    <Label className="text-sm font-medium">Category</Label>
+                    <p className="text-sm text-muted-foreground mt-1 capitalize">
+                      {selectedReminder.context}
                     </p>
                   </div>
                 )}
-
-                <div>
-                  <h4 className="font-medium mb-2">Notification Settings</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedReminder.browserNotification && (
-                      <Badge variant="outline">Browser</Badge>
-                    )}
-                    {selectedReminder.voiceNotification && (
-                      <Badge variant="outline">Voice</Badge>
-                    )}
-                    {selectedReminder.emailNotification && (
-                      <Badge variant="outline">Email</Badge>
-                    )}
+                {selectedReminder.attachments && selectedReminder.attachments.length > 0 && (
+                  <div>
+                    <Label className="text-sm font-medium">Attachments</Label>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedReminder.attachments.length} attachment(s)
+                    </p>
                   </div>
-                </div>
+                )}
 
                 <Button
                   onClick={handleVoicePreview}
