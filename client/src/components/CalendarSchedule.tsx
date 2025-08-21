@@ -89,11 +89,11 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
   const isTimeInPast = (hour: number) => {
     if (!selectedDate) return false;
-    
+
     const now = new Date();
     const timeSlot = new Date(selectedDate);
     timeSlot.setHours(hour, 0, 0, 0);
-    
+
     return timeSlot < now;
   };
 

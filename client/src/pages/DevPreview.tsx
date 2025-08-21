@@ -1,76 +1,26 @@
+
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlayCircle, Loader2 } from 'lucide-react';
-
-interface PreviewData {
-  reminder: {
-    rudeMessage: string;
-    voiceCharacter: string;
-  };
-}
-
-interface FormData {
-  task: string;
-  rudenessLevel: string;
-  voiceCharacter: string;
-  personalityTraits: string[];
-}
+import { PlayCircle, Loader2, Clock, User, Volume2 } from 'lucide-react';
+import { apiRequest } from '@/lib/queryClient';
+import type { Reminder } from '@shared/schema';
 
 export default function DevPreview() {
-  const [formData, setFormData] = useState<FormData>({
-    task: '',
-    rudenessLevel: 'medium',
-    voiceCharacter: 'gordon-ramsay',
-    personalityTraits: []
-  });
-  
-  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handlePreview = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/dev/preview', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      }).catch(err => {
-        console.error('Network error:', err);
-        throw new Error('Network error: Unable to reach server');
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        throw new Error(`Failed to generate preview: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-
-      const data = await response.json().catch(err => {
-        console.error('JSON parse error:', err);
-        throw new Error('Invalid response format from server');
-      });
-
-      setPreviewData(data);
-    } catch (err) {
-      console.error('Preview generation error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Fetch all reminders
+  const { data: reminders, isLoading } = useQuery({
+    queryKey: ['/api/reminders'],
+    queryFn: () => apiRequest('/api/reminders'),
+  });
 
   const handleVoicePreview = async () => {
-    if (!previewData?.reminder) return;
+    if (!selectedReminder?.rudeMessage) return;
 
     setIsPlayingVoice(true);
 
@@ -81,8 +31,8 @@ export default function DevPreview() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          text: previewData.reminder.rudeMessage,
-          voiceId: previewData.reminder.voiceCharacter,
+          text: selectedReminder.rudeMessage,
+          voiceId: selectedReminder.voiceCharacter,
         }),
       }).catch(err => {
         console.error('Voice API network error:', err);
@@ -124,7 +74,7 @@ export default function DevPreview() {
       // Fallback to Web Speech API
       if ('speechSynthesis' in window) {
         try {
-          const utterance = new SpeechSynthesisUtterance(previewData.reminder.rudeMessage);
+          const utterance = new SpeechSynthesisUtterance(selectedReminder.rudeMessage);
           utterance.onend = () => setIsPlayingVoice(false);
           utterance.onerror = (err) => {
             console.error('Speech synthesis error:', err);
@@ -142,107 +92,167 @@ export default function DevPreview() {
     }
   };
 
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleString();
+  };
+
+  const getRudenessColor = (level: number) => {
+    const colors = {
+      1: "bg-green-100 text-green-800",
+      2: "bg-blue-100 text-blue-800",
+      3: "bg-yellow-100 text-yellow-800",
+      4: "bg-orange-100 text-orange-800",
+      5: "bg-red-100 text-red-800",
+    };
+    return colors[level as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2">Loading reminders...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Reminder Preview</h1>
-        <p className="text-gray-600">Test how your rude reminders will sound and feel</p>
+        <p className="text-gray-600">Preview and test your actual reminders</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Input Form */}
+        {/* Reminders List */}
         <Card>
           <CardHeader>
-            <CardTitle>Reminder Configuration</CardTitle>
-            <CardDescription>Customize your reminder settings</CardDescription>
+            <CardTitle>Your Reminders</CardTitle>
+            <CardDescription>Click a reminder to preview it</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="task">Task Description</Label>
-              <Input
-                id="task"
-                placeholder="e.g., Take out the trash"
-                value={formData.task}
-                onChange={(e) => setFormData({ ...formData, task: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="rudeness">Rudeness Level</Label>
-              <Select
-                value={formData.rudenessLevel}
-                onValueChange={(value) => setFormData({ ...formData, rudenessLevel: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select rudeness level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="mild">Mild</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="harsh">Harsh</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="voice">Voice Character</Label>
-              <Select
-                value={formData.voiceCharacter}
-                onValueChange={(value) => setFormData({ ...formData, voiceCharacter: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select voice character" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gordon-ramsay">Gordon Ramsay</SelectItem>
-                  <SelectItem value="drill-sergeant">Drill Sergeant</SelectItem>
-                  <SelectItem value="disappointed-parent">Disappointed Parent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button 
-              onClick={handlePreview} 
-              disabled={isLoading || !formData.task}
-              className="w-full"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                'Generate Preview'
-              )}
-            </Button>
+          <CardContent>
+            {!reminders || reminders.length === 0 ? (
+              <div className="text-center text-gray-500 py-8">
+                <p>No reminders found.</p>
+                <p className="text-sm mt-2">Create a reminder from the main page first!</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {reminders.map((reminder: Reminder) => (
+                  <div
+                    key={reminder.id}
+                    className={`p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
+                      selectedReminder?.id === reminder.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    }`}
+                    onClick={() => setSelectedReminder(reminder)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{reminder.title}</h4>
+                        <p className="text-xs text-gray-500 mt-1">
+                          <Clock className="inline h-3 w-3 mr-1" />
+                          {formatDateTime(reminder.scheduledFor)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge className={`text-xs ${getRudenessColor(reminder.rudenessLevel)}`}>
+                          Level {reminder.rudenessLevel}
+                        </Badge>
+                        {reminder.completed && (
+                          <Badge variant="outline" className="text-xs">
+                            Completed
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    {reminder.voiceCharacter && reminder.voiceCharacter !== 'default' && (
+                      <div className="flex items-center mt-2 text-xs text-gray-600">
+                        <Volume2 className="h-3 w-3 mr-1" />
+                        {reminder.voiceCharacter.replace('-', ' ')}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Preview Results */}
+        {/* Preview Panel */}
         <Card>
           <CardHeader>
-            <CardTitle>Preview Results</CardTitle>
+            <CardTitle>Reminder Preview</CardTitle>
             <CardDescription>See how your reminder will appear</CardDescription>
           </CardHeader>
           <CardContent>
-            {error && (
-              <div className="p-4 text-red-600 bg-red-50 rounded-md mb-4">
-                {error}
-              </div>
-            )}
-            
-            {previewData ? (
+            {selectedReminder ? (
               <div className="space-y-4">
                 <div>
-                  <Label>Generated Message</Label>
+                  <h4 className="font-medium mb-2">Title</h4>
+                  <p className="text-sm text-gray-700">{selectedReminder.title}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2">Original Message</h4>
+                  <p className="text-sm text-gray-600 italic">{selectedReminder.originalMessage}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2">Rude Message</h4>
                   <Textarea
-                    value={previewData.reminder.rudeMessage}
+                    value={selectedReminder.rudeMessage}
                     readOnly
-                    className="mt-1"
-                    rows={4}
+                    className="resize-none"
+                    rows={3}
                   />
                 </div>
-                
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium mb-1">Rudeness Level</h4>
+                    <Badge className={getRudenessColor(selectedReminder.rudenessLevel)}>
+                      Level {selectedReminder.rudenessLevel}
+                    </Badge>
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-1">Voice Character</h4>
+                    <p className="text-sm text-gray-600 capitalize">
+                      {selectedReminder.voiceCharacter?.replace('-', ' ') || 'Default'}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-1">Scheduled For</h4>
+                  <p className="text-sm text-gray-600">{formatDateTime(selectedReminder.scheduledFor)}</p>
+                </div>
+
+                {selectedReminder.motivationalQuote && (
+                  <div>
+                    <h4 className="font-medium mb-2">Motivational Quote</h4>
+                    <p className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded">
+                      "{selectedReminder.motivationalQuote}"
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <h4 className="font-medium mb-2">Notification Settings</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedReminder.browserNotification && (
+                      <Badge variant="outline">Browser</Badge>
+                    )}
+                    {selectedReminder.voiceNotification && (
+                      <Badge variant="outline">Voice</Badge>
+                    )}
+                    {selectedReminder.emailNotification && (
+                      <Badge variant="outline">Email</Badge>
+                    )}
+                  </div>
+                </div>
+
                 <Button
                   onClick={handleVoicePreview}
                   disabled={isPlayingVoice}
@@ -257,14 +267,15 @@ export default function DevPreview() {
                   ) : (
                     <>
                       <PlayCircle className="mr-2 h-4 w-4" />
-                      Play Voice Preview
+                      Test Voice Preview
                     </>
                   )}
                 </Button>
               </div>
             ) : (
               <div className="text-center text-gray-500 py-8">
-                Generate a preview to see results here
+                <User className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p>Select a reminder from the list to preview it</p>
               </div>
             )}
           </CardContent>
