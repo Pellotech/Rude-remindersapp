@@ -130,22 +130,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { smartResponseService } = await import('./services/smartResponseService');
       
-      // Generate fresh responses
-      const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
+      // Force refresh to ensure new responses
+      const forceRefresh = req.query.refresh === 'true';
+      
+      // Generate fresh responses with timestamp for uniqueness
+      const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder, forceRefresh);
       const contextualRemarks = await smartResponseService.getContextualRemarks(reminder);
       
-      // Get additional rude phrases for variety
+      // Get additional rude phrases for variety with timestamp shuffling
       const phrases = await storage.getRudePhrasesForLevel(reminder.rudenessLevel);
+      const timestamp = Date.now();
       const additionalResponses = phrases
-        .sort(() => 0.5 - Math.random())
+        .sort(() => 0.5 - Math.random() + (timestamp % 1000) / 10000)
         .slice(0, 5)
-        .map(phrase => `${reminder.originalMessage}${phrase.phrase}`);
+        .map(phrase => `${reminder.originalMessage} ${phrase.phrase} (Generated at ${new Date().toLocaleTimeString()})`);
 
       res.json({
         personalizedResponses,
         contextualRemarks,
         additionalResponses,
-        totalCount: personalizedResponses.length + contextualRemarks.length + additionalResponses.length
+        totalCount: personalizedResponses.length + contextualRemarks.length + additionalResponses.length,
+        generatedAt: new Date().toISOString()
       });
     } catch (error) {
       console.error("Error getting more responses:", error);

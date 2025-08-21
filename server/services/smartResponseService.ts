@@ -11,35 +11,72 @@ interface UserBehaviorData {
 }
 
 class SmartResponseService {
+  private responseVersion = Date.now(); // Cache-busting version
+  
   // Analyze user behavior and suggest better responses
-  async getPersonalizedResponse(reminder: Reminder): Promise<string[]> {
+  async getPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
     const userBehavior = await this.getUserBehaviorData(reminder.userId);
     const responses: string[] = [];
     
-    // Get base response variations
+    // Add randomization to ensure variety even with same inputs
+    const randomSeed = forceRefresh ? Date.now() : reminder.id.slice(-8);
+    
+    // Get base response variations with shuffling
     const phrases = await storage.getRudePhrasesForLevel(reminder.rudenessLevel);
+    const shuffledPhrases = this.shuffleArray([...phrases], randomSeed);
     
     // Adapt responses based on user behavior
     if (userBehavior) {
       // If user responds better to higher rudeness, make it spicier
       if (userBehavior.responseToRudenessLevel[reminder.rudenessLevel] < 50) {
         const harshPhrases = await storage.getRudePhrasesForLevel(Math.min(5, reminder.rudenessLevel + 1));
-        responses.push(...harshPhrases.slice(0, 2).map(p => `${reminder.originalMessage}${p.phrase}`));
+        const shuffledHarsh = this.shuffleArray([...harshPhrases], randomSeed);
+        responses.push(...shuffledHarsh.slice(0, 2).map(p => `${reminder.originalMessage} ${p.phrase}`));
       }
       
       // Add motivational style based on preference
-      responses.push(...this.getStyleBasedResponses(reminder, userBehavior.preferredMotivationStyle));
+      responses.push(...this.getStyleBasedResponses(reminder, userBehavior.preferredMotivationStyle, randomSeed));
     }
     
-    // Fallback to standard responses
+    // Fallback to standard responses with variety
     if (responses.length === 0) {
-      responses.push(...phrases.slice(0, 3).map(p => `${reminder.originalMessage}${p.phrase}`));
+      responses.push(...shuffledPhrases.slice(0, 3).map(p => `${reminder.originalMessage} ${p.phrase}`));
     }
     
-    return responses;
+    // Ensure we always return different responses by adding variation
+    return this.ensureResponseVariety(responses, reminder, randomSeed);
   }
 
-  private getStyleBasedResponses(reminder: Reminder, style: string): string[] {
+  private shuffleArray(array: any[], seed: string): any[] {
+    const seedNum = parseInt(seed, 16) || Date.now();
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor((seedNum + i) % (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  private ensureResponseVariety(responses: string[], reminder: Reminder, seed: string): string[] {
+    // Add timestamp-based variations to make responses unique
+    const timeVariations = [
+      "Right now, no excuses!",
+      "Time's ticking!",
+      "Clock's judging you!",
+      "Deadline approaching!",
+      "Your future self is watching!"
+    ];
+    
+    const seedIndex = parseInt(seed, 16) % timeVariations.length;
+    const uniqueResponses = responses.map((response, index) => {
+      const variation = timeVariations[(seedIndex + index) % timeVariations.length];
+      return `${response} ${variation}`;
+    });
+    
+    return uniqueResponses;
+  }
+
+  private getStyleBasedResponses(reminder: Reminder, style: string, seed: string): string[] {
     const baseMessage = reminder.originalMessage;
     const category = this.categorizeReminder(baseMessage);
     
@@ -50,7 +87,8 @@ class SmartResponseService {
       'direct': this.getDirectResponses(baseMessage, category)
     };
     
-    return styleResponses[style as keyof typeof styleResponses] || styleResponses.direct;
+    const responses = styleResponses[style as keyof typeof styleResponses] || styleResponses.direct;
+    return this.shuffleArray(responses, seed);
   }
 
   private getToughLoveResponses(baseMessage: string, category: string): string[] {

@@ -1,26 +1,60 @@
-
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { PlayCircle, Loader2, Clock, User, Volume2 } from 'lucide-react';
+import { PlayCircle, Loader2, Clock, User, Volume2, RefreshCw } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+  const [moreResponses, setMoreResponses] = useState<any>(null); // State to store more responses
+  const [loadingMore, setLoadingMore] = useState(false); // State for loading more responses
+  const { toast } = useToast();
 
   // Fetch all reminders
-  const { data: reminders, isLoading } = useQuery({
+  const { data: reminders = [], isLoading } = useQuery({
     queryKey: ['/api/reminders'],
     queryFn: async () => {
       const response = await apiRequest('GET', '/api/reminders');
       return response.json();
     },
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache data
   });
+
+  const fetchMoreResponses = async (reminderId: string, forceRefresh = false) => {
+    setLoadingMore(true);
+    try {
+      const url = forceRefresh
+        ? `/api/reminders/${reminderId}/more-responses?refresh=true&t=${Date.now()}`
+        : `/api/reminders/${reminderId}/more-responses?t=${Date.now()}`;
+
+      const response = await apiRequest("GET", url);
+      const data = await response.json();
+      setMoreResponses(data);
+
+      if (forceRefresh) {
+        toast({
+          title: "Fresh Responses Generated!",
+          description: `Generated ${data.totalCount} new AI responses at ${new Date().toLocaleTimeString()}`,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch more responses:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate new responses. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const handleVoicePreview = async () => {
     if (!selectedReminder?.rudeMessage) return;
@@ -98,12 +132,12 @@ export default function DevPreview() {
   const formatDateTime = (dateString: string, reminder?: Reminder) => {
     const date = new Date(dateString);
     const formatted = date.toLocaleString();
-    
+
     // If it's a multi-day reminder, show the selected days
     if (reminder?.isMultiDay && reminder?.selectedDays && reminder.selectedDays.length > 0) {
       const dayNames = {
         'monday': 'Mon',
-        'tuesday': 'Tue', 
+        'tuesday': 'Tue',
         'wednesday': 'Wed',
         'thursday': 'Thu',
         'friday': 'Fri',
@@ -113,7 +147,7 @@ export default function DevPreview() {
       const selectedDayNames = reminder.selectedDays.map(day => dayNames[day as keyof typeof dayNames]).join(', ');
       return `${formatted} (Repeats: ${selectedDayNames})`;
     }
-    
+
     return formatted;
   };
 
@@ -167,7 +201,10 @@ export default function DevPreview() {
                     className={`p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
                       selectedReminder?.id === reminder.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                     }`}
-                    onClick={() => setSelectedReminder(reminder)}
+                    onClick={() => {
+                      setSelectedReminder(reminder);
+                      setMoreResponses(null); // Clear previous more responses when selecting a new reminder
+                    }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -309,6 +346,46 @@ export default function DevPreview() {
                     </>
                   )}
                 </Button>
+
+                {/* New section for more responses and refresh button */}
+                {selectedReminder && (
+                  <div className="mt-4">
+                    {moreResponses && (
+                      <div className="mb-4 p-3 border rounded-lg bg-gray-50">
+                        <h5 className="font-medium mb-2">More AI Responses:</h5>
+                        <p className="text-sm text-gray-700">{moreResponses.rudeMessage}</p>
+                        <p className="text-xs text-gray-500 mt-1">Generated at: {new Date(moreResponses.timestamp).toLocaleString()}</p>
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => fetchMoreResponses(selectedReminder.id)}
+                        disabled={loadingMore}
+                      >
+                        {loadingMore ? (
+                          <div className="flex items-center">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2" />
+                            Loading...
+                          </div>
+                        ) : (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Get More Responses
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={() => fetchMoreResponses(selectedReminder.id, true)}
+                        disabled={loadingMore}
+                        title="Force fresh AI responses"
+                      >
+                        🔄 Fresh AI
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="text-center text-gray-500 py-8">
