@@ -243,24 +243,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         {
           id: "mom",
-          name: "Scarlett (Disappointed Mom)",
+          name: "Jane (Disappointed Mom)",
           unrealId: "Scarlett",
           personality: "Guilt-inducing maternal energy", 
           testMessage: "I'm not angry, I'm just disappointed. You know how much this means to me."
-        },
-        {
-          id: "motivational-coach",
-          name: "Dan (Motivational Coach)",
-          unrealId: "Dan",
-          personality: "High-energy motivational speaker",
-          testMessage: "You've got this! Let's crush those goals and make it happen!"
-        },
-        {
-          id: "wise-teacher",
-          name: "Amy (Wise Teacher)",
-          unrealId: "Amy",
-          personality: "Patient but firm educator",
-          testMessage: "Remember, every small step forward is progress towards your goal."
         },
         {
           id: "confident-leader",
@@ -268,20 +254,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           unrealId: "Will",
           personality: "Executive leadership style",
           testMessage: "Let's execute this plan efficiently and deliver results."
-        },
-        {
-          id: "calm-narrator",
-          name: "Scarlett (Calm Narrator)",
-          unrealId: "Scarlett", 
-          personality: "Soothing and reassuring",
-          testMessage: "Take a deep breath and focus on what needs to be accomplished."
-        },
-        {
-          id: "energetic-trainer",
-          name: "Dan (Energetic Trainer)",
-          unrealId: "Dan",
-          personality: "Fitness coach energy",
-          testMessage: "Come on! Push through and show me what you're made of!"
         }
       ];
       
