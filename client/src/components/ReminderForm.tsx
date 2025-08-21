@@ -71,11 +71,7 @@ const getVoiceIcon = (id: string) => {
     "robot": Bot,
     "british-butler": Crown,
     "mom": Heart,
-    "motivational-coach": Zap,
-    "wise-teacher": User,
-    "confident-leader": Crown,
-    "calm-narrator": Heart,
-    "energetic-trainer": Zap
+    "confident-leader": Crown
   };
   return iconMap[id] || User;
 };

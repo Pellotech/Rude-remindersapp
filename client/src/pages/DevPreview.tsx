@@ -93,8 +93,7 @@ export default function DevPreview() {
 
             switch (selectedReminder.voiceCharacter) {
               case 'drill-sergeant':
-              case 'motivational-coach':
-                // Look for male voices
+                // Look for male voices (Dan - tough man)
                 selectedVoice = voices.find(voice => 
                   voice.name.includes('Male') || 
                   voice.name.includes('David') ||
@@ -105,7 +104,7 @@ export default function DevPreview() {
                 break;
               
               case 'british-butler':
-                // Look for British male voices
+                // Look for British male voices (Gerald - British man)
                 selectedVoice = voices.find(voice => 
                   voice.lang.includes('en-GB') || 
                   voice.name.includes('British') ||
@@ -115,8 +114,18 @@ export default function DevPreview() {
                 break;
               
               case 'default':
+                // Look for female voices (Scarlett - professional)
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Female') ||
+                  voice.name.includes('Samantha') ||
+                  voice.name.includes('Victoria') ||
+                  voice.name.includes('Susan') ||
+                  voice.gender === 'female'
+                );
+                break;
+
               case 'mom':
-                // Look for female voices (Scarlett - middle-aged woman)
+                // Look for female voices (Jane - disappointed mom)
                 selectedVoice = voices.find(voice => 
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
@@ -127,12 +136,23 @@ export default function DevPreview() {
                 break;
               
               case 'robot':
-                // Look for robotic/computer voices
+                // Look for robotic/computer voices (Will - AI Assistant)
                 selectedVoice = voices.find(voice => 
                   voice.name.includes('Microsoft') || 
                   voice.name.includes('Robot') ||
                   voice.name.includes('Computer') ||
                   voice.name.includes('Zira')
+                );
+                break;
+
+              case 'confident-leader':
+                // Look for male voices (Will - executive style)
+                selectedVoice = voices.find(voice => 
+                  voice.name.includes('Male') || 
+                  voice.name.includes('David') ||
+                  voice.name.includes('Mark') ||
+                  voice.name.includes('Daniel') ||
+                  voice.gender === 'male'
                 );
                 break;
             }
