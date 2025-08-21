@@ -21,7 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings, Calendar, Clock } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2 } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -63,6 +63,19 @@ const rudenessLabels = [
   { level: 3, emoji: "😏", label: "Sarcastic" },
   { level: 4, emoji: "😠", label: "Harsh" },
   { level: 5, emoji: "🤬", label: "Savage" },
+];
+
+// Context categories for quick selection
+const contextCategories = [
+  { id: "work", label: "Work", description: "Job, career, professional tasks", icon: Briefcase },
+  { id: "family", label: "Family & Friends", description: "Relationships, social commitments", icon: Users },
+  { id: "health", label: "Working Out", description: "Exercise, fitness, health goals", icon: Dumbbell },
+  { id: "meditation", label: "Personal Reflection", description: "Meditation, mindfulness, self-care", icon: Brain },
+  { id: "learning", label: "Learning & School", description: "Education, studying, skill development", icon: GraduationCap },
+  { id: "cooking", label: "Food & Cooking", description: "Meals, recipes, nutrition", icon: ChefHat },
+  { id: "household", label: "Home & Chores", description: "Cleaning, organization, maintenance", icon: Home },
+  { id: "finance", label: "Money & Finance", description: "Bills, budgeting, financial goals", icon: DollarSign },
+  { id: "entertainment", label: "Fun & Hobbies", description: "Recreation, entertainment, personal time", icon: Gamepad2 },
 ];
 
 // Voice character icon mapping
@@ -163,6 +176,7 @@ export default function ReminderForm() {
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
   const [selectedMotivation, setSelectedMotivation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedContextCategory, setSelectedContextCategory] = useState("");
 
   // Collapsible states for advanced sections
   const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
@@ -267,6 +281,7 @@ export default function ReminderForm() {
       setSelectedAttachments([]);
       setSelectedMotivation("");
       setSelectedCategory("");
+      setSelectedContextCategory("");
       setSelectedDays([]);
       setIsMultiDay(false);
       setMultiDayHour(9);
@@ -390,8 +405,7 @@ export default function ReminderForm() {
                 selectedVoice = voices.find(voice => 
                   voice.name.includes('Male') || 
                   voice.name.includes('David') ||
-                  voice.name.includes('Daniel') ||
-                  voice.gender === 'male'
+                  voice.name.includes('Daniel')
                 );
                 break;
               case 'british-male':
@@ -405,8 +419,7 @@ export default function ReminderForm() {
                 selectedVoice = voices.find(voice => 
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
-                  voice.name.includes('Victoria') ||
-                  voice.gender === 'female'
+                  voice.name.includes('Victoria')
                 );
                 break;
               case 'robotic':
@@ -512,6 +525,13 @@ export default function ReminderForm() {
 
   const removeAttachment = (index: number) => {
     setSelectedAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Handle context category selection
+  const handleContextCategorySelect = (category: typeof contextCategories[0]) => {
+    setSelectedContextCategory(category.id);
+    // Set the context field with the category description
+    form.setValue("context", category.description);
   };
 
   // Multi-day selection helper functions
@@ -695,6 +715,38 @@ export default function ReminderForm() {
                     <span>Why is this important to you?</span>
                     <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
                   </FormLabel>
+                  
+                  {/* Quick Context Categories - Horizontal Scrolling */}
+                  <div className="mb-3">
+                    <div className="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
+                      {contextCategories.map((category) => {
+                        const IconComponent = category.icon;
+                        const isSelected = selectedContextCategory === category.id;
+                        return (
+                          <Button
+                            key={category.id}
+                            type="button"
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleContextCategorySelect(category)}
+                            className={cn(
+                              "flex-shrink-0 h-auto py-2 px-3 text-xs font-medium transition-all",
+                              isSelected 
+                                ? "bg-blue-600 text-white hover:bg-blue-700" 
+                                : "hover:bg-blue-50 hover:border-blue-300"
+                            )}
+                          >
+                            <IconComponent className="w-4 h-4 mr-2" />
+                            <span className="whitespace-nowrap">{category.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      👆 Tap a category above or type your own reason below
+                    </p>
+                  </div>
+
                   <FormControl>
                     <div className="relative">
                       <Input

@@ -197,3 +197,13 @@
   background-color: rgb(243 244 246);
   border-radius: 0.375rem;
 }
+
+/* Hide scrollbar for context categories */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
