@@ -87,6 +87,16 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
            quarterState.hour !== null;
   };
 
+  const isTimeInPast = (hour: number) => {
+    if (!selectedDate) return false;
+    
+    const now = new Date();
+    const timeSlot = new Date(selectedDate);
+    timeSlot.setHours(hour, 0, 0, 0);
+    
+    return timeSlot < now;
+  };
+
   return (
     <div className="space-y-4">
       {/* Calendar Section */}
@@ -146,6 +156,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {timeSlots.map((slot) => {
                 const isSelected = isTimeSelected(slot.value);
+                const isPastTime = isTimeInPast(slot.value);
 
                 return (
                   <Button
@@ -154,9 +165,11 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleTimeSelect(slot.value)}
+                    disabled={isPastTime}
                     className={cn(
                       "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
-                      isSelected && "bg-primary text-primary-foreground"
+                      isSelected && "bg-primary text-primary-foreground",
+                      isPastTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
                     )}
                   >
                     {slot.display}
