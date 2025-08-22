@@ -1062,19 +1062,41 @@ export default function ReminderForm() {
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Quickly adjust common reminder settings</p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <p className="text-sm text-muted-foreground">Quickly set reminder times</p>
+                    <div className="grid grid-cols-3 gap-3">
                       <div
                         className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
-                        onClick={() => form.setValue("rudenessLevel", 1)}
+                        onClick={() => {
+                          const oneHourFromNow = new Date();
+                          oneHourFromNow.setHours(oneHourFromNow.getHours() + 1);
+                          const isoString = oneHourFromNow.toISOString().slice(0, 16);
+                          form.setValue("scheduledFor", isoString);
+                        }}
                       >
-                        😊 Be Nice
+                        ⏰ One Hour
                       </div>
                       <div
                         className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
-                        onClick={() => form.setValue("rudenessLevel", 5)}
+                        onClick={() => {
+                          const thisAfternoon = new Date();
+                          thisAfternoon.setHours(15, 0, 0, 0); // 3 PM today
+                          const isoString = thisAfternoon.toISOString().slice(0, 16);
+                          form.setValue("scheduledFor", isoString);
+                        }}
                       >
-                        🤬 Be Savage
+                        ☀️ This Afternoon
+                      </div>
+                      <div
+                        className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
+                        onClick={() => {
+                          const tomorrow = new Date();
+                          tomorrow.setDate(tomorrow.getDate() + 1);
+                          tomorrow.setHours(9, 0, 0, 0); // 9 AM tomorrow
+                          const isoString = tomorrow.toISOString().slice(0, 16);
+                          form.setValue("scheduledFor", isoString);
+                        }}
+                      >
+                        🌅 Tomorrow
                       </div>
                     </div>
                   </CollapsibleContent>
