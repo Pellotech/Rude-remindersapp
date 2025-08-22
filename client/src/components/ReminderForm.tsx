@@ -172,7 +172,22 @@ export default function ReminderForm() {
 
   const isSimplifiedInterface = (userSettings as any)?.simplifiedInterface || false;
   const [previewMessage, setPreviewMessage] = useState("");
-  const [selectedVoice, setSelectedVoice] = useState("default");
+  
+  // Fetch voice characters from backend
+  const { data: voiceCharacters = [], isLoading: voicesLoading } = useQuery({
+    queryKey: ["/api/voices"],
+    queryFn: async () => {
+      const response = await fetch("/api/voices");
+      if (!response.ok) throw new Error("Failed to fetch voices");
+      return response.json();
+    }
+  });
+
+  // Voice character state - randomly select initial voice
+  const [selectedVoice, setSelectedVoice] = useState(() => {
+    const randomIndex = Math.floor(Math.random() * voiceCharacters.length);
+    return voiceCharacters[randomIndex]?.id || "default";
+  });
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
   const [selectedMotivation, setSelectedMotivation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -231,16 +246,6 @@ export default function ReminderForm() {
     enabled: rudenessLevel >= 1 && rudenessLevel <= 5,
   });
 
-  // Fetch voice characters from backend
-  const { data: voiceCharacters = [], isLoading: voicesLoading } = useQuery({
-    queryKey: ["/api/voices"],
-    queryFn: async () => {
-      const response = await fetch("/api/voices");
-      if (!response.ok) throw new Error("Failed to fetch voices");
-      return response.json();
-    }
-  });
-
   // Update preview when message or rudeness level changes
   useEffect(() => {
     if (originalMessage && phrases && Array.isArray(phrases) && phrases.length > 0) {
@@ -275,9 +280,10 @@ export default function ReminderForm() {
         description: "Your rude reminder has been created.",
       });
       form.reset();
-      
+
       // Reset all custom state variables
-      setSelectedVoice("default");
+      const randomIndex = Math.floor(Math.random() * voiceCharacters.length);
+      setSelectedVoice(voiceCharacters[randomIndex]?.id || "default");
       setSelectedAttachments([]);
       setSelectedMotivation("");
       setSelectedCategory("");
@@ -286,7 +292,7 @@ export default function ReminderForm() {
       setIsMultiDay(false);
       setMultiDayHour(9);
       setMultiDayMinute(0);
-      
+
       queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
     },
@@ -722,7 +728,7 @@ export default function ReminderForm() {
                     <span>What type of reminder is this?</span>
                     <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
                   </FormLabel>
-                  
+
                   {/* Quick Context Categories - Horizontal Scrolling */}
                   <div className="space-y-2">
                     <div className="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
