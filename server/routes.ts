@@ -88,10 +88,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         attachments: reminder.attachments
       });
 
-      // Schedule the reminder
-      reminderService.scheduleReminder(reminder);
-
-      res.status(201).json(reminder);
+      // Automatically generate AI response for the new reminder
+      try {
+        const updatedReminder = await reminderService.generateReminderResponse(reminder);
+        await storage.updateReminder(reminder.id, userId, updatedReminder);
+        
+        // Schedule the reminder
+        reminderService.scheduleReminder(updatedReminder);
+        
+        res.status(201).json(updatedReminder);
+      } catch (error) {
+        console.error("Error generating AI response during creation:", error);
+        // Still schedule and return the original reminder if AI generation fails
+        reminderService.scheduleReminder(reminder);
+        res.status(201).json(reminder);
+      }
     } catch (error) {
       console.error("Error creating reminder:", error);
       res.status(400).json({ message: "Failed to create reminder" });
