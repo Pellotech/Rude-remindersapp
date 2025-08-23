@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { PlayCircle, Loader2, Clock, User, Volume2, RefreshCw, ArrowUpDown } from 'lucide-react';
+import { PlayCircle, Loader2, Clock, User, Volume2, ArrowUpDown } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
@@ -13,8 +13,6 @@ import { Label } from '@/components/ui/label';
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
-  const [moreResponses, setMoreResponses] = useState<any>(null); // State to store more responses
-  const [loadingMore, setLoadingMore] = useState(false); // State for loading more responses
   const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('scheduled'); // New state for sorting
   const { toast } = useToast();
 
@@ -45,34 +43,6 @@ export default function DevPreview() {
   });
 
 
-  const fetchMoreResponses = async (reminderId: string, forceRefresh = false) => {
-    setLoadingMore(true);
-    try {
-      const url = forceRefresh
-        ? `/api/reminders/${reminderId}/more-responses?refresh=true&t=${Date.now()}`
-        : `/api/reminders/${reminderId}/more-responses?t=${Date.now()}`;
-
-      const response = await apiRequest("GET", url);
-      const data = await response.json();
-      setMoreResponses(data);
-
-      if (forceRefresh) {
-        toast({
-          title: "Fresh Responses Generated!",
-          description: `Generated ${data.totalCount} new AI responses at ${new Date().toLocaleTimeString()}`,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to fetch more responses:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate new responses. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoadingMore(false);
-    }
-  };
 
   const handleVoicePreview = async () => {
     if (!selectedReminder?.rudeMessage) return;
@@ -295,7 +265,6 @@ export default function DevPreview() {
                     }`}
                     onClick={() => {
                       setSelectedReminder(reminder);
-                      setMoreResponses(null); // Clear previous more responses when selecting a new reminder
                     }}
                   >
                     <div className="flex items-start justify-between">
@@ -457,91 +426,6 @@ export default function DevPreview() {
                 </Button>
 
                 {/* New section for more responses and refresh button */}
-                {selectedReminder && (
-                  <div className="mt-4">
-                    {moreResponses && (
-                      <div className="mb-4 space-y-3">
-                        <div className="p-3 border rounded-lg bg-blue-50">
-                          <h5 className="font-medium mb-2 text-blue-800">🎯 Personalized AI Responses:</h5>
-                          {moreResponses.personalizedResponses && moreResponses.personalizedResponses.length > 0 ? (
-                            <div className="space-y-2">
-                              {moreResponses.personalizedResponses.map((response: string, index: number) => (
-                                <p key={index} className="text-sm text-blue-700 bg-white p-2 rounded border-l-2 border-blue-300">
-                                  {response}
-                                </p>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-blue-600 italic">No personalized responses available.</p>
-                          )}
-                        </div>
-
-                        <div className="p-3 border rounded-lg bg-green-50">
-                          <h5 className="font-medium mb-2 text-green-800">💡 Contextual Remarks:</h5>
-                          {moreResponses.contextualRemarks && moreResponses.contextualRemarks.length > 0 ? (
-                            <div className="space-y-2">
-                              {moreResponses.contextualRemarks.map((remark: string, index: number) => (
-                                <p key={index} className="text-sm text-green-700 bg-white p-2 rounded border-l-2 border-green-300">
-                                  {remark}
-                                </p>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-green-600 italic">No contextual remarks available.</p>
-                          )}
-                        </div>
-
-                        <div className="p-3 border rounded-lg bg-orange-50">
-                          <h5 className="font-medium mb-2 text-orange-800">🔥 Additional Variations:</h5>
-                          {moreResponses.additionalResponses && moreResponses.additionalResponses.length > 0 ? (
-                            <div className="space-y-2">
-                              {moreResponses.additionalResponses.map((response: string, index: number) => (
-                                <p key={index} className="text-sm text-orange-700 bg-white p-2 rounded border-l-2 border-orange-300">
-                                  {response}
-                                </p>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-orange-600 italic">No additional variations available.</p>
-                          )}
-                        </div>
-
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">
-                            Generated {moreResponses.totalCount} responses at {new Date(moreResponses.generatedAt).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => fetchMoreResponses(selectedReminder.id)}
-                        disabled={loadingMore}
-                      >
-                        {loadingMore ? (
-                          <div className="flex items-center">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2" />
-                            Loading...
-                          </div>
-                        ) : (
-                          <>
-                            <RefreshCw className="h-4 w-4 mr-2" />
-                            Get More Responses
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        onClick={() => fetchMoreResponses(selectedReminder.id, true)}
-                        disabled={loadingMore}
-                        title="Force fresh AI responses"
-                      >
-                        🔄 Fresh AI
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <div className="text-center text-gray-500 py-8">
