@@ -45,7 +45,7 @@ class ReminderService {
 
   private async triggerReminder(reminder: Reminder) {
     console.log(`Triggering reminder: ${reminder.title}`);
-    
+
     try {
       // Get user for notification preferences
       const user = await storage.getUser(reminder.userId);
@@ -58,7 +58,7 @@ class ReminderService {
       // Get personalized and contextual responses
       const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
       const contextualRemarks = await smartResponseService.getContextualRemarks(reminder);
-      
+
       // Create enhanced reminder with multiple response options
       const enhancedReminder = {
         ...reminder,

@@ -258,11 +258,12 @@ export default function ReminderForm({
 
   // Update preview when message or rudeness level changes
   useEffect(() => {
+    let baseMessage = "";
     if (originalMessage && phrases && Array.isArray(phrases) && phrases.length > 0) {
       const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-      setPreviewMessage(`${originalMessage}${randomPhrase.phrase}`);
+      baseMessage = `${originalMessage}${randomPhrase.phrase}`;
     } else if (originalMessage) {
-      setPreviewMessage(`${originalMessage}, get it done!`);
+      baseMessage = `${originalMessage}, get it done!`;
     } else {
       const samplePhrases = {
         1: ", you've got this! 💪",
@@ -271,9 +272,16 @@ export default function ReminderForm({
         4: ", stop procrastinating like a lazy sloth!",
         5: ", you absolute couch potato!",
       };
-      setPreviewMessage(`Finish that report${samplePhrases[rudenessLevel as keyof typeof samplePhrases]}`);
+      baseMessage = `Finish that report${samplePhrases[rudenessLevel as keyof typeof samplePhrases]}`;
     }
-  }, [originalMessage, rudenessLevel, phrases]);
+    
+    // Add motivational quote if selected
+    if (selectedMotivation) {
+      baseMessage += `\n\n💡 ${selectedMotivation}`;
+    }
+    
+    setPreviewMessage(baseMessage);
+  }, [originalMessage, rudenessLevel, phrases, selectedMotivation]);
 
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {

@@ -381,9 +381,45 @@ export default function DevPreview() {
                 {selectedReminder.attachments && selectedReminder.attachments.length > 0 && (
                   <div>
                     <Label className="text-sm font-medium">Attachments</Label>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <div className="mt-2 grid grid-cols-3 gap-2">
+                      {selectedReminder.attachments.map((attachment: string, index: number) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={attachment}
+                            alt={`Attachment ${index + 1}`}
+                            className="w-full h-20 object-cover rounded-md border"
+                            onError={(e) => {
+                              // Handle broken images by showing a placeholder
+                              const target = e.target as HTMLImageElement;
+                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNmNWY1ZjUiLz4KPGJ0cj5QaG90byBub3QgYXZhaWxhYmxlPC90ZXh0Pgo8L3N2Zz4K';
+                              target.style.display = 'flex';
+                              target.style.alignItems = 'center';
+                              target.style.justifyContent = 'center';
+                              target.style.backgroundColor = '#f5f5f5';
+                              target.style.color = '#999';
+                              target.style.fontSize = '12px';
+                            }}
+                          />
+                          <span className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
+                            {index + 1}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
                       {selectedReminder.attachments.length} attachment(s)
                     </p>
+                  </div>
+                )}
+
+                {selectedReminder.motivationalQuote && (
+                  <div>
+                    <Label className="text-sm font-medium">Motivational Quote</Label>
+                    <div className="mt-1 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                      <p className="text-sm text-blue-800 italic">
+                        "{selectedReminder.motivationalQuote}"
+                      </p>
+                    </div>
                   </div>
                 )}
 
