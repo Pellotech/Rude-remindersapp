@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Megaphone, Settings, Home } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Megaphone, Settings, Home, Crown, Star } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import { HelpMenu } from "./HelpMenu";
 import { Link, useLocation } from "wouter";
@@ -11,6 +13,22 @@ export default function Navigation() {
   const { user } = useAuth() as { user: User | undefined };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [location] = useLocation();
+  
+  // Developer toggle for testing subscription tiers
+  const [isDeveloperMode, setIsDeveloperMode] = useState(
+    localStorage.getItem('dev-premium-mode') === 'true'
+  );
+  
+  const toggleDeveloperMode = () => {
+    const newMode = !isDeveloperMode;
+    setIsDeveloperMode(newMode);
+    localStorage.setItem('dev-premium-mode', newMode.toString());
+    
+    // Force page reload to apply subscription status change
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
+  };
 
   return (
     <>
@@ -23,6 +41,30 @@ export default function Navigation() {
             </div>
             <div className="flex items-center space-x-4">
               <HelpMenu />
+              
+              {/* Developer Toggle for Testing Subscription Tiers */}
+              <div className="flex items-center space-x-2 px-3 py-1 bg-gray-100 rounded-lg border">
+                <Star className="h-4 w-4 text-blue-600" />
+                <span className="text-xs font-medium text-gray-700">Free</span>
+                <Switch
+                  checked={isDeveloperMode}
+                  onCheckedChange={toggleDeveloperMode}
+                  className="data-[state=checked]:bg-purple-600"
+                />
+                <span className="text-xs font-medium text-gray-700">Premium</span>
+                <Crown className="h-4 w-4 text-purple-600" />
+              </div>
+              
+              {/* Current Mode Badge */}
+              <Badge 
+                variant={isDeveloperMode ? "default" : "secondary"}
+                className={isDeveloperMode 
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white" 
+                  : "bg-blue-100 text-blue-800"
+                }
+              >
+                {isDeveloperMode ? "Premium Mode" : "Free Mode"}
+              </Badge>
               
               {/* Show Home button when not on home page */}
               {location !== "/" && (
