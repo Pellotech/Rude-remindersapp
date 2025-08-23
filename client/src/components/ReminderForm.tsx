@@ -820,10 +820,10 @@ export default function ReminderForm({
                                     <Button
                                       type="button"
                                       variant={isSelected ? "default" : "outline"}
-                                      size="sm"
+                                      size="lg"
                                       onClick={() => toggleDay(day.id)}
                                       className={cn(
-                                        "w-full h-12 flex flex-col items-center justify-center p-1",
+                                        "w-full h-16 flex flex-col items-center justify-center p-2",
                                         day.isToday && !isSelected && "border-primary text-primary",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
@@ -862,10 +862,10 @@ export default function ReminderForm({
                                       key={hour}
                                       type="button"
                                       variant={isSelected ? "default" : "outline"}
-                                      size="sm"
+                                      size="lg"
                                       onClick={() => setMultiDayHour(hour)}
                                       className={cn(
-                                        "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
+                                        "h-12 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
@@ -902,10 +902,10 @@ export default function ReminderForm({
                                       key={slot.value}
                                       type="button"
                                       variant={isSelected ? "default" : "outline"}
-                                      size="sm"
+                                      size="lg"
                                       onClick={() => setMultiDayMinute(slot.value)}
                                       className={cn(
-                                        "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
+                                        "h-12 text-sm whitespace-nowrap flex-shrink-0 min-w-[120px]",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
