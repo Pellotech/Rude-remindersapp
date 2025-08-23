@@ -354,8 +354,123 @@ export default function RemindersList() {
                         Overdue ({overdueReminders.length})
                       </h3>
                     </div>
+                    <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        Let us know if you accomplished these so we know whether to build a mountain of disappointments or a mountain of accomplishments! ✅❌
+                      </p>
+                    </div>
                     <div className="max-h-64 overflow-y-auto space-y-3 border border-red-200 rounded-lg p-3 bg-red-50">
-                      {overdueReminders.map(renderReminder)}
+                      {overdueReminders.map((reminder: Reminder) => (
+                        <Card key={reminder.id} className={cn(
+                          "transition-all duration-200 hover:shadow-md w-full max-w-full",
+                          reminder.completed && "opacity-60"
+                        )}>
+                          <CardContent className="p-4 w-full overflow-x-hidden">
+                            <div className="space-y-3">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    <h3 className="text-sm sm:text-base font-medium text-gray-900 break-words">
+                                      {reminder.title}
+                                    </h3>
+                                    <Badge 
+                                      className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
+                                    >
+                                      {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
+                                    </Badge>
+                                    {reminder.completed && (
+                                      <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
+                                        Completed
+                                      </Badge>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-1 mb-2">
+                                    {reminder.browserNotification && (
+                                      <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                                    )}
+                                    {reminder.voiceNotification && (
+                                      <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                                    )}
+                                    {reminder.emailNotification && (
+                                      <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                  {/* Accomplishment tracking buttons for overdue items */}
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-green-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
+                                    onClick={() => {
+                                      completeReminderMutation.mutate(reminder.id);
+                                      toast({
+                                        title: "Added to accomplishments! 🎉",
+                                        description: "Building that mountain of accomplishments!",
+                                      });
+                                    }}
+                                    disabled={completeReminderMutation.isPending}
+                                    title="Mark as accomplished"
+                                  >
+                                    <Check className="h-4 w-4" />
+                                  </Button>
+
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
+                                    onClick={() => {
+                                      deleteReminderMutation.mutate(reminder.id);
+                                      toast({
+                                        title: "Added to disappointments 😔",
+                                        description: "Another brick in the wall of regret...",
+                                      });
+                                    }}
+                                    disabled={deleteReminderMutation.isPending}
+                                    title="Mark as not accomplished"
+                                  >
+                                    ❌
+                                  </Button>
+
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
+                                    onClick={() => {
+                                      // TODO: Implement edit functionality
+                                      toast({
+                                        title: "Coming Soon",
+                                        description: "Edit functionality will be added soon.",
+                                      });
+                                    }}
+                                  >
+                                    <Edit className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+
+                              <p className="text-sm text-gray-600 break-words">
+                                "{reminder.originalMessage}"
+                              </p>
+
+                              <div className="flex items-center text-xs text-gray-500 flex-wrap">
+                                <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
+                                <span className="break-all">
+                                  {new Date(reminder.scheduledFor).toLocaleString()}
+                                </span>
+                                {!reminder.completed && (
+                                  <>
+                                    <span className="mx-2 flex-shrink-0">•</span>
+                                    <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </div>
                 )}
