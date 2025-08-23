@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generate AI response for a specific reminder
-  app.post('/api/reminders/:id/generate-response', async (req: any, res) => {
+  app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const reminder = await storage.getReminder(req.params.id, userId);
