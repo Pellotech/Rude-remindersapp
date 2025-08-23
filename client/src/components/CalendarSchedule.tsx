@@ -114,26 +114,26 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
               const isSelected = isDateSelected(date);
 
               return (
-                <div key={index} className="text-center flex-shrink-0 min-w-[100px]">
-                  <div className="text-sm font-medium text-muted-foreground mb-2">
+                <div key={index} className="text-center flex-shrink-0 min-w-[70px]">
+                  <div className="text-xs font-medium text-muted-foreground mb-1">
                     {dayName}
                   </div>
                   <Button
                     key={index}
                     type="button"
                     variant={isSelected ? "default" : "outline"}
-                    size="lg"
+                    size="sm"
                     onClick={() => handleDateSelect(date)}
                     disabled={isPast(date)}
                     className={cn(
-                      "w-full h-16 flex flex-col items-center justify-center p-2",
+                      "w-full h-12 flex flex-col items-center justify-center p-1",
                       isToday && !isSelected && "border-primary text-primary",
                       isSelected && "bg-primary text-primary-foreground"
                     )}
                   >
-                    <span className="text-xl font-bold">{dayNumber}</span>
+                    <span className="text-lg font-semibold">{dayNumber}</span>
                     {isToday && (
-                      <span className="text-xs mt-1">Today</span>
+                      <span className="text-xs">Today</span>
                     )}
                   </Button>
                 </div>
