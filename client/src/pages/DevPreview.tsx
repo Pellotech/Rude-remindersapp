@@ -39,7 +39,7 @@ export default function DevPreview() {
   // Auto-generate AI responses for existing reminders that don't have them
   const generateMissingResponses = async () => {
     for (const reminder of reminders) {
-      if (!reminder.rudeMessage || !reminder.responses || reminder.responses.length === 0) {
+      if (!reminder.rudeMessage || reminder.rudeMessage === "") {
         try {
           console.log(`Auto-generating missing AI response for reminder: ${reminder.originalMessage}`);
           await apiRequest('POST', `/api/reminders/${reminder.id}/generate-response`);
@@ -54,7 +54,7 @@ export default function DevPreview() {
   React.useEffect(() => {
     if (reminders.length > 0) {
       const remindersMissingResponses = reminders.filter(r => 
-        !r.rudeMessage || !r.responses || r.responses.length === 0
+        !r.rudeMessage || r.rudeMessage === ""
       );
       if (remindersMissingResponses.length > 0) {
         generateMissingResponses();
@@ -381,9 +381,9 @@ export default function DevPreview() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Generated Response</Label>
-                  {selectedReminder.responses && selectedReminder.responses.length > 0 ? (
+                  {selectedReminder.rudeMessage ? (
                     <p className="text-sm text-muted-foreground mt-1">
-                      {selectedReminder.responses[0]}
+                      {selectedReminder.rudeMessage}
                     </p>
                   ) : selectedReminder.status === 'generating' ? (
                     <div className="mt-1 flex items-center gap-2">
