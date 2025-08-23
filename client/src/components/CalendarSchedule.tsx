@@ -106,7 +106,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
           <p className="text-sm text-muted-foreground">Choose a day within the next week</p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-7 gap-2">
+          <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {weekDays.map((date, index) => {
               const dayName = format(date, 'EEE'); // Mon, Tue, Wed, etc.
               const dayNumber = format(date, 'd');
@@ -114,26 +114,26 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
               const isSelected = isDateSelected(date);
 
               return (
-                <div key={index} className="text-center">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
+                <div key={index} className="text-center flex-shrink-0 min-w-[100px]">
+                  <div className="text-sm font-medium text-muted-foreground mb-2">
                     {dayName}
                   </div>
                   <Button
                     key={index}
                     type="button"
                     variant={isSelected ? "default" : "outline"}
-                    size="sm"
+                    size="lg"
                     onClick={() => handleDateSelect(date)}
                     disabled={isPast(date)}
                     className={cn(
-                      "w-full h-12 flex flex-col items-center justify-center p-1",
+                      "w-full h-16 flex flex-col items-center justify-center p-2",
                       isToday && !isSelected && "border-primary text-primary",
                       isSelected && "bg-primary text-primary-foreground"
                     )}
                   >
-                    <span className="text-lg font-semibold">{dayNumber}</span>
+                    <span className="text-xl font-bold">{dayNumber}</span>
                     {isToday && (
-                      <span className="text-xs">Today</span>
+                      <span className="text-xs mt-1">Today</span>
                     )}
                   </Button>
                 </div>
