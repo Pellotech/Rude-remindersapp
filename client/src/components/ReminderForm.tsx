@@ -1148,7 +1148,7 @@ export default function ReminderForm({
                               <SelectValue placeholder="Select a voice character" />
                             </SelectTrigger>
                             <SelectContent>
-                              {voiceCharacters.map((character: any) => {
+                              {voiceCharacters.slice(0, isFreePlan ? 3 : 10).map((character: any) => {
                                 const IconComponent = getVoiceIcon(character.id);
                                 return (
                                   <SelectItem key={character.id} value={character.id}>
@@ -1162,6 +1162,11 @@ export default function ReminderForm({
                                   </SelectItem>
                                 );
                               })}
+                              {isFreePlan && voiceCharacters.length > 3 && (
+                                <div className="px-2 py-1 text-xs text-amber-600 bg-amber-50 rounded">
+                                  {voiceCharacters.length - 3} more voices available with Premium
+                                </div>
+                              )}
                             </SelectContent>
                           </Select>
                         </FormItem>
@@ -1201,9 +1206,10 @@ export default function ReminderForm({
                     {isMobileWithCamera ? (
                       <MobileCamera
                         onPhotoCaptured={(photoUrl) => {
-                          setSelectedAttachments(prev => [...prev, photoUrl].slice(0, 5));
+                          const maxAttachments = isFreePlan ? 1 : 5;
+                          setSelectedAttachments(prev => [...prev, photoUrl].slice(0, maxAttachments));
                         }}
-                        maxFiles={5}
+                        maxFiles={isFreePlan ? 1 : 5}
                         currentCount={selectedAttachments.length}
                       />
                     ) : (
@@ -1212,9 +1218,13 @@ export default function ReminderForm({
                         variant="outline"
                         className="w-full"
                         onClick={handlePhotoAttachment}
+                        disabled={isFreePlan && selectedAttachments.length >= 1}
                       >
                         <Camera className="mr-2 h-4 w-4" />
-                        Add Photos/Videos ({selectedAttachments.length}/5)
+                        Add Photos/Videos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
+                        {isFreePlan && selectedAttachments.length >= 1 && (
+                          <span className="ml-2 text-xs text-amber-600">(Upgrade for more)</span>
+                        )}
                       </Button>
                     )}
 
