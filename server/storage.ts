@@ -116,6 +116,7 @@ export class DatabaseStorage implements IStorage {
         ...reminder,
         userId,
         rudeMessage,
+        responseVariations: JSON.stringify(responseVariations),
         daySpecificMessages,
         rudenessLevel: reminder.rudenessLevel,
       })
@@ -421,7 +422,7 @@ class MemoryStorage implements IStorage {
       selectedDays: reminder.selectedDays || [],
       daySpecificMessages: daySpecificMessages,
       rudeMessage,
-
+      responseVariations: JSON.stringify(responseVariations),
       completed: false,
       completedAt: null,
       createdAt: new Date(),
