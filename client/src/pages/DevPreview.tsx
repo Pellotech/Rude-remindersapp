@@ -346,11 +346,20 @@ export default function DevPreview() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Generated Response</Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {selectedReminder.responses && selectedReminder.responses.length > 0 
-                      ? selectedReminder.responses[0] 
-                      : "No response generated yet"}
-                  </p>
+                  <div className="mt-1">
+                    <p className="text-sm text-muted-foreground">
+                      {selectedReminder.responses && selectedReminder.responses.length > 0 
+                        ? selectedReminder.responses[0] 
+                        : "No response generated yet"}
+                    </p>
+                    {selectedReminder.motivationalQuote && (
+                      <div className="mt-2 p-2 bg-blue-50 rounded border-l-4 border-blue-500">
+                        <p className="text-sm text-blue-800 italic">
+                          💡 {selectedReminder.motivationalQuote}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Voice Character</Label>
