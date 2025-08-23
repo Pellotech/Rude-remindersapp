@@ -45,11 +45,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const updates = req.body;
-      const user = await storage.updateUser(userId, updates);
-      res.json(user);
+
+      // Ensure notification settings are properly stored
+      const allowedSettings = [
+        'firstName', 'lastName', 'timezone', 'darkMode', 'simplifiedInterface',
+        'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
+        'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 
+        'ethnicitySpecificQuotes', 'genderSpecificReminders'
+      ];
+
+      const sanitizedUpdates = Object.keys(updates)
+        .filter(key => allowedSettings.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = updates[key];
+          return obj;
+        }, {} as any);
+
+      // Update user in storage
+      await storage.updateUser(userId, sanitizedUpdates);
+
+      res.json({ success: true });
     } catch (error) {
       console.error("Error updating settings:", error);
-      res.status(500).json({ message: "Failed to update settings" });
+      res.status(500).json({ 
+        error: "Failed to update settings",
+        details: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
   });
 
@@ -80,15 +101,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         context,
         scheduledFor,
         rudenessLevel,
-        browserNotification,
-        voiceNotification,
-        emailNotification,
         voiceCharacter,
         attachments,
         motivationalQuote,
         selectedDays,
         isMultiDay
       } = req.body;
+
+      // Use user's notification settings from their profile
+      const browserNotification = user.browserNotifications !== false; // Default to true if not set
+      const voiceNotification = user.voiceNotifications || false;
+      const emailNotification = user.emailNotifications || false;
 
       // Create base reminder
       let reminder = {
@@ -191,7 +214,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rudeMessage: reminder.rudeMessage,
         detectedMood: reminder.detectedMood
       });
-      
+
       await storage.createReminder(userId, reminder);
       reminderService.scheduleReminder(reminder);
 

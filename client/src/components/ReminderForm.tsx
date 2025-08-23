@@ -45,9 +45,6 @@ const formSchema = z.object({
     message: "Reminder must be scheduled between now and one week from now",
   }),
   rudenessLevel: z.number().min(1).max(5),
-  browserNotification: z.boolean(),
-  voiceNotification: z.boolean(),
-  emailNotification: z.boolean(),
   voiceCharacter: z.string().optional(),
   attachments: z.array(z.string()).optional(),
   motivationalQuote: z.string().optional(),
@@ -227,9 +224,6 @@ export default function ReminderForm({
       context: "",
       scheduledFor: "",
       rudenessLevel: 3,
-      browserNotification: true,
-      voiceNotification: false,
-      emailNotification: false,
       voiceCharacter: "default",
       attachments: [],
       motivationalQuote: "",
@@ -1007,77 +1001,6 @@ export default function ReminderForm({
             {/* Show advanced sections only if not simplified interface */}
             {!isSimplifiedInterface && (
               <>
-                {/* Notification Options */}
-                <div className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                  <p className="text-sm text-muted-foreground">Choose how you want to be notified</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="browserNotification"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
-                          <div className="flex items-center">
-                            <Bell className="text-rude-red-600 mr-2 h-4 w-4" />
-                            <Label className="text-sm font-medium cursor-pointer" htmlFor="browser-notification">
-                              Browser
-                            </Label>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              id="browser-notification"
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="voiceNotification"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
-                          <div className="flex items-center">
-                            <Volume2 className="text-rude-red-600 mr-2 h-4 w-4" />
-                            <Label className="text-sm font-medium cursor-pointer" htmlFor="voice-notification">
-                              Voice
-                            </Label>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              id="voice-notification"
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="emailNotification"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100 bg-white">
-                          <div className="flex items-center">
-                            <Mail className="text-rude-red-600 mr-2 h-4 w-4" />
-                            <Label className="text-sm font-medium cursor-pointer" htmlFor="email-notification">
-                              Email
-                            </Label>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              id="email-notification"
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
 
                 {/* Quick Settings */}
                 <Collapsible open={quickSettingsOpen} onOpenChange={setQuickSettingsOpen}>
@@ -1337,6 +1260,19 @@ export default function ReminderForm({
               </>
             )}
 
+            {/* Notification Settings Info */}
+            <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg">
+              <p>Notifications will use your preferences from Settings → Notifications</p>
+              <Button
+                type="button"
+                variant="link"
+                className="text-blue-600 hover:text-blue-800 p-0 h-auto text-sm"
+                onClick={() => window.location.href = '/settings/notifications'}
+              >
+                Change notification settings
+              </Button>
+            </div>
+
             {/* Submit Button */}
             <Button
               type="submit"
@@ -1349,7 +1285,7 @@ export default function ReminderForm({
                   Generating AI Response & Quote...
                 </>
               ) : (
-                "Create Reminder (Auto-generates AI & Quote)"
+                "Create Reminder"
               )}
             </Button>
           </form>
