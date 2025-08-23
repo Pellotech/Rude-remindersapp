@@ -72,8 +72,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         scheduledFor: new Date(req.body.scheduledFor)
       };
+      
+      console.log("Creating reminder with data:", {
+        motivationalQuote: requestData.motivationalQuote,
+        attachments: requestData.attachments,
+        title: requestData.title
+      });
+      
       const validatedData = insertReminderSchema.parse(requestData);
       const reminder = await storage.createReminder(userId, validatedData);
+
+      console.log("Created reminder:", {
+        id: reminder.id,
+        motivationalQuote: reminder.motivationalQuote,
+        attachments: reminder.attachments
+      });
 
       // Schedule the reminder
       reminderService.scheduleReminder(reminder);
