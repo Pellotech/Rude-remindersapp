@@ -89,23 +89,6 @@ export default function SettingsLanding() {
             </CardHeader>
           </Card>
         </Link>
-
-        <Link href="/settings/reminder-history">
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-indigo-600" />
-                  Your Reminder History
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                View your stats, manage past reminders, and track progress
-              </p>
-            </CardHeader>
-          </Card>
-        </Link>
       </div>
     </div>
   );
