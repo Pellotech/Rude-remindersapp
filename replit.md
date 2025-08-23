@@ -31,6 +31,7 @@ The AI now balances brutal honesty with genuine humor - like having a funny frie
 - Smart routing based on user subscription status (subscriptionStatus === 'active' || subscriptionPlan === 'premium')
 - Both pages have identical UI/UX design for consistent user experience
 - ReminderForm component supports feature restrictions based on plan type
+- Developer toggle in Navigation component for easy switching between free/premium views for testing
 Mobile Development: ✅ COMPLETED - Successfully converted to iOS/Android mobile apps using Capacitor.
 Enhancement Features: ✅ COMPLETED - Implemented comprehensive user personalization system with:
 - Gender selection (Male/Female/Other) with gender-specific reminders

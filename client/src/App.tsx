@@ -20,8 +20,12 @@ import { useEffect } from "react";
 function HomeRouter() {
   const { user } = useAuth();
   
-  // Check if user has premium subscription
-  const isPremium = user?.subscriptionStatus === 'active' || 
+  // Check developer mode for testing subscription tiers
+  const isDeveloperPremiumMode = localStorage.getItem('dev-premium-mode') === 'true';
+  
+  // Check if user has premium subscription OR developer mode is enabled
+  const isPremium = isDeveloperPremiumMode || 
+                   user?.subscriptionStatus === 'active' || 
                    user?.subscriptionPlan === 'premium';
   
   return isPremium ? <HomePremium /> : <HomeFree />;
