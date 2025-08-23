@@ -101,7 +101,7 @@ export default function HomePremium() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="w-full px-4 py-8 max-w-none overflow-x-hidden">
         {/* Welcome Header - identical to free */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -128,7 +128,7 @@ export default function HomePremium() {
 
         {/* Main Content Tabs - identical to free */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-4 overflow-x-auto flex-shrink-0">
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
               Create
@@ -165,7 +165,7 @@ export default function HomePremium() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="manage" className="space-y-6">
+          <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
             <RemindersList />
           </TabsContent>
 
