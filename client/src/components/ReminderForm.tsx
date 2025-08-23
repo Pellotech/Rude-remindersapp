@@ -57,6 +57,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+interface ReminderFormProps {
+  isFreePlan?: boolean;
+  currentReminderCount?: number;
+  maxReminders?: number;
+}
+
 const rudenessLabels = [
   { level: 1, emoji: "😊", label: "Gentle" },
   { level: 2, emoji: "🙂", label: "Firm" },
@@ -159,7 +165,11 @@ const sampleQuotes = {
   ]
 };
 
-export default function ReminderForm() {
+export default function ReminderForm({ 
+  isFreePlan = false,
+  currentReminderCount = 0,
+  maxReminders = 5
+}: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -265,8 +275,16 @@ export default function ReminderForm() {
     }
   }, [originalMessage, rudenessLevel, phrases]);
 
+  // Check if user can create more reminders
+  const canCreateReminder = !isFreePlan || currentReminderCount < maxReminders;
+
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {
+      // Check reminder limit for free users
+      if (isFreePlan && currentReminderCount >= maxReminders) {
+        throw new Error(`Free plan limited to ${maxReminders} reminders. Upgrade to premium for unlimited reminders.`);
+      }
+
       const response = await apiRequest("POST", "/api/reminders", {
         ...data,
         title: data.originalMessage, // Use the original message as the title
@@ -695,6 +713,57 @@ export default function ReminderForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Free Plan Restrictions Warning */}
+        {isFreePlan && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Crown className="h-5 w-5 text-orange-600 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-orange-800 mb-1">
+                  Free Plan - Limited Features
+                </h3>
+                <p className="text-sm text-orange-700 mb-3">
+                  You're using {currentReminderCount} of {maxReminders} free reminders. 
+                  Some features are restricted on the free plan.
+                </p>
+                <div className="space-y-1">
+                  <div className="flex items-center text-xs text-orange-600">
+                    <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                    Voice characters limited to 3 options
+                  </div>
+                  <div className="flex items-center text-xs text-orange-600">
+                    <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                    Photo/video attachments limited to 1 per reminder
+                  </div>
+                  <div className="flex items-center text-xs text-orange-600">
+                    <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                    AI responses may be less personalized
+                  </div>
+                </div>
+                <Button 
+                  type="button" 
+                  size="sm" 
+                  className="mt-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  onClick={() => window.location.href = '/settings/billing'}
+                >
+                  <Crown className="h-4 w-4 mr-1" />
+                  Upgrade to Premium
+                </Button>
+              </div>
+              {!canCreateReminder && (
+                <div className="text-right">
+                  <div className="text-xs font-semibold text-red-600 mb-1">
+                    Reminder Limit Reached
+                  </div>
+                  <div className="text-xs text-red-500">
+                    Delete old reminders or upgrade
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Message Field */}
@@ -1114,12 +1183,24 @@ export default function ReminderForm() {
                       <div className="flex items-center">
                         <Volume2 className="mr-2 h-4 w-4 text-rude-red-600" />
                         Voice Characters
+                        {isFreePlan && (
+                          <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">
+                            Limited
+                          </span>
+                        )}
                       </div>
                       <ChevronDown className={`h-4 w-4 transition-transform ${voiceCharacterOpen ? 'rotate-180' : ''}`} />
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
+                      {isFreePlan && (
+                        <span className="text-xs text-orange-600 font-medium">
+                          {voiceCharacters.slice(0, 3).length}/3 available
+                        </span>
+                      )}
+                    </div>
                     <FormField
                       control={form.control}
                       name="voiceCharacter"
@@ -1130,7 +1211,7 @@ export default function ReminderForm() {
                               <SelectValue placeholder="Select a voice character" />
                             </SelectTrigger>
                             <SelectContent>
-                              {voiceCharacters.map((character: any) => {
+                              {(isFreePlan ? voiceCharacters.slice(0, 3) : voiceCharacters).map((character: any) => {
                                 const IconComponent = getVoiceIcon(character.id);
                                 return (
                                   <SelectItem key={character.id} value={character.id}>
@@ -1144,6 +1225,22 @@ export default function ReminderForm() {
                                   </SelectItem>
                                 );
                               })}
+                              {isFreePlan && voiceCharacters.length > 3 && (
+                                <div className="p-2 text-center border-t">
+                                  <div className="text-xs text-orange-600 mb-1">
+                                    +{voiceCharacters.length - 3} more characters
+                                  </div>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    className="text-xs h-6"
+                                    onClick={() => window.location.href = '/settings/billing'}
+                                  >
+                                    <Crown className="h-3 w-3 mr-1" />
+                                    Upgrade
+                                  </Button>
+                                </div>
+                              )}
                             </SelectContent>
                           </Select>
                         </FormItem>
@@ -1173,19 +1270,32 @@ export default function ReminderForm() {
                       <div className="flex items-center">
                         <Camera className="mr-2 h-4 w-4 text-rude-red-600" />
                         Media Attachments
+                        {isFreePlan && (
+                          <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">
+                            1 max
+                          </span>
+                        )}
                       </div>
                       <ChevronDown className={`h-4 w-4 transition-transform ${attachmentsOpen ? 'rotate-180' : ''}`} />
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
+                      {isFreePlan && (
+                        <span className="text-xs text-orange-600 font-medium">
+                          Free: 1 attachment max
+                        </span>
+                      )}
+                    </div>
 
                     {isMobileWithCamera ? (
                       <MobileCamera
                         onPhotoCaptured={(photoUrl) => {
-                          setSelectedAttachments(prev => [...prev, photoUrl].slice(0, 5));
+                          const maxFiles = isFreePlan ? 1 : 5;
+                          setSelectedAttachments(prev => [...prev, photoUrl].slice(0, maxFiles));
                         }}
-                        maxFiles={5}
+                        maxFiles={isFreePlan ? 1 : 5}
                         currentCount={selectedAttachments.length}
                       />
                     ) : (
@@ -1194,10 +1304,31 @@ export default function ReminderForm() {
                         variant="outline"
                         className="w-full"
                         onClick={handlePhotoAttachment}
+                        disabled={isFreePlan && selectedAttachments.length >= 1}
                       >
                         <Camera className="mr-2 h-4 w-4" />
-                        Add Photos/Videos ({selectedAttachments.length}/5)
+                        Add Photos/Videos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
+                        {isFreePlan && selectedAttachments.length >= 1 && (
+                          <Crown className="ml-2 h-4 w-4 text-orange-600" />
+                        )}
                       </Button>
+                    )}
+
+                    {isFreePlan && selectedAttachments.length >= 1 && (
+                      <div className="text-center p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                        <p className="text-xs text-orange-700 mb-2">
+                          Free plan limited to 1 attachment. Want more?
+                        </p>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className="text-xs h-7"
+                          onClick={() => window.location.href = '/settings/billing'}
+                        >
+                          <Crown className="h-3 w-3 mr-1" />
+                          Upgrade to Premium
+                        </Button>
+                      </div>
                     )}
 
                     {selectedAttachments.length > 0 && (
@@ -1297,18 +1428,44 @@ export default function ReminderForm() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 text-lg"
-              disabled={createReminderMutation.isPending}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 text-lg disabled:bg-gray-400"
+              disabled={createReminderMutation.isPending || !canCreateReminder}
             >
               {createReminderMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                   Creating...
                 </>
+              ) : !canCreateReminder ? (
+                <>
+                  <Crown className="mr-2 h-4 w-4" />
+                  Reminder Limit Reached - Upgrade to Premium
+                </>
               ) : (
                 "Create Rude Reminder"
               )}
             </Button>
+
+            {/* Additional upgrade prompt when limit is reached */}
+            {!canCreateReminder && (
+              <div className="text-center mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-purple-800 mb-2">
+                  You've reached your free reminder limit!
+                </h3>
+                <p className="text-sm text-purple-700 mb-3">
+                  Delete old reminders or upgrade to premium for unlimited reminders, advanced AI responses, and premium features.
+                </p>
+                <Button 
+                  type="button"
+                  size="sm" 
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  onClick={() => window.location.href = '/settings/billing'}
+                >
+                  <Crown className="h-4 w-4 mr-1" />
+                  Upgrade to Premium Now
+                </Button>
+              </div>
+            )}
           </form>
         </Form>
       </CardContent>
