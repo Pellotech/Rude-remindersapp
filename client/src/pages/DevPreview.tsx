@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import * as React from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +35,32 @@ export default function DevPreview() {
       return hasGenerating ? 2000 : false;
     },
   });
+
+  // Auto-generate AI responses for existing reminders that don't have them
+  const generateMissingResponses = async () => {
+    for (const reminder of reminders) {
+      if (!reminder.rudeMessage || !reminder.responses || reminder.responses.length === 0) {
+        try {
+          console.log(`Auto-generating missing AI response for reminder: ${reminder.originalMessage}`);
+          await apiRequest('POST', `/api/reminders/${reminder.id}/generate-response`);
+        } catch (error) {
+          console.error(`Failed to generate response for reminder ${reminder.id}:`, error);
+        }
+      }
+    }
+  };
+
+  // Trigger generation for missing responses when reminders load
+  React.useEffect(() => {
+    if (reminders.length > 0) {
+      const remindersMissingResponses = reminders.filter(r => 
+        !r.rudeMessage || !r.responses || r.responses.length === 0
+      );
+      if (remindersMissingResponses.length > 0) {
+        generateMissingResponses();
+      }
+    }
+  }, [reminders.length]);
 
   const fetchMoreResponses = async (reminderId: string, forceRefresh = false) => {
     setLoadingMore(true);

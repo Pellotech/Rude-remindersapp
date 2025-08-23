@@ -160,6 +160,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate AI response for existing reminder
+  app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reminder = await storage.getReminder(req.params.id, userId);
+      if (!reminder) {
+        return res.status(404).json({ message: "Reminder not found" });
+      }
+
+      // Generate AI response
+      const updatedReminder = await reminderService.generateReminderResponse(reminder);
+      
+      // Update the reminder in storage
+      await storage.updateReminder(req.params.id, userId, updatedReminder);
+      
+      res.json(updatedReminder);
+    } catch (error) {
+      console.error("Error generating response for existing reminder:", error);
+      res.status(500).json({ message: "Failed to generate response" });
+    }
+  });
+
   // Get additional responses for a reminder
   app.get('/api/reminders/:id/more-responses', isAuthenticated, async (req: any, res) => {
     try {
