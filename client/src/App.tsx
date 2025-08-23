@@ -5,8 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/home";
-import PageOne from "@/pages/page-one";
-import PageTwo from "@/pages/page-two";
 import Settings from "@/pages/SettingsLanding";
 import PersonalInfo from "@/pages/settings/PersonalInfo";
 import Notifications from "@/pages/settings/Notifications";
@@ -44,8 +42,6 @@ function Router() {
       {isAuthenticated ? (
         <>
           <Route path="/" component={Home} />
-          <Route path="/page-one" component={PageOne} />
-          <Route path="/page-two" component={PageTwo} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/settings" component={Settings} />
           <Route path="/settings/personal" component={PersonalInfo} />

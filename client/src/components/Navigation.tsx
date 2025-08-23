@@ -24,40 +24,18 @@ export default function Navigation() {
             <div className="flex items-center space-x-4">
               <HelpMenu />
               
-              {/* Navigation Links */}
-              <Link href="/">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`text-gray-500 hover:text-gray-700 ${location === "/" ? "bg-gray-100 text-gray-900" : ""}`}
-                  data-testid="nav-home"
-                >
-                  <Home className="h-5 w-5 mr-1" />
-                  Home
-                </Button>
-              </Link>
-              
-              <Link href="/page-one">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`text-gray-500 hover:text-gray-700 ${location === "/page-one" ? "bg-gray-100 text-gray-900" : ""}`}
-                  data-testid="nav-page-one"
-                >
-                  Page One
-                </Button>
-              </Link>
-              
-              <Link href="/page-two">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`text-gray-500 hover:text-gray-700 ${location === "/page-two" ? "bg-gray-100 text-gray-900" : ""}`}
-                  data-testid="nav-page-two"
-                >
-                  Page Two
-                </Button>
-              </Link>
+              {/* Show Home button when not on home page */}
+              {location !== "/" && (
+                <Link href="/">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <Home className="h-5 w-5" />
+                  </Button>
+                </Link>
+              )}
               
               <Link href="/settings">
                 <Button
