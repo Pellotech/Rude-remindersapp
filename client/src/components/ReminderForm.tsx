@@ -292,10 +292,10 @@ export default function ReminderForm({
       });
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (reminder) => {
       toast({
         title: "Success!",
-        description: "Your rude reminder has been created.",
+        description: `Your reminder has been created ${reminder.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
       });
       form.reset();
 
@@ -1282,11 +1282,11 @@ export default function ReminderForm({
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions</p>
+                    <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions (Auto-generated if category selected)</p>
 
                     <Select value={selectedCategory} onValueChange={handleCategorySelection}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose motivation category" />
+                        <SelectValue placeholder="Choose motivation category (optional - auto-generated)" />
                       </SelectTrigger>
                       <SelectContent>
                         {motivationCategories.map((category) => {
@@ -1346,10 +1346,10 @@ export default function ReminderForm({
               {createReminderMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Creating...
+                  Generating AI Response & Quote...
                 </>
               ) : (
-                "Create Rude Reminder"
+                "Create Reminder (Auto-generates AI & Quote)"
               )}
             </Button>
           </form>
