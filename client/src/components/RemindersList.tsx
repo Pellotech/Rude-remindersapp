@@ -232,8 +232,19 @@ export default function RemindersList() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4 w-full">
-            {filteredReminders.map((reminder: Reminder) => (
+          (() => {
+            const now = new Date();
+            const overdueReminders = filteredReminders.filter((reminder: Reminder) => 
+              !reminder.completed && new Date(reminder.scheduledFor) < now
+            );
+            const upcomingReminders = filteredReminders.filter((reminder: Reminder) => 
+              !reminder.completed && new Date(reminder.scheduledFor) >= now
+            );
+            const completedReminders = filteredReminders.filter((reminder: Reminder) => 
+              reminder.completed
+            );
+
+            const renderReminder = (reminder: Reminder) => (
               <Card key={reminder.id} className={cn(
                 "transition-all duration-200 hover:shadow-md w-full max-w-full",
                 reminder.completed && "opacity-60"
@@ -330,8 +341,57 @@ export default function RemindersList() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            );
+
+            return (
+              <div className="space-y-6 w-full">
+                {/* Overdue Reminders */}
+                {overdueReminders.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-red-700">
+                        Overdue ({overdueReminders.length})
+                      </h3>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto space-y-3 border border-red-200 rounded-lg p-3 bg-red-50">
+                      {overdueReminders.map(renderReminder)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Upcoming Reminders */}
+                {upcomingReminders.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-blue-700">
+                        Upcoming ({upcomingReminders.length})
+                      </h3>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto space-y-3 border border-blue-200 rounded-lg p-3 bg-blue-50">
+                      {upcomingReminders.map(renderReminder)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Completed Reminders */}
+                {completedReminders.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-green-700">
+                        Completed ({completedReminders.length})
+                      </h3>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto space-y-3 border border-green-200 rounded-lg p-3 bg-green-50">
+                      {completedReminders.map(renderReminder)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()
         )}
       </CardContent>
     </Card>
