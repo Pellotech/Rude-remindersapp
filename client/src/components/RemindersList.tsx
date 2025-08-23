@@ -312,7 +312,7 @@ export default function RemindersList() {
                     </div>
 
                     <p className="text-sm text-gray-600 break-words">
-                      "{reminder.rudeMessage}"
+                      "{reminder.originalMessage}"
                     </p>
 
                     <div className="flex items-center text-xs text-gray-500 flex-wrap">
