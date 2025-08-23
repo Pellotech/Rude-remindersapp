@@ -150,10 +150,7 @@ export default function HomePremium() {
           <TabsContent value="create" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  Create Premium Reminder
-                </CardTitle>
+                <CardTitle>Create Premium Reminder</CardTitle>
               </CardHeader>
               <CardContent>
                 <ReminderForm 
