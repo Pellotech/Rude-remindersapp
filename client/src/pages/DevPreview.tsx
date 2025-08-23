@@ -10,6 +10,7 @@ import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
+import { detectReminderMood, getMoodStyling, getMoodDescription, type ReminderMood } from '@/utils/moodDetection';
 
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
@@ -315,17 +316,25 @@ export default function DevPreview() {
               </div>
             ) : (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {sortedReminders.map((reminder: Reminder) => (
-                  <div
-                    key={reminder.id}
-                    className={`p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
-                      selectedReminder?.id === reminder.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
-                    }`}
-                    onClick={() => {
-                      setSelectedReminder(reminder);
-                      setMoreResponses(null); // Clear previous more responses when selecting a new reminder
-                    }}
-                  >
+                {sortedReminders.map((reminder: Reminder) => {
+                  // Detect mood from current response or use stored mood
+                  const currentMood = reminder.detectedMood as ReminderMood || 
+                    (reminder.rudeMessage ? detectReminderMood(reminder.rudeMessage).mood : 'gentle');
+                  const moodStyling = getMoodStyling(currentMood);
+                  
+                  return (
+                    <div
+                      key={reminder.id}
+                      className={`p-3 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                        selectedReminder?.id === reminder.id 
+                          ? `${moodStyling.cardClass} border-2` 
+                          : `${moodStyling.cardClass} border opacity-75 hover:opacity-100`
+                      }`}
+                      onClick={() => {
+                        setSelectedReminder(reminder);
+                        setMoreResponses(null); // Clear previous more responses when selecting a new reminder
+                      }}
+                    >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h4 className="font-medium text-sm">{reminder.title}</h4>
@@ -338,6 +347,12 @@ export default function DevPreview() {
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-1">
+                          <span className="text-lg">{moodStyling.icon}</span>
+                          <Badge className={`text-xs ${moodStyling.badgeClass}`}>
+                            {currentMood}
+                          </Badge>
+                        </div>
                         <Badge className={`text-xs ${getRudenessColor(reminder.rudenessLevel)}`}>
                           Level {reminder.rudenessLevel}
                         </Badge>
@@ -359,8 +374,9 @@ export default function DevPreview() {
                         {reminder.voiceCharacter.replace('-', ' ')}
                       </div>
                     )}
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </CardContent>
@@ -375,6 +391,39 @@ export default function DevPreview() {
           <CardContent>
             {selectedReminder ? (
               <div className="space-y-4">
+                {/* Mood Display */}
+                {selectedReminder.rudeMessage && (
+                  <div className="mb-4">
+                    {(() => {
+                      const currentMood = selectedReminder.detectedMood as ReminderMood || 
+                        detectReminderMood(selectedReminder.rudeMessage).mood;
+                      const moodStyling = getMoodStyling(currentMood);
+                      const confidence = selectedReminder.moodConfidence || 5;
+                      
+                      return (
+                        <div className={`p-3 rounded-lg border ${moodStyling.cardClass}`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-2xl">{moodStyling.icon}</span>
+                              <div>
+                                <h4 className={`font-medium ${moodStyling.textColor}`}>
+                                  {currentMood.charAt(0).toUpperCase() + currentMood.slice(1)} Mood
+                                </h4>
+                                <p className="text-xs text-gray-600">
+                                  {getMoodDescription(currentMood)} • Confidence: {confidence}/10
+                                </p>
+                              </div>
+                            </div>
+                            <Badge className={moodStyling.badgeClass}>
+                              {currentMood}
+                            </Badge>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
                 <div>
                   <Label className="text-sm font-medium">Original Message</Label>
                   <p className="text-sm text-muted-foreground mt-1">{selectedReminder.originalMessage}</p>
@@ -382,9 +431,11 @@ export default function DevPreview() {
                 <div>
                   <Label className="text-sm font-medium">Generated Response</Label>
                   {selectedReminder.rudeMessage ? (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {selectedReminder.rudeMessage}
-                    </p>
+                    <div className="mt-1 p-3 rounded-lg bg-gray-50 border-l-4 border-gray-400">
+                      <p className="text-sm font-medium text-gray-800">
+                        {selectedReminder.rudeMessage}
+                      </p>
+                    </div>
                   ) : selectedReminder.status === 'generating' ? (
                     <div className="mt-1 flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin text-blue-600" />

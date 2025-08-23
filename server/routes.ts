@@ -108,14 +108,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Schedule the reminder
           reminderService.scheduleReminder(finalReminder);
           
-          console.log(`AI response generated successfully for reminder: ${reminder.id}`);
+          console.log(`AI response generated successfully for reminder: ${reminder.id} with mood: ${updatedReminder.detectedMood}`);
         } catch (error) {
           console.error("Error generating AI response during creation:", error);
           // Set status to 'active' even if AI generation fails, with fallback response
           await storage.updateReminder(reminder.id, userId, { 
             status: 'active',
             rudeMessage: `Time to ${reminder.originalMessage}!`,
-            responses: [`Time to ${reminder.originalMessage}!`]
+            responses: [`Time to ${reminder.originalMessage}!`],
+            detectedMood: 'gentle',
+            moodConfidence: 5
           });
           // Still schedule the reminder
           reminderService.scheduleReminder(reminder);
