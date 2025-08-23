@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/home";
+import HomeFree from "@/pages/home-free";
+import HomePremium from "@/pages/home-premium";
 import Settings from "@/pages/SettingsLanding";
 import PersonalInfo from "@/pages/settings/PersonalInfo";
 import Notifications from "@/pages/settings/Notifications";
@@ -14,6 +16,16 @@ import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
+
+function HomeRouter() {
+  const { user } = useAuth();
+  
+  // Check if user has premium subscription
+  const isPremium = user?.subscriptionStatus === 'active' || 
+                   user?.subscriptionPlan === 'premium';
+  
+  return isPremium ? <HomePremium /> : <HomeFree />;
+}
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -41,7 +53,7 @@ function Router() {
     <Switch>
       {isAuthenticated ? (
         <>
-          <Route path="/" component={Home} />
+          <Route path="/" component={HomeRouter} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/settings" component={Settings} />
           <Route path="/settings/personal" component={PersonalInfo} />

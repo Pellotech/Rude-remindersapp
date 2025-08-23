@@ -57,6 +57,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+interface ReminderFormProps {
+  isFreePlan?: boolean;
+  currentReminderCount?: number;
+  maxReminders?: number;
+}
+
 const rudenessLabels = [
   { level: 1, emoji: "😊", label: "Gentle" },
   { level: 2, emoji: "🙂", label: "Firm" },
@@ -159,7 +165,11 @@ const sampleQuotes = {
   ]
 };
 
-export default function ReminderForm() {
+export default function ReminderForm({ 
+  isFreePlan = false,
+  currentReminderCount = 0,
+  maxReminders = 5
+}: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
