@@ -88,21 +88,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         attachments: reminder.attachments
       });
 
-      // Automatically generate AI response for the new reminder
-      try {
-        const updatedReminder = await reminderService.generateReminderResponse(reminder);
-        await storage.updateReminder(reminder.id, userId, updatedReminder);
-        
-        // Schedule the reminder
-        reminderService.scheduleReminder(updatedReminder);
-        
-        res.status(201).json(updatedReminder);
-      } catch (error) {
-        console.error("Error generating AI response during creation:", error);
-        // Still schedule and return the original reminder if AI generation fails
-        reminderService.scheduleReminder(reminder);
-        res.status(201).json(reminder);
-      }
+      // Set initial status to 'generating' to show loading state
+      const pendingReminder = { ...reminder, status: 'generating' as const };
+      await storage.updateReminder(reminder.id, userId, { status: 'generating' });
+      
+      // Return the reminder immediately so user sees it's created
+      res.status(201).json(pendingReminder);
+      
+      // Generate AI response in background
+      process.nextTick(async () => {
+        try {
+          console.log(`Generating AI response for reminder: ${reminder.originalMessage}`);
+          const updatedReminder = await reminderService.generateReminderResponse(reminder);
+          
+          // Update status to 'active' once AI response is ready
+          const finalReminder = { ...updatedReminder, status: 'active' as const };
+          await storage.updateReminder(reminder.id, userId, finalReminder);
+          
+          // Schedule the reminder
+          reminderService.scheduleReminder(finalReminder);
+          
+          console.log(`AI response generated successfully for reminder: ${reminder.id}`);
+        } catch (error) {
+          console.error("Error generating AI response during creation:", error);
+          // Set status to 'active' even if AI generation fails, with fallback response
+          await storage.updateReminder(reminder.id, userId, { 
+            status: 'active',
+            rudeMessage: `Time to ${reminder.originalMessage}!`,
+            responses: [`Time to ${reminder.originalMessage}!`]
+          });
+          // Still schedule the reminder
+          reminderService.scheduleReminder(reminder);
+        }
+      });
     } catch (error) {
       console.error("Error creating reminder:", error);
       res.status(400).json({ message: "Failed to create reminder" });

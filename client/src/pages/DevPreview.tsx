@@ -18,7 +18,7 @@ export default function DevPreview() {
   const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('scheduled'); // New state for sorting
   const { toast } = useToast();
 
-  // Fetch all reminders
+  // Fetch all reminders with auto-refresh for generating status
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ['/api/reminders'],
     queryFn: async () => {
@@ -27,6 +27,12 @@ export default function DevPreview() {
     },
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
+    refetchInterval: (query) => {
+      // Auto-refresh every 2 seconds if any reminder is generating
+      const reminders = query.state.data || [];
+      const hasGenerating = reminders.some((r: any) => r.status === 'generating');
+      return hasGenerating ? 2000 : false;
+    },
   });
 
   // Sort reminders based on selected criteria
@@ -351,6 +357,11 @@ export default function DevPreview() {
                     <p className="text-sm text-muted-foreground mt-1">
                       {selectedReminder.responses[0]}
                     </p>
+                  ) : selectedReminder.status === 'generating' ? (
+                    <div className="mt-1 flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                      <span className="text-sm text-blue-600">Generating AI response...</span>
+                    </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">AI response will be generated automatically</p>
                   )}

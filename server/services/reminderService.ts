@@ -161,7 +161,7 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
       ...reminder,
       rudeMessage,
       responses,
-      status: 'pending' as const,
+      status: 'active' as const,
       updatedAt: new Date()
     };
   } catch (error) {
@@ -171,7 +171,7 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
       ...reminder,
       rudeMessage: `Time to ${reminder.originalMessage}!`,
       responses: [`Time to ${reminder.originalMessage}!`],
-      status: 'pending' as const,
+      status: 'active' as const,
       updatedAt: new Date()
     };
   }
