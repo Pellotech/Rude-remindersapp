@@ -187,11 +187,11 @@ export default function RemindersList() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="space-y-4">
           <CardTitle>Your Reminders</CardTitle>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-2">
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40 flex-shrink-0">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -203,12 +203,12 @@ export default function RemindersList() {
               </SelectContent>
             </Select>
             
-            <div className="relative">
+            <div className="relative flex-1 min-w-0">
               <Input
                 placeholder="Search reminders..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-48"
+                className="pl-10 w-full"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             </div>
@@ -235,92 +235,95 @@ export default function RemindersList() {
             {filteredReminders.map((reminder: Reminder) => (
               <div
                 key={reminder.id}
-                className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                className="p-3 sm:p-4 border rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-base font-medium text-gray-900">
-                        {reminder.title}
-                      </h3>
-                      <Badge 
-                        className={rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]}
-                      >
-                        {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                      </Badge>
-                      <div className="flex items-center space-x-1">
-                        {reminder.browserNotification && (
-                          <Bell className="text-gray-400 h-3 w-3" />
-                        )}
-                        {reminder.voiceNotification && (
-                          <Volume2 className="text-gray-400 h-3 w-3" />
-                        )}
-                        {reminder.emailNotification && (
-                          <Mail className="text-gray-400 h-3 w-3" />
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <h3 className="text-sm sm:text-base font-medium text-gray-900 break-words">
+                          {reminder.title}
+                        </h3>
+                        <Badge 
+                          className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
+                        >
+                          {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
+                        </Badge>
+                        {reminder.completed && (
+                          <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
+                            Completed
+                          </Badge>
                         )}
                       </div>
-                      {reminder.completed && (
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
-                          Completed
-                        </Badge>
-                      )}
+                      
+                      <div className="flex items-center gap-1 mb-2">
+                        {reminder.browserNotification && (
+                          <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                        )}
+                        {reminder.voiceNotification && (
+                          <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                        )}
+                        {reminder.emailNotification && (
+                          <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                        )}
+                      </div>
                     </div>
                     
-                    <p className="text-sm text-gray-600 mb-2">
-                      "{reminder.rudeMessage}"
-                    </p>
-                    
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Clock className="mr-1 h-3 w-3" />
-                      <span>
-                        {new Date(reminder.scheduledFor).toLocaleString()}
-                      </span>
-                      {!reminder.completed && (
-                        <>
-                          <span className="mx-2">•</span>
-                          <span>{formatTimeRemaining(reminder.scheduledFor)}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 ml-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-400 hover:text-gray-600"
-                      onClick={() => {
-                        // TODO: Implement edit functionality
-                        toast({
-                          title: "Coming Soon",
-                          description: "Edit functionality will be added soon.",
-                        });
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    
-                    {!reminder.completed && (
+                    <div className="flex items-center gap-1 flex-shrink-0">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-gray-400 hover:text-green-600"
-                        onClick={() => completeReminderMutation.mutate(reminder.id)}
-                        disabled={completeReminderMutation.isPending}
+                        className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
+                        onClick={() => {
+                          // TODO: Implement edit functionality
+                          toast({
+                            title: "Coming Soon",
+                            description: "Edit functionality will be added soon.",
+                          });
+                        }}
                       >
-                        <Check className="h-4 w-4" />
+                        <Edit className="h-3 w-3" />
                       </Button>
+                      
+                      {!reminder.completed && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
+                          onClick={() => completeReminderMutation.mutate(reminder.id)}
+                          disabled={completeReminderMutation.isPending}
+                        >
+                          <Check className="h-3 w-3" />
+                        </Button>
+                      )}
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-gray-400 hover:text-red-600 h-8 w-8 p-0"
+                        onClick={() => deleteReminderMutation.mutate(reminder.id)}
+                        disabled={deleteReminderMutation.isPending}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-gray-600 break-words">
+                    "{reminder.rudeMessage}"
+                  </p>
+                  
+                  <div className="flex items-center text-xs text-gray-500 flex-wrap">
+                    <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
+                    <span className="break-all">
+                      {new Date(reminder.scheduledFor).toLocaleString()}
+                    </span>
+                    {!reminder.completed && (
+                      <>
+                        <span className="mx-2 flex-shrink-0">•</span>
+                        <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
+                      </>
                     )}
-                    
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-400 hover:text-red-600"
-                      onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                      disabled={deleteReminderMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>
