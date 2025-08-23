@@ -31,6 +31,7 @@ import {
   CircleSlash2
 } from "lucide-react";
 import type { Reminder } from "@shared/schema";
+import { cn } from "@/lib/utils";
 
 const rudenessLevelColors = {
   1: "bg-green-100 text-green-800",
@@ -127,14 +128,14 @@ export default function RemindersList() {
   const filteredReminders = (reminders as Reminder[]).filter((reminder: Reminder) => {
     const matchesSearch = reminder.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          reminder.originalMessage.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     if (!matchesSearch) return false;
-    
+
     const now = new Date();
     const reminderDate = new Date(reminder.scheduledFor);
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const reminderDay = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
-    
+
     switch (filter) {
       case "today":
         return reminderDay.getTime() === today.getTime();
@@ -155,14 +156,14 @@ export default function RemindersList() {
     const now = new Date();
     const reminderTime = new Date(scheduledFor);
     const timeDiff = reminderTime.getTime() - now.getTime();
-    
+
     if (timeDiff < 0) {
       return "Overdue";
     }
-    
+
     const hours = Math.floor(timeDiff / (1000 * 60 * 60));
     const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (hours > 24) {
       const days = Math.floor(hours / 24);
       return `${days} day${days !== 1 ? 's' : ''} remaining`;
@@ -202,7 +203,7 @@ export default function RemindersList() {
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <div className="relative flex-1 min-w-0">
               <Input
                 placeholder="Search reminders..."
@@ -215,7 +216,7 @@ export default function RemindersList() {
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         {filteredReminders.length === 0 ? (
           <div className="text-center py-12">
@@ -231,102 +232,104 @@ export default function RemindersList() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 w-full">
             {filteredReminders.map((reminder: Reminder) => (
-              <div
-                key={reminder.id}
-                className="p-3 sm:p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <h3 className="text-sm sm:text-base font-medium text-gray-900 break-words">
-                          {reminder.title}
-                        </h3>
-                        <Badge 
-                          className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
-                        >
-                          {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                        </Badge>
-                        {reminder.completed && (
-                          <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
-                            Completed
+              <Card key={reminder.id} className={cn(
+                "transition-all duration-200 hover:shadow-md w-full max-w-full",
+                reminder.completed && "opacity-60"
+              )}>
+                <CardContent className="p-4 w-full overflow-x-hidden">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <h3 className="text-sm sm:text-base font-medium text-gray-900 break-words">
+                            {reminder.title}
+                          </h3>
+                          <Badge 
+                            className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
+                          >
+                            {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
                           </Badge>
-                        )}
+                          {reminder.completed && (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
+                              Completed
+                            </Badge>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1 mb-2">
+                          {reminder.browserNotification && (
+                            <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                          )}
+                          {reminder.voiceNotification && (
+                            <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                          )}
+                          {reminder.emailNotification && (
+                            <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                          )}
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center gap-1 mb-2">
-                        {reminder.browserNotification && (
-                          <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                        )}
-                        {reminder.voiceNotification && (
-                          <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                        )}
-                        {reminder.emailNotification && (
-                          <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
-                        onClick={() => {
-                          // TODO: Implement edit functionality
-                          toast({
-                            title: "Coming Soon",
-                            description: "Edit functionality will be added soon.",
-                          });
-                        }}
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
-                      
-                      {!reminder.completed && (
+
+                      <div className="flex items-center gap-1 flex-shrink-0">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
-                          onClick={() => completeReminderMutation.mutate(reminder.id)}
-                          disabled={completeReminderMutation.isPending}
+                          className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
+                          onClick={() => {
+                            // TODO: Implement edit functionality
+                            toast({
+                              title: "Coming Soon",
+                              description: "Edit functionality will be added soon.",
+                            });
+                          }}
                         >
-                          <Check className="h-3 w-3" />
+                          <Edit className="h-3 w-3" />
                         </Button>
+
+                        {!reminder.completed && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
+                            onClick={() => completeReminderMutation.mutate(reminder.id)}
+                            disabled={completeReminderMutation.isPending}
+                          >
+                            <Check className="h-3 w-3" />
+                          </Button>
+                        )}
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-400 hover:text-red-600 h-8 w-8 p-0"
+                          onClick={() => deleteReminderMutation.mutate(reminder.id)}
+                          disabled={deleteReminderMutation.isPending}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-gray-600 break-words">
+                      "{reminder.rudeMessage}"
+                    </p>
+
+                    <div className="flex items-center text-xs text-gray-500 flex-wrap">
+                      <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
+                      <span className="break-all">
+                        {new Date(reminder.scheduledFor).toLocaleString()}
+                      </span>
+                      {!reminder.completed && (
+                        <>
+                          <span className="mx-2 flex-shrink-0">•</span>
+                          <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
+                        </>
                       )}
-                      
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-400 hover:text-red-600 h-8 w-8 p-0"
-                        onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                        disabled={deleteReminderMutation.isPending}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
                     </div>
                   </div>
-                  
-                  <p className="text-sm text-gray-600 break-words">
-                    "{reminder.rudeMessage}"
-                  </p>
-                  
-                  <div className="flex items-center text-xs text-gray-500 flex-wrap">
-                    <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
-                    <span className="break-all">
-                      {new Date(reminder.scheduledFor).toLocaleString()}
-                    </span>
-                    {!reminder.completed && (
-                      <>
-                        <span className="mx-2 flex-shrink-0">•</span>
-                        <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}
