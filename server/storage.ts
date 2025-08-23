@@ -78,6 +78,7 @@ export class DatabaseStorage implements IStorage {
 
   // Reminder operations
   async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
+    
     // Generate rude message with multiple variations
     let rudeMessage: string;
     let daySpecificMessages: string | null = null;
@@ -627,7 +628,7 @@ export const storage = {
   async updateUser(id: string, updates: any) {
     return (await getStorage()).updateUser(id, updates);
   },
-  async createReminder(userId: string, reminder: any) {
+  async createReminder(userId: string, reminder: InsertReminder) {
     return (await getStorage()).createReminder(userId, reminder);
   },
   async getReminders(userId: string) {
