@@ -619,6 +619,7 @@ export default function ReminderForm({
       );
       if (culturalQuote) {
         setSelectedMotivation(culturalQuote);
+        form.setValue("motivationalQuote", culturalQuote);
         toast({
           title: "Cultural Motivation Added",
           description: "Personalized quote based on your cultural background!",
@@ -632,6 +633,7 @@ export default function ReminderForm({
     if (quote) {
       const formattedQuote = QuotesService.formatQuote(quote);
       setSelectedMotivation(formattedQuote);
+      form.setValue("motivationalQuote", formattedQuote);
       toast({
         title: "Motivation Added",
         description: `Quote from ${quote.author} selected!`,
@@ -642,6 +644,19 @@ export default function ReminderForm({
         description: "Please try a different category",
         variant: "destructive",
       });
+    }
+  };
+
+  // Auto-generate quote when category is selected
+  const handleCategorySelection = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    if (categoryId) {
+      // Automatically generate a quote when category is selected
+      getRandomQuote(categoryId);
+    } else {
+      // Clear quote if no category selected
+      setSelectedMotivation("");
+      form.setValue("motivationalQuote", "");
     }
   };
 
@@ -665,7 +680,7 @@ export default function ReminderForm({
       scheduledFor: scheduledDateTime,
       voiceCharacter: selectedVoice,
       attachments: selectedAttachments,
-      motivationalQuote: selectedMotivation,
+      motivationalQuote: selectedMotivation || data.motivationalQuote,
       selectedDays: isMultiDay ? selectedDays : [],
       isMultiDay: isMultiDay
     };
@@ -1269,7 +1284,7 @@ export default function ReminderForm({
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions</p>
 
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <Select value={selectedCategory} onValueChange={handleCategorySelection}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Choose motivation category" />
                       </SelectTrigger>
@@ -1299,7 +1314,7 @@ export default function ReminderForm({
                         onClick={() => getRandomQuote(selectedCategory)}
                       >
                         <Quote className="mr-2 h-4 w-4" />
-                        Get Random Quote
+                        Get New Quote
                       </Button>
                     )}
 
