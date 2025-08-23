@@ -148,18 +148,11 @@ export default function HomePremium() {
           </TabsList>
 
           <TabsContent value="create" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create Premium Reminder</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ReminderForm 
-                  isFreePlan={false}
-                  currentReminderCount={reminders.length}
-                  maxReminders={999999}
-                />
-              </CardContent>
-            </Card>
+            <ReminderForm 
+              isFreePlan={false}
+              currentReminderCount={reminders.length}
+              maxReminders={999999}
+            />
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">

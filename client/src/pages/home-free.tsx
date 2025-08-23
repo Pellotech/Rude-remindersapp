@@ -161,18 +161,11 @@ export default function HomeFree() {
           </TabsList>
 
           <TabsContent value="create" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create Reminder</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ReminderForm 
-                  isFreePlan={true} 
-                  currentReminderCount={freeUsage.reminders}
-                  maxReminders={FREE_LIMITS.reminders}
-                />
-              </CardContent>
-            </Card>
+            <ReminderForm 
+              isFreePlan={true} 
+              currentReminderCount={freeUsage.reminders}
+              maxReminders={FREE_LIMITS.reminders}
+            />
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6">
