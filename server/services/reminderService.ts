@@ -162,7 +162,7 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
       rudeMessage,
       responses,
       status: 'pending' as const,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date()
     };
   } catch (error) {
     console.error('Error generating reminder response:', error);
@@ -172,12 +172,21 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
       rudeMessage: `Time to ${reminder.originalMessage}!`,
       responses: [`Time to ${reminder.originalMessage}!`],
       status: 'pending' as const,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date()
     };
   }
 }
 
+// Create an instance of the ReminderService class
+const reminderServiceInstance = new ReminderService();
+
 export const reminderService = {
+  // Class methods
+  initializeScheduler: () => reminderServiceInstance.initializeScheduler(),
+  scheduleReminder: (reminder: Reminder) => reminderServiceInstance.scheduleReminder(reminder),
+  unscheduleReminder: (reminderId: string) => reminderServiceInstance.unscheduleReminder(reminderId),
+  
+  // Function methods
   createReminder,
   scheduleNotification,
   generateReminder,

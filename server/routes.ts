@@ -450,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('DeepSeek test failed:', error);
       res.status(500).json({ 
         success: false, 
-        error: error.message,
+        error: (error as Error).message,
         fallbackMessage: 'DeepSeek API integration failed - check API key and network connection'
       });
     }
