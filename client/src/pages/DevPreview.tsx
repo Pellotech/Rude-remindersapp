@@ -16,6 +16,7 @@ export default function DevPreview() {
   const [moreResponses, setMoreResponses] = useState<any>(null); // State to store more responses
   const [loadingMore, setLoadingMore] = useState(false); // State for loading more responses
   const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('scheduled'); // New state for sorting
+  const [generatingResponse, setGeneratingResponse] = useState(false); // New state for AI response generation
   const { toast } = useToast();
 
   // Fetch all reminders
@@ -37,6 +38,39 @@ export default function DevPreview() {
       return new Date(a.createdAt || a.scheduledFor).getTime() - new Date(b.createdAt || b.scheduledFor).getTime();
     }
   });
+
+  // Function to generate AI response for a reminder
+  const generateAIResponse = async (reminderId: string) => {
+    setGeneratingResponse(true);
+    try {
+      const response = await apiRequest('POST', `/api/reminders/${reminderId}/generate-response`);
+      if (response.ok) {
+        const updatedReminder = await response.json();
+        
+        // Update the selected reminder if it's the same one
+        if (selectedReminder?.id === reminderId) {
+          setSelectedReminder(updatedReminder);
+        }
+        
+        // Refresh the reminders list
+        window.location.reload();
+        
+        toast({
+          title: "AI Response Generated!",
+          description: "Your reminder now has a personalized AI response.",
+        });
+      }
+    } catch (error) {
+      console.error('Failed to generate AI response:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate AI response. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingResponse(false);
+    }
+  };
 
   const fetchMoreResponses = async (reminderId: string, forceRefresh = false) => {
     setLoadingMore(true);
@@ -346,11 +380,36 @@ export default function DevPreview() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Generated Response</Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {selectedReminder.responses && selectedReminder.responses.length > 0 
-                      ? selectedReminder.responses[0] 
-                      : "No response generated yet"}
-                  </p>
+                  {generatingResponse ? (
+                    <div className="mt-1 flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm text-blue-600">Generating personalized AI response...</span>
+                    </div>
+                  ) : selectedReminder.responses && selectedReminder.responses.length > 0 ? (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedReminder.responses[0]}
+                    </p>
+                  ) : (
+                    <div className="mt-1 space-y-2">
+                      <p className="text-sm text-muted-foreground">No response generated yet</p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => generateAIResponse(selectedReminder.id)}
+                        disabled={generatingResponse}
+                        className="text-xs"
+                      >
+                        {generatingResponse ? (
+                          <>
+                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          'Generate AI Response'
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label className="text-sm font-medium">Voice Character</Label>

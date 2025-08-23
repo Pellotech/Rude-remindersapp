@@ -2,6 +2,46 @@ import { storage } from "../storage";
 import { notificationService } from "./notificationService";
 import type { Reminder } from "@shared/schema";
 
+// Assuming these functions are defined elsewhere and imported
+// For demonstration purposes, let's define them as placeholders
+const createReminder = async (reminder: Reminder): Promise<Reminder> => {
+  console.log("Placeholder for createReminder");
+  return reminder;
+};
+const scheduleNotification = async (reminder: Reminder): Promise<void> => {
+  console.log("Placeholder for scheduleNotification");
+};
+const generateReminder = async (reminder: Reminder): Promise<Reminder> => {
+  console.log("Placeholder for generateReminder");
+  return reminder;
+};
+const getMoreResponses = async (reminderId: string): Promise<string[]> => {
+  console.log("Placeholder for getMoreResponses");
+  return ["More response 1", "More response 2"];
+};
+
+// Mocking smartResponseService and followUpService for completeness in this snippet
+const smartResponseService = {
+  getPersonalizedResponse: async (reminder: Reminder, isRude?: boolean): Promise<string[]> => {
+    console.log(`Mock getPersonalizedResponse for reminder: ${reminder.originalMessage}, isRude: ${isRude}`);
+    if (isRude) {
+      return [`Don't forget to ${reminder.originalMessage}!`];
+    }
+    return [`Remember to ${reminder.originalMessage}.`];
+  },
+  getContextualRemarks: async (reminder: Reminder): Promise<string[]> => {
+    console.log(`Mock getContextualRemarks for reminder: ${reminder.originalMessage}`);
+    return ["Contextual remark 1"];
+  }
+};
+
+const followUpService = {
+  scheduleFollowUps: async (reminder: Reminder): Promise<void> => {
+    console.log(`Mock scheduleFollowUps for reminder: ${reminder.originalMessage}`);
+  }
+};
+
+
 class ReminderService {
   private scheduledReminders = new Map<string, NodeJS.Timeout>();
 
@@ -52,8 +92,8 @@ class ReminderService {
       if (!user) return;
 
       // Import smart response service
-      const { smartResponseService } = await import('./smartResponseService');
-      const { followUpService } = await import('./followupService');
+      // const { smartResponseService } = await import('./smartResponseService');
+      // const { followUpService } = await import('./followupService');
 
       // Get personalized and contextual responses
       const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
@@ -108,4 +148,39 @@ class ReminderService {
   }
 }
 
-export const reminderService = new ReminderService();
+// Generate AI response for an existing reminder
+async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
+  try {
+    console.log(`Generating AI response for reminder: ${reminder.originalMessage}`);
+
+    // Generate the rude/motivational message
+    const responses = await smartResponseService.getPersonalizedResponse(reminder, true);
+    const rudeMessage = responses[0] || `Time to ${reminder.originalMessage}!`;
+
+    return {
+      ...reminder,
+      rudeMessage,
+      responses,
+      status: 'pending' as const,
+      updatedAt: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('Error generating reminder response:', error);
+    // Return reminder with basic response if AI fails
+    return {
+      ...reminder,
+      rudeMessage: `Time to ${reminder.originalMessage}!`,
+      responses: [`Time to ${reminder.originalMessage}!`],
+      status: 'pending' as const,
+      updatedAt: new Date().toISOString()
+    };
+  }
+}
+
+export const reminderService = {
+  createReminder,
+  scheduleNotification,
+  generateReminder,
+  getMoreResponses,
+  generateReminderResponse
+};

@@ -320,7 +320,7 @@ export class DatabaseStorage implements IStorage {
 // In-memory storage implementation for development
 class MemoryStorage implements IStorage {
   private users: Map<string, User> = new Map();
-  private reminders: Map<string, Reminder> = new Map();
+  private reminders: Reminder[] = [];
   private rudePhrasesSeeded = false;
   private rudePhrasesStore: RudePhrase[] = [];
 
@@ -428,7 +428,7 @@ class MemoryStorage implements IStorage {
       updatedAt: new Date(),
     };
 
-    this.reminders.set(id, newReminder);
+    this.reminders.push(newReminder);
     return newReminder;
   }
 
@@ -439,7 +439,7 @@ class MemoryStorage implements IStorage {
   }
 
   async getReminder(id: string, userId: string): Promise<Reminder | undefined> {
-    const reminder = this.reminders.get(id);
+    const reminder = this.reminders.find(r => r.id === id);
     return reminder && reminder.userId === userId ? reminder : undefined;
   }
 
@@ -462,14 +462,17 @@ class MemoryStorage implements IStorage {
       rudeMessage,
       updatedAt: new Date() 
     };
-    this.reminders.set(id, updated);
+    const index = this.reminders.findIndex(r => r.id === id);
+    if (index !== -1) {
+      this.reminders[index] = updated;
+    }
     return updated;
   }
 
   async deleteReminder(id: string, userId: string): Promise<void> {
-    const reminder = await this.getReminder(id, userId);
-    if (reminder) {
-      this.reminders.delete(id);
+    const index = this.reminders.findIndex(r => r.id === id && r.userId === userId);
+    if (index !== -1) {
+      this.reminders.splice(index, 1);
     }
   }
 
@@ -496,7 +499,10 @@ class MemoryStorage implements IStorage {
       completedAt: new Date(),
       updatedAt: new Date() 
     };
-    this.reminders.set(id, updated);
+    const index = this.reminders.findIndex(r => r.id === id);
+    if (index !== -1) {
+      this.reminders[index] = updated;
+    }
     return updated;
   }
 

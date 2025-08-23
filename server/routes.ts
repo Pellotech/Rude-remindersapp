@@ -72,13 +72,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         scheduledFor: new Date(req.body.scheduledFor)
       };
-      
+
       console.log("Creating reminder with data:", {
         motivationalQuote: requestData.motivationalQuote,
         attachments: requestData.attachments,
         title: requestData.title
       });
-      
+
       const validatedData = insertReminderSchema.parse(requestData);
       const reminder = await storage.createReminder(userId, validatedData);
 
@@ -136,20 +136,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const reminder = await storage.getReminder(req.params.id, userId);
-      
+
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
       }
 
       const { smartResponseService } = await import('./services/smartResponseService');
-      
+
       // Force refresh to ensure new responses
       const forceRefresh = req.query.refresh === 'true';
-      
+
       // Generate fresh responses with timestamp for uniqueness
       const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder, forceRefresh);
       const contextualRemarks = await smartResponseService.getContextualRemarks(reminder);
-      
+
       // Get additional rude phrases for variety with timestamp shuffling
       const phrases = await storage.getRudePhrasesForLevel(reminder.rudenessLevel);
       const timestamp = Date.now();
@@ -170,6 +170,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to get more responses" });
     }
   });
+
+  // Generate AI response for a specific reminder
+  app.post('/api/reminders/:id/generate-response', async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reminder = await storage.getReminder(req.params.id, userId);
+      if (!reminder) {
+        return res.status(404).json({ message: "Reminder not found" });
+      }
+
+      // Generate AI response using the reminder service
+      // This assumes reminderService.generateReminderResponse updates the reminder object in place or returns a new one
+      const updatedReminder = await reminderService.generateReminderResponse(reminder); 
+
+      // Update the reminder in storage with the new AI response
+      await storage.updateReminder(req.params.id, userId, updatedReminder);
+
+      res.json(updatedReminder);
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+      res.status(500).json({ message: "Failed to generate AI response" });
+    }
+  });
+
 
   app.delete('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
@@ -269,7 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           testMessage: "Let's execute this plan efficiently and deliver results."
         }
       ];
-      
+
       res.json(voiceCharacters);
     } catch (error) {
       console.error("Error fetching voice characters:", error);
@@ -281,7 +305,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/voices/test', async (req, res) => {
     try {
       const { voiceCharacter, testMessage } = req.body;
-      
+
       if (!voiceCharacter) {
         return res.status(400).json({ message: "Voice character is required" });
       }
@@ -289,7 +313,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const voiceSettings = notificationService.getBrowserVoiceSettings(voiceCharacter);
       const message = testMessage || "This is a test of your selected voice character.";
       const speechData = notificationService.generateBrowserSpeech(message, voiceCharacter);
-      
+
       res.json({ 
         speechData, 
         voiceSettings, 
@@ -306,7 +330,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/test-speech', async (req, res) => {
     try {
       const { text, voiceId } = req.body;
-      
+
       if (!text) {
         return res.status(400).json({ message: "Text is required" });
       }
@@ -315,7 +339,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const character = voiceId || "default";
       const voiceSettings = notificationService.getBrowserVoiceSettings(character);
       const speechData = notificationService.generateBrowserSpeech(text, character);
-      
+
       res.json({
         speechData,
         voiceSettings,
@@ -406,16 +430,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { DeepSeekService } = await import('./services/deepseekService.js');
       const deepseekService = new DeepSeekService();
-      
+
       const testContext = {
         task: req.body.task || 'study for exam',
         category: req.body.category || 'learning',
         rudenessLevel: req.body.rudenessLevel || 3,
         timeOfDay: 'evening'
       };
-      
+
       const responses = await deepseekService.generatePersonalizedResponses(testContext, 3);
-      
+
       res.json({ 
         success: true,
         context: testContext,
