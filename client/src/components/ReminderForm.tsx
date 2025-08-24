@@ -745,58 +745,7 @@ export default function ReminderForm({
               )}
             />
 
-            {/* Context Categories for Better AI Responses */}
-            <FormField
-              control={form.control}
-              name="context"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <span>What type of reminder is this?</span>
-                    <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
-                  </FormLabel>
-
-                  {/* Quick Context Categories - Horizontal Scrolling */}
-                  <div className="space-y-2">
-                    <div className="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
-                      {contextCategories.map((category) => {
-                        const IconComponent = category.icon;
-                        const isSelected = selectedContextCategory === category.id;
-                        return (
-                          <Button
-                            key={category.id}
-                            type="button"
-                            variant={isSelected ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handleContextCategorySelect(category)}
-                            className={cn(
-                              "flex-shrink-0 h-auto py-2 px-3 text-xs font-medium transition-all",
-                              isSelected 
-                                ? "bg-blue-600 text-white hover:bg-blue-700" 
-                                : "hover:bg-blue-50 hover:border-blue-300"
-                            )}
-                          >
-                            <IconComponent className="w-4 h-4 mr-2" />
-                            <span className="whitespace-nowrap">{category.label}</span>
-                          </Button>
-                        );
-                      })}
-                    </div>
-                    {selectedContextCategory && (
-                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                        Selected: {contextCategories.find(c => c.id === selectedContextCategory)?.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Hidden input to store the selected context */}
-                  <FormControl>
-                    <input type="hidden" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            
 
             {/* Select Date Section */}
             <FormField
@@ -993,6 +942,59 @@ export default function ReminderForm({
 
 
                   </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Context Categories for Better AI Responses */}
+            <FormField
+              control={form.control}
+              name="context"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center">
+                    <span>What type of reminder is this?</span>
+                    <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
+                  </FormLabel>
+
+                  {/* Quick Context Categories - Horizontal Scrolling */}
+                  <div className="space-y-2">
+                    <div className="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
+                      {contextCategories.map((category) => {
+                        const IconComponent = category.icon;
+                        const isSelected = selectedContextCategory === category.id;
+                        return (
+                          <Button
+                            key={category.id}
+                            type="button"
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleContextCategorySelect(category)}
+                            className={cn(
+                              "flex-shrink-0 h-auto py-2 px-3 text-xs font-medium transition-all",
+                              isSelected 
+                                ? "bg-blue-600 text-white hover:bg-blue-700" 
+                                : "hover:bg-blue-50 hover:border-blue-300"
+                            )}
+                          >
+                            <IconComponent className="w-4 h-4 mr-2" />
+                            <span className="whitespace-nowrap">{category.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    {selectedContextCategory && (
+                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        Selected: {contextCategories.find(c => c.id === selectedContextCategory)?.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Hidden input to store the selected context */}
+                  <FormControl>
+                    <input type="hidden" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
