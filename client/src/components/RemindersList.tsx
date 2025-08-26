@@ -196,11 +196,10 @@ export default function RemindersList() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Reminders</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="all">All Active</SelectItem>
+                <SelectItem value="active">Current</SelectItem>
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="week">This Week</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
 
@@ -239,9 +238,6 @@ export default function RemindersList() {
             );
             const upcomingReminders = filteredReminders.filter((reminder: Reminder) => 
               !reminder.completed && new Date(reminder.scheduledFor) >= now
-            );
-            const completedReminders = filteredReminders.filter((reminder: Reminder) => 
-              reminder.completed
             );
 
             const renderReminder = (reminder: Reminder) => (
@@ -359,7 +355,7 @@ export default function RemindersList() {
                         Let us know if you accomplished these so we know whether to build a mountain of disappointments or a mountain of accomplishments! ✅❌
                       </p>
                     </div>
-                    <div className="max-h-64 overflow-y-auto space-y-3 border border-red-200 rounded-lg p-3 bg-red-50">
+                    <div className="max-h-96 overflow-y-auto space-y-3 border border-red-200 rounded-lg p-3 bg-red-50">
                       {overdueReminders.map((reminder: Reminder) => (
                         <Card key={reminder.id} className={cn(
                           "transition-all duration-200 hover:shadow-md w-full max-w-full",
@@ -475,33 +471,36 @@ export default function RemindersList() {
                   </div>
                 )}
 
-                {/* Upcoming Reminders */}
+                {/* Current & Upcoming Reminders */}
                 {upcomingReminders.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                       <h3 className="text-lg font-semibold text-blue-700">
-                        Upcoming ({upcomingReminders.length})
+                        Current & Upcoming Reminders ({upcomingReminders.length})
                       </h3>
                     </div>
-                    <div className="max-h-64 overflow-y-auto space-y-3 border border-blue-200 rounded-lg p-3 bg-blue-50">
+                    <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        Your active reminders that are scheduled for today and beyond. Manage, edit, or complete them here.
+                      </p>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto space-y-3 border border-blue-200 rounded-lg p-3 bg-blue-50">
                       {upcomingReminders.map(renderReminder)}
                     </div>
                   </div>
                 )}
 
-                {/* Completed Reminders */}
-                {completedReminders.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <h3 className="text-lg font-semibold text-green-700">
-                        Completed ({completedReminders.length})
-                      </h3>
-                    </div>
-                    <div className="max-h-64 overflow-y-auto space-y-3 border border-green-200 rounded-lg p-3 bg-green-50">
-                      {completedReminders.map(renderReminder)}
-                    </div>
+                {/* Show message when no active reminders */}
+                {overdueReminders.length === 0 && upcomingReminders.length === 0 && (
+                  <div className="text-center py-12">
+                    <Clock className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No active reminders
+                    </h3>
+                    <p className="text-gray-500">
+                      All caught up! Create a new reminder to get started.
+                    </p>
                   </div>
                 )}
               </div>
