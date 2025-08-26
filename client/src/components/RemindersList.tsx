@@ -28,7 +28,9 @@ import {
   Bell, 
   Volume2, 
   Mail,
-  CircleSlash2
+  CircleSlash2,
+  Eye,
+  Play
 } from "lucide-react";
 import type { Reminder } from "@shared/schema";
 import { cn } from "@/lib/utils";
@@ -54,6 +56,7 @@ export default function RemindersList() {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [previewReminder, setPreviewReminder] = useState<Reminder | null>(null);
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -174,6 +177,26 @@ export default function RemindersList() {
     }
   };
 
+  const previewNotification = (reminder: Reminder) => {
+    setPreviewReminder(reminder);
+    
+    // Simulate what happens when reminder is triggered
+    if (reminder.browserNotification) {
+      toast({
+        title: `Preview: ${reminder.title}`,
+        description: reminder.rudeMessage || reminder.originalMessage,
+        duration: 5000,
+      });
+    }
+    
+    if (reminder.voiceNotification && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage || reminder.originalMessage);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.1;
+      speechSynthesis.speak(utterance);
+    }
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -279,6 +302,16 @@ export default function RemindersList() {
                       </div>
 
                       <div className="flex items-center gap-1 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-400 hover:text-blue-600 h-8 w-8 p-0"
+                          onClick={() => previewNotification(reminder)}
+                          title="Preview how this reminder will appear when triggered"
+                        >
+                          <Eye className="h-3 w-3" />
+                        </Button>
+
                         <Button
                           variant="ghost"
                           size="sm"
@@ -505,6 +538,88 @@ export default function RemindersList() {
           })()
         )}
       </CardContent>
+
+      {/* Preview Modal */}
+      {previewReminder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Reminder Preview</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPreviewReminder(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-medium text-sm text-gray-600 mb-2">Title</h4>
+                <p className="font-semibold">{previewReminder.title}</p>
+              </div>
+
+              <div className="p-4 bg-rude-red-50 rounded-lg border border-rude-red-200">
+                <h4 className="font-medium text-sm text-rude-red-700 mb-2">What you'll see/hear</h4>
+                <p className="text-rude-red-800 font-medium">
+                  {previewReminder.rudeMessage || previewReminder.originalMessage}
+                </p>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-sm text-blue-700 mb-2">Notification Types</h4>
+                <div className="space-y-2">
+                  {previewReminder.browserNotification && (
+                    <div className="flex items-center gap-2 text-sm text-blue-600">
+                      <Bell className="h-4 w-4" />
+                      <span>Browser notification (shown above as toast)</span>
+                    </div>
+                  )}
+                  {previewReminder.voiceNotification && (
+                    <div className="flex items-center gap-2 text-sm text-blue-600">
+                      <Volume2 className="h-4 w-4" />
+                      <span>Voice notification (spoken aloud)</span>
+                    </div>
+                  )}
+                  {previewReminder.emailNotification && (
+                    <div className="flex items-center gap-2 text-sm text-blue-600">
+                      <Mail className="h-4 w-4" />
+                      <span>Email notification</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <h4 className="font-medium text-sm text-yellow-700 mb-2">Rudeness Level</h4>
+                <Badge className={`${rudenessLevelColors[previewReminder.rudenessLevel as keyof typeof rudenessLevelColors]}`}>
+                  {rudenessLevelLabels[previewReminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
+                </Badge>
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <Button
+                  onClick={() => previewNotification(previewReminder)}
+                  className="flex items-center gap-2"
+                  variant="outline"
+                >
+                  <Play className="h-4 w-4" />
+                  Preview Again
+                </Button>
+                <Button
+                  onClick={() => setPreviewReminder(null)}
+                  variant="secondary"
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }
