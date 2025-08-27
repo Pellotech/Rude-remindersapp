@@ -6,6 +6,8 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertReminderSchema, updateReminderSchema } from "@shared/schema";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
+import { premiumQuotesService } from "./services/premiumQuotesService";
+import { isUserPremium } from "./utils/premiumCheck";
 import crypto from 'crypto'; // Import crypto module for UUID generation
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -320,7 +322,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate AI response for a specific reminder
+  // Generate AI response for a specific reminder (Premium feature)
   app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -329,14 +331,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Reminder not found" });
       }
 
+      // Check if user has premium access for AI generation
+      const isPremium = await isUserPremium(userId);
+
       // Generate AI response using the reminder service
-      // This assumes reminderService.generateReminderResponse updates the reminder object in place or returns a new one
       const updatedReminder = await reminderService.generateReminderResponse(reminder); 
 
       // Update the reminder in storage with the new AI response
-      await storage.updateReminder(req.params.id, userId, updatedReminder);
+      const finalReminder = {
+        id: reminder.id,
+        userId: userId,
+        title: updatedReminder.title,
+        originalMessage: updatedReminder.originalMessage,
+        context: updatedReminder.context,
+        rudeMessage: updatedReminder.rudeMessage,
+        rudenessLevel: updatedReminder.rudenessLevel,
+        scheduledFor: updatedReminder.scheduledFor,
+        browserNotification: updatedReminder.browserNotification,
+        voiceNotification: updatedReminder.voiceNotification,
+        emailNotification: updatedReminder.emailNotification,
+        pushNotification: updatedReminder.pushNotification,
+        voiceCharacter: updatedReminder.voiceCharacter,
+        attachments: updatedReminder.attachments,
+        isRecurring: updatedReminder.isRecurring,
+        recurringPattern: updatedReminder.recurringPattern,
+        completedAt: updatedReminder.completedAt,
+        detectedMood: updatedReminder.detectedMood,
+        moodConfidence: updatedReminder.moodConfidence,
+        snoozeCount: updatedReminder.snoozeCount,
+        status: updatedReminder.status,
+        createdAt: updatedReminder.createdAt,
+        updatedAt: updatedReminder.updatedAt
+      };
 
-      res.json(updatedReminder);
+      await storage.updateReminder(req.params.id, userId, finalReminder);
+
+      res.json({
+        ...updatedReminder,
+        isPremium,
+        aiGenerated: isPremium,
+        source: isPremium ? 'ai-deepseek' : 'template-based'
+      });
     } catch (error) {
       console.error("Error generating AI response:", error);
       res.status(500).json({ message: "Failed to generate AI response" });
@@ -572,6 +607,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Failed to generate preview",
         error: error instanceof Error ? error.message : 'Unknown error'
       });
+    }
+  });
+
+  // Premium Quotes API - Get personalized AI or cultural quotes
+  app.get('/api/quotes/personalized', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { category, ethnicity, gender, mood } = req.query;
+      
+      const context = {
+        category: category as string,
+        ethnicity: ethnicity as string,
+        gender: gender as string,
+        mood: mood as string
+      };
+      
+      const quote = await premiumQuotesService.getPersonalizedQuote(userId, context);
+      const isPremium = await isUserPremium(userId);
+      
+      res.json({
+        quote,
+        isPremium,
+        source: isPremium ? 'ai-generated' : 'cultural-library',
+        generatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error getting personalized quote:", error);
+      res.status(500).json({ message: "Failed to get personalized quote" });
+    }
+  });
+
+  // Check premium status endpoint
+  app.get('/api/user/premium-status', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const isPremium = await isUserPremium(userId);
+      
+      res.json({ 
+        isPremium,
+        features: {
+          aiGeneratedResponses: isPremium,
+          aiGeneratedQuotes: isPremium,
+          unlimitedReminders: isPremium,
+          advancedVoiceCharacters: isPremium
+        }
+      });
+    } catch (error) {
+      console.error("Error checking premium status:", error);
+      res.status(500).json({ message: "Failed to check premium status" });
     }
   });
 

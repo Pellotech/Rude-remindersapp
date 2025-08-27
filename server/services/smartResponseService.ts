@@ -1,6 +1,7 @@
 import { storage } from "../storage";
 import type { Reminder } from "@shared/schema";
 import { DeepSeekService } from './deepseekService.js';
+import { isUserPremium } from '../utils/premiumCheck.js';
 
 interface UserBehaviorData {
   userId: string;
@@ -25,8 +26,11 @@ class SmartResponseService {
   
   // Generate truly personalized AI responses using DeepSeek API for maximum freshness
   async getPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
-    // Try DeepSeek first for truly fresh, personalized responses
-    if (this.deepseekService) {
+    // Check if user has premium access for AI generation
+    const isPremium = await isUserPremium(reminder.userId);
+    
+    // Only use DeepSeek AI for premium users
+    if (isPremium && this.deepseekService) {
       try {
         const user = await storage.getUser(reminder.userId);
         const now = new Date();
@@ -43,15 +47,17 @@ class SmartResponseService {
         
         const deepseekResponses = await this.deepseekService.generatePersonalizedResponses(context, 4);
         if (deepseekResponses.length > 0) {
-          console.log(`Generated ${deepseekResponses.length} fresh DeepSeek responses for "${reminder.originalMessage}"`);
+          console.log(`Generated ${deepseekResponses.length} fresh DeepSeek AI responses for premium user: "${reminder.originalMessage}"`);
           return deepseekResponses;
         }
       } catch (error) {
         console.error('DeepSeek generation failed, falling back to templates:', error);
       }
+    } else if (!isPremium) {
+      console.log(`User ${reminder.userId} needs premium subscription for AI-generated responses. Using template responses.`);
     }
     
-    // Fallback to existing logic if DeepSeek is unavailable
+    // Fallback to template responses for free users or if DeepSeek is unavailable
     return this.getLegacyPersonalizedResponse(reminder, forceRefresh);
   }
   
