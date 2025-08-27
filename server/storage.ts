@@ -84,7 +84,7 @@ export class DatabaseStorage implements IStorage {
 
   // Reminder operations
   async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
-    
+
     // Generate rude message with multiple variations
     let rudeMessage: string;
     let daySpecificMessages: string | null = null;
@@ -330,6 +330,35 @@ class MemoryStorage implements IStorage {
   private reminders: Reminder[] = [];
   private rudePhrasesSeeded = false;
   private rudePhrasesStore: RudePhrase[] = [];
+
+  constructor() {
+    // Add a default dev user for testing
+    this.users.set('dev-user-001', {
+      id: 'dev-user-001',
+      email: 'developer@example.com',
+      firstName: 'Developer', // Corrected from name to firstName
+      lastName: null, // Added lastName for schema compliance
+      profileImageUrl: null, // Added profileImageUrl
+      defaultRudenessLevel: 3, // Added defaultRudenessLevel
+      voiceNotifications: true, // Added voiceNotifications
+      emailNotifications: false, // Added emailNotifications
+      browserNotifications: true, // Added browserNotifications
+      gender: 'other', // Added gender
+      genderSpecificReminders: false, // Added genderSpecificReminders
+      ethnicity: null, // Added ethnicity
+      ethnicitySpecificQuotes: false, // Added ethnicitySpecificQuotes
+      subscriptionStatus: 'active', // Updated to active for premium testing
+      stripeCustomerId: null, // Added stripeCustomerId
+      stripeSubscriptionId: null, // Added stripeSubscriptionId
+      subscriptionPlan: 'premium', // Updated to premium
+      subscriptionEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
+      simplifiedInterface: false, // Added simplifiedInterface
+      alarmSound: 'gentle-chime', // Added alarmSound
+      passwordHash: null, // Added passwordHash
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+  }
 
   // User operations
   async getUser(id: string): Promise<User | undefined> {
