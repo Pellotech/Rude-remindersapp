@@ -755,6 +755,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Developer endpoint to toggle premium status (only for development)
+  app.post('/api/dev/toggle-premium', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { isPremium } = req.body;
+      
+      // Update user subscription status
+      const updates = {
+        subscriptionPlan: isPremium ? 'premium' : 'free',
+        subscriptionStatus: isPremium ? 'active' : 'free',
+        subscriptionEndsAt: isPremium ? new Date('2025-12-31') : null
+      };
+      
+      const updatedUser = await storage.updateUser(userId, updates);
+      
+      console.log(`Developer toggle: User ${userId} switched to ${updates.subscriptionPlan} plan`);
+      
+      res.json({
+        success: true,
+        subscriptionPlan: updates.subscriptionPlan,
+        subscriptionStatus: updates.subscriptionStatus,
+        isPremium
+      });
+    } catch (error) {
+      console.error("Error toggling premium status:", error);
+      res.status(500).json({ message: "Failed to toggle premium status" });
+    }
+  });
+
   // Test DeepSeek API integration
   app.post('/api/test-deepseek', async (req, res) => {
     try {

@@ -15,7 +15,8 @@ import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
 import NotFound from "@/pages/not-found";
-import { useEffect } from "react";
+import { DevTools } from "@/components/DevTools";
+import { useEffect, useState } from "react";
 
 function HomeRouter() {
   const { user } = useAuth();
@@ -75,11 +76,17 @@ function Router() {
 }
 
 function App() {
+  const [showDevTools, setShowDevTools] = useState(false);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Router />
+        <DevTools 
+          isVisible={showDevTools} 
+          onToggle={() => setShowDevTools(!showDevTools)}
+        />
       </TooltipProvider>
     </QueryClientProvider>
   );
