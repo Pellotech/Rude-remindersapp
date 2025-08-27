@@ -45,19 +45,24 @@ class SmartResponseService {
           timeOfDay
         };
         
+        console.log(`Attempting DeepSeek AI generation for: "${reminder.originalMessage}" with context:`, context);
         const deepseekResponses = await this.deepseekService.generatePersonalizedResponses(context, 4);
+        
         if (deepseekResponses.length > 0) {
-          console.log(`Generated ${deepseekResponses.length} fresh DeepSeek AI responses for premium user: "${reminder.originalMessage}"`);
+          console.log(`✅ Successfully generated ${deepseekResponses.length} fresh DeepSeek AI responses:`, deepseekResponses);
           return deepseekResponses;
+        } else {
+          console.warn('⚠️ DeepSeek returned empty responses array, falling back to templates');
         }
       } catch (error) {
-        console.error('DeepSeek generation failed, falling back to templates:', error);
+        console.error('❌ DeepSeek generation failed, falling back to templates:', error);
       }
     } else if (!isPremium) {
       console.log(`User ${reminder.userId} needs premium subscription for AI-generated responses. Using template responses.`);
     }
     
     // Fallback to template responses for free users or if DeepSeek is unavailable
+    console.log('Using fallback template responses instead of AI');
     return this.getLegacyPersonalizedResponse(reminder, forceRefresh);
   }
   

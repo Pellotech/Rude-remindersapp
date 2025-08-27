@@ -75,6 +75,8 @@ export const reminders = pgTable("reminders", {
   voiceCharacter: varchar("voice_character").default("default"),
   attachments: text("attachments").array().default(sql`'{}'::text[]`),
   motivationalQuote: text("motivational_quote"),
+  // AI-generated response variants
+  responses: text("responses").array().default(sql`'{}'::text[]`), // Store all AI-generated response options
   // Multi-day selection functionality
   isMultiDay: boolean("is_multi_day").default(false),
   selectedDays: text("selected_days").array().default(sql`'{}'::text[]`), // ["monday", "wednesday", "friday"]

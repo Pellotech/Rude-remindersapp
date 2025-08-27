@@ -212,7 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         id: reminder.id,
         motivationalQuote: reminder.motivationalQuote,
         rudeMessage: reminder.rudeMessage,
-
+        responses: reminder.responses
       });
 
       await storage.createReminder(userId, reminder);

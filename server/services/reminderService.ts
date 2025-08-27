@@ -144,24 +144,29 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
   try {
     console.log(`Generating AI response for reminder: ${reminder.originalMessage}`);
 
-    // Generate the rude/motivational message
+    // Generate the personalized AI responses
     const responses = await smartResponseService.getPersonalizedResponse(reminder, true);
+    console.log(`✅ Received ${responses.length} responses for "${reminder.originalMessage}":`, responses);
+    
     const rudeMessage = responses[0] || `Time to ${reminder.originalMessage}!`;
 
-
-
-    return {
+    const updatedReminder = {
       ...reminder,
       rudeMessage,
+      responses, // Store all AI-generated response options
       status: 'active' as const,
       updatedAt: new Date()
     };
+    
+    console.log(`✅ Returning reminder with ${updatedReminder.responses.length} responses`);
+    return updatedReminder;
   } catch (error) {
     console.error('Error generating reminder response:', error);
     // Return reminder with basic response if AI fails
     return {
       ...reminder,
       rudeMessage: `Time to ${reminder.originalMessage}!`,
+      responses: [`Time to ${reminder.originalMessage}!`], // Always include responses array
       status: 'active' as const,
       updatedAt: new Date()
     };
