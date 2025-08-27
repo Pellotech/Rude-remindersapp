@@ -580,7 +580,7 @@ export default function ReminderForm({
 
   const daysOfWeek = getWeekDays();
 
-  const toggleDay = (dayId: string) => {
+  const handleDayToggle = (dayId: string) => {
     setSelectedDays(prev => {
       const newDays = prev.includes(dayId)
         ? prev.filter(d => d !== dayId)
@@ -780,24 +780,24 @@ export default function ReminderForm({
                               {daysOfWeek.map((day) => {
                                 const isSelected = selectedDays.includes(day.id);
                                 return (
-                                  <div key={day.id} className="text-center flex-shrink-0 min-w-[100px]">
-                                    <div className="text-sm font-medium text-muted-foreground mb-2">
+                                  <div key={day.id} className="text-center flex-shrink-0 min-w-[70px]">
+                                    <div className="text-xs font-medium text-muted-foreground mb-1">
                                       {day.label}
                                     </div>
                                     <Button
                                       type="button"
                                       variant={isSelected ? "default" : "outline"}
-                                      size="lg"
-                                      onClick={() => toggleDay(day.id)}
+                                      size="sm"
+                                      onClick={() => handleDayToggle(day.id)}
                                       className={cn(
-                                        "w-full h-16 flex flex-col items-center justify-center p-2",
+                                        "w-full h-12 flex flex-col items-center justify-center p-1",
                                         day.isToday && !isSelected && "border-primary text-primary",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
-                                      <span className="text-xl font-bold">{day.short}</span>
+                                      <span className="text-lg font-semibold">{day.short}</span>
                                       {day.isToday && (
-                                        <span className="text-xs mt-1">Today</span>
+                                        <span className="text-xs">Today</span>
                                       )}
                                     </Button>
                                   </div>
@@ -900,7 +900,7 @@ export default function ReminderForm({
                         )}
                       </div>
                     ) : (
-                      /* Regular Calendar/Time Picker */
+                      /* Regular Calendar/Time<blockquote> picker */
                       <CalendarSchedule
                         selectedDateTime={selectedDateTime}
                         onDateTimeChange={handleDateTimeChange}
