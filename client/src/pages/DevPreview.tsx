@@ -420,6 +420,34 @@ export default function DevPreview() {
                     <p className="text-sm text-muted-foreground">AI response will be generated automatically</p>
                   )}
                 </div>
+
+                {/* Show all AI-generated response variations */}
+                {selectedReminder.responses && selectedReminder.responses.length > 1 && (
+                  <div>
+                    <Label className="text-sm font-medium">All AI Response Variations</Label>
+                    <div className="mt-2 space-y-2">
+                      {selectedReminder.responses.map((response: string, index: number) => (
+                        <div key={index} className={`p-3 rounded-lg border-l-4 ${
+                          isPremium && features.aiGeneratedResponses
+                            ? 'bg-purple-50 border-purple-400' 
+                            : 'bg-gray-50 border-gray-400'
+                        }`}>
+                          <div className="flex items-start justify-between">
+                            <p className="text-sm font-medium text-gray-800 flex-1">
+                              {response}
+                            </p>
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              {index + 1}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedReminder.responses.length} AI-generated variations available
+                    </p>
+                  </div>
+                )}
                 <div>
                   <Label className="text-sm font-medium">Voice Character</Label>
                   <p className="text-sm text-muted-foreground mt-1">
