@@ -19,15 +19,15 @@ import { useEffect } from "react";
 
 function HomeRouter() {
   const { user } = useAuth();
-  
+
   // Check developer mode for testing subscription tiers
   const isDeveloperPremiumMode = localStorage.getItem('dev-premium-mode') === 'true';
-  
+
   // Check if user has premium subscription OR developer mode is enabled
   const isPremium = isDeveloperPremiumMode || 
                    user?.subscriptionStatus === 'active' || 
                    user?.subscriptionPlan === 'premium';
-  
+
   return isPremium ? <HomePremium /> : <HomeFree />;
 }
 
@@ -58,13 +58,15 @@ function Router() {
       {isAuthenticated ? (
         <>
           <Route path="/" component={HomeRouter} />
+          <Route path="/home-free" component={HomeFree} />
+          <Route path="/home-premium" component={HomePremium} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/settings" component={Settings} />
           <Route path="/settings/personal" component={PersonalInfo} />
           <Route path="/settings/notifications" component={Notifications} />
           <Route path="/settings/appearance" component={Appearance} />
           <Route path="/settings/billing" component={Billing} />
-          <Route path="/settings/reminder-history" component={ReminderHistory} />
+          <Route path="/settings/history" component={ReminderHistory} />
         </>
       ) : null}
       <Route component={NotFound} />

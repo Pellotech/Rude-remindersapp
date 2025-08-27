@@ -6,14 +6,28 @@ import { Badge } from "@/components/ui/badge";
 import { Megaphone, Settings, Home, Crown, Star, Bell } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import { HelpMenu } from "./HelpMenu";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useRoute } from "wouter";
 import type { User } from "@shared/schema";
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | undefined };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [location] = useLocation();
-  const [developmentMode, setDevelopmentMode] = useState(false); // State to manage development mode
+  const [location, navigate] = useLocation();
+  
+  // Determine current mode based on URL
+  const isCurrentlyPremium = location.includes('premium');
+  const [developmentMode, setDevelopmentMode] = useState(isCurrentlyPremium);
+
+  // Handle switching between free and premium pages
+  const handleModeChange = (newMode: string) => {
+    const isPremium = newMode === "premium";
+    setDevelopmentMode(isPremium);
+    
+    // Navigate to appropriate page
+    if (location === "/" || location === "/home-free" || location === "/home-premium") {
+      navigate(isPremium ? "/home-premium" : "/home-free");
+    }
+  };
 
   return (
     <>
@@ -42,7 +56,7 @@ export default function Navigation() {
                 </label>
                 <select 
                   value={developmentMode ? "premium" : "free"}
-                  onChange={(e) => setDevelopmentMode(e.target.value === "premium")}
+                  onChange={(e) => handleModeChange(e.target.value)}
                   className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="free">Free User</option>
