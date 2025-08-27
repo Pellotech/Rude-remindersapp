@@ -79,9 +79,7 @@ export const reminders = pgTable("reminders", {
   isMultiDay: boolean("is_multi_day").default(false),
   selectedDays: text("selected_days").array().default(sql`'{}'::text[]`), // ["monday", "wednesday", "friday"]
   daySpecificMessages: text("day_specific_messages"), // JSON string with day-specific rude messages
-  // Mood detection for UI theming
-  detectedMood: varchar("detected_mood"), // "motivational", "harsh", "humorous", "gentle", "aggressive"
-  moodConfidence: integer("mood_confidence"), // 1-10 confidence score
+
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

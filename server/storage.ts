@@ -467,9 +467,7 @@ class MemoryStorage implements IStorage {
       isMultiDay: reminder.isMultiDay ?? false,
       selectedDays: reminder.selectedDays || [],
       daySpecificMessages: daySpecificMessages,
-      // Mood detection fields
-      detectedMood: reminder.detectedMood || null,
-      moodConfidence: reminder.moodConfidence || null,
+
       rudeMessage,
 
       completed: false,

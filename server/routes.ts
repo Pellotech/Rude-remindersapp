@@ -134,8 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         selectedDays: selectedDays || [],
         isMultiDay: isMultiDay || false,
         daySpecificMessages: null,
-        detectedMood: null,
-        moodConfidence: null,
+
         completed: false,
         completedAt: null,
         status: 'pending' as const,
@@ -202,8 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Fallback to basic message if AI generation fails
         reminder.rudeMessage = `Time to ${originalMessage}!`;
         reminder.responses = [`Time to ${originalMessage}!`];
-        reminder.detectedMood = 'gentle';
-        reminder.moodConfidence = 5;
+
       }
 
       // Update status to active since everything is generated
@@ -214,7 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         id: reminder.id,
         motivationalQuote: reminder.motivationalQuote,
         rudeMessage: reminder.rudeMessage,
-        detectedMood: reminder.detectedMood
+
       });
 
       await storage.createReminder(userId, reminder);
@@ -356,8 +354,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isRecurring: updatedReminder.isRecurring,
         recurringPattern: updatedReminder.recurringPattern,
         completedAt: updatedReminder.completedAt,
-        detectedMood: updatedReminder.detectedMood,
-        moodConfidence: updatedReminder.moodConfidence,
+
         snoozeCount: updatedReminder.snoozeCount,
         status: updatedReminder.status,
         createdAt: updatedReminder.createdAt,
@@ -614,13 +611,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/quotes/personalized', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const { category, ethnicity, gender, mood } = req.query;
+      const { category, ethnicity, gender } = req.query;
       
       const context = {
         category: category as string,
         ethnicity: ethnicity as string,
-        gender: gender as string,
-        mood: mood as string
+        gender: gender as string
       };
       
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, context);

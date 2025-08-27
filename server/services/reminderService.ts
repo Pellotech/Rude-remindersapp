@@ -148,37 +148,11 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
     const responses = await smartResponseService.getPersonalizedResponse(reminder, true);
     const rudeMessage = responses[0] || `Time to ${reminder.originalMessage}!`;
 
-    // Detect mood from the generated response
-    let detectedMood: 'gentle' | 'aggressive' | 'motivational' | 'harsh' | 'humorous' | 'sarcastic' = 'gentle';
-    let moodConfidence = 5;
-    try {
-      // Simple mood detection based on keywords in the server
-      const lowerMessage = rudeMessage.toLowerCase();
-      if (lowerMessage.includes('now!') || lowerMessage.includes('get off') || lowerMessage.includes('move it')) {
-        detectedMood = 'aggressive';
-        moodConfidence = 8;
-      } else if (lowerMessage.includes('achieve') || lowerMessage.includes('succeed') || lowerMessage.includes('goal')) {
-        detectedMood = 'motivational';
-        moodConfidence = 7;
-      } else if (lowerMessage.includes('pathetic') || lowerMessage.includes('lazy') || lowerMessage.includes('useless')) {
-        detectedMood = 'harsh';
-        moodConfidence = 8;
-      } else if (lowerMessage.includes('lol') || lowerMessage.includes('seriously?') || lowerMessage.includes('really?')) {
-        detectedMood = 'humorous';
-        moodConfidence = 6;
-      } else if (lowerMessage.includes('oh sure') || lowerMessage.includes('great job') || lowerMessage.includes('brilliant')) {
-        detectedMood = 'sarcastic';
-        moodConfidence = 7;
-      }
-    } catch (error) {
-      console.error('Error detecting mood:', error);
-    }
+
 
     return {
       ...reminder,
       rudeMessage,
-      detectedMood,
-      moodConfidence,
       status: 'active' as const,
       updatedAt: new Date()
     };
@@ -188,8 +162,6 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
     return {
       ...reminder,
       rudeMessage: `Time to ${reminder.originalMessage}!`,
-      detectedMood: 'gentle',
-      moodConfidence: 5,
       status: 'active' as const,
       updatedAt: new Date()
     };

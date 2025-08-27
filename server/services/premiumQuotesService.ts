@@ -6,7 +6,6 @@ interface QuoteGenerationContext {
   category?: string;
   ethnicity?: string;
   gender?: string;
-  mood?: string;
   timeOfDay?: string;
 }
 
@@ -109,7 +108,7 @@ export class PremiumQuotesService {
    * Build a prompt for AI quote generation
    */
   private buildQuotePrompt(context: QuoteGenerationContext): string {
-    const { category, ethnicity, gender, mood, timeOfDay } = context;
+    const { category, ethnicity, gender, timeOfDay } = context;
     
     let prompt = `Generate a motivational quote that is:
 - Inspiring and uplifting
@@ -128,9 +127,7 @@ export class PremiumQuotesService {
       prompt += `\n- Appropriate and inspiring for a ${gender} individual`;
     }
 
-    if (mood) {
-      prompt += `\n- Matching a ${mood} mood`;
-    }
+
 
     prompt += `\n\nFormat: "Quote text" - Author Name
 Example: "The best time to plant a tree was 20 years ago. The second best time is now." - Chinese Proverb
