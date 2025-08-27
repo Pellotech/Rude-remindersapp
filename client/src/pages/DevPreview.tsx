@@ -325,6 +325,16 @@ export default function DevPreview() {
                         <Badge className={`text-xs ${getRudenessColor(reminder.rudenessLevel)}`}>
                           Level {reminder.rudenessLevel}
                         </Badge>
+                        {/* Premium/Free indicator based on AI-generated content */}
+                        {reminder.rudeMessage && (reminder.rudeMessage.includes('DeepSeek') || reminder.rudeMessage.length > 100) ? (
+                          <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                            Premium AI
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-xs border-gray-400 text-gray-600">
+                            Free Template
+                          </Badge>
+                        )}
                         {reminder.isMultiDay && (
                           <Badge variant="secondary" className="text-xs">
                             Multi-Day
@@ -398,9 +408,26 @@ export default function DevPreview() {
                   <p className="text-sm text-muted-foreground mt-1">{selectedReminder.originalMessage}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Generated Response</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">Generated Response</Label>
+                    {selectedReminder.rudeMessage && (
+                      selectedReminder.rudeMessage.includes('DeepSeek') || selectedReminder.rudeMessage.length > 100 ? (
+                        <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                          Premium AI Generated
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs border-gray-400 text-gray-600">
+                          Free Template Based
+                        </Badge>
+                      )
+                    )}
+                  </div>
                   {selectedReminder.rudeMessage ? (
-                    <div className="mt-1 p-3 rounded-lg bg-gray-50 border-l-4 border-gray-400">
+                    <div className={`mt-1 p-3 rounded-lg border-l-4 ${
+                      selectedReminder.rudeMessage.includes('DeepSeek') || selectedReminder.rudeMessage.length > 100 
+                        ? 'bg-purple-50 border-purple-400' 
+                        : 'bg-gray-50 border-gray-400'
+                    }`}>
                       <p className="text-sm font-medium text-gray-800">
                         {selectedReminder.rudeMessage}
                       </p>
@@ -476,9 +503,32 @@ export default function DevPreview() {
 
                 {selectedReminder.motivationalQuote && (
                   <div>
-                    <Label className="text-sm font-medium">Motivational Quote</Label>
-                    <div className="mt-1 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                      <p className="text-sm text-blue-800 italic">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Motivational Quote</Label>
+                      {/* Check if quote is AI-generated (premium) or cultural/template (free/premium) */}
+                      {selectedReminder.motivationalQuote.length > 150 || 
+                       selectedReminder.motivationalQuote.includes('based on your') ? (
+                        <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                          Premium AI Quote
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs border-blue-400 text-blue-600">
+                          Cultural Quote
+                        </Badge>
+                      )}
+                    </div>
+                    <div className={`mt-1 p-3 rounded-lg border-l-4 ${
+                      selectedReminder.motivationalQuote.length > 150 || 
+                      selectedReminder.motivationalQuote.includes('based on your')
+                        ? 'bg-purple-50 border-purple-500' 
+                        : 'bg-blue-50 border-blue-500'
+                    }`}>
+                      <p className={`text-sm italic ${
+                        selectedReminder.motivationalQuote.length > 150 || 
+                        selectedReminder.motivationalQuote.includes('based on your')
+                          ? 'text-purple-800' 
+                          : 'text-blue-800'
+                      }`}>
                         "{selectedReminder.motivationalQuote}"
                       </p>
                     </div>
