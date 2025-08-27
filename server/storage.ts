@@ -337,13 +337,13 @@ class MemoryStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    for (const user of this.users.values()) {
+    for (const user of Array.from(this.users.values())) {
       if (user.email === email) {
         return user;
       }
     }
     return undefined;
-  }</old_str>
+  }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
     const user: User = {
@@ -367,6 +367,7 @@ class MemoryStorage implements IStorage {
       subscriptionEndsAt: userData.subscriptionEndsAt || null,
       simplifiedInterface: userData.simplifiedInterface ?? false,
       alarmSound: userData.alarmSound || "gentle-chime",
+      passwordHash: userData.passwordHash || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -424,6 +425,7 @@ class MemoryStorage implements IStorage {
       userId,
       title: reminder.title,
       originalMessage: reminder.originalMessage,
+      context: reminder.context || null,
       rudenessLevel: reminder.rudenessLevel,
       scheduledFor: reminder.scheduledFor,
       browserNotification: reminder.browserNotification ?? true,
@@ -436,6 +438,9 @@ class MemoryStorage implements IStorage {
       isMultiDay: reminder.isMultiDay ?? false,
       selectedDays: reminder.selectedDays || [],
       daySpecificMessages: daySpecificMessages,
+      // Mood detection fields
+      detectedMood: reminder.detectedMood || null,
+      moodConfidence: reminder.moodConfidence || null,
       rudeMessage,
 
       completed: false,
