@@ -1,5 +1,7 @@
 import * as client from "openid-client";
 import { Strategy, type VerifyFunction } from "openid-client/passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import bcrypt from "bcryptjs";
 
 import passport from "passport";
 import session from "express-session";
@@ -87,6 +89,48 @@ export async function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Email/Password Local Strategy
+  passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+  }, async (email, password, done) => {
+    try {
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return done(null, false, { message: 'Invalid email or password' });
+      }
+
+      if (!user.passwordHash) {
+        return done(null, false, { message: 'Please use social login for this account' });
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.passwordHash);
+      if (!isValidPassword) {
+        return done(null, false, { message: 'Invalid email or password' });
+      }
+
+      // Create session-compatible user object
+      const sessionUser = {
+        claims: {
+          sub: user.id,
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          profile_image_url: user.profileImageUrl,
+          exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60) // 1 week
+        },
+        access_token: "local-auth",
+        refresh_token: null,
+        expires_at: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)
+      };
+
+      return done(null, sessionUser);
+    } catch (error) {
+      return done(error);
+    }
+  }));
+
+  // Replit Auth setup (existing code)
   const config = await getOidcConfig();
 
   const verify: VerifyFunction = async (
@@ -141,14 +185,80 @@ export async function setupAuth(app: Express) {
     })(req, res, next);
   });
 
+  // Email/Password Authentication Routes
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const { email, password, firstName, lastName } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists with this email" });
+      }
+
+      // Hash password
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+
+      // Create user
+      const newUser = await storage.upsertUser({
+        id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        email,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        profileImageUrl: null,
+        passwordHash
+      });
+
+      res.json({ success: true, message: "Account created successfully" });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(500).json({ message: "Failed to create account" });
+    }
+  });
+
+  app.post("/api/auth/login", (req, res, next) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
+      if (err) {
+        return res.status(500).json({ message: "Authentication error" });
+      }
+      if (!user) {
+        return res.status(401).json({ message: info?.message || "Invalid credentials" });
+      }
+
+      req.logIn(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Login failed" });
+        }
+        res.json({ success: true, message: "Logged in successfully" });
+      });
+    })(req, res, next);
+  });
+
   app.get("/api/logout", (req, res) => {
+    const user = req.user as any;
+    
     req.logout(() => {
-      res.redirect(
-        client.buildEndSessionUrl(config, {
-          client_id: process.env.REPL_ID!,
-          post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
-        }).href
-      );
+      // If it's a Replit user, redirect to Replit logout
+      if (user && user.access_token !== "local-auth") {
+        res.redirect(
+          client.buildEndSessionUrl(config, {
+            client_id: process.env.REPL_ID!,
+            post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
+          }).href
+        );
+      } else {
+        // For local auth users, just redirect to home
+        res.redirect("/");
+      }
     });
   });
 }

@@ -18,6 +18,7 @@ export interface IStorage {
   // User operations
   // (IMPORTANT) these user operations are mandatory for Replit Auth.
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
 
@@ -49,6 +50,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
   }
 
@@ -329,6 +335,15 @@ class MemoryStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    for (const user of this.users.values()) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return undefined;
+  }</old_str>
 
   async upsertUser(userData: UpsertUser): Promise<User> {
     const user: User = {
@@ -621,6 +636,9 @@ export const getStorage = async (): Promise<IStorage> => {
 export const storage = {
   async getUser(id: string) {
     return (await getStorage()).getUser(id);
+  },
+  async getUserByEmail(email: string) {
+    return (await getStorage()).getUserByEmail(email);
   },
   async upsertUser(user: any) {
     return (await getStorage()).upsertUser(user);

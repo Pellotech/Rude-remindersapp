@@ -52,6 +52,7 @@ export const users = pgTable("users", {
   // UI Preferences
   simplifiedInterface: boolean("simplified_interface").default(false),
   alarmSound: text("alarm_sound").default("gentle-chime"),
+  passwordHash: text("password_hash"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -129,8 +130,8 @@ export const updateReminderSchema = baseInsertReminderSchema.partial();
 export const updateUserSchema = insertUserSchema.partial();
 
 // Types
-export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type UpsertUser = Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>> & { id: string };
 export type InsertReminder = z.infer<typeof insertReminderSchema>;
 export type UpdateReminder = z.infer<typeof updateReminderSchema>;
 export type Reminder = typeof reminders.$inferSelect;
