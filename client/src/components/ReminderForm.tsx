@@ -601,43 +601,76 @@ export default function ReminderForm({
 
 
 
-  const getRandomQuote = (category: string) => {
-    // Check if user has cultural preferences enabled
-    const userData = userSettings as any;
-    if (userData?.ethnicitySpecificQuotes && userData?.ethnicity) {
-      const culturalQuote = CulturalQuotesService.getPersonalizedQuote(
-        userData.ethnicity,
-        true,
-        userData.gender,
-        userData.genderSpecificReminders
-      );
-      if (culturalQuote) {
-        setSelectedMotivation(culturalQuote);
-        form.setValue("motivationalQuote", culturalQuote);
-        toast({
-          title: "Cultural Motivation Added",
-          description: "Personalized quote based on your cultural background!",
-        });
-        return;
-      }
-    }
+  const getRandomQuote = async (category: string) => {
+    try {
+      // Make API call to get quote for the specific category
+      const response = await fetch(`/api/quotes/${category}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
 
-    // Fallback to general quotes
-    const quote = QuotesService.getRandomQuote(category);
-    if (quote) {
-      const formattedQuote = QuotesService.formatQuote(quote);
-      setSelectedMotivation(formattedQuote);
-      form.setValue("motivationalQuote", formattedQuote);
-      toast({
-        title: "Motivation Added",
-        description: `Quote from ${quote.author} selected!`,
-      });
-    } else {
-      toast({
-        title: "No quotes found",
-        description: "Please try a different category",
-        variant: "destructive",
-      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch quote: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.quote) {
+        setSelectedMotivation(data.quote);
+        form.setValue("motivationalQuote", data.quote);
+        
+        toast({
+          title: data.isPremium ? "AI-Generated Quote Added" : "Cultural Quote Added",
+          description: data.isPremium 
+            ? "Fresh AI-generated motivation from DeepSeek!" 
+            : `Quote from ${category} category selected!`,
+        });
+      } else {
+        throw new Error("No quote received from API");
+      }
+    } catch (error) {
+      console.error("Error fetching quote:", error);
+      
+      // Fallback to client-side quotes if API fails
+      const userData = userSettings as any;
+      if (userData?.ethnicitySpecificQuotes && userData?.ethnicity) {
+        const culturalQuote = CulturalQuotesService.getPersonalizedQuote(
+          userData.ethnicity,
+          true,
+          userData.gender,
+          userData.genderSpecificReminders
+        );
+        if (culturalQuote) {
+          setSelectedMotivation(culturalQuote);
+          form.setValue("motivationalQuote", culturalQuote);
+          toast({
+            title: "Cultural Motivation Added",
+            description: "Personalized quote based on your cultural background!",
+          });
+          return;
+        }
+      }
+
+      // Final fallback to general quotes
+      const quote = QuotesService.getRandomQuote(category);
+      if (quote) {
+        const formattedQuote = QuotesService.formatQuote(quote);
+        setSelectedMotivation(formattedQuote);
+        form.setValue("motivationalQuote", formattedQuote);
+        toast({
+          title: "Motivation Added",
+          description: `Quote from ${quote.author} selected!`,
+        });
+      } else {
+        toast({
+          title: "No quotes found",
+          description: "Please try a different category",
+          variant: "destructive",
+        });
+      }
     }
   };
 
