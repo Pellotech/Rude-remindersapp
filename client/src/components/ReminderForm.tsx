@@ -179,7 +179,7 @@ export default function ReminderForm({
 
   const isSimplifiedInterface = (userSettings as any)?.simplifiedInterface || false;
   const [previewMessage, setPreviewMessage] = useState("");
-  
+
   // Fetch voice characters from backend
   const { data: voiceCharacters = [], isLoading: voicesLoading } = useQuery({
     queryKey: ["/api/voices"],
@@ -268,12 +268,12 @@ export default function ReminderForm({
       };
       baseMessage = `Finish that report${samplePhrases[rudenessLevel as keyof typeof samplePhrases]}`;
     }
-    
+
     // Add motivational quote if selected
     if (selectedMotivation) {
       baseMessage += `\n\n💡 ${selectedMotivation}`;
     }
-    
+
     setPreviewMessage(baseMessage);
   }, [originalMessage, rudenessLevel, phrases, selectedMotivation]);
 
@@ -746,7 +746,7 @@ export default function ReminderForm({
               )}
             />
 
-            
+
 
             {/* Select Date Section */}
             <FormField
@@ -776,12 +776,12 @@ export default function ReminderForm({
                             <p className="text-sm text-muted-foreground">Choose which days of the week to repeat</p>
                           </CardHeader>
                           <CardContent>
-                            <div className="grid grid-cols-7 gap-2">
+                            <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                               {daysOfWeek.map((day) => {
                                 const isSelected = selectedDays.includes(day.id);
                                 return (
-                                  <div key={day.id} className="text-center">
-                                    <div className="text-xs font-medium text-muted-foreground mb-1">
+                                  <div key={day.id} className="text-center flex-shrink-0 min-w-[100px]">
+                                    <div className="text-sm font-medium text-muted-foreground mb-2">
                                       {day.label}
                                     </div>
                                     <Button
@@ -795,9 +795,9 @@ export default function ReminderForm({
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
-                                      <span className="text-lg font-semibold">{day.short}</span>
+                                      <span className="text-xl font-bold">{day.short}</span>
                                       {day.isToday && (
-                                        <span className="text-xs">Today</span>
+                                        <span className="text-xs mt-1">Today</span>
                                       )}
                                     </Button>
                                   </div>
