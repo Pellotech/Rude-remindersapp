@@ -12,6 +12,69 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 import { detectReminderMood, getMoodStyling, getMoodDescription, type ReminderMood } from '@/utils/moodDetection';
 
+// Helper function to detect if a response is AI-generated (premium)
+const isAIPremiumResponse = (message: string): boolean => {
+  if (!message) return false;
+  
+  // Check for AI-generated patterns vs template patterns
+  const aiPatterns = [
+    // DeepSeek patterns
+    /DeepSeek/i,
+    // More sophisticated language patterns
+    /your future self/i,
+    /stop making.*pay for.*laziness/i,
+    /choosing.*over/i,
+    /literally your job/i,
+    /procrastination.*strategy/i,
+    /promotion.*starts with/i,
+    /career depends on/i,
+    /word should mean something/i,
+    /value your relationships/i,
+    /magically complete itself/i,
+    /admit you don't actually want/i
+  ];
+  
+  // Template patterns (simpler, more generic)
+  const templatePatterns = [
+    /^Time to.*\s-\s.*!$/,
+    /^Ready to tackle.*\?/,
+    /calling your name/i,
+    /missed opportunity/i,
+    /collect your victory/i
+  ];
+  
+  // Check for AI patterns first
+  const hasAIPattern = aiPatterns.some(pattern => pattern.test(message));
+  if (hasAIPattern) return true;
+  
+  // Check if it's clearly a template
+  const isTemplate = templatePatterns.some(pattern => pattern.test(message));
+  if (isTemplate) return false;
+  
+  // Check message complexity (AI responses tend to be more varied and personal)
+  const complexity = message.split(' ').length;
+  const hasPersonalPronouns = /\b(you're|your|you)\b/gi.test(message);
+  const hasComplexSentence = message.includes(',') && message.includes('!');
+  
+  return complexity > 15 && hasPersonalPronouns && hasComplexSentence;
+};
+
+// Helper function to detect if a quote is AI-generated (premium)
+const isAIPremiumQuote = (quote: string): boolean => {
+  if (!quote) return false;
+  
+  // AI quotes tend to be more personalized and contextual
+  const aiQuotePatterns = [
+    /based on your/i,
+    /your journey/i,
+    /as you.*today/i,
+    /in your.*path/i,
+    /remember.*you/i
+  ];
+  
+  return aiQuotePatterns.some(pattern => pattern.test(quote)) || quote.length > 150;
+};
+
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
@@ -326,7 +389,7 @@ export default function DevPreview() {
                           Level {reminder.rudenessLevel}
                         </Badge>
                         {/* Premium/Free indicator based on AI-generated content */}
-                        {reminder.rudeMessage && (reminder.rudeMessage.includes('DeepSeek') || reminder.rudeMessage.length > 100) ? (
+                        {reminder.rudeMessage && isAIPremiumResponse(reminder.rudeMessage) ? (
                           <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                             Premium AI
                           </Badge>
@@ -411,7 +474,7 @@ export default function DevPreview() {
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium">Generated Response</Label>
                     {selectedReminder.rudeMessage && (
-                      selectedReminder.rudeMessage.includes('DeepSeek') || selectedReminder.rudeMessage.length > 100 ? (
+                      isAIPremiumResponse(selectedReminder.rudeMessage) ? (
                         <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                           Premium AI Generated
                         </Badge>
@@ -424,7 +487,7 @@ export default function DevPreview() {
                   </div>
                   {selectedReminder.rudeMessage ? (
                     <div className={`mt-1 p-3 rounded-lg border-l-4 ${
-                      selectedReminder.rudeMessage.includes('DeepSeek') || selectedReminder.rudeMessage.length > 100 
+                      isAIPremiumResponse(selectedReminder.rudeMessage)
                         ? 'bg-purple-50 border-purple-400' 
                         : 'bg-gray-50 border-gray-400'
                     }`}>
@@ -506,8 +569,7 @@ export default function DevPreview() {
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium">Motivational Quote</Label>
                       {/* Check if quote is AI-generated (premium) or cultural/template (free/premium) */}
-                      {selectedReminder.motivationalQuote.length > 150 || 
-                       selectedReminder.motivationalQuote.includes('based on your') ? (
+                      {isAIPremiumQuote(selectedReminder.motivationalQuote) ? (
                         <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                           Premium AI Quote
                         </Badge>
@@ -518,14 +580,12 @@ export default function DevPreview() {
                       )}
                     </div>
                     <div className={`mt-1 p-3 rounded-lg border-l-4 ${
-                      selectedReminder.motivationalQuote.length > 150 || 
-                      selectedReminder.motivationalQuote.includes('based on your')
+                      isAIPremiumQuote(selectedReminder.motivationalQuote)
                         ? 'bg-purple-50 border-purple-500' 
                         : 'bg-blue-50 border-blue-500'
                     }`}>
                       <p className={`text-sm italic ${
-                        selectedReminder.motivationalQuote.length > 150 || 
-                        selectedReminder.motivationalQuote.includes('based on your')
+                        isAIPremiumQuote(selectedReminder.motivationalQuote)
                           ? 'text-purple-800' 
                           : 'text-blue-800'
                       }`}>
