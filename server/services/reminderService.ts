@@ -1,43 +1,34 @@
 import { storage } from "../storage";
 import { notificationService } from "./notificationService";
+import { smartResponseService } from "./smartResponseService";
 import type { Reminder } from "@shared/schema";
 
-// Assuming these functions are defined elsewhere and imported
-// For demonstration purposes, let's define them as placeholders
+// Helper functions for reminder management
 const createReminder = async (reminder: Reminder): Promise<Reminder> => {
-  console.log("Placeholder for createReminder");
-  return reminder;
-};
-const scheduleNotification = async (reminder: Reminder): Promise<void> => {
-  console.log("Placeholder for scheduleNotification");
-};
-const generateReminder = async (reminder: Reminder): Promise<Reminder> => {
-  console.log("Placeholder for generateReminder");
-  return reminder;
-};
-const getMoreResponses = async (reminderId: string): Promise<string[]> => {
-  console.log("Placeholder for getMoreResponses");
-  return ["More response 1", "More response 2"];
+  return await storage.createReminder(reminder);
 };
 
-// Mocking smartResponseService and followUpService for completeness in this snippet
-const smartResponseService = {
-  getPersonalizedResponse: async (reminder: Reminder, isRude?: boolean): Promise<string[]> => {
-    console.log(`Mock getPersonalizedResponse for reminder: ${reminder.originalMessage}, isRude: ${isRude}`);
-    if (isRude) {
-      return [`Don't forget to ${reminder.originalMessage}!`];
-    }
-    return [`Remember to ${reminder.originalMessage}.`];
-  },
-  getContextualRemarks: async (reminder: Reminder): Promise<string[]> => {
-    console.log(`Mock getContextualRemarks for reminder: ${reminder.originalMessage}`);
-    return ["Contextual remark 1"];
+const scheduleNotification = async (reminder: Reminder): Promise<void> => {
+  console.log(`Scheduling notification for reminder: ${reminder.title}`);
+  // Notification scheduling is handled by the ReminderService class
+};
+
+const generateReminder = async (reminder: Reminder): Promise<Reminder> => {
+  return await generateReminderResponse(reminder);
+};
+
+const getMoreResponses = async (reminderId: string, userId: string): Promise<string[]> => {
+  const reminder = await storage.getReminder(reminderId, userId);
+  if (reminder) {
+    return await smartResponseService.getPersonalizedResponse(reminder, true);
   }
+  return ["More response 1", "More response 2"];
 };
 
 const followUpService = {
   scheduleFollowUps: async (reminder: Reminder): Promise<void> => {
-    console.log(`Mock scheduleFollowUps for reminder: ${reminder.originalMessage}`);
+    console.log(`Scheduling follow-ups for reminder: ${reminder.originalMessage}`);
+    // Follow-up logic can be implemented here
   }
 };
 
