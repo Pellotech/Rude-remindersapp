@@ -612,16 +612,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const { category, ethnicity, gender } = req.query;
-      
+
       const context = {
         category: category as string,
         ethnicity: ethnicity as string,
         gender: gender as string
       };
-      
+
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, context);
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({
         quote,
         isPremium,
@@ -640,7 +640,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'sports' });
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({
         quote,
         isPremium,
@@ -659,7 +659,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'historical' });
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({
         quote,
         isPremium,
@@ -678,7 +678,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'entrepreneurs' });
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({
         quote,
         isPremium,
@@ -697,7 +697,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'scientists' });
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({
         quote,
         isPremium,
@@ -716,7 +716,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'motivational' });
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({
         quote,
         isPremium,
@@ -735,7 +735,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const isPremium = await isUserPremium(userId);
-      
+
       res.json({ 
         isPremium,
         features: {
@@ -756,18 +756,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const { isPremium } = req.body;
-      
+
       // Update user subscription status
       const updates = {
         subscriptionPlan: isPremium ? 'premium' : 'free',
         subscriptionStatus: isPremium ? 'active' : 'free',
         subscriptionEndsAt: isPremium ? new Date('2025-12-31') : null
       };
-      
+
       const updatedUser = await storage.updateUser(userId, updates);
-      
+
       console.log(`Developer toggle: User ${userId} switched to ${updates.subscriptionPlan} plan`);
-      
+
       res.json({
         success: true,
         subscriptionPlan: updates.subscriptionPlan,

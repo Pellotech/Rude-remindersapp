@@ -113,7 +113,7 @@ export default function HomeFree() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
-      
+
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Welcome Header - identical to premium */}
         <div className="mb-8">
@@ -137,7 +137,7 @@ export default function HomeFree() {
           </div>
         </div>
 
-        
+
 
         {/* Main Content Tabs - identical to premium */}
         <Tabs defaultValue="create" className="space-y-6">
@@ -215,7 +215,7 @@ export default function HomeFree() {
                       const completed = categoryReminders.filter((r: any) => r.completed).length;
                       const total = categoryReminders.length;
                       const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-                      
+
                       return (
                         <div key={category} className="flex items-center justify-between">
                           <span className="text-sm capitalize">{category}</span>
@@ -249,7 +249,7 @@ export default function HomeFree() {
                 <p className="text-purple-700">
                   Unlock unlimited reminders, premium voice characters, advanced AI responses, and more!
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <h3 className="font-semibold text-purple-800">Premium Features:</h3>
@@ -276,7 +276,7 @@ export default function HomeFree() {
                       </li>
                     </ul>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div className="text-center p-4 bg-white rounded-lg border border-purple-200">
                       <div className="text-2xl font-bold text-purple-800">$9.99/month</div>

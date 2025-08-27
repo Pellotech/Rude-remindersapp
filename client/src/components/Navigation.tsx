@@ -13,7 +13,7 @@ export default function Navigation() {
   const { user } = useAuth() as { user: User | undefined };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [location, navigate] = useLocation();
-  
+
   // Determine current mode based on URL
   const isCurrentlyPremium = location.includes('premium');
   const [developmentMode, setDevelopmentMode] = useState(isCurrentlyPremium);
@@ -22,7 +22,7 @@ export default function Navigation() {
   const handleModeChange = (newMode: string) => {
     const isPremium = newMode === "premium";
     setDevelopmentMode(isPremium);
-    
+
     // Navigate to appropriate page
     if (location === "/" || location === "/home-free" || location === "/home-premium") {
       navigate(isPremium ? "/home-premium" : "/home-free");
@@ -49,20 +49,7 @@ export default function Navigation() {
                 </div>
               </div>
 
-              {/* Premium Toggle Input */}
-              <div className="flex items-center gap-2 ml-4">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  View as:
-                </label>
-                <select 
-                  value={developmentMode ? "premium" : "free"}
-                  onChange={(e) => handleModeChange(e.target.value)}
-                  className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="free">Free User</option>
-                  <option value="premium">Premium User</option>
-                </select>
-              </div>
+              {/* Removed the Premium Toggle Input as requested */}
             </div>
             <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
               <HelpMenu />

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import * as React from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
 import { PlayCircle, Loader2, Clock, User, Volume2, ArrowUpDown } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
@@ -12,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 
 
-// Helper function to check if user has premium access
+// Helper function to check if user has premium access - no dropdown dependencies
 const usePremiumStatus = (): { 
   isPremium: boolean; 
   features: { aiGeneratedResponses: boolean; aiGeneratedQuotes: boolean } 
@@ -20,6 +19,7 @@ const usePremiumStatus = (): {
   const { data } = useQuery({
     queryKey: ["/api/user/premium-status"],
     retry: false,
+    staleTime: 1000, // Refresh quickly for dev tools
   });
   
   return {
