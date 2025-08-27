@@ -112,7 +112,7 @@ const motivationCategories = [
   },
   {
     id: "entrepreneurs",
-    name: "Business Innovators", 
+    name: "Business Innovators",
     icon: Bot,
     description: "Insights from successful entrepreneurs",
     figures: ["Steve Jobs", "Bill Gates", "Elon Musk", "Oprah Winfrey", "Jeff Bezos"]
@@ -162,7 +162,7 @@ const sampleQuotes = {
   ]
 };
 
-export default function ReminderForm({ 
+export default function ReminderForm({
   isFreePlan = false,
   currentReminderCount = 0,
   maxReminders = 5
@@ -420,29 +420,29 @@ export default function ReminderForm({
             switch (data.voiceSettings.voiceType) {
               case 'male':
               case 'upbeat-male':
-                selectedVoice = voices.find(voice => 
-                  voice.name.includes('Male') || 
+                selectedVoice = voices.find(voice =>
+                  voice.name.includes('Male') ||
                   voice.name.includes('David') ||
                   voice.name.includes('Daniel')
                 );
                 break;
               case 'british-male':
-                selectedVoice = voices.find(voice => 
-                  voice.lang.includes('en-GB') || 
+                selectedVoice = voices.find(voice =>
+                  voice.lang.includes('en-GB') ||
                   voice.name.includes('British') ||
                   voice.name.includes('Oliver')
                 );
                 break;
               case 'female':
-                selectedVoice = voices.find(voice => 
+                selectedVoice = voices.find(voice =>
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
                   voice.name.includes('Victoria')
                 );
                 break;
               case 'robotic':
-                selectedVoice = voices.find(voice => 
-                  voice.name.includes('Microsoft') || 
+                selectedVoice = voices.find(voice =>
+                  voice.name.includes('Microsoft') ||
                   voice.name.includes('Computer')
                 );
                 break;
@@ -582,7 +582,7 @@ export default function ReminderForm({
 
   const toggleDay = (dayId: string) => {
     setSelectedDays(prev => {
-      const newDays = prev.includes(dayId) 
+      const newDays = prev.includes(dayId)
         ? prev.filter(d => d !== dayId)
         : [...prev, dayId];
       form.setValue("selectedDays", newDays);
@@ -820,7 +820,7 @@ export default function ReminderForm({
                               {/* Hour Selection */}
                               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {Array.from({ length: 24 }, (_, i) => {
-                                  const hour = i;
+                                  const hour = i; // Start from 0 (12 AM) and go to 23 (11 PM)
                                   const isSelected = multiDayHour === hour;
                                   const display = hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
 
@@ -890,7 +890,7 @@ export default function ReminderForm({
                           <div className="text-center p-3 bg-muted rounded-lg">
                             <p className="text-sm text-muted-foreground">Selected recurring reminder:</p>
                             <p className="font-medium">
-                              {selectedDays.map(dayId => 
+                              {selectedDays.map(dayId =>
                                 daysOfWeek.find(d => d.id === dayId)?.full
                               ).join(", ")} at {
                                 multiDayHour === 0 ? "12" : multiDayHour === 12 ? "12" : multiDayHour > 12 ? `${multiDayHour - 12}` : `${multiDayHour}`
@@ -974,8 +974,8 @@ export default function ReminderForm({
                             onClick={() => handleContextCategorySelect(category)}
                             className={cn(
                               "flex-shrink-0 h-auto py-2 px-3 text-xs font-medium transition-all",
-                              isSelected 
-                                ? "bg-blue-600 text-white hover:bg-blue-700" 
+                              isSelected
+                                ? "bg-blue-600 text-white hover:bg-blue-700"
                                 : "hover:bg-blue-50 hover:border-blue-300"
                             )}
                           >
