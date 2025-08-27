@@ -22,13 +22,9 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const today = new Date();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
-  // Full 24-hour time slots in AM/PM format starting from logical hour
+  // Full 24-hour time slots in AM/PM format
   const timeSlots = Array.from({ length: 24 }, (_, i) => {
-    const currentHour = new Date().getHours();
-    // If it's very late (after 10 PM) or very early (before 6 AM), start from 6 AM
-    // Otherwise start from current hour
-    const startHour = (currentHour >= 22 || currentHour < 6) ? 6 : currentHour;
-    const hour = (startHour + i) % 24; // Start from logical hour and wrap around
+    const hour = i;
     return {
       value: hour,
       label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
