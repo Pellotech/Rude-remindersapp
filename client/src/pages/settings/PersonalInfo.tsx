@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { BackNavigation } from "@/components/BackNavigation";
-import { UserCircle, Users, Globe } from "lucide-react";
+import { UserCircle, Users } from "lucide-react";
 
 const ethnicityOptions = [
   { value: "american", label: "American" },
@@ -189,47 +189,7 @@ export default function PersonalInfo() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
-            Cultural Background
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="ethnicity">Cultural Background</Label>
-            <Select
-              value={currentSettings.ethnicity || ""}
-              onValueChange={(value) => updateSetting("ethnicity", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select your cultural background" />
-              </SelectTrigger>
-              <SelectContent>
-                {ethnicityOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Cultural Motivational Quotes</Label>
-              <p className="text-sm text-muted-foreground">
-                Include culturally relevant quotes from historical figures
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.ethnicitySpecificQuotes || false}
-              onCheckedChange={(checked) => updateSetting("ethnicitySpecificQuotes", checked)}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      
     </div>
   );
 }

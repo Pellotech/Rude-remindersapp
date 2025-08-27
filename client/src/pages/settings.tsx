@@ -294,43 +294,7 @@ export default function Settings() {
 
               <Separator />
 
-              {/* Cultural Background */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">Cultural Background</Label>
-                <p className="text-sm text-muted-foreground">
-                  Choose your cultural background to receive motivational quotes from relevant historical figures and leaders
-                </p>
-                <Select
-                  value={currentSettings.ethnicity || ""}
-                  onValueChange={(value) => updateSetting("ethnicity", value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select your cultural background" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    {ethnicityOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                {currentSettings.ethnicity && (
-                  <div className="flex items-center justify-between p-4 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                    <div className="space-y-1">
-                      <Label className="text-sm font-medium">Cultural-specific motivational quotes</Label>
-                      <p className="text-xs text-muted-foreground">
-                        Receive quotes from historical figures and leaders from your cultural background
-                      </p>
-                    </div>
-                    <Switch
-                      checked={currentSettings.ethnicitySpecificQuotes || false}
-                      onCheckedChange={(checked) => updateSetting("ethnicitySpecificQuotes", checked)}
-                    />
-                  </div>
-                )}
-              </div>
+              
             </CardContent>
           </CollapsibleContent>
         </Collapsible>
