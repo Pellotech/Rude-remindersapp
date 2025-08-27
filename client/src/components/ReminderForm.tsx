@@ -821,7 +821,10 @@ export default function ReminderForm({
                               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {Array.from({ length: 24 }, (_, i) => {
                                   const currentHour = new Date().getHours();
-                                  const hour = (currentHour + i) % 24; // Start from current hour and wrap around
+                                  // If it's very late (after 10 PM) or very early (before 6 AM), start from 6 AM
+                                  // Otherwise start from current hour
+                                  const startHour = (currentHour >= 22 || currentHour < 6) ? 6 : currentHour;
+                                  const hour = (startHour + i) % 24; // Start from logical hour and wrap around
                                   const isSelected = multiDayHour === hour;
                                   const display = hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
 
