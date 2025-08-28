@@ -228,8 +228,8 @@ export default function ReminderForm({
       originalMessage: "",
       context: "",
       scheduledFor: "",
-      rudenessLevel: user?.defaultRudenessLevel || 3,
-      voiceCharacter: user?.defaultVoiceCharacter || "default",
+      rudenessLevel: 3,
+      voiceCharacter: "default",
       attachments: [],
       motivationalQuote: "",
       selectedDays: [],
@@ -728,28 +728,7 @@ export default function ReminderForm({
     form.setValue("scheduledFor", isoString);
   }, [form]);
 
-  // Reset form when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      setOriginalMessage("");
-      setContext("");
-      setScheduledFor("");
-      setRudenessLevel(user?.defaultRudenessLevel || 3);
-      setVoiceCharacter(user?.defaultVoiceCharacter || "default");
-      setAttachments([]);
-      setSelectedCategory("");
-      setSelectedDays([]);
-      setIsMultiDay(false);
-    }
-  }, [isOpen, user]);
 
-  // Update defaults when user settings change
-  useEffect(() => {
-    if (user) {
-      setRudenessLevel(user.defaultRudenessLevel || 3);
-      setVoiceCharacter(user.defaultVoiceCharacter || "default");
-    }
-  }, [user?.defaultRudenessLevel, user?.defaultVoiceCharacter]);
 
   return (
     <Card>
