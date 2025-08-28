@@ -3,23 +3,16 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertReminderSchema, updateReminderSchema } from "@shared/schema";
+import { insertReminderSchema, updateReminderSchema, type Reminder, type User } from "@shared/schema";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
 import { isUserPremium } from "./utils/premiumCheck";
 import crypto from 'crypto'; // Import crypto module for UUID generation
 
-// Placeholder for deepseekService and voiceService, ensure these are correctly imported or defined elsewhere
-// For the purpose of this edit, we assume they are available in the scope.
-// const deepseekService = require('./services/deepseekService'); // Example import
-// const voiceService = require('./services/voiceService'); // Example import
-// Assuming these are imported or available in the module scope.
 import { DeepSeekService } from './services/deepseekService';
-import { VoiceService } from './services/voiceService'; // Assuming VoiceService is in './services/voiceService'
 
 const deepseekService = new DeepSeekService();
-const voiceService = new VoiceService();
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -150,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Create base reminder for the specific day
           let reminder = {
-            id: crypto.randomUUID(),
+            id: crypto.randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
             userId,
             title: reminderDataForDay.title,
             originalMessage: reminderDataForDay.originalMessage,
@@ -167,10 +160,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             selectedDays: [], // Individual reminders don't have selectedDays
             isMultiDay: false,
             daySpecificMessages: null,
-
             completed: false,
             completedAt: null,
-            status: 'pending' as const,
             responses: [] as string[],
             createdAt: new Date(),
             updatedAt: new Date()
@@ -237,8 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           }
 
-          // Update status to active since everything is generated
-          reminder.status = 'active' as const;
+          // Update timestamp since everything is generated
           reminder.updatedAt = new Date();
 
           console.log("Created reminder with auto-generated content:", {
@@ -263,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Handle single reminders as before
         // Create base reminder
         let reminder = {
-          id: crypto.randomUUID(),
+          id: crypto.randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
           userId,
           title: originalMessage,
           originalMessage,
@@ -280,10 +270,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           selectedDays: [],
           isMultiDay: false,
           daySpecificMessages: null,
-
           completed: false,
           completedAt: null,
-          status: 'pending' as const,
           responses: [] as string[],
           createdAt: new Date(),
           updatedAt: new Date()
@@ -350,8 +338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         }
 
-        // Update status to active since everything is generated
-        reminder.status = 'active' as const;
+        // Update timestamp since everything is generated
         reminder.updatedAt = new Date();
 
         console.log("Created reminder with auto-generated content:", {
@@ -481,28 +468,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Update the reminder in storage with the new AI response
       const finalReminder = {
-        id: reminder.id,
-        userId: userId,
-        title: updatedReminder.title,
-        originalMessage: updatedReminder.originalMessage,
-        context: updatedReminder.context,
-        rudeMessage: updatedReminder.rudeMessage,
-        rudenessLevel: updatedReminder.rudenessLevel,
-        scheduledFor: updatedReminder.scheduledFor,
-        browserNotification: updatedReminder.browserNotification,
-        voiceNotification: updatedReminder.voiceNotification,
-        emailNotification: updatedReminder.emailNotification,
-        pushNotification: updatedReminder.pushNotification,
-        voiceCharacter: updatedReminder.voiceCharacter,
-        attachments: updatedReminder.attachments,
-        isRecurring: updatedReminder.isRecurring,
-        recurringPattern: updatedReminder.recurringPattern,
-        completedAt: updatedReminder.completedAt,
-
-        snoozeCount: updatedReminder.snoozeCount,
-        status: updatedReminder.status,
-        createdAt: updatedReminder.createdAt,
-        updatedAt: updatedReminder.updatedAt
+        ...reminder,
+        ...updatedReminder,
+        updatedAt: new Date()
       };
 
       await storage.updateReminder(req.params.id, userId, finalReminder);
@@ -686,7 +654,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create a sample reminder object
       const sampleReminder: Partial<Reminder> = {
-        id: 'preview-' + Date.now(),
+        id: ('preview-' + Date.now()) as `${string}-${string}-${string}-${string}-${string}`,
         userId,
         title: task || 'Sample Task',
         originalMessage: task || 'Sample Task',
@@ -695,8 +663,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         scheduledFor: new Date(),
         rudenessLevel: rudenessLevel || 3,
         voiceCharacter: voiceCharacter || 'default',
-        category: category || 'general',
-        status: 'active',
         motivationalQuote: '',
         createdAt: new Date(),
         updatedAt: new Date()
@@ -713,10 +679,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           const context = {
             task: sampleReminder.title!,
-            category: sampleReminder.category!,
+            category: category || 'general',
             rudenessLevel: sampleReminder.rudenessLevel!,
-            gender: user?.gender,
-            culturalBackground: user?.ethnicity,
+            gender: user?.gender || undefined,
+            culturalBackground: user?.ethnicity || undefined,
             timeOfDay
           };
 
@@ -742,12 +708,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Generate speech data for voice preview using the AI-generated message
-      const speechData = await voiceService.generateSpeech(
-        sampleReminder.rudeMessage,
+      const speechData = notificationService.generateBrowserSpeech(
+        sampleReminder.rudeMessage || 'Time to work!',
         sampleReminder.voiceCharacter || 'default'
       );
 
-      const voiceSettings = voiceService.getVoiceSettings(sampleReminder.voiceCharacter || 'default');
+      const voiceSettings = notificationService.getBrowserVoiceSettings(sampleReminder.voiceCharacter || 'default');
 
       const previewData = {
         reminder: sampleReminder,
