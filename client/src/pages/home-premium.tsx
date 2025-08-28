@@ -8,15 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bell,
   Crown,
-  Zap,
-  Star,
   TrendingUp,
   Calendar,
   MessageSquare,
   CheckCircle,
   Camera,
-  Volume2,
-  Brain,
   BarChart3,
   Target,
   Sparkles,
@@ -126,9 +122,9 @@ export default function HomePremium() {
 
         
 
-        {/* Main Content Tabs - identical to free */}
+        {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 overflow-x-auto flex-shrink-0">
+          <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
               Create
@@ -140,10 +136,6 @@ export default function HomePremium() {
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Analytics
-            </TabsTrigger>
-            <TabsTrigger value="premium" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              Premium Tools
             </TabsTrigger>
           </TabsList>
 
@@ -224,45 +216,7 @@ export default function HomePremium() {
             </div>
           </TabsContent>
 
-          <TabsContent value="premium" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Zap className="h-5 w-5" />
-                    AI Response Generator
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Generate unlimited fresh, personalized responses with advanced AI
-                  </p>
-                  <Button className="w-full">
-                    <Brain className="h-4 w-4 mr-2" />
-                    Open Response Lab
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5" />
-                    Premium Voice Studio
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Test and customize all 10 premium voice characters
-                  </p>
-                  <Button className="w-full" variant="outline">
-                    <Volume2 className="h-4 w-4 mr-2" />
-                    Voice Studio
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+          
         </Tabs>
       </div>
     </div>
