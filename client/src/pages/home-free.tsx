@@ -139,9 +139,9 @@ export default function HomeFree() {
 
 
 
-        {/* Main Content Tabs - restricted for free users */}
+        {/* Main Content Tabs - analytics shows upgrade prompt for free users */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
               Create
@@ -149,6 +149,10 @@ export default function HomeFree() {
             <TabsTrigger value="manage" className="flex items-center gap-2">
               <Target className="h-4 w-4" />
               Manage
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Analytics
             </TabsTrigger>
             <TabsTrigger value="upgrade" className="flex items-center gap-2">
               <Crown className="h-4 w-4" />
@@ -180,7 +184,92 @@ export default function HomeFree() {
             <RemindersList />
           </TabsContent>
 
-          
+          <TabsContent value="analytics" className="space-y-6">
+            {/* Premium Upgrade Prompt for Analytics */}
+            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+              <CardHeader className="text-center">
+                <CardTitle className="flex items-center justify-center gap-2 text-purple-800">
+                  <TrendingUp className="h-6 w-6" />
+                  Analytics - Premium Feature
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="text-center">
+                  <p className="text-purple-700 mb-4">
+                    Unlock detailed insights into your productivity patterns and reminder completion trends!
+                  </p>
+                  
+                  {/* Preview of what analytics would show */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 opacity-60 pointer-events-none">
+                    <Card className="border-purple-100">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm text-purple-800">Completion Trends</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-purple-600">This Week</span>
+                            <Badge variant="outline" className="text-purple-600 border-purple-300">? completed</Badge>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-purple-600">Success Rate</span>
+                            <Badge variant="outline" className="text-purple-600 border-purple-300">?%</Badge>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-purple-600">Current Streak</span>
+                            <Badge variant="outline" className="text-purple-600 border-purple-300">? days</Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-purple-100">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm text-purple-800">Category Breakdown</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {['Work', 'Health', 'Personal'].map((category) => (
+                            <div key={category} className="flex items-center justify-between">
+                              <span className="text-sm text-purple-600">{category}</span>
+                              <div className="flex items-center gap-2">
+                                <div className="w-16 h-2 bg-purple-200 rounded-full overflow-hidden">
+                                  <div className="h-full bg-purple-400 w-1/2" />
+                                </div>
+                                <span className="text-xs text-purple-500 w-6">?%</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-t from-purple-100 to-transparent z-10 rounded-lg"></div>
+                    <div className="text-center py-8">
+                      <Crown className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-purple-800 mb-2">Premium Analytics Include:</h3>
+                      <ul className="text-sm text-purple-700 space-y-1 mb-6">
+                        <li>• Detailed completion trends and streaks</li>
+                        <li>• Category-wise performance breakdown</li>
+                        <li>• Most productive days analysis</li>
+                        <li>• Average rudeness level tracking</li>
+                        <li>• Weekly and monthly progress reports</li>
+                      </ul>
+                      <Button 
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                        onClick={() => window.location.href = '/settings/billing'}
+                      >
+                        <Crown className="h-4 w-4 mr-2" />
+                        Upgrade to Premium - $9.99/month
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="upgrade" className="space-y-6">
             <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
