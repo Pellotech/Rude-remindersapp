@@ -21,7 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Settings, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2 } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2 } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -206,7 +206,6 @@ export default function ReminderForm({
   const [selectedContextCategory, setSelectedContextCategory] = useState("");
 
   // Collapsible states for advanced sections
-  const [quickSettingsOpen, setQuickSettingsOpen] = useState(false);
   const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [motivationalOpen, setMotivationalOpen] = useState(false);
@@ -1060,61 +1059,7 @@ export default function ReminderForm({
             {!isSimplifiedInterface && (
               <>
 
-                {/* Quick Settings */}
-                <Collapsible open={quickSettingsOpen} onOpenChange={setQuickSettingsOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                      type="button"
-                    >
-                      <div className="flex items-center">
-                        <Settings className="mr-2 h-4 w-4 text-rude-red-600" />
-                        Quick Settings
-                      </div>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${quickSettingsOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Quickly set reminder times</p>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div
-                        className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
-                        onClick={() => {
-                          const oneHourFromNow = new Date();
-                          oneHourFromNow.setHours(oneHourFromNow.getHours() + 1);
-                          const isoString = oneHourFromNow.toISOString().slice(0, 16);
-                          form.setValue("scheduledFor", isoString);
-                        }}
-                      >
-                        ⏰ One Hour
-                      </div>
-                      <div
-                        className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
-                        onClick={() => {
-                          const thisAfternoon = new Date();
-                          thisAfternoon.setHours(15, 0, 0, 0); // 3 PM today
-                          const isoString = thisAfternoon.toISOString().slice(0, 16);
-                          form.setValue("scheduledFor", isoString);
-                        }}
-                      >
-                        ☀️ This Afternoon
-                      </div>
-                      <div
-                        className="p-3 border rounded-lg hover:bg-gray-100 bg-white cursor-pointer text-center text-sm font-medium"
-                        onClick={() => {
-                          const tomorrow = new Date();
-                          tomorrow.setDate(tomorrow.getDate() + 1);
-                          tomorrow.setHours(9, 0, 0, 0); // 9 AM tomorrow
-                          const isoString = tomorrow.toISOString().slice(0, 16);
-                          form.setValue("scheduledFor", isoString);
-                        }}
-                      >
-                        🌅 Tomorrow
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+                
 
 
                 {/* Voice Characters */}
