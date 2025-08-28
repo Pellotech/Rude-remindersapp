@@ -688,6 +688,56 @@ export default function ReminderForm({
     }
   };
 
+  // New function specifically for generating quotes during form submission
+  const generateQuoteForSubmission = async (category: string): Promise<string | null> => {
+    try {
+      // Make API call to get quote for the specific category
+      const response = await fetch(`/api/quotes/${category}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch quote: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.quote) {
+        return data.quote;
+      } else {
+        throw new Error("No quote received from API");
+      }
+    } catch (error) {
+      console.error("Error fetching quote for submission:", error);
+      
+      // Fallback to client-side quotes if API fails
+      const userData = userSettings as any;
+      if (userData?.ethnicitySpecificQuotes && userData?.ethnicity) {
+        const culturalQuote = CulturalQuotesService.getPersonalizedQuote(
+          userData.ethnicity,
+          true,
+          userData.gender,
+          userData.genderSpecificReminders
+        );
+        if (culturalQuote) {
+          return culturalQuote;
+        }
+      }
+
+      // Final fallback to general quotes
+      const quote = QuotesService.getRandomQuote(category);
+      if (quote) {
+        return QuotesService.formatQuote(quote);
+      }
+      
+      return null;
+    }
+  };
+
   // Handle category selection without auto-generating quotes
   const handleCategorySelection = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -723,8 +773,8 @@ export default function ReminderForm({
     if (selectedCategory && !finalMotivationalQuote) {
       try {
         // Generate quote based on selected category
-        await getRandomQuote(selectedCategory);
-        finalMotivationalQuote = selectedMotivation; // Use the newly generated quote
+        const generatedQuote = await generateQuoteForSubmission(selectedCategory);
+        finalMotivationalQuote = generatedQuote || finalMotivationalQuote;
       } catch (error) {
         console.error("Failed to generate quote on submission:", error);
       }
