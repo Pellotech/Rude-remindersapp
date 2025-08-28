@@ -35,7 +35,7 @@ export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
 
-  const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('scheduled'); // New state for sorting
+  const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('created'); // New state for sorting
   const { toast } = useToast();
   const { isPremium, features } = usePremiumStatus();
 
@@ -89,7 +89,8 @@ export default function DevPreview() {
     if (sortBy === 'scheduled') {
       return new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime();
     } else {
-      return new Date(a.createdAt || a.scheduledFor).getTime() - new Date(b.createdAt || b.scheduledFor).getTime();
+      // Sort by created date with newest first (reverse order)
+      return new Date(b.createdAt || b.scheduledFor).getTime() - new Date(a.createdAt || a.scheduledFor).getTime();
     }
   });
 
