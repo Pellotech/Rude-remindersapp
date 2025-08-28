@@ -19,9 +19,7 @@ const deepseekService = new DeepSeekService();
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -1013,22 +1011,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Create the subscription with $5 monthly price
+      // Get plan from request body, default to monthly
+      const { plan = 'monthly' } = req.body;
+      
+      let priceData;
+      if (plan === 'yearly') {
+        priceData = {
+          currency: 'usd',
+          product_data: {
+            name: 'Rude Reminder Premium - Yearly',
+            description: 'Premium features including AI-generated responses and unlimited reminders (Yearly)',
+          },
+          unit_amount: 4800, // $48.00 in cents
+          recurring: {
+            interval: 'year',
+          },
+        };
+      } else {
+        priceData = {
+          currency: 'usd',
+          product_data: {
+            name: 'Rude Reminder Premium - Monthly',
+            description: 'Premium features including AI-generated responses and unlimited reminders (Monthly)',
+          },
+          unit_amount: 600, // $6.00 in cents
+          recurring: {
+            interval: 'month',
+          },
+        };
+      }
+
+      // Create the subscription with selected plan
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
-        items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Rude Reminder Premium',
-              description: 'Premium features including AI-generated responses and unlimited reminders',
-            },
-            unit_amount: 500, // $5.00 in cents
-            recurring: {
-              interval: 'month',
-            },
-          },
-        }],
+        items: [{ price_data: priceData }],
         payment_behavior: 'default_incomplete',
         payment_settings: {
           save_default_payment_method: 'on_subscription',
@@ -1105,8 +1121,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const customerId = subscription.customer as string;
           
           // Find user by Stripe customer ID
-          const users = await storage.getAllUsers(); // You may need to implement this
-          const user = users.find(u => u.stripeCustomerId === customerId);
+          const users = await storage.getAllUsers();
+          const user = users.find((u: any) => u.stripeCustomerId === customerId);
           
           if (user) {
             const status = subscription.status === 'active' ? 'active' : 
@@ -1128,7 +1144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Payment successful, ensure user is marked as premium
             const subCustomerId = invoice.customer as string;
             const subUsers = await storage.getAllUsers();
-            const subUser = subUsers.find(u => u.stripeCustomerId === subCustomerId);
+            const subUser = subUsers.find((u: any) => u.stripeCustomerId === subCustomerId);
             
             if (subUser) {
               await storage.updateUser(subUser.id, {
@@ -1144,7 +1160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (failedInvoice.subscription) {
             const failCustomerId = failedInvoice.customer as string;
             const failUsers = await storage.getAllUsers();
-            const failUser = failUsers.find(u => u.stripeCustomerId === failCustomerId);
+            const failUser = failUsers.find((u: any) => u.stripeCustomerId === failCustomerId);
             
             if (failUser) {
               await storage.updateUser(failUser.id, {

@@ -14,11 +14,13 @@ if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 }
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-const SubscribeForm = () => {
+const SubscribeForm = ({ selectedPlan }: { selectedPlan: string }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const buttonText = selectedPlan === 'yearly' ? 'Subscribe for $48/year' : 'Subscribe for $6/month';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +69,7 @@ const SubscribeForm = () => {
             Processing...
           </>
         ) : (
-          'Subscribe for $5/month'
+          buttonText
         )}
       </Button>
     </form>
@@ -128,14 +130,62 @@ const PremiumFeatures = () => {
   );
 };
 
+const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, onPlanChange: (plan: string) => void }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <Card 
+        className={`cursor-pointer transition-all ${selectedPlan === 'monthly' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'}`}
+        onClick={() => onPlanChange('monthly')}
+        data-testid="plan-monthly"
+      >
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Monthly Plan</span>
+            {selectedPlan === 'monthly' && <Check className="h-5 w-5 text-blue-500" />}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold">$6<span className="text-lg text-muted-foreground">/month</span></div>
+          <p className="text-sm text-muted-foreground mt-1">Billed monthly</p>
+        </CardContent>
+      </Card>
+
+      <Card 
+        className={`cursor-pointer transition-all relative ${selectedPlan === 'yearly' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:shadow-md'}`}
+        onClick={() => onPlanChange('yearly')}
+        data-testid="plan-yearly"
+      >
+        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+          Save 33%
+        </div>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Yearly Plan</span>
+            {selectedPlan === 'yearly' && <Check className="h-5 w-5 text-green-500" />}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold">$48<span className="text-lg text-muted-foreground">/year</span></div>
+          <p className="text-sm text-muted-foreground mt-1">$4/month (billed yearly)</p>
+          <p className="text-xs text-green-600 font-medium">Early subscriber special!</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 export default function Subscribe() {
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState('yearly'); // Default to yearly for better value
 
-  useEffect(() => {
-    // Create subscription as soon as the page loads
-    apiRequest("POST", "/api/create-subscription")
+  const createSubscription = (plan: string) => {
+    setLoading(true);
+    setError("");
+    
+    // Create subscription with selected plan
+    apiRequest("POST", "/api/create-subscription", { plan })
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
@@ -149,7 +199,16 @@ export default function Subscribe() {
         setError(error.message || 'Failed to create subscription');
         setLoading(false);
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    // Create subscription when component mounts or plan changes
+    createSubscription(selectedPlan);
+  }, [selectedPlan]);
+
+  const handlePlanChange = (plan: string) => {
+    setSelectedPlan(plan);
+  };
 
   if (loading) {
     return (
@@ -201,9 +260,11 @@ export default function Subscribe() {
         <div className="text-center">
           <h1 className="text-3xl font-bold">Upgrade to Premium</h1>
           <p className="text-muted-foreground mt-2">
-            Unlock AI-powered personalized reminders for just $5/month
+            Choose your plan and unlock AI-powered personalized reminders
           </p>
         </div>
+
+        <PlanSelector selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />
 
         <div className="grid md:grid-cols-2 gap-6">
           <PremiumFeatures />
@@ -217,7 +278,7 @@ export default function Subscribe() {
             </CardHeader>
             <CardContent>
               <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <SubscribeForm />
+                <SubscribeForm selectedPlan={selectedPlan} />
               </Elements>
             </CardContent>
           </Card>

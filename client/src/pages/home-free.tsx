@@ -263,7 +263,7 @@ export default function HomeFree() {
                         data-testid="button-upgrade-premium-analytics"
                       >
                         <Crown className="h-4 w-4 mr-2" />
-                        Upgrade to Premium - $5/month
+                        Upgrade to Premium - From $4/month
                       </Button>
                     </div>
                   </div>
@@ -314,8 +314,8 @@ export default function HomeFree() {
 
                   <div className="space-y-4">
                     <div className="text-center p-4 bg-white rounded-lg border border-purple-200">
-                      <div className="text-2xl font-bold text-purple-800">$5.00/month</div>
-                      <div className="text-sm text-purple-600">Billed monthly</div>
+                      <div className="text-2xl font-bold text-purple-800">From $4/month</div>
+                      <div className="text-sm text-purple-600">$48 yearly or $6 monthly</div>
                     </div>
                     <Button 
                       className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
@@ -323,7 +323,7 @@ export default function HomeFree() {
                       data-testid="button-upgrade-premium-main"
                     >
                       <Crown className="h-4 w-4 mr-2" />
-                      Upgrade Now
+                      Choose Your Plan
                     </Button>
                   </div>
                 </div>

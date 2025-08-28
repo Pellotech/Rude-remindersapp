@@ -87,7 +87,7 @@ export default function Billing() {
                 onClick={() => window.location.href = '/subscribe'}
                 data-testid="button-upgrade-premium"
               >
-                Upgrade to Premium - $5/month
+                Upgrade to Premium - From $4/month
               </Button>
             ) : (
               <Button 
@@ -191,7 +191,7 @@ export default function Billing() {
                   <p className="text-sm text-muted-foreground">Premium Plan</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">$5.00</p>
+                  <p className="font-medium">$48.00</p>
                   <Badge variant="outline" className="text-xs">
                     Paid
                   </Badge>
@@ -201,10 +201,10 @@ export default function Billing() {
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <p className="font-medium">December 2024</p>
-                  <p className="text-sm text-muted-foreground">Premium Plan</p>
+                  <p className="text-sm text-muted-foreground">Premium Plan (Monthly)</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">$5.00</p>
+                  <p className="font-medium">$6.00</p>
                   <Badge variant="outline" className="text-xs">
                     Paid
                   </Badge>

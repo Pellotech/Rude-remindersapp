@@ -3,6 +3,13 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
+## Recent Changes (August 28, 2025)
+- **Stripe Subscription System**: Implemented comprehensive payment processing with dual pricing tiers
+- **Flexible Pricing Model**: Monthly subscription at $6/month and yearly at $48/year ($4/month effective rate)
+- **Early Subscriber Benefits**: Yearly plan positioned as special early subscriber rate with 33% savings
+- **Premium Feature Gating**: AI-generated responses, cultural personalization, and advanced features require subscription
+- **Subscription Management**: Full billing interface with plan selection, cancellation, and payment history
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.
