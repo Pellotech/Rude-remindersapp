@@ -171,8 +171,16 @@ export default function HomePremium() {
                       <Badge variant="outline">{stats?.successRate || 0}%</Badge>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm">Streak</span>
+                      <span className="text-sm">Current Streak</span>
                       <Badge variant="outline">{stats?.currentStreak || 0} days</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Total Completed</span>
+                      <Badge variant="outline">{completedToday.length} today</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Active Reminders</span>
+                      <Badge variant="outline">{activeReminders.length} pending</Badge>
                     </div>
                   </div>
                 </CardContent>
@@ -187,7 +195,7 @@ export default function HomePremium() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {['work', 'health', 'personal', 'learning'].map((category) => {
+                    {['work', 'family', 'health', 'learning', 'household', 'finance', 'entertainment'].map((category) => {
                       const categoryReminders = reminders.filter((r: any) => 
                         r.context?.toLowerCase() === category
                       );
@@ -195,13 +203,19 @@ export default function HomePremium() {
                       const total = categoryReminders.length;
                       const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
                       
+                      // Only show categories that have reminders
+                      if (total === 0) return null;
+                      
                       return (
                         <div key={category} className="flex items-center justify-between">
-                          <span className="text-sm capitalize">{category}</span>
                           <div className="flex items-center gap-2">
-                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <span className="text-sm capitalize">{category}</span>
+                            <span className="text-xs text-gray-400">({total} total)</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div 
-                                className="h-full bg-blue-600 transition-all"
+                                className="h-full bg-gradient-to-r from-purple-600 to-pink-600 transition-all duration-300"
                                 style={{ width: `${percentage}%` }}
                               />
                             </div>
@@ -209,8 +223,84 @@ export default function HomePremium() {
                           </div>
                         </div>
                       );
-                    })}
+                    }).filter(Boolean)}
+                    {reminders.length === 0 && (
+                      <div className="text-center py-4 text-gray-500">
+                        <p className="text-sm">No reminders yet. Create some to see your progress!</p>
+                      </div>
+                    )}
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Additional Analytics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Completion Rate
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {reminders.length > 0 
+                      ? Math.round((reminders.filter((r: any) => r.completed).length / reminders.length) * 100)
+                      : 0
+                    }%
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {reminders.filter((r: any) => r.completed).length} of {reminders.length} completed
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Most Productive Day
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {(() => {
+                      const dayCompletions = reminders
+                        .filter((r: any) => r.completed && r.completedAt)
+                        .reduce((acc: any, r: any) => {
+                          const day = new Date(r.completedAt).toLocaleDateString('en-US', { weekday: 'long' });
+                          acc[day] = (acc[day] || 0) + 1;
+                          return acc;
+                        }, {});
+                      
+                      const topDay = Object.entries(dayCompletions).reduce((a: any, b: any) => 
+                        dayCompletions[a[0]] > dayCompletions[b[0]] ? a : b, ['None', 0]
+                      );
+                      
+                      return topDay[0];
+                    })()}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Based on completion history
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Average Rudeness
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {reminders.length > 0 
+                      ? (reminders.reduce((acc: number, r: any) => acc + (r.rudenessLevel || 3), 0) / reminders.length).toFixed(1)
+                      : '3.0'
+                    }
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Out of 5.0 max rudeness
+                  </p>
                 </CardContent>
               </Card>
             </div>
