@@ -139,9 +139,9 @@ export default function HomeFree() {
 
 
 
-        {/* Main Content Tabs - identical to premium */}
+        {/* Main Content Tabs - restricted for free users */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="create" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
               Create
@@ -149,10 +149,6 @@ export default function HomeFree() {
             <TabsTrigger value="manage" className="flex items-center gap-2">
               <Target className="h-4 w-4" />
               Manage
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Analytics
             </TabsTrigger>
             <TabsTrigger value="upgrade" className="flex items-center gap-2">
               <Crown className="h-4 w-4" />
@@ -184,70 +180,7 @@ export default function HomeFree() {
             <RemindersList />
           </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    Completion Trends
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">This Week</span>
-                      <Badge variant="outline">{stats?.completedThisWeek || 0} completed</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Success Rate</span>
-                      <Badge variant="outline">{stats?.successRate || 0}%</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Streak</span>
-                      <Badge variant="outline">{stats?.currentStreak || 0} days</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Category Breakdown
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {['work', 'health', 'personal', 'learning'].map((category) => {
-                      const categoryReminders = reminders.filter((r: any) => 
-                        r.context?.toLowerCase() === category
-                      );
-                      const completed = categoryReminders.filter((r: any) => r.completed).length;
-                      const total = categoryReminders.length;
-                      const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-                      return (
-                        <div key={category} className="flex items-center justify-between">
-                          <span className="text-sm capitalize">{category}</span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-blue-600 transition-all"
-                                style={{ width: `${percentage}%` }}
-                              />
-                            </div>
-                            <span className="text-xs text-gray-500 w-8">{percentage}%</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+          
 
           <TabsContent value="upgrade" className="space-y-6">
             <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
