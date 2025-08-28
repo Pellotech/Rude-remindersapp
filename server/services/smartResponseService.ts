@@ -41,6 +41,7 @@ class SmartResponseService {
           category: reminder.context || this.categorizeReminder(reminder.originalMessage),
           rudenessLevel: reminder.rudenessLevel,
           gender: user?.gender || undefined,
+          genderSpecificReminders: user?.genderSpecificReminders || false,
           culturalBackground: user?.ethnicity || undefined,
           timeOfDay
         };
@@ -76,7 +77,7 @@ class SmartResponseService {
     const category = this.categorizeReminder(reminder.originalMessage);
     
     // Generate task-specific AI responses based on the reminder content
-    const taskSpecificResponses = this.generateTaskSpecificResponses(reminder, category, randomSeed);
+    const taskSpecificResponses = await this.generateTaskSpecificResponses(reminder, category, randomSeed);
     responses.push(...taskSpecificResponses);
     
     // Add behavior-adapted responses if we have user data
@@ -111,6 +112,23 @@ class SmartResponseService {
     return 'night';
   }
 
+  // Helper method to get appropriate gender term
+  private getGenderTerm(user: any): string {
+    if (!user?.genderSpecificReminders || !user?.gender) {
+      return '';
+    }
+    
+    if (user.gender === 'male') {
+      const maleTerms = ['Big guy', 'Chief', 'Sir', 'Mr', 'Boss'];
+      return maleTerms[Math.floor(Math.random() * maleTerms.length)];
+    } else if (user.gender === 'female') {
+      const femaleTerms = ['', 'friend', 'dear']; // Keep it friendly but not overly familiar
+      return femaleTerms[Math.floor(Math.random() * femaleTerms.length)];
+    }
+    
+    return '';
+  }
+
   private shuffleArray(array: any[], seed: string): any[] {
     const seedNum = parseInt(seed, 16) || Date.now();
     const shuffled = [...array];
@@ -122,11 +140,15 @@ class SmartResponseService {
   }
 
   // Generate task-specific responses based on reminder content
-  private generateTaskSpecificResponses(reminder: Reminder, category: string, seed: string): string[] {
+  private async generateTaskSpecificResponses(reminder: Reminder, category: string, seed: string): Promise<string[]> {
     const task = reminder.originalMessage.toLowerCase();
     const context = reminder.context?.toLowerCase() || "";
     const responses: string[] = [];
     const seedNum = parseInt(seed, 16) || Date.now();
+    
+    // Get user settings for gender-specific terms
+    const user = await storage.getUser(reminder.userId);
+    const genderTerm = this.getGenderTerm(user);
     
     // Extract key action words from the task
     const actionWords = this.extractActionWords(task);
@@ -134,13 +156,13 @@ class SmartResponseService {
     
     // If we have context, generate context-aware responses first (these are higher quality)
     if (context) {
-      responses.push(...this.generateContextAwareResponses(reminder.originalMessage, context, urgencyLevel, seedNum));
+      responses.push(...this.generateContextAwareResponses(reminder.originalMessage, context, urgencyLevel, seedNum, genderTerm));
     }
     
     // Generate contextually relevant responses based on the specific task
     if (actionWords.length > 0) {
       const primaryAction = actionWords[0];
-      responses.push(...this.generateActionSpecificResponses(primaryAction, task, urgencyLevel, seedNum));
+      responses.push(...this.generateActionSpecificResponses(primaryAction, task, urgencyLevel, seedNum, genderTerm));
     }
     
     // Add category-specific intelligent responses
@@ -273,7 +295,7 @@ class SmartResponseService {
   }
 
   // Generate action-specific responses
-  private generateActionSpecificResponses(action: string, task: string, urgency: string, seed: number): string[] {
+  private generateActionSpecificResponses(action: string, task: string, urgency: string, seed: number, genderTerm: string = ''): string[] {
     const responses: string[] = [];
     
     const actionTemplates: Record<string, string[]> = {
@@ -578,15 +600,15 @@ class SmartResponseService {
   }
 
   // Generate high-quality context-aware responses using user's selected category
-  private generateContextAwareResponses(task: string, context: string, urgencyLevel: string, seedNum: number): string[] {
+  private generateContextAwareResponses(task: string, context: string, urgencyLevel: string, seedNum: number, genderTerm: string = ''): string[] {
     const responses: string[] = [];
     
     // Map category IDs to response generators - treating task as an action to do
     const categoryResponses = {
       work: () => [
-        `Time to ${task} - your professional reputation depends on it!`,
-        `Get moving on "${task}" - your career deserves better than procrastination!`,
-        `Every minute you delay "${task}", you're choosing comfort over career advancement. Choose wisely!`
+        `Time to ${task}${genderTerm ? `, ${genderTerm}` : ''} - your professional reputation depends on it!`,
+        `Get moving on "${task}"${genderTerm ? `, ${genderTerm}` : ''} - your career deserves better than procrastination!`,
+        `Every minute you delay "${task}", you're choosing comfort over career advancement. Choose wisely${genderTerm ? `, ${genderTerm}` : ''}!`
       ],
       family: () => [
         `Time to ${task} - this matters to the people who matter most!`,
@@ -594,9 +616,9 @@ class SmartResponseService {
         `Don't put off "${task}" - your relationships depend on following through!`
       ],
       health: () => [
-        `Your body is calling - time to ${task}! No excuses!`,
-        `Time to ${task} and invest in your future self. Stop sabotaging your own wellbeing!`,
-        `Health isn't optional - "${task}" is exactly what your body needs right now!`
+        `Your body is calling - time to ${task}${genderTerm ? `, ${genderTerm}` : ''}! No excuses!`,
+        `Time to ${task} and invest in your future self${genderTerm ? `, ${genderTerm}` : ''}. Stop sabotaging your own wellbeing!`,
+        `Health isn't optional${genderTerm ? `, ${genderTerm}` : ''} - "${task}" is exactly what your body needs right now!`
       ],
       meditation: () => [
         `Your mental peace depends on taking time to ${task}. Give yourself this gift!`,

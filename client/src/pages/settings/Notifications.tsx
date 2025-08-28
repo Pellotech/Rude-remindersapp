@@ -218,6 +218,24 @@ export default function Notifications() {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
+              <Label>Gender-Specific AI Responses</Label>
+              <p className="text-sm text-muted-foreground">
+                {currentSettings.gender === 'male' 
+                  ? 'Use terms like "Big guy", "Chief", "Sir", "Mr" in AI responses' 
+                  : currentSettings.gender === 'female'
+                  ? 'Use friendly, encouraging terms in AI responses'
+                  : 'Use respectful, gender-neutral terms in AI responses'
+                }
+              </p>
+            </div>
+            <Switch
+              checked={currentSettings.genderSpecificReminders || false}
+              onCheckedChange={(checked) => updateSetting("genderSpecificReminders", checked)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
               <Label className="text-muted-foreground">Cultural Motivational Quotes</Label>
               <p className="text-sm text-muted-foreground">
                 Include culturally relevant quotes from historical figures (Not available right now)

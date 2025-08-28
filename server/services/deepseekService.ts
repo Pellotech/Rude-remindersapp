@@ -23,6 +23,7 @@ interface ReminderContext {
   category: string;
   rudenessLevel: number;
   gender?: string;
+  genderSpecificReminders?: boolean;
   culturalBackground?: string;
   timeOfDay: string;
 }
@@ -85,7 +86,7 @@ export class DeepSeekService {
   }
 
   private buildPrompt(context: ReminderContext, count: number): string {
-    const { task, category, rudenessLevel, gender, culturalBackground, timeOfDay } = context;
+    const { task, category, rudenessLevel, gender, genderSpecificReminders, culturalBackground, timeOfDay } = context;
     
     const rudenessMap = {
       1: 'gentle and encouraging',
@@ -97,6 +98,18 @@ export class DeepSeekService {
 
     const tone = rudenessMap[rudenessLevel as keyof typeof rudenessMap] || 'motivating';
     
+    // Build gender-specific guidance if enabled
+    let genderGuidance = '';
+    if (genderSpecificReminders && gender) {
+      if (gender === 'male') {
+        genderGuidance = '\n- Use masculine terms like "Big guy", "Chief", "Sir", "Mr", or "Boss" when appropriate';
+      } else if (gender === 'female') {
+        genderGuidance = '\n- Use friendly, encouraging terms that feel supportive and empowering';
+      } else {
+        genderGuidance = '\n- Use respectful, gender-neutral language throughout';
+      }
+    }
+    
     return `Generate ${count} unique, personalized reminder messages for this task: "${task}"
 
 Context:
@@ -104,7 +117,7 @@ Context:
 - Tone: ${tone} (level ${rudenessLevel}/5)
 - Time: ${timeOfDay}
 ${gender ? `- User identifies as: ${gender}` : ''}
-${culturalBackground ? `- Cultural background: ${culturalBackground}` : ''}
+${culturalBackground ? `- Cultural background: ${culturalBackground}` : ''}${genderGuidance}
 
 Requirements:
 1. Each message should start with "Time to" or similar action-oriented phrasing
