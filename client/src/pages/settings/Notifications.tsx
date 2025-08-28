@@ -218,27 +218,14 @@ export default function Notifications() {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Enable AI Response Generation</Label>
+              <Label className="text-muted-foreground">Cultural Motivational Quotes</Label>
               <p className="text-sm text-muted-foreground">
-                Generate smart responses based on your reminder content
+                Include culturally relevant quotes from historical figures (Not available right now)
               </p>
             </div>
             <Switch
-              checked={currentSettings.enableAIResponses !== false}
-              onCheckedChange={(checked) => updateSetting("enableAIResponses", checked)}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Cultural Motivational Quotes</Label>
-              <p className="text-sm text-muted-foreground">
-                Include culturally relevant quotes from historical figures
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.ethnicitySpecificQuotes || false}
-              onCheckedChange={(checked) => updateSetting("ethnicitySpecificQuotes", checked)}
+              disabled={true}
+              checked={false}
             />
           </div>
         </CardContent>
