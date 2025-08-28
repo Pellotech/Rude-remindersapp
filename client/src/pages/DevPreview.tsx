@@ -87,7 +87,8 @@ export default function DevPreview() {
   // Sort reminders based on selected criteria
   const sortedReminders = [...reminders].sort((a: Reminder, b: Reminder) => {
     if (sortBy === 'scheduled') {
-      return new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime();
+      // Sort by scheduled date with newest first (reverse order)
+      return new Date(b.scheduledFor).getTime() - new Date(a.scheduledFor).getTime();
     } else {
       // Sort by created date with newest first (reverse order)
       return new Date(b.createdAt || b.scheduledFor).getTime() - new Date(a.createdAt || a.scheduledFor).getTime();
