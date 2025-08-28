@@ -179,7 +179,7 @@ export default function RemindersList() {
 
   const previewNotification = (reminder: Reminder) => {
     setPreviewReminder(reminder);
-    
+
     // Simulate what happens when reminder is triggered
     if (reminder.browserNotification) {
       toast({
@@ -188,7 +188,7 @@ export default function RemindersList() {
         duration: 5000,
       });
     }
-    
+
     if (reminder.voiceNotification && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage || reminder.originalMessage);
       utterance.rate = 0.9;
@@ -302,53 +302,43 @@ export default function RemindersList() {
                       </div>
 
                       <div className="flex items-center gap-1 flex-shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-blue-400 hover:text-blue-600 h-8 w-8 p-0"
-                          onClick={() => previewNotification(reminder)}
-                          title="Preview how this reminder will appear when triggered"
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
+                                    onClick={() => {
+                                      // TODO: Implement edit functionality
+                                      toast({
+                                        title: "Coming Soon",
+                                        description: "Edit functionality will be added soon.",
+                                      });
+                                    }}
+                                  >
+                                    <Edit className="h-3 w-3" />
+                                  </Button>
 
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
-                          onClick={() => {
-                            // TODO: Implement edit functionality
-                            toast({
-                              title: "Coming Soon",
-                              description: "Edit functionality will be added soon.",
-                            });
-                          }}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
+                                  {!reminder.completed && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
+                                      onClick={() => completeReminderMutation.mutate(reminder.id)}
+                                      disabled={completeReminderMutation.isPending}
+                                    >
+                                      <Check className="h-3 w-3" />
+                                    </Button>
+                                  )}
 
-                        {!reminder.completed && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
-                            onClick={() => completeReminderMutation.mutate(reminder.id)}
-                            disabled={completeReminderMutation.isPending}
-                          >
-                            <Check className="h-3 w-3" />
-                          </Button>
-                        )}
-
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-400 hover:text-red-600 h-8 w-8 p-0"
-                          onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                          disabled={deleteReminderMutation.isPending}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-gray-400 hover:text-red-600 h-8 w-8 p-0"
+                                    onClick={() => deleteReminderMutation.mutate(reminder.id)}
+                                    disabled={deleteReminderMutation.isPending}
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
                     </div>
 
                     <p className="text-sm text-gray-600 break-words">
@@ -554,7 +544,7 @@ export default function RemindersList() {
                 ✕
               </Button>
             </div>
-            
+
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-lg">
                 <h4 className="font-medium text-sm text-gray-600 mb-2">Title</h4>
