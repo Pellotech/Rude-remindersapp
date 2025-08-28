@@ -688,20 +688,17 @@ export default function ReminderForm({
     }
   };
 
-  // Auto-generate quote when category is selected
+  // Handle category selection without auto-generating quotes
   const handleCategorySelection = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    if (categoryId) {
-      // Automatically generate a quote when category is selected
-      getRandomQuote(categoryId);
-    } else {
+    if (!categoryId) {
       // Clear quote if no category selected
       setSelectedMotivation("");
       form.setValue("motivationalQuote", "");
     }
   };
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     let scheduledDateTime;
 
     if (isMultiDay && selectedDays.length > 0) {
@@ -721,13 +718,25 @@ export default function ReminderForm({
       scheduledDateTime = tomorrow.toISOString();
     }
 
+    // Generate quote if category is selected but no quote exists
+    let finalMotivationalQuote = selectedMotivation || data.motivationalQuote;
+    if (selectedCategory && !finalMotivationalQuote) {
+      try {
+        // Generate quote based on selected category
+        await getRandomQuote(selectedCategory);
+        finalMotivationalQuote = selectedMotivation; // Use the newly generated quote
+      } catch (error) {
+        console.error("Failed to generate quote on submission:", error);
+      }
+    }
+
     // Include all the new features in the submission
     const submissionData = {
       ...data,
       scheduledFor: scheduledDateTime,
       voiceCharacter: selectedVoice,
       attachments: selectedAttachments,
-      motivationalQuote: selectedMotivation || data.motivationalQuote,
+      motivationalQuote: finalMotivationalQuote,
       selectedDays: isMultiDay ? selectedDays : [],
       isMultiDay: isMultiDay
     };
@@ -1278,7 +1287,7 @@ export default function ReminderForm({
 
                     <Select value={selectedCategory} onValueChange={handleCategorySelection}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose motivation category (optional - auto-generated)" />
+                        <SelectValue placeholder="Choose motivation category (optional - generated on submit)" />
                       </SelectTrigger>
                       <SelectContent>
                         {motivationCategories.map((category) => {
@@ -1306,8 +1315,19 @@ export default function ReminderForm({
                         onClick={() => getRandomQuote(selectedCategory)}
                       >
                         <Quote className="mr-2 h-4 w-4" />
-                        Get New Quote
+                        Preview Quote Now
                       </Button>
+                    )}
+
+                    {selectedCategory && !selectedMotivation && (
+                      <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <p className="text-sm text-blue-700">
+                          📝 <strong>{motivationCategories.find(c => c.id === selectedCategory)?.name}</strong> category selected
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          A motivational quote will be generated when you submit the reminder
+                        </p>
+                      </div>
                     )}
 
                     {selectedMotivation && (
