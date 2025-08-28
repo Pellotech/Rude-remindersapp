@@ -228,8 +228,8 @@ export default function ReminderForm({
       originalMessage: "",
       context: "",
       scheduledFor: "",
-      rudenessLevel: 3,
-      voiceCharacter: "default",
+      rudenessLevel: user?.defaultRudenessLevel || 3,
+      voiceCharacter: user?.defaultVoiceCharacter || "default",
       attachments: [],
       motivationalQuote: "",
       selectedDays: [],
@@ -241,7 +241,6 @@ export default function ReminderForm({
   const originalMessage = form.watch("originalMessage");
 
   // Convert form's scheduledFor string to Date for calendar component
-  const scheduledForValue = form.watch("scheduledFor");
   const selectedDateTime = scheduledForValue ? new Date(scheduledForValue) : null;
 
   // Handle calendar date/time selection
@@ -285,21 +284,21 @@ export default function ReminderForm({
         title: data.originalMessage, // Use the original message as the title
         scheduledFor: data.scheduledFor ? new Date(data.scheduledFor).toISOString() : undefined,
       };
-      
+
       const response = await apiRequest("POST", "/api/reminders", submissionData);
       return response.json();
     },
     onSuccess: (result) => {
       // Handle both single reminder and multi-day reminder responses
       const isMultiDayResult = result.count && result.reminders;
-      
+
       toast({
         title: "Success!",
-        description: isMultiDayResult 
+        description: isMultiDayResult
           ? `Created ${result.count} recurring reminders with AI responses and motivational quotes!`
           : `Your reminder has been created ${result.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
       });
-      
+
       form.reset();
 
       // Reset all custom state variables
@@ -634,7 +633,7 @@ export default function ReminderForm({
       }
 
       const data = await response.json();
-      
+
       if (data.quote) {
         return data.quote;
       } else {
@@ -642,7 +641,7 @@ export default function ReminderForm({
       }
     } catch (error) {
       console.error("Error fetching quote for submission:", error);
-      
+
       // Fallback to client-side quotes if API fails
       const userData = userSettings as any;
       if (userData?.ethnicitySpecificQuotes && userData?.ethnicity) {
@@ -662,7 +661,7 @@ export default function ReminderForm({
       if (quote) {
         return QuotesService.formatQuote(quote);
       }
-      
+
       return null;
     }
   };
@@ -727,6 +726,29 @@ export default function ReminderForm({
     const isoString = tomorrow.toISOString().slice(0, 16);
     form.setValue("scheduledFor", isoString);
   }, [form]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setOriginalMessage("");
+      setContext("");
+      setScheduledFor("");
+      setRudenessLevel(user?.defaultRudenessLevel || 3);
+      setVoiceCharacter(user?.defaultVoiceCharacter || "default");
+      setAttachments([]);
+      setSelectedCategory("");
+      setSelectedDays([]);
+      setIsMultiDay(false);
+    }
+  }, [isOpen, user]);
+
+  // Update defaults when user settings change
+  useEffect(() => {
+    if (user) {
+      setRudenessLevel(user.defaultRudenessLevel || 3);
+      setVoiceCharacter(user.defaultVoiceCharacter || "default");
+    }
+  }, [user?.defaultRudenessLevel, user?.defaultVoiceCharacter]);
 
   return (
     <Card>
@@ -1281,7 +1303,7 @@ export default function ReminderForm({
                       </SelectContent>
                     </Select>
 
-                    
+
 
                     {selectedCategory && (
                       <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
@@ -1318,7 +1340,7 @@ export default function ReminderForm({
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 text-lg"
               disabled={
-                createReminderMutation.isPending || 
+                createReminderMutation.isPending ||
                 (isMultiDay && selectedDays.length === 0) ||
                 (!isMultiDay && !form.watch("scheduledFor"))
               }
@@ -1329,7 +1351,7 @@ export default function ReminderForm({
                   Generating AI Response & Quote...
                 </>
               ) : isMultiDay ? (
-                selectedDays.length > 0 
+                selectedDays.length > 0
                   ? `Create Recurring Reminder (${selectedDays.length} days)`
                   : "Select Days to Continue"
               ) : (
