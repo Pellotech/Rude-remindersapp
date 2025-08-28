@@ -35,21 +35,27 @@ import { Label } from "@/components/ui/label";
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
   context: z.string().optional(),
-  scheduledFor: z.string().min(1, "Date and time are required").refine((dateStr) => {
-    const scheduledDate = new Date(dateStr);
-    const now = new Date();
-    // Allow scheduling from now until 7 days in the future
-    const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
-  }, {
-    message: "Reminder must be scheduled between now and one week from now",
-  }),
+  scheduledFor: z.string().optional(), // Made optional since multi-day doesn't use this
   rudenessLevel: z.number().min(1).max(5),
   voiceCharacter: z.string().optional(),
   attachments: z.array(z.string()).optional(),
   motivationalQuote: z.string().optional(),
   selectedDays: z.array(z.string()).optional(),
   isMultiDay: z.boolean().optional(),
+}).refine((data) => {
+  // Custom validation: either scheduledFor is provided (single day) OR isMultiDay with selectedDays
+  if (data.isMultiDay) {
+    return data.selectedDays && data.selectedDays.length > 0;
+  } else {
+    if (!data.scheduledFor) return false;
+    const scheduledDate = new Date(data.scheduledFor);
+    const now = new Date();
+    const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
+  }
+}, {
+  message: "Please select a valid schedule: either a specific date/time or multiple days",
+  path: ["scheduledFor"], // This will show the error on the scheduling field
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -279,18 +285,26 @@ export default function ReminderForm({
 
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await apiRequest("POST", "/api/reminders", {
+      const submissionData = {
         ...data,
         title: data.originalMessage, // Use the original message as the title
-        scheduledFor: new Date(data.scheduledFor).toISOString(),
-      });
+        scheduledFor: data.scheduledFor ? new Date(data.scheduledFor).toISOString() : undefined,
+      };
+      
+      const response = await apiRequest("POST", "/api/reminders", submissionData);
       return response.json();
     },
-    onSuccess: (reminder) => {
+    onSuccess: (result) => {
+      // Handle both single reminder and multi-day reminder responses
+      const isMultiDayResult = result.count && result.reminders;
+      
       toast({
         title: "Success!",
-        description: `Your reminder has been created ${reminder.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
+        description: isMultiDayResult 
+          ? `Created ${result.count} recurring reminders with AI responses and motivational quotes!`
+          : `Your reminder has been created ${result.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
       });
+      
       form.reset();
 
       // Reset all custom state variables
@@ -690,15 +704,21 @@ export default function ReminderForm({
   const onSubmit = (data: FormData) => {
     let scheduledDateTime;
 
-    if (isMultiDay) {
+    if (isMultiDay && selectedDays.length > 0) {
       // For multi-day reminders, create a date with the selected hour and minute
       // Use tomorrow as base date for multi-day scheduling
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(multiDayHour, multiDayMinute, 0, 0);
       scheduledDateTime = tomorrow.toISOString();
-    } else {
+    } else if (!isMultiDay && data.scheduledFor) {
       scheduledDateTime = data.scheduledFor;
+    } else {
+      // Fallback: use tomorrow at 9 AM if no valid schedule is set
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0);
+      scheduledDateTime = tomorrow.toISOString();
     }
 
     // Include all the new features in the submission
@@ -711,6 +731,8 @@ export default function ReminderForm({
       selectedDays: isMultiDay ? selectedDays : [],
       isMultiDay: isMultiDay
     };
+
+    console.log('Submitting reminder data:', submissionData);
     createReminderMutation.mutate(submissionData);
   };
 
@@ -785,7 +807,7 @@ export default function ReminderForm({
             <FormField
               control={form.control}
               name="scheduledFor"
-              render={() => (
+              render={({ fieldState }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
                     <FormLabel>{isMultiDay ? "Set time for all selected days" : "When should we remind you?"}</FormLabel>
@@ -933,13 +955,24 @@ export default function ReminderForm({
                         )}
                       </div>
                     ) : (
-                      /* Regular Calendar/Time<blockquote> picker */
+                      /* Regular Calendar/Time picker */
                       <CalendarSchedule
                         selectedDateTime={selectedDateTime}
                         onDateTimeChange={handleDateTimeChange}
                       />
                     )}
                   </FormControl>
+                  {/* Show validation errors */}
+                  {fieldState.error && (
+                    <p className="text-sm font-medium text-destructive">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                  {isMultiDay && selectedDays.length === 0 && (
+                    <p className="text-sm text-amber-600">
+                      Please select at least one day for your recurring reminder
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -1313,13 +1346,21 @@ export default function ReminderForm({
             <Button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 text-lg"
-              disabled={createReminderMutation.isPending}
+              disabled={
+                createReminderMutation.isPending || 
+                (isMultiDay && selectedDays.length === 0) ||
+                (!isMultiDay && !form.watch("scheduledFor"))
+              }
             >
               {createReminderMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                   Generating AI Response & Quote...
                 </>
+              ) : isMultiDay ? (
+                selectedDays.length > 0 
+                  ? `Create Recurring Reminder (${selectedDays.length} days)`
+                  : "Select Days to Continue"
               ) : (
                 "Create Reminder"
               )}
