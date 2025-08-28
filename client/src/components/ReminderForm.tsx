@@ -1307,17 +1307,7 @@ export default function ReminderForm({
                       </SelectContent>
                     </Select>
 
-                    {selectedCategory && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => getRandomQuote(selectedCategory)}
-                      >
-                        <Quote className="mr-2 h-4 w-4" />
-                        Preview Quote Now
-                      </Button>
-                    )}
+                    
 
                     {selectedCategory && !selectedMotivation && (
                       <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
