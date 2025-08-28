@@ -34,11 +34,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       });
 
       if (image.webPath) {
+        console.log('Camera captured image with webPath:', image.webPath);
         onPhotoCaptured(image.webPath);
         toast({
           title: "Photo captured",
           description: "Photo added to your reminder",
         });
+      } else {
+        console.error('Camera image captured but no webPath available:', image);
       }
     } catch (error) {
       console.error('Error taking photo:', error);
@@ -72,11 +75,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       });
 
       if (image.webPath) {
+        console.log('Gallery selected image with webPath:', image.webPath);
         onPhotoCaptured(image.webPath);
         toast({
           title: "Photo selected",
           description: "Photo added to your reminder",
         });
+      } else {
+        console.error('Gallery image selected but no webPath available:', image);
       }
     } catch (error) {
       console.error('Error picking photo:', error);

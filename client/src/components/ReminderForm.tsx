@@ -537,9 +537,15 @@ export default function ReminderForm({
       const files = (e.target as HTMLInputElement).files;
       if (files) {
         const newAttachments = Array.from(files).map(file => {
-          return URL.createObjectURL(file);
+          const objectUrl = URL.createObjectURL(file);
+          console.log(`Created object URL for ${file.name}:`, objectUrl);
+          return objectUrl;
         });
-        setSelectedAttachments(prev => [...prev, ...newAttachments].slice(0, 5));
+        setSelectedAttachments(prev => {
+          const updated = [...prev, ...newAttachments].slice(0, isFreePlan ? 1 : 5);
+          console.log('Updated attachments array:', updated);
+          return updated;
+        });
         toast({
           title: "Media Added",
           description: `Added ${files.length} file(s) to your reminder`,

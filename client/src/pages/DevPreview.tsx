@@ -481,26 +481,45 @@ export default function DevPreview() {
                     <Label className="text-sm font-medium">Attachments</Label>
                     <div className="mt-2 grid grid-cols-3 gap-2">
                       {selectedReminder.attachments.map((attachment: string, index: number) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={attachment}
-                            alt={`Attachment ${index + 1}`}
-                            className="w-full h-20 object-cover rounded-md border"
-                            onError={(e) => {
-                              // Handle broken images by showing a placeholder
-                              const target = e.target as HTMLImageElement;
-                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNmNWY1ZjUiLz4KPHRleHQgeD0iMTIiIHk9IjEyIiBmaWxsPSIjOTk5IiBzdHlsZT0iZm9udC1zaXplOjEw[removed]cGFkZGluZzogMTBweDsgYmFja2dyb3VuZC1jb2xvcjogI2Y1ZjVmNTsgY29sb3I6ICM5OTk7Ij40MDQ8L3RleHQ+Cjwvc3ZnPg==';
-                              target.style.display = 'flex';
-                              target.style.alignItems = 'center';
-                              target.style.justifyContent = 'center';
-                              target.style.backgroundColor = '#f5f5f5';
-                              target.style.color = '#999';
-                              target.style.fontSize = '12px';
-                            }}
-                          />
+                        <div key={index} className="relative group">
+                          <div className="w-full h-20 rounded-md border overflow-hidden">
+                            {attachment.startsWith('blob:') || attachment.startsWith('data:') || attachment.startsWith('http') ? (
+                              <img
+                                src={attachment}
+                                alt={`Attachment ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  const container = target.parentElement!;
+                                  container.innerHTML = `
+                                    <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                                      <div class="text-center">
+                                        <div class="text-lg">📷</div>
+                                        <div class="text-xs">Image unavailable</div>
+                                      </div>
+                                    </div>
+                                  `;
+                                }}
+                                onLoad={(e) => {
+                                  console.log(`Successfully loaded attachment ${index + 1}:`, attachment);
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                                <div className="text-center">
+                                  <div className="text-lg">📁</div>
+                                  <div className="text-xs">File</div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
                           <span className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
                             {index + 1}
                           </span>
+                          {/* Tooltip on hover showing the full URL for debugging */}
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black bg-opacity-75 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 max-w-48 truncate">
+                            {attachment}
+                          </div>
                         </div>
                       ))}
                     </div>
