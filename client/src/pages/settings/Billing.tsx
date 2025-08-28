@@ -17,18 +17,19 @@ export default function Billing() {
   });
 
   const cancelSubscriptionMutation = useMutation({
-    mutationFn: () => apiRequest("/api/subscription/cancel", "POST"),
-    onSuccess: () => {
+    mutationFn: () => apiRequest("/api/cancel-subscription", "POST"),
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/premium-status"] });
       toast({
         title: "Subscription cancelled",
-        description: "Your subscription has been cancelled successfully.",
+        description: data.message || "Your subscription will be cancelled at the end of the billing period.",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Error",
-        description: "Failed to cancel subscription. Please try again.",
+        description: error.message || "Failed to cancel subscription. Please try again.",
         variant: "destructive",
       });
     },
@@ -81,14 +82,19 @@ export default function Billing() {
 
           <div className="pt-4 border-t">
             {!isSubscribed ? (
-              <Button className="bg-rude-red hover:bg-rude-red/90">
-                Upgrade to Premium
+              <Button 
+                className="bg-rude-red hover:bg-rude-red/90"
+                onClick={() => window.location.href = '/subscribe'}
+                data-testid="button-upgrade-premium"
+              >
+                Upgrade to Premium - $5/month
               </Button>
             ) : (
               <Button 
                 variant="outline" 
                 onClick={() => cancelSubscriptionMutation.mutate()}
                 disabled={cancelSubscriptionMutation.isPending}
+                data-testid="button-cancel-subscription"
               >
                 {cancelSubscriptionMutation.isPending ? "Cancelling..." : "Cancel Subscription"}
               </Button>
@@ -109,31 +115,31 @@ export default function Billing() {
             <div className="flex items-center gap-3">
               <Check className={`h-4 w-4 ${isSubscribed ? 'text-green-600' : 'text-gray-400'}`} />
               <span className={isSubscribed ? 'text-foreground' : 'text-muted-foreground'}>
-                Unlimited reminder attachments
+                AI-Generated Personalized Responses
               </span>
             </div>
             <div className="flex items-center gap-3">
               <Check className={`h-4 w-4 ${isSubscribed ? 'text-green-600' : 'text-gray-400'}`} />
               <span className={isSubscribed ? 'text-foreground' : 'text-muted-foreground'}>
-                Advanced voice character selection
+                Cultural & Gender-Specific Content
               </span>
             </div>
             <div className="flex items-center gap-3">
               <Check className={`h-4 w-4 ${isSubscribed ? 'text-green-600' : 'text-gray-400'}`} />
               <span className={isSubscribed ? 'text-foreground' : 'text-muted-foreground'}>
-                Cultural motivational quotes
+                Premium Motivational Quotes
               </span>
             </div>
             <div className="flex items-center gap-3">
               <Check className={`h-4 w-4 ${isSubscribed ? 'text-green-600' : 'text-gray-400'}`} />
               <span className={isSubscribed ? 'text-foreground' : 'text-muted-foreground'}>
-                Priority customer support
+                Unlimited Reminders
               </span>
             </div>
             <div className="flex items-center gap-3">
               <Check className={`h-4 w-4 ${isSubscribed ? 'text-green-600' : 'text-gray-400'}`} />
               <span className={isSubscribed ? 'text-foreground' : 'text-muted-foreground'}>
-                Mobile app with push notifications
+                Advanced Voice Characters
               </span>
             </div>
           </div>
@@ -185,7 +191,7 @@ export default function Billing() {
                   <p className="text-sm text-muted-foreground">Premium Plan</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">$9.99</p>
+                  <p className="font-medium">$5.00</p>
                   <Badge variant="outline" className="text-xs">
                     Paid
                   </Badge>
@@ -198,7 +204,7 @@ export default function Billing() {
                   <p className="text-sm text-muted-foreground">Premium Plan</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">$9.99</p>
+                  <p className="font-medium">$5.00</p>
                   <Badge variant="outline" className="text-xs">
                     Paid
                   </Badge>

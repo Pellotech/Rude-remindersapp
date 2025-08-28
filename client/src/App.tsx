@@ -14,6 +14,7 @@ import Appearance from "@/pages/settings/Appearance";
 import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
+import Subscribe from "@/pages/subscribe";
 import NotFound from "@/pages/not-found";
 import { DevTools } from "@/components/DevTools";
 import { useEffect, useState } from "react";
@@ -26,8 +27,8 @@ function HomeRouter() {
 
   // Check if user has premium subscription OR developer mode is enabled
   const isPremium = isDeveloperPremiumMode || 
-                   user?.subscriptionStatus === 'active' || 
-                   user?.subscriptionPlan === 'premium';
+                   (user as any)?.subscriptionStatus === 'active' || 
+                   (user as any)?.subscriptionPlan === 'premium';
 
   return isPremium ? <HomePremium /> : <HomeFree />;
 }
@@ -68,6 +69,7 @@ function Router() {
           <Route path="/settings/appearance" component={Appearance} />
           <Route path="/settings/billing" component={Billing} />
           <Route path="/settings/history" component={ReminderHistory} />
+          <Route path="/subscribe" component={Subscribe} />
         </>
       ) : null}
       <Route component={NotFound} />
