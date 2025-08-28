@@ -246,6 +246,28 @@ export default function Settings() {
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Age</Label>
+                  <Input
+                    type="number"
+                    min="13"
+                    max="120"
+                    value={currentSettings.age || ""}
+                    onChange={(e) => updateSetting("age", e.target.value ? parseInt(e.target.value) : null)}
+                    placeholder="Enter your age"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Country</Label>
+                  <Input
+                    value={currentSettings.country || ""}
+                    onChange={(e) => updateSetting("country", e.target.value)}
+                    placeholder="Enter your country"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Email Address</Label>
                 <Input

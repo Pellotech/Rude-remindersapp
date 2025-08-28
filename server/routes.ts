@@ -63,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const allowedSettings = [
         'firstName', 'lastName', 'timezone', 'darkMode', 'simplifiedInterface',
         'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
-        'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 
+        'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
         'ethnicitySpecificQuotes', 'genderSpecificReminders', 
         'defaultRudenessLevel', 'defaultVoiceCharacter'
       ];

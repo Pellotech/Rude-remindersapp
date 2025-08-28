@@ -41,6 +41,8 @@ export const users = pgTable("users", {
   genderSpecificReminders: boolean("gender_specific_reminders").default(false),
   ethnicity: varchar("ethnicity"), // Country/cultural background
   ethnicitySpecificQuotes: boolean("ethnicity_specific_quotes").default(false),
+  age: integer("age"), // User's age
+  country: varchar("country"), // Country where user lives
 
   // Subscription fields
   subscriptionStatus: varchar("subscription_status").default("free"), // free, active, canceled, past_due

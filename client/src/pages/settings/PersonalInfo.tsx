@@ -146,6 +146,30 @@ export default function PersonalInfo() {
               placeholder="Enter your email"
             />
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="age">Age</Label>
+              <Input
+                id="age"
+                type="number"
+                min="13"
+                max="120"
+                value={currentSettings.age || ""}
+                onChange={(e) => updateSetting("age", e.target.value ? parseInt(e.target.value) : null)}
+                placeholder="Enter your age"
+              />
+            </div>
+            <div>
+              <Label htmlFor="country">Country</Label>
+              <Input
+                id="country"
+                value={currentSettings.country || ""}
+                onChange={(e) => updateSetting("country", e.target.value)}
+                placeholder="Enter your country"
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 
