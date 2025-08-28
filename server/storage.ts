@@ -360,6 +360,8 @@ class MemoryStorage implements IStorage {
       simplifiedInterface: false, // Added simplifiedInterface
       alarmSound: 'gentle-chime', // Added alarmSound
       passwordHash: null, // Added passwordHash
+      age: null, // Added age
+      country: null, // Added country
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -402,6 +404,8 @@ class MemoryStorage implements IStorage {
       simplifiedInterface: userData.simplifiedInterface ?? false,
       alarmSound: userData.alarmSound || "gentle-chime",
       passwordHash: userData.passwordHash || null,
+      age: userData.age || null,
+      country: userData.country || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -416,6 +420,10 @@ class MemoryStorage implements IStorage {
     const updated = { ...existing, ...updates, updatedAt: new Date() };
     this.users.set(id, updated);
     return updated;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
   }
 
   // Reminder operations
@@ -468,6 +476,7 @@ class MemoryStorage implements IStorage {
       voiceCharacter: reminder.voiceCharacter || 'default',
       attachments: reminder.attachments || [],
       motivationalQuote: reminder.motivationalQuote || null,
+      responses: responseVariations,
       // Multi-day fields
       isMultiDay: reminder.isMultiDay ?? false,
       selectedDays: reminder.selectedDays || [],
