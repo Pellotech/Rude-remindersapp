@@ -202,7 +202,6 @@ export default function ReminderForm({
     return voiceCharacters[randomIndex]?.id || "default";
   });
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
-  const [selectedMotivation, setSelectedMotivation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedContextCategory, setSelectedContextCategory] = useState("");
 
@@ -242,7 +241,8 @@ export default function ReminderForm({
   const originalMessage = form.watch("originalMessage");
 
   // Convert form's scheduledFor string to Date for calendar component
-  const selectedDateTime = form.watch("scheduledFor") ? new Date(form.watch("scheduledFor")) : null;
+  const scheduledForValue = form.watch("scheduledFor");
+  const selectedDateTime = scheduledForValue ? new Date(scheduledForValue) : null;
 
   // Handle calendar date/time selection
   const handleDateTimeChange = (dateTime: Date) => {
@@ -275,13 +275,8 @@ export default function ReminderForm({
       baseMessage = `Finish that report${samplePhrases[rudenessLevel as keyof typeof samplePhrases]}`;
     }
 
-    // Add motivational quote if selected
-    if (selectedMotivation) {
-      baseMessage += `\n\n💡 ${selectedMotivation}`;
-    }
-
     setPreviewMessage(baseMessage);
-  }, [originalMessage, rudenessLevel, phrases, selectedMotivation]);
+  }, [originalMessage, rudenessLevel, phrases]);
 
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -311,7 +306,6 @@ export default function ReminderForm({
       const randomIndex = Math.floor(Math.random() * voiceCharacters.length);
       setSelectedVoice(voiceCharacters[randomIndex]?.id || "default");
       setSelectedAttachments([]);
-      setSelectedMotivation("");
       setSelectedCategory("");
       setSelectedContextCategory("");
       setSelectedDays([]);
@@ -615,78 +609,7 @@ export default function ReminderForm({
 
 
 
-  const getRandomQuote = async (category: string) => {
-    try {
-      // Make API call to get quote for the specific category
-      const response = await fetch(`/api/quotes/${category}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch quote: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.quote) {
-        setSelectedMotivation(data.quote);
-        form.setValue("motivationalQuote", data.quote);
-        
-        toast({
-          title: data.isPremium ? "AI-Generated Quote Added" : "Cultural Quote Added",
-          description: data.isPremium 
-            ? "Fresh AI-generated motivation from DeepSeek!" 
-            : `Quote from ${category} category selected!`,
-        });
-      } else {
-        throw new Error("No quote received from API");
-      }
-    } catch (error) {
-      console.error("Error fetching quote:", error);
-      
-      // Fallback to client-side quotes if API fails
-      const userData = userSettings as any;
-      if (userData?.ethnicitySpecificQuotes && userData?.ethnicity) {
-        const culturalQuote = CulturalQuotesService.getPersonalizedQuote(
-          userData.ethnicity,
-          true,
-          userData.gender,
-          userData.genderSpecificReminders
-        );
-        if (culturalQuote) {
-          setSelectedMotivation(culturalQuote);
-          form.setValue("motivationalQuote", culturalQuote);
-          toast({
-            title: "Cultural Motivation Added",
-            description: "Personalized quote based on your cultural background!",
-          });
-          return;
-        }
-      }
-
-      // Final fallback to general quotes
-      const quote = QuotesService.getRandomQuote(category);
-      if (quote) {
-        const formattedQuote = QuotesService.formatQuote(quote);
-        setSelectedMotivation(formattedQuote);
-        form.setValue("motivationalQuote", formattedQuote);
-        toast({
-          title: "Motivation Added",
-          description: `Quote from ${quote.author} selected!`,
-        });
-      } else {
-        toast({
-          title: "No quotes found",
-          description: "Please try a different category",
-          variant: "destructive",
-        });
-      }
-    }
-  };
 
   // New function specifically for generating quotes during form submission
   const generateQuoteForSubmission = async (category: string): Promise<string | null> => {
@@ -741,11 +664,6 @@ export default function ReminderForm({
   // Handle category selection without auto-generating quotes
   const handleCategorySelection = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    if (!categoryId) {
-      // Clear quote if no category selected
-      setSelectedMotivation("");
-      form.setValue("motivationalQuote", "");
-    }
   };
 
   const onSubmit = async (data: FormData) => {
@@ -768,13 +686,13 @@ export default function ReminderForm({
       scheduledDateTime = tomorrow.toISOString();
     }
 
-    // Generate quote if category is selected but no quote exists
-    let finalMotivationalQuote = selectedMotivation || data.motivationalQuote;
-    if (selectedCategory && !finalMotivationalQuote) {
+    // Generate quote if category is selected
+    let finalMotivationalQuote = "";
+    if (selectedCategory) {
       try {
         // Generate quote based on selected category
         const generatedQuote = await generateQuoteForSubmission(selectedCategory);
-        finalMotivationalQuote = generatedQuote || finalMotivationalQuote;
+        finalMotivationalQuote = generatedQuote || "";
       } catch (error) {
         console.error("Failed to generate quote on submission:", error);
       }
@@ -1359,7 +1277,7 @@ export default function ReminderForm({
 
                     
 
-                    {selectedCategory && !selectedMotivation && (
+                    {selectedCategory && (
                       <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
                         <p className="text-sm text-blue-700">
                           📝 <strong>{motivationCategories.find(c => c.id === selectedCategory)?.name}</strong> category selected
@@ -1370,20 +1288,7 @@ export default function ReminderForm({
                       </div>
                     )}
 
-                    {selectedMotivation && (
-                      <div className="p-4 bg-white rounded-lg border-l-4 border-rude-red-600">
-                        <p className="text-sm italic">"{selectedMotivation}"</p>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedMotivation("")}
-                          className="mt-2 h-auto p-1 text-xs"
-                        >
-                          Remove quote
-                        </Button>
-                      </div>
-                    )}
+
                   </CollapsibleContent>
                 </Collapsible>
               </>
