@@ -56,22 +56,19 @@ export default function SettingsLanding() {
           </Card>
         </Link>
 
-        <Link href="/settings/appearance">
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Palette className="h-5 w-5 text-purple-600" />
-                  Appearance
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Customize theme, interface options, and alarm sounds
-              </p>
-            </CardHeader>
-          </Card>
-        </Link>
+        <Card className="opacity-50 cursor-not-allowed">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-muted-foreground" />
+                Appearance
+              </div>
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Customize theme, interface options, and alarm sounds (Not available right now)
+            </p>
+          </CardHeader>
+        </Card>
 
         <Link href="/settings/billing">
           <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
