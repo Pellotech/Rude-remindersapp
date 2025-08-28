@@ -43,7 +43,7 @@ export default function Home() {
         const data = JSON.parse(event.data);
         if (data.type === 'reminder') {
           const { reminder } = data;
-          
+
           // Show browser notification if enabled
           if (reminder.browserNotification && 'Notification' in window) {
             if (Notification.permission === 'granted') {
@@ -66,7 +66,7 @@ export default function Home() {
           // Handle voice notification from WebSocket
           if (reminder.voiceNotification && 'speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
-            
+
             // Fetch voice settings from backend for consistency
             if (reminder.voiceCharacter) {
               fetch('/api/voices/test', {
@@ -82,7 +82,7 @@ export default function Home() {
                 if (data.voiceSettings) {
                   utterance.rate = data.voiceSettings.rate;
                   utterance.pitch = data.voiceSettings.pitch;
-                  
+
                   const voices = speechSynthesis.getVoices();
                   let selectedVoice = null;
 
@@ -183,22 +183,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Form Section */}
-          <div className="lg:col-span-2">
-            <ReminderForm />
+        <Navigation />
+        <div className="flex pt-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Form Section */}
+            <div className="lg:col-span-2">
+              <ReminderForm />
+            </div>
+
+            {/* Sidebar */}
+            <div>
+              <Sidebar />
+            </div>
           </div>
-          
-          {/* Sidebar */}
-          <div>
-            <Sidebar />
-          </div>
+
+
         </div>
-
-
       </div>
     </div>
   );

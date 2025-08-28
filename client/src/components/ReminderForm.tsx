@@ -734,7 +734,7 @@ export default function ReminderForm({
 
 
   return (
-    <Card>
+    <Card className="mt-4">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <Button
