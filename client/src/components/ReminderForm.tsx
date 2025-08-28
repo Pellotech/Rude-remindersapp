@@ -228,8 +228,8 @@ export default function ReminderForm({
       originalMessage: "",
       context: "",
       scheduledFor: "",
-      rudenessLevel: 3,
-      voiceCharacter: "default",
+      rudenessLevel: userSettings?.defaultRudenessLevel || 3,
+      voiceCharacter: userSettings?.defaultVoiceCharacter || "default",
       attachments: [],
       motivationalQuote: "",
       selectedDays: [],
@@ -704,7 +704,7 @@ export default function ReminderForm({
       }
     }
 
-    // Include all the new features in the submission
+    // Include all the new features in the submission along with user notification preferences
     const submissionData = {
       ...data,
       scheduledFor: scheduledDateTime,
@@ -712,7 +712,11 @@ export default function ReminderForm({
       attachments: selectedAttachments,
       motivationalQuote: finalMotivationalQuote,
       selectedDays: isMultiDay ? selectedDays : [],
-      isMultiDay: isMultiDay
+      isMultiDay: isMultiDay,
+      // Apply user's notification preferences from settings
+      browserNotification: userSettings?.browserNotifications ?? true,
+      voiceNotification: userSettings?.voiceNotifications ?? false,
+      emailNotification: userSettings?.emailNotifications ?? false,
     };
 
     console.log('Submitting reminder data:', submissionData);
