@@ -12,16 +12,16 @@ import { Label } from '@/components/ui/label';
 
 
 // Helper function to check if user has premium access - no dropdown dependencies
-const usePremiumStatus = (): { 
-  isPremium: boolean; 
-  features: { aiGeneratedResponses: boolean; aiGeneratedQuotes: boolean } 
+const usePremiumStatus = (): {
+  isPremium: boolean;
+  features: { aiGeneratedResponses: boolean; aiGeneratedQuotes: boolean }
 } => {
   const { data } = useQuery({
     queryKey: ["/api/user/premium-status"],
     retry: false,
     staleTime: 1000, // Refresh quickly for dev tools
   });
-  
+
   return {
     isPremium: data?.isPremium || false,
     features: data?.features || {
@@ -34,7 +34,7 @@ const usePremiumStatus = (): {
 export default function DevPreview() {
   const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
-  
+
   const [sortBy, setSortBy] = useState<'scheduled' | 'created'>('scheduled'); // New state for sorting
   const { toast } = useToast();
   const { isPremium, features } = usePremiumStatus();
@@ -73,7 +73,7 @@ export default function DevPreview() {
   // Trigger generation for missing responses when reminders load
   React.useEffect(() => {
     if (reminders.length > 0) {
-      const remindersMissingResponses = reminders.filter(r => 
+      const remindersMissingResponses = reminders.filter(r =>
         !r.rudeMessage || r.rudeMessage === ""
       );
       if (remindersMissingResponses.length > 0) {
@@ -82,7 +82,7 @@ export default function DevPreview() {
     }
   }, [reminders.length]);
 
-  
+
 
   // Sort reminders based on selected criteria
   const sortedReminders = [...reminders].sort((a: Reminder, b: Reminder) => {
@@ -133,8 +133,8 @@ export default function DevPreview() {
             switch (selectedReminder.voiceCharacter) {
               case 'drill-sergeant':
                 // Look for male voices (Dan - tough man)
-                selectedVoice = voices.find(voice => 
-                  voice.name.includes('Male') || 
+                selectedVoice = voices.find(voice =>
+                  voice.name.includes('Male') ||
                   voice.name.includes('David') ||
                   voice.name.includes('Mark') ||
                   voice.name.includes('Daniel')
@@ -143,8 +143,8 @@ export default function DevPreview() {
 
               case 'british-butler':
                 // Look for British male voices (Gerald - British man)
-                selectedVoice = voices.find(voice => 
-                  voice.lang.includes('en-GB') || 
+                selectedVoice = voices.find(voice =>
+                  voice.lang.includes('en-GB') ||
                   voice.name.includes('British') ||
                   voice.name.includes('Oliver') ||
                   voice.name.includes('Arthur')
@@ -153,7 +153,7 @@ export default function DevPreview() {
 
               case 'default':
                 // Look for female voices (Scarlett - professional)
-                selectedVoice = voices.find(voice => 
+                selectedVoice = voices.find(voice =>
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
                   voice.name.includes('Victoria') ||
@@ -163,7 +163,7 @@ export default function DevPreview() {
 
               case 'mom':
                 // Look for female voices (Jane - disappointed mom)
-                selectedVoice = voices.find(voice => 
+                selectedVoice = voices.find(voice =>
                   voice.name.includes('Female') ||
                   voice.name.includes('Samantha') ||
                   voice.name.includes('Victoria') ||
@@ -173,8 +173,8 @@ export default function DevPreview() {
 
               case 'robot':
                 // Look for robotic/computer voices (Will - AI Assistant)
-                selectedVoice = voices.find(voice => 
-                  voice.name.includes('Microsoft') || 
+                selectedVoice = voices.find(voice =>
+                  voice.name.includes('Microsoft') ||
                   voice.name.includes('Robot') ||
                   voice.name.includes('Computer') ||
                   voice.name.includes('Zira')
@@ -183,8 +183,8 @@ export default function DevPreview() {
 
               case 'confident-leader':
                 // Look for male voices (Will - executive style)
-                selectedVoice = voices.find(voice => 
-                  voice.name.includes('Male') || 
+                selectedVoice = voices.find(voice =>
+                  voice.name.includes('Male') ||
                   voice.name.includes('David') ||
                   voice.name.includes('Mark') ||
                   voice.name.includes('Daniel')
@@ -309,13 +309,13 @@ export default function DevPreview() {
             ) : (
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {sortedReminders.map((reminder: Reminder) => {
-                  
+
                   return (
                     <div
                       key={reminder.id}
                       className={`p-3 border rounded-lg cursor-pointer transition-all hover:shadow-md ${
-                        selectedReminder?.id === reminder.id 
-                          ? 'bg-blue-50 border-blue-200 border-2' 
+                        selectedReminder?.id === reminder.id
+                          ? 'bg-blue-50 border-blue-200 border-2'
                           : 'border-gray-200 opacity-75 hover:opacity-100 hover:border-gray-300'
                       }`}
                       onClick={() => setSelectedReminder(reminder)}
@@ -325,7 +325,7 @@ export default function DevPreview() {
                         <h4 className="font-medium text-sm">{reminder.title}</h4>
                         <p className="text-xs text-gray-500 mt-1">
                           <Clock className="inline h-3 w-3 mr-1" />
-                          {sortBy === 'scheduled' 
+                          {sortBy === 'scheduled'
                             ? formatDateTime(reminder.scheduledFor, reminder)
                             : formatDateTime(reminder.createdAt || reminder.scheduledFor, reminder, true)
                           }
@@ -404,7 +404,7 @@ export default function DevPreview() {
                   {selectedReminder.rudeMessage ? (
                     <div className={`mt-1 p-3 rounded-lg border-l-4 ${
                       isPremium && features.aiGeneratedResponses
-                        ? 'bg-purple-50 border-purple-400' 
+                        ? 'bg-purple-50 border-purple-400'
                         : 'bg-gray-50 border-gray-400'
                     }`}>
                       <p className="text-sm font-medium text-gray-800">
@@ -429,7 +429,7 @@ export default function DevPreview() {
                       {selectedReminder.responses.map((response: string, index: number) => (
                         <div key={index} className={`p-3 rounded-lg border-l-4 ${
                           isPremium && features.aiGeneratedResponses
-                            ? 'bg-purple-50 border-purple-400' 
+                            ? 'bg-purple-50 border-purple-400'
                             : 'bg-gray-50 border-gray-400'
                         }`}>
                           <div className="flex items-start justify-between">
@@ -487,7 +487,7 @@ export default function DevPreview() {
                             onError={(e) => {
                               // Handle broken images by showing a placeholder
                               const target = e.target as HTMLImageElement;
-                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNmNWY1ZjUiLz4KPGJ0cj5QaG90byBub3QgYXZhaWxhYmxlPC90ZXh0Pgo8L3N2Zz4K';
+                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNmNWY1ZjUiLz4KPHRleHQgeD0iMTIiIHk9IjEyIiBmaWxsPSIjOTk5IiBzdHlsZT0iZm9udC1zaXplOjEw[removed]cGFkZGluZzogMTBweDsgYmFja2dyb3VuZC1jb2xvcjogI2Y1ZjVmNTsgY29sb3I6ICM5OTk7Ij40MDQ8L3RleHQ+Cjwvc3ZnPg==';
                               target.style.display = 'flex';
                               target.style.alignItems = 'center';
                               target.style.justifyContent = 'center';
@@ -525,12 +525,12 @@ export default function DevPreview() {
                     </div>
                     <div className={`mt-1 p-3 rounded-lg border-l-4 ${
                       isPremium && features.aiGeneratedQuotes
-                        ? 'bg-purple-50 border-purple-500' 
+                        ? 'bg-purple-50 border-purple-500'
                         : 'bg-blue-50 border-blue-500'
                     }`}>
                       <p className={`text-sm italic ${
                         isPremium && features.aiGeneratedQuotes
-                          ? 'text-purple-800' 
+                          ? 'text-purple-800'
                           : 'text-blue-800'
                       }`}>
                         "{selectedReminder.motivationalQuote}"
@@ -558,7 +558,7 @@ export default function DevPreview() {
                   )}
                 </Button>
 
-                
+
               </div>
             ) : (
               <div className="text-center text-gray-500 py-8">
