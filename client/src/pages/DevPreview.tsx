@@ -423,10 +423,14 @@ export default function DevPreview() {
                   )}
                 </div>
 
-                {/* Show limited AI-generated response variations (max 2 for premium) */}
+                {/* Show limited response variations (max 2) with correct labeling */}
                 {selectedReminder.responses && selectedReminder.responses.length > 1 && (
                   <div>
-                    <Label className="text-sm font-medium">AI Response Variations (Showing 2)</Label>
+                    <Label className="text-sm font-medium">
+                      {isPremium && features.aiGeneratedResponses 
+                        ? "AI Response Variations (Showing 2)" 
+                        : "Template Response Variations (Showing 2)"}
+                    </Label>
                     <div className="mt-2 space-y-2">
                       {selectedReminder.responses.slice(0, 2).map((response: string, index: number) => (
                         <div key={index} className={`p-3 rounded-lg border-l-4 ${
@@ -446,7 +450,7 @@ export default function DevPreview() {
                       ))}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Showing 2 of {selectedReminder.responses.length} AI-generated variations
+                      Showing 2 of {selectedReminder.responses.length} {isPremium && features.aiGeneratedResponses ? "AI-generated" : "template-based"} variations
                     </p>
                   </div>
                 )}
