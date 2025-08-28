@@ -210,24 +210,16 @@ export default function Billing() {
       )}
 
       {isSubscribed && (
-        <div className="fixed bottom-4 right-4">
-          <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3 max-w-xs">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-900">Account Status</p>
-                <p className="text-xs text-gray-500">Premium Active</p>
-              </div>
-              <Button
-                variant="link"
-                size="sm"
-                className="text-red-600 hover:text-red-700 text-xs p-0 h-auto"
-                onClick={() => cancelSubscriptionMutation.mutate()}
-                disabled={cancelSubscriptionMutation.isPending}
-              >
-                {cancelSubscriptionMutation.isPending ? "Cancelling..." : "Cancel Subscription"}
-              </Button>
-            </div>
-          </div>
+        <div className="mt-8 pt-4 border-t border-gray-200 text-center">
+          <Button
+            variant="link"
+            size="sm"
+            className="text-red-600 hover:text-red-700 text-sm"
+            onClick={() => cancelSubscriptionMutation.mutate()}
+            disabled={cancelSubscriptionMutation.isPending}
+          >
+            {cancelSubscriptionMutation.isPending ? "Cancelling..." : "Cancel Subscription"}
+          </Button>
         </div>
       )}
     </div>
