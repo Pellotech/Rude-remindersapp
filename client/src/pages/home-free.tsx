@@ -166,6 +166,18 @@ export default function HomeFree() {
               currentReminderCount={freeUsage.reminders}
               maxReminders={FREE_LIMITS.reminders}
             />
+            {/* Notification Settings Info */}
+            <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg">
+              <p>Notifications will use your preferences from Settings → Notifications</p>
+              <Button
+                type="button"
+                variant="link"
+                className="text-blue-600 hover:text-blue-800 p-0 h-auto text-sm"
+                onClick={() => window.location.href = '/settings/notifications'}
+              >
+                Change notification settings
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6">
