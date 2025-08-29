@@ -1295,7 +1295,7 @@ export default function ReminderForm({
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="flex flex-col items-center p-3 h-auto bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300"
+                            className="flex flex-col items-center p-2 h-12 bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300"
                             onClick={() => {
                               const currentMessage = form.watch("originalMessage");
                               if (!currentMessage || currentMessage.trim() === "") {
@@ -1317,7 +1317,7 @@ export default function ReminderForm({
                               });
                             }}
                           >
-                            <span className="text-lg font-semibold text-blue-600">+{minutes}m</span>
+                            <span className="text-sm font-semibold text-blue-600">+{minutes}m</span>
                             <span className="text-xs text-gray-600">{label}</span>
                           </Button>
                         ))}
