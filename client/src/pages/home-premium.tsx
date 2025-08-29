@@ -103,7 +103,7 @@ export default function HomePremium() {
                 'wise-elder': { rate: 0.8, pitch: 0.7, voiceType: 'male' }
               };
 
-              const settings = voiceSettings[reminder.voiceCharacter] || voiceSettings.default;
+              const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
               utterance.rate = settings.rate;
               utterance.pitch = settings.pitch;
 
@@ -214,8 +214,8 @@ export default function HomePremium() {
     }
   };
 
-  const activeReminders = reminders.filter((r: any) => !r.completed);
-  const completedToday = reminders.filter((r: any) => 
+  const activeReminders = (reminders as any[]).filter((r: any) => !r.completed);
+  const completedToday = (reminders as any[]).filter((r: any) => 
     r.completed && 
     new Date(r.completedAt).toDateString() === new Date().toDateString()
   );
@@ -232,7 +232,7 @@ export default function HomePremium() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-                Welcome back{user?.firstName ? `, ${user.firstName}` : ""}! 
+                Welcome back{(user as any)?.firstName ? `, ${(user as any).firstName}` : ""}! 
                 <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                   <Crown className="h-4 w-4 mr-1" />
                   Premium
@@ -295,15 +295,15 @@ export default function HomePremium() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm">This Week</span>
-                      <Badge variant="outline">{stats?.completedThisWeek || 0} completed</Badge>
+                      <Badge variant="outline">{(stats as any)?.completedThisWeek || 0} completed</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Success Rate</span>
-                      <Badge variant="outline">{stats?.successRate || 0}%</Badge>
+                      <Badge variant="outline">{(stats as any)?.successRate || 0}%</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Current Streak</span>
-                      <Badge variant="outline">{stats?.currentStreak || 0} days</Badge>
+                      <Badge variant="outline">{(stats as any)?.currentStreak || 0} days</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm">Total Completed</span>
@@ -327,7 +327,7 @@ export default function HomePremium() {
                 <CardContent>
                   <div className="space-y-3">
                     {['work', 'family', 'health', 'learning', 'household', 'finance', 'entertainment'].map((category) => {
-                      const categoryReminders = reminders.filter((r: any) => 
+                      const categoryReminders = (reminders as any[]).filter((r: any) => 
                         r.context?.toLowerCase() === category
                       );
                       const completed = categoryReminders.filter((r: any) => r.completed).length;
@@ -355,7 +355,7 @@ export default function HomePremium() {
                         </div>
                       );
                     }).filter(Boolean)}
-                    {reminders.length === 0 && (
+                    {(reminders as any[]).length === 0 && (
                       <div className="text-center py-4 text-gray-500">
                         <p className="text-sm">No reminders yet. Create some to see your progress!</p>
                       </div>
@@ -424,8 +424,8 @@ export default function HomePremium() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {reminders.length > 0 
-                      ? (reminders.reduce((acc: number, r: any) => acc + (r.rudenessLevel || 3), 0) / reminders.length).toFixed(1)
+                    {(reminders as any[]).length > 0 
+                      ? ((reminders as any[]).reduce((acc: number, r: any) => acc + (r.rudenessLevel || 3), 0) / (reminders as any[]).length).toFixed(1)
                       : '3.0'
                     }
                   </div>
