@@ -22,16 +22,35 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const today = new Date();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
-  // Generate time slots - always show all 24 hours in natural order (12 AM - 11 PM)
+  // Generate time slots - show appropriate hours based on selected date
   const generateTimeSlots = () => {
-    return Array.from({ length: 24 }, (_, i) => {
-      const hour = i; // 0 = 12 AM, 1 = 1 AM, ..., 23 = 11 PM
-      return {
-        value: hour,
-        label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
-        display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
-      };
-    });
+    const now = new Date();
+    const isSelectedDateToday = selectedDate && isSameDay(selectedDate, now);
+    
+    if (isSelectedDateToday) {
+      // When today is selected: Show time slots starting from the current hour and continue through the rest of the day
+      const currentHour = now.getHours();
+      const remainingHours = 24 - currentHour;
+      
+      return Array.from({ length: remainingHours }, (_, i) => {
+        const hour = currentHour + i;
+        return {
+          value: hour,
+          label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
+          display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+        };
+      });
+    } else {
+      // For future dates: Show all 24 hours in natural order (12 AM - 11 PM)
+      return Array.from({ length: 24 }, (_, i) => {
+        const hour = i; // 0 = 12 AM, 1 = 1 AM, ..., 23 = 11 PM
+        return {
+          value: hour,
+          label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
+          display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+        };
+      });
+    }
   };
 
   const timeSlots = generateTimeSlots();
