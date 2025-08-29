@@ -1252,22 +1252,25 @@ export default function ReminderForm({
               </>
             )}
 
-            {/* Quick Reminder Settings - Only show when date is chosen but no specific time */}
+            {/* Quick Reminder Settings - Show when not in multi-day mode and today or future date selected */}
             {!isMultiDay && scheduledForValue && (
               (() => {
                 const scheduledDate = new Date(scheduledForValue);
                 const now = new Date();
                 const isToday = scheduledDate.toDateString() === now.toDateString();
-                const hasSpecificTime = scheduledDate.getHours() !== 9 || scheduledDate.getMinutes() !== 0; // Check if time was manually set (default is 9:00 AM)
+                const isFuture = scheduledDate > now;
                 
-                if (isToday && !hasSpecificTime) {
+                // Show if it's today OR if it's a future date within the next 24 hours
+                if (isToday || (isFuture && scheduledDate.getTime() - now.getTime() <= 24 * 60 * 60 * 1000)) {
                   return (
                     <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
                       <h3 className="font-medium text-blue-900 mb-3 flex items-center">
                         <Clock className="mr-2 h-4 w-4" />
                         Quick Reminder Settings
                       </h3>
-                      <p className="text-sm text-blue-700 mb-3">Set a reminder for later today:</p>
+                      <p className="text-sm text-blue-700 mb-3">
+                        {isToday ? "Set a reminder for later today:" : "Quick time adjustments:"}
+                      </p>
                       <div className="grid grid-cols-3 gap-2">
                         {[
                           { minutes: 5, label: "5 minutes" },
