@@ -34,10 +34,10 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
   // Quarter-hour options (15-minute intervals)
   const quarterSlots = [
-    { value: 0, label: "On the hour", minutes: 0 },
-    { value: 15, label: "Quarter past", minutes: 15 },
-    { value: 30, label: "Half past", minutes: 30 },
-    { value: 45, label: "Quarter to", minutes: 45 }
+    { value: 0, label: ":00", displayLabel: "On the hour", minutes: 0 },
+    { value: 15, label: ":15", displayLabel: "Quarter past", minutes: 15 },
+    { value: 30, label: ":30", displayLabel: "Half past", minutes: 30 },
+    { value: 45, label: ":45", displayLabel: "Quarter to", minutes: 45 }
   ];
 
   const handleDateSelect = (date: Date) => {
@@ -53,9 +53,28 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const handleTimeSelect = (hour: number) => {
     if (!selectedDate) return;
 
-    setQuarterState({ hour, minutes: 0 });
+    // If selecting today's date and this hour, check if we need to start with a future minute
+    const now = new Date();
+    const isToday = isSameDay(selectedDate, now);
+    let initialMinutes = 0;
+    
+    if (isToday && hour === now.getHours()) {
+      // If it's the current hour, start with the next available 15-minute slot
+      const currentMinutes = now.getMinutes();
+      if (currentMinutes < 15) initialMinutes = 15;
+      else if (currentMinutes < 30) initialMinutes = 30;
+      else if (currentMinutes < 45) initialMinutes = 45;
+      else {
+        // If past 45 minutes, move to next hour
+        hour = hour + 1;
+        if (hour >= 24) return; // Can't schedule for next day in this component
+        initialMinutes = 0;
+      }
+    }
+
+    setQuarterState({ hour, minutes: initialMinutes });
     const newDateTime = new Date(selectedDate);
-    newDateTime.setHours(hour, 0, 0, 0);
+    newDateTime.setHours(hour, initialMinutes, 0, 0);
     onDateTimeChange(newDateTime);
   };
 
@@ -87,12 +106,12 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
            quarterState.hour !== null;
   };
 
-  const isTimeInPast = (hour: number) => {
+  const isTimeInPast = (hour: number, minutes: number = 0) => {
     if (!selectedDate) return false;
 
     const now = new Date();
     const timeSlot = new Date(selectedDate);
-    timeSlot.setHours(hour, 0, 0, 0);
+    timeSlot.setHours(hour, minutes, 0, 0);
 
     return timeSlot < now;
   };
@@ -185,15 +204,16 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {selectedDate && quarterState.hour !== null && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Select Minutes (Optional)</CardTitle>
+            <CardTitle className="text-lg">Select Minutes</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Fine-tune your reminder time
+              Choose exact time for {quarterState.hour !== null ? timeSlots[quarterState.hour]?.label : ''} 
             </p>
           </CardHeader>
           <CardContent>
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {quarterSlots.map((slot) => {
                 const isSelected = isQuarterSelected(slot.value);
+                const isPastQuarterTime = quarterState.hour !== null && isTimeInPast(quarterState.hour, slot.value);
 
                 return (
                   <Button
@@ -202,12 +222,17 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleQuarterSelect(slot.value)}
+                    disabled={isPastQuarterTime}
                     className={cn(
-                      "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
-                      isSelected && "bg-primary text-primary-foreground"
+                      "h-16 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
+                      isSelected && "bg-primary text-primary-foreground",
+                      isPastQuarterTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
                     )}
                   >
-                    {slot.label}
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold text-base">{slot.label}</span>
+                      <span className="text-xs opacity-75">{slot.displayLabel}</span>
+                    </div>
                   </Button>
                 );
               })}
