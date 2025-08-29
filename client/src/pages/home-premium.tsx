@@ -16,7 +16,7 @@ import {
   BarChart3,
   Target,
   Sparkles,
-  
+
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
@@ -33,7 +33,7 @@ export default function HomePremium() {
   const [currentReminder, setCurrentReminder] = useState<Reminder | null>(null);
   const [showRichNotification, setShowRichNotification] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
-  
+
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -61,7 +61,7 @@ export default function HomePremium() {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          
+
           if (data.type === "reminder" || data.type === "browser_notification") {
             const { reminder } = data;
 
@@ -75,7 +75,7 @@ export default function HomePremium() {
                 const notificationBody = reminder.motivationalQuote 
                   ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
                   : reminder.rudeMessage;
-                
+
                 new Notification(`Rude Reminder: ${reminder.title}`, {
                   body: notificationBody,
                   icon: "/favicon.ico",
@@ -86,7 +86,7 @@ export default function HomePremium() {
             // Play voice notification if enabled (premium gets all voice features)
             if (reminder.voiceNotification && window.speechSynthesis) {
               const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
-              
+
               // Apply voice character settings (premium has more options)
               const voices = window.speechSynthesis.getVoices();
               const voiceSettings = {
@@ -140,13 +140,13 @@ export default function HomePremium() {
   // Voice playback handler for premium
   const handleVoicePlay = () => {
     if (!currentReminder?.rudeMessage) return;
-    
+
     setIsPlayingVoice(true);
-    
+
     try {
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(currentReminder.rudeMessage);
-        
+
         // Apply voice character settings (premium has more options)
         const voices = window.speechSynthesis.getVoices();
         const voiceSettings = {
@@ -196,7 +196,7 @@ export default function HomePremium() {
   // Complete reminder handler
   const handleCompleteReminder = async () => {
     if (!currentReminder) return;
-    
+
     try {
       await apiRequest('POST', `/api/reminders/${currentReminder.id}/complete`);
       setShowRichNotification(false);
@@ -220,12 +220,12 @@ export default function HomePremium() {
     new Date(r.completedAt).toDateString() === new Date().toDateString()
   );
 
-  
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navigation />
-      
+
       <div className="w-full px-4 py-8 max-w-none overflow-x-hidden">
         {/* Welcome Header - identical to free */}
         <div className="mb-8">
@@ -249,7 +249,7 @@ export default function HomePremium() {
           </div>
         </div>
 
-        
+
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
@@ -279,7 +279,32 @@ export default function HomePremium() {
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
             <RemindersList />
 
-            
+            {/* Upgrade Prompt */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-purple-600" />
+                  Unlock Premium Features
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-4 text-gray-700 dark:text-gray-300">
+                  You're currently on the free plan. Upgrade to Premium to access unlimited reminders, advanced AI features, exclusive voice options, and more!
+                </p>
+                <div className="flex justify-between items-center">
+                  <Button 
+                    onClick={() => window.location.href = '/settings/billing'}
+                    data-testid="button-manage-subscription"
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
+                  >
+                    Upgrade to Premium
+                  </Button>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Start your journey to peak productivity!
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
@@ -333,10 +358,10 @@ export default function HomePremium() {
                       const completed = categoryReminders.filter((r: any) => r.completed).length;
                       const total = categoryReminders.length;
                       const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-                      
+
                       // Only show categories that have reminders
                       if (total === 0) return null;
-                      
+
                       return (
                         <div key={category} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -402,11 +427,11 @@ export default function HomePremium() {
                           acc[day] = (acc[day] || 0) + 1;
                           return acc;
                         }, {});
-                      
+
                       const topDay = Object.entries(dayCompletions).reduce((a: any, b: any) => 
                         dayCompletions[a[0]] > dayCompletions[b[0]] ? a : b, ['None', 0]
                       );
-                      
+
                       return topDay[0];
                     })()}
                   </div>
@@ -437,7 +462,7 @@ export default function HomePremium() {
             </div>
           </TabsContent>
 
-          
+
         </Tabs>
       </div>
 

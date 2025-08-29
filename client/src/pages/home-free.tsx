@@ -495,7 +495,7 @@ export default function HomeFree() {
                     </div>
                     <Button 
                       className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                      onClick={() => window.location.href = '/subscribe'}
+                      onClick={() => window.location.href = '/settings/billing'}
                       data-testid="button-upgrade-premium-main"
                     >
                       <Crown className="h-4 w-4 mr-2" />
