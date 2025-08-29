@@ -31,10 +31,39 @@ class NotificationService {
     return voiceSettings[character] || voiceSettings.default;
   }
 
-  sendBrowserNotification(reminder: Reminder, user: User) {
-    // Browser notifications are handled on the client side
-    // We just send the data via WebSocket
-    console.log(`Browser notification for ${user.email}: ${reminder.rudeMessage}`);
+  async sendBrowserNotification(reminder: Reminder, user: User) {
+    try {
+      // Send rich notification data via WebSocket for browser display
+      if (this.wss) {
+        const notificationData = {
+          type: 'browser_notification',
+          reminder: {
+            id: reminder.id,
+            title: reminder.title,
+            rudeMessage: reminder.rudeMessage,
+            motivationalQuote: reminder.motivationalQuote,
+            rudenessLevel: reminder.rudenessLevel,
+            browserNotification: reminder.browserNotification,
+            voiceNotification: reminder.voiceNotification,
+            emailNotification: reminder.emailNotification,
+            attachments: reminder.attachments || [],
+            responses: reminder.responses || []
+          },
+          userId: user.id,
+          displayStyle: 'full' // Show full reminder content, not just basic notification
+        };
+
+        this.wss.clients.forEach((client) => {
+          if (client.readyState === client.OPEN) {
+            client.send(JSON.stringify(notificationData));
+          }
+        });
+      }
+
+      console.log(`Browser notification sent for ${user.email}: ${reminder.rudeMessage}`);
+    } catch (error) {
+      console.error('Error sending browser notification:', error);
+    }
   }
 
   async sendVoiceNotification(reminder: Reminder, user: User) {

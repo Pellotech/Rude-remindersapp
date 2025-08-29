@@ -64,23 +64,68 @@ export default function HomeFree() {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          if (data.type === "reminder") {
+          
+          if (data.type === "reminder" || data.type === "browser_notification") {
             const { reminder } = data;
 
+            // Show browser notification if enabled
             if (reminder.browserNotification && "Notification" in window) {
               if (Notification.permission === "granted") {
+                const notificationBody = reminder.motivationalQuote 
+                  ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
+                  : reminder.rudeMessage;
+                
                 new Notification(`Rude Reminder: ${reminder.title}`, {
-                  body: reminder.rudeMessage,
+                  body: notificationBody,
                   icon: "/favicon.ico",
                 });
               }
             }
 
+            // Show rich toast notification with full content
+            const toastDescription = reminder.motivationalQuote 
+              ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
+              : reminder.rudeMessage;
+
             toast({
               title: `⏰ ${reminder.title}`,
-              description: reminder.rudeMessage,
-              duration: 8000,
+              description: toastDescription,
+              duration: 12000, // Longer duration for more content
+              className: "max-w-md text-left"
             });
+
+            // Play voice notification if enabled
+            if (reminder.voiceNotification && window.speechSynthesis) {
+              const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+              
+              // Apply voice character settings
+              const voices = window.speechSynthesis.getVoices();
+              const voiceSettings = {
+                'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
+                'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' },
+                'robot': { rate: 0.8, pitch: 0.6, voiceType: 'male' },
+                'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
+                'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' },
+                'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }
+              };
+
+              const settings = voiceSettings[reminder.voiceCharacter] || voiceSettings.default;
+              utterance.rate = settings.rate;
+              utterance.pitch = settings.pitch;
+
+              // Try to find appropriate voice
+              const preferredVoice = voices.find(voice => 
+                settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
+                settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
+                voice.name.toLowerCase().includes('en')
+              );
+
+              if (preferredVoice) {
+                utterance.voice = preferredVoice;
+              }
+
+              window.speechSynthesis.speak(utterance);
+            }
           }
         } catch (error) {
           console.error("WebSocket message error:", error);
@@ -139,6 +184,48 @@ export default function HomeFree() {
 
 
 
+        {/* Free Plan Usage Overview */}
+        <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200 mb-6">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-blue-800">Free Plan Usage</h3>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-4 w-4 text-blue-600" />
+                    <span>{freeUsage.reminders}/{FREE_LIMITS.reminders} reminders</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-4 w-4 text-blue-600" />
+                    <span>{freeUsage.voiceCharacters}/{FREE_LIMITS.voiceCharacters} voice characters</span>
+                  </div>
+                </div>
+                {/* Progress bar for reminders */}
+                <div className="w-48">
+                  <div className="flex justify-between text-xs text-blue-600 mb-1">
+                    <span>Reminders Used</span>
+                    <span>{Math.round((freeUsage.reminders / FREE_LIMITS.reminders) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${Math.min((freeUsage.reminders / FREE_LIMITS.reminders) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                onClick={() => window.location.href = '/subscribe'}
+              >
+                <Crown className="h-4 w-4 mr-2" />
+                Upgrade for Unlimited
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Main Content Tabs - analytics shows upgrade prompt for free users */}
         <Tabs defaultValue="create" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
@@ -166,17 +253,26 @@ export default function HomeFree() {
               currentReminderCount={freeUsage.reminders}
               maxReminders={FREE_LIMITS.reminders}
             />
-            {/* Notification Settings Info */}
-            <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg">
-              <p>Notifications will use your preferences from Settings → Notifications</p>
-              <Button
-                type="button"
-                variant="link"
-                className="text-blue-600 hover:text-blue-800 p-0 h-auto text-sm"
-                onClick={() => window.location.href = '/settings/notifications'}
-              >
-                Change notification settings
-              </Button>
+            {/* Free Plan Features Info */}
+            <div className="text-center text-sm text-muted-foreground p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+              <div className="space-y-2">
+                <p className="font-medium text-blue-800">✨ Free Plan Features Active</p>
+                <p>• Template-based motivational responses</p>
+                <p>• Browser & voice notifications</p>
+                <p>• Up to {FREE_LIMITS.reminders} active reminders</p>
+                <p>• Basic voice characters</p>
+                <div className="pt-2 border-t border-blue-200 mt-3">
+                  <p className="text-xs">Notifications use your settings from Settings → Notifications</p>
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="text-blue-600 hover:text-blue-800 p-0 h-auto text-xs"
+                    onClick={() => window.location.href = '/settings/notifications'}
+                  >
+                    Change notification settings
+                  </Button>
+                </div>
+              </div>
             </div>
           </TabsContent>
 
