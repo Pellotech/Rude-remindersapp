@@ -53,23 +53,73 @@ export default function HomePremium() {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          if (data.type === "reminder") {
+          
+          if (data.type === "reminder" || data.type === "browser_notification") {
             const { reminder } = data;
 
+            // Show browser notification if enabled
             if (reminder.browserNotification && "Notification" in window) {
               if (Notification.permission === "granted") {
+                const notificationBody = reminder.motivationalQuote 
+                  ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
+                  : reminder.rudeMessage;
+                
                 new Notification(`Rude Reminder: ${reminder.title}`, {
-                  body: reminder.rudeMessage,
+                  body: notificationBody,
                   icon: "/favicon.ico",
                 });
               }
             }
 
+            // Show rich toast notification with full premium content
+            const toastDescription = reminder.motivationalQuote 
+              ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
+              : reminder.rudeMessage;
+
             toast({
               title: `⏰ ${reminder.title}`,
-              description: reminder.rudeMessage,
-              duration: 8000,
+              description: toastDescription,
+              duration: 15000, // Even longer duration for premium users
+              className: "max-w-lg text-left" // Slightly larger for premium
             });
+
+            // Play voice notification if enabled (premium gets all voice features)
+            if (reminder.voiceNotification && window.speechSynthesis) {
+              const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+              
+              // Apply voice character settings (premium has more options)
+              const voices = window.speechSynthesis.getVoices();
+              const voiceSettings = {
+                'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
+                'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' },
+                'robot': { rate: 0.8, pitch: 0.6, voiceType: 'male' },
+                'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
+                'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' },
+                'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
+                // Premium-only voice characters
+                'therapist': { rate: 0.9, pitch: 1.1, voiceType: 'female' },
+                'coach': { rate: 1.2, pitch: 0.9, voiceType: 'male' },
+                'celebrity': { rate: 1.0, pitch: 1.0, voiceType: 'female' },
+                'wise-elder': { rate: 0.8, pitch: 0.7, voiceType: 'male' }
+              };
+
+              const settings = voiceSettings[reminder.voiceCharacter] || voiceSettings.default;
+              utterance.rate = settings.rate;
+              utterance.pitch = settings.pitch;
+
+              // Try to find appropriate voice
+              const preferredVoice = voices.find(voice => 
+                settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
+                settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
+                voice.name.toLowerCase().includes('en')
+              );
+
+              if (preferredVoice) {
+                utterance.voice = preferredVoice;
+              }
+
+              window.speechSynthesis.speak(utterance);
+            }
           }
         } catch (error) {
           console.error("WebSocket message error:", error);
