@@ -1321,7 +1321,7 @@ export default function ReminderForm({
                             variant="outline"
                             size="sm"
                             className="flex flex-col items-center p-2 h-12 bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300"
-                            onClick={() => {
+                            onClick={async () => {
                               const currentMessage = form.watch("originalMessage");
                               if (!currentMessage || currentMessage.trim() === "") {
                                 toast({
@@ -1336,8 +1336,28 @@ export default function ReminderForm({
                               newTime.setMinutes(newTime.getMinutes() + minutes);
                               const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");
                               form.setValue("scheduledFor", formattedDateTime);
+                              
+                              // Create quick reminder with current form data
+                              const quickReminderData = {
+                                originalMessage: currentMessage,
+                                context: form.watch("context") || "",
+                                scheduledFor: formattedDateTime,
+                                rudenessLevel: form.watch("rudenessLevel"),
+                                voiceCharacter: selectedVoice,
+                                attachments: selectedAttachments,
+                                motivationalQuote: selectedCategory ? await generateQuoteForSubmission(selectedCategory) : "",
+                                selectedDays: [],
+                                isMultiDay: false,
+                                browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
+                                voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
+                                emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+                              };
+
+                              // Submit the reminder
+                              createReminderMutation.mutate(quickReminderData);
+                              
                               toast({
-                                title: "Quick Reminder Set",
+                                title: "Quick Reminder Created",
                                 description: `Reminder set for ${format(newTime, "h:mm a")} (${label} from now)`,
                               });
                             }}
