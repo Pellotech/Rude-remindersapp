@@ -357,6 +357,7 @@ class MemoryStorage implements IStorage {
       stripeSubscriptionId: null, // Added stripeSubscriptionId
       subscriptionPlan: 'premium', // Updated to premium
       subscriptionEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
+      monthlyReminderUsage: null, // Added monthlyReminderUsage
       simplifiedInterface: false, // Added simplifiedInterface
       alarmSound: 'gentle-chime', // Added alarmSound
       passwordHash: null, // Added passwordHash
@@ -401,6 +402,7 @@ class MemoryStorage implements IStorage {
       stripeSubscriptionId: userData.stripeSubscriptionId || null,
       subscriptionPlan: userData.subscriptionPlan || "free",
       subscriptionEndsAt: userData.subscriptionEndsAt || null,
+      monthlyReminderUsage: userData.monthlyReminderUsage || null,
       simplifiedInterface: userData.simplifiedInterface ?? false,
       alarmSound: userData.alarmSound || "gentle-chime",
       passwordHash: userData.passwordHash || null,
