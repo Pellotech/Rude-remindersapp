@@ -16,7 +16,7 @@ import {
   BarChart3,
   Target,
   Sparkles,
-  Eye,
+  
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
@@ -27,7 +27,7 @@ export default function HomePremium() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
-  const [previewReminder, setPreviewReminder] = useState<any | null>(null);
+  
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -145,46 +145,7 @@ export default function HomePremium() {
     new Date(r.completedAt).toDateString() === new Date().toDateString()
   );
 
-  const previewOverdueReminder = (reminder: any) => {
-    setPreviewReminder(reminder);
-
-    // Show premium preview toast with full features
-    const toastDescription = reminder.motivationalQuote 
-      ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
-      : reminder.rudeMessage;
-
-    toast({
-      title: `Premium Preview: ${reminder.title}`,
-      description: toastDescription,
-      duration: 10000,
-      className: "max-w-lg text-left whitespace-pre-line"
-    });
-
-    // Play voice preview with premium voice options
-    if (reminder.voiceNotification && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
-      
-      // Premium voice character settings
-      const voiceSettings = {
-        'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
-        'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' },
-        'robot': { rate: 0.8, pitch: 0.6, voiceType: 'male' },
-        'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
-        'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' },
-        'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
-        'therapist': { rate: 0.9, pitch: 1.1, voiceType: 'female' },
-        'coach': { rate: 1.2, pitch: 0.9, voiceType: 'male' },
-        'celebrity': { rate: 1.0, pitch: 1.0, voiceType: 'female' },
-        'wise-elder': { rate: 0.8, pitch: 0.7, voiceType: 'male' }
-      };
-
-      const settings = voiceSettings[reminder.voiceCharacter] || voiceSettings.default;
-      utterance.rate = settings.rate;
-      utterance.pitch = settings.pitch;
-
-      speechSynthesis.speak(utterance);
-    }
-  };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -273,15 +234,6 @@ export default function HomePremium() {
                             )}
                           </div>
                           <div className="flex items-center gap-2 ml-4">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-                              onClick={() => previewOverdueReminder(reminder)}
-                              title="Preview full premium reminder"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
                           </div>
                         </div>
                       ))}
@@ -292,89 +244,7 @@ export default function HomePremium() {
 
             <RemindersList />
 
-            {/* Premium Preview Modal */}
-            {previewReminder && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <Crown className="h-5 w-5 text-purple-600" />
-                      Premium Overdue Preview
-                    </h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setPreviewReminder(null)}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      ✕
-                    </Button>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <h4 className="font-medium text-sm text-gray-600 mb-2">Title</h4>
-                      <p className="font-semibold">{previewReminder.title}</p>
-                    </div>
-
-                    <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                      <h4 className="font-medium text-sm text-red-700 mb-2">Original Message</h4>
-                      <p className="text-gray-800">"{previewReminder.originalMessage}"</p>
-                    </div>
-
-                    <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                      <h4 className="font-medium text-sm text-purple-700 mb-2 flex items-center gap-1">
-                        <Sparkles className="h-4 w-4" />
-                        Premium AI Response
-                      </h4>
-                      <p className="text-purple-800 font-medium whitespace-pre-line">
-                        {previewReminder.rudeMessage}
-                        {previewReminder.motivationalQuote && (
-                          <span className="block mt-2 text-green-700">💪 {previewReminder.motivationalQuote}</span>
-                        )}
-                      </p>
-                    </div>
-
-                    {previewReminder.voiceCharacter && previewReminder.voiceCharacter !== 'default' && (
-                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <h4 className="font-medium text-sm text-blue-700 mb-2">Premium Voice Character</h4>
-                        <p className="text-blue-800 capitalize">
-                          {previewReminder.voiceCharacter.replace('-', ' ')}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <h4 className="font-medium text-sm text-yellow-700 mb-2">Scheduled For</h4>
-                      <p className="text-yellow-800">
-                        {new Date(previewReminder.scheduledFor).toLocaleString()}
-                      </p>
-                      <p className="text-xs text-red-600 mt-1">
-                        ⚠️ This reminder is overdue
-                      </p>
-                    </div>
-
-                    <div className="flex gap-2 pt-4">
-                      <Button
-                        onClick={() => previewOverdueReminder(previewReminder)}
-                        className="flex items-center gap-2"
-                        variant="outline"
-                      >
-                        <Eye className="h-4 w-4" />
-                        Preview Again
-                      </Button>
-                      <Button
-                        onClick={() => setPreviewReminder(null)}
-                        variant="secondary"
-                        className="flex-1"
-                      >
-                        Close
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
