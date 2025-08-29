@@ -20,6 +20,7 @@ import {
   BarChart3,
   Target,
   Sparkles,
+  Eye,
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
@@ -37,6 +38,7 @@ export default function HomeFree() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+  const [previewReminder, setPreviewReminder] = useState<any | null>(null);
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -153,6 +155,30 @@ export default function HomeFree() {
   const freeUsage = {
     reminders: activeReminders.length,
     voiceCharacters: Math.min(voices.length, FREE_LIMITS.voiceCharacters),
+  };
+
+  const previewOverdueReminder = (reminder: any) => {
+    setPreviewReminder(reminder);
+
+    // Show preview toast
+    const toastDescription = reminder.motivationalQuote 
+      ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
+      : reminder.rudeMessage;
+
+    toast({
+      title: `Preview: ${reminder.title}`,
+      description: toastDescription,
+      duration: 8000,
+      className: "max-w-lg text-left whitespace-pre-line"
+    });
+
+    // Play voice preview if voice notifications enabled
+    if (reminder.voiceNotification && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.1;
+      speechSynthesis.speak(utterance);
+    }
   };
 
   return (
@@ -277,7 +303,119 @@ export default function HomeFree() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6">
+            {/* Overdue Reminders Section for Free Users */}
+            {activeReminders.filter((r: any) => new Date(r.scheduledFor) < new Date()).length > 0 && (
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader>
+                  <CardTitle className="text-red-700 flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    Overdue Reminders ({activeReminders.filter((r: any) => new Date(r.scheduledFor) < new Date()).length})
+                  </CardTitle>
+                  <p className="text-sm text-red-600">
+                    Preview your overdue reminders and mark them as completed or not accomplished.
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {activeReminders
+                      .filter((r: any) => new Date(r.scheduledFor) < new Date())
+                      .map((reminder: any) => (
+                        <div key={reminder.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-red-200">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-gray-900 truncate">{reminder.title}</h4>
+                            <p className="text-sm text-gray-600 truncate">"{reminder.originalMessage}"</p>
+                            <p className="text-xs text-red-600">
+                              Due: {new Date(reminder.scheduledFor).toLocaleString()}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 ml-4">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+                              onClick={() => previewOverdueReminder(reminder)}
+                              title="Preview full reminder"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <RemindersList />
+
+            {/* Preview Modal */}
+            {previewReminder && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Overdue Reminder Preview</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPreviewReminder(null)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      ✕
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <h4 className="font-medium text-sm text-gray-600 mb-2">Title</h4>
+                      <p className="font-semibold">{previewReminder.title}</p>
+                    </div>
+
+                    <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                      <h4 className="font-medium text-sm text-red-700 mb-2">Original Message</h4>
+                      <p className="text-gray-800">"{previewReminder.originalMessage}"</p>
+                    </div>
+
+                    <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                      <h4 className="font-medium text-sm text-orange-700 mb-2">What you would see/hear</h4>
+                      <p className="text-orange-800 font-medium whitespace-pre-line">
+                        {previewReminder.rudeMessage}
+                        {previewReminder.motivationalQuote && (
+                          <span className="block mt-2">💪 {previewReminder.motivationalQuote}</span>
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <h4 className="font-medium text-sm text-yellow-700 mb-2">Scheduled For</h4>
+                      <p className="text-yellow-800">
+                        {new Date(previewReminder.scheduledFor).toLocaleString()}
+                      </p>
+                      <p className="text-xs text-red-600 mt-1">
+                        ⚠️ This reminder is overdue
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2 pt-4">
+                      <Button
+                        onClick={() => previewOverdueReminder(previewReminder)}
+                        className="flex items-center gap-2"
+                        variant="outline"
+                      >
+                        <Eye className="h-4 w-4" />
+                        Preview Again
+                      </Button>
+                      <Button
+                        onClick={() => setPreviewReminder(null)}
+                        variant="secondary"
+                        className="flex-1"
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
