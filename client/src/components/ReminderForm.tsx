@@ -872,7 +872,7 @@ export default function ReminderForm({
                                 {Array.from({ length: 24 }, (_, i) => {
                                   const hour = i; // Start from 0 (12 AM) and go to 23 (11 PM)
                                   const isSelected = multiDayHour === hour;
-                                  const display = hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`;
+                                  const display = hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
 
                                   return (
                                     <Button
@@ -882,7 +882,7 @@ export default function ReminderForm({
                                       size="lg"
                                       onClick={() => setMultiDayHour(hour)}
                                       className={cn(
-                                        "h-12 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
+                                        "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
@@ -899,18 +899,22 @@ export default function ReminderForm({
                         {selectedDays.length > 0 && (
                           <Card>
                             <CardHeader>
-                              <CardTitle className="text-lg">Select Minutes (Optional)</CardTitle>
+                              <CardTitle className="text-lg">Select Minutes</CardTitle>
                               <p className="text-sm text-muted-foreground">
-                                Fine-tune your reminder time
+                                Choose exact time for {
+                                  multiDayHour === 0 ? "12 AM" : 
+                                  multiDayHour === 12 ? "12 PM" : 
+                                  multiDayHour > 12 ? `${multiDayHour - 12} PM` : `${multiDayHour} AM`
+                                }
                               </p>
                             </CardHeader>
                             <CardContent>
                               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {[
-                                  { value: 0, label: "On the hour" },
-                                  { value: 15, label: "Quarter past" },
-                                  { value: 30, label: "Half past" },
-                                  { value: 45, label: "Quarter to" }
+                                  { value: 0, label: ":00", displayLabel: "On the hour" },
+                                  { value: 15, label: ":15", displayLabel: "Quarter past" },
+                                  { value: 30, label: ":30", displayLabel: "Half past" },
+                                  { value: 45, label: ":45", displayLabel: "Quarter to" }
                                 ].map((slot) => {
                                   const isSelected = multiDayMinute === slot.value;
 
@@ -922,11 +926,14 @@ export default function ReminderForm({
                                       size="lg"
                                       onClick={() => setMultiDayMinute(slot.value)}
                                       className={cn(
-                                        "h-12 text-sm whitespace-nowrap flex-shrink-0 min-w-[120px]",
+                                        "h-16 text-sm whitespace-nowrap flex-shrink-0 min-w-[120px]",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
-                                      {slot.label}
+                                      <div className="flex flex-col items-center">
+                                        <span className="font-semibold text-base">{slot.label}</span>
+                                        <span className="text-xs opacity-75">{slot.displayLabel}</span>
+                                      </div>
                                     </Button>
                                   );
                                 })}
