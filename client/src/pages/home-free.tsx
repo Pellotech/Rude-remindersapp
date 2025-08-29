@@ -281,40 +281,6 @@ export default function HomeFree() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6">
-            {/* Overdue Reminders Section for Free Users */}
-            {activeReminders.filter((r: any) => new Date(r.scheduledFor) < new Date()).length > 0 && (
-              <Card className="border-red-200 bg-red-50">
-                <CardHeader>
-                  <CardTitle className="text-red-700 flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    Overdue Reminders ({activeReminders.filter((r: any) => new Date(r.scheduledFor) < new Date()).length})
-                  </CardTitle>
-                  <p className="text-sm text-red-600">
-                    Preview your overdue reminders and mark them as completed or not accomplished.
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {activeReminders
-                      .filter((r: any) => new Date(r.scheduledFor) < new Date())
-                      .map((reminder: any) => (
-                        <div key={reminder.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-red-200">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-gray-900 truncate">{reminder.title}</h4>
-                            <p className="text-sm text-gray-600 truncate">"{reminder.originalMessage}"</p>
-                            <p className="text-xs text-red-600">
-                              Due: {new Date(reminder.scheduledFor).toLocaleString()}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 ml-4">
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
             <RemindersList />
 
             
