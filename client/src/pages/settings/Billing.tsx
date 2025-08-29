@@ -312,10 +312,13 @@ export default function Billing() {
                   />
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-purple-800">From $4/month</p>
-                <p className="text-sm text-purple-600">$48 yearly or $6 monthly</p>
-              </div>
+              <Button 
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                onClick={() => window.location.href = '/subscribe'}
+              >
+                <Crown className="h-4 w-4 mr-2" />
+                Upgrade
+              </Button>
             </div>
           </div>
         </CardContent>
