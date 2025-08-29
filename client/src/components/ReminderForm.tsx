@@ -184,6 +184,12 @@ export default function ReminderForm({
     enabled: !!user,
   });
 
+  // Get user notification preferences from settings
+  const { data: userNotificationSettings } = useQuery({
+    queryKey: ["/api/settings"],
+    enabled: !!user,
+  });
+
   const isSimplifiedInterface = (userSettings as any)?.simplifiedInterface || false;
   const [previewMessage, setPreviewMessage] = useState("");
 
@@ -228,8 +234,8 @@ export default function ReminderForm({
       originalMessage: "",
       context: "",
       scheduledFor: "",
-      rudenessLevel: userSettings?.defaultRudenessLevel || 3,
-      voiceCharacter: userSettings?.defaultVoiceCharacter || "default",
+      rudenessLevel: (userNotificationSettings as any)?.defaultRudenessLevel || 3,
+      voiceCharacter: "default",
       attachments: [],
       motivationalQuote: "",
       selectedDays: [],
@@ -714,9 +720,9 @@ export default function ReminderForm({
       selectedDays: isMultiDay ? selectedDays : [],
       isMultiDay: isMultiDay,
       // Apply user's notification preferences from settings
-      browserNotification: userSettings?.browserNotifications ?? true,
-      voiceNotification: userSettings?.voiceNotifications ?? false,
-      emailNotification: userSettings?.emailNotifications ?? false,
+      browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
+      voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
+      emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
     };
 
     console.log('Submitting reminder data:', submissionData);
