@@ -334,11 +334,36 @@ export default function ReminderForm({
         }, 500);
         return;
       }
-      toast({
-        title: "Error",
-        description: "Failed to create reminder. Please try again.",
-        variant: "destructive",
-      });
+      // Handle specific error codes
+      try {
+        const errorData = JSON.parse(error.message);
+        if (errorData?.code === 'REMINDER_LIMIT_EXCEEDED') {
+          toast({
+            title: "Reminder Limit Reached",
+            description: errorData.message,
+            variant: "destructive",
+          });
+        } else if (errorData?.code === 'MONTHLY_LIMIT_EXCEEDED') {
+          toast({
+            title: "Monthly Limit Reached",
+            description: errorData.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to create reminder. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } catch (e) {
+        // Fallback for non-JSON error messages
+        toast({
+          title: "Error",
+          description: "Failed to create reminder. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -902,8 +927,8 @@ export default function ReminderForm({
                               <CardTitle className="text-lg">Select Minutes</CardTitle>
                               <p className="text-sm text-muted-foreground">
                                 Choose exact time for {
-                                  multiDayHour === 0 ? "12 AM" : 
-                                  multiDayHour === 12 ? "12 PM" : 
+                                  multiDayHour === 0 ? "12 AM" :
+                                  multiDayHour === 12 ? "12 PM" :
                                   multiDayHour > 12 ? `${multiDayHour - 12} PM` : `${multiDayHour} AM`
                                 }
                               </p>
@@ -1073,7 +1098,7 @@ export default function ReminderForm({
             {!isSimplifiedInterface && (
               <>
 
-                
+
 
 
                 {/* Voice Characters */}
@@ -1272,7 +1297,7 @@ export default function ReminderForm({
                 const now = new Date();
                 const isToday = scheduledDate.toDateString() === now.toDateString();
                 const isFuture = scheduledDate > now;
-                
+
                 // Show if it's today OR if it's a future date within the next 24 hours
                 if (isToday || (isFuture && scheduledDate.getTime() - now.getTime() <= 24 * 60 * 60 * 1000)) {
                   return (
@@ -1306,7 +1331,7 @@ export default function ReminderForm({
                                 });
                                 return;
                               }
-                              
+
                               const newTime = new Date();
                               newTime.setMinutes(newTime.getMinutes() + minutes);
                               const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");

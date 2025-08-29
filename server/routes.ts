@@ -371,7 +371,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           responses: reminder.responses
         });
 
+        // Check monthly limit for free users
+        const { checkFreeUserMonthlyLimit, incrementMonthlyReminderCount } = await import('./utils/premiumCheck');
+        const limitCheck = await checkFreeUserMonthlyLimit(user.id);
+
+        if (limitCheck.hasExceeded) {
+          return res.status(403).json({ 
+            error: `Monthly reminder limit reached. Free users can create up to ${limitCheck.limit} reminders per month. Your limit will reset next month.`,
+            code: 'MONTHLY_LIMIT_EXCEEDED',
+            currentCount: limitCheck.currentCount,
+            limit: limitCheck.limit
+          });
+        }
+
         await storage.createReminder(userId, reminder);
+
+        // Increment monthly count for free users
+        await incrementMonthlyReminderCount(user.id);
+
         reminderService.scheduleReminder(reminder);
 
         res.json(reminder);
@@ -539,7 +556,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const stats = await storage.getUserStats(userId);
+      const reminders = await storage.getReminders(userId);
+      const user = await storage.getUser(userId);
+
+      const completed = reminders.filter(r => r.completed);
+      const overdue = reminders.filter(r => !r.completed && new Date(r.scheduledFor) < new Date());
+
+      const stats = {
+        total: reminders.length,
+        completed: completed.length,
+        pending: reminders.length - completed.length,
+        overdue: overdue.length,
+        monthlyReminderUsage: user?.monthlyReminderUsage || {},
+      };
+
       res.json(stats);
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -973,7 +1003,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe subscription endpoints
-  
+
   // Create or retrieve subscription
   app.post('/api/create-subscription', isAuthenticated, async (req: any, res) => {
     try {
@@ -988,7 +1018,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user.stripeSubscriptionId) {
         try {
           const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
-          
+
           if (subscription.status === 'active') {
             return res.json({
               subscriptionId: subscription.id,
@@ -1030,7 +1060,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get plan from request body, default to monthly
       const { plan = 'monthly' } = req.body;
-      
+
       let priceData;
       if (plan === 'yearly') {
         priceData = {
@@ -1136,11 +1166,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         case 'customer.subscription.deleted':
           const subscription = event.data.object as Stripe.Subscription;
           const customerId = subscription.customer as string;
-          
+
           // Find user by Stripe customer ID
           const users = await storage.getAllUsers();
           const user = users.find((u: any) => u.stripeCustomerId === customerId);
-          
+
           if (user) {
             const status = subscription.status === 'active' ? 'active' : 
                           subscription.status === 'canceled' ? 'canceled' : 
@@ -1162,7 +1192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const subCustomerId = invoice.customer as string;
             const subUsers = await storage.getAllUsers();
             const subUser = subUsers.find((u: any) => u.stripeCustomerId === subCustomerId);
-            
+
             if (subUser) {
               await storage.updateUser(subUser.id, {
                 subscriptionStatus: 'active',
@@ -1178,7 +1208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const failCustomerId = failedInvoice.customer as string;
             const failUsers = await storage.getAllUsers();
             const failUser = failUsers.find((u: any) => u.stripeCustomerId === failCustomerId);
-            
+
             if (failUser) {
               await storage.updateUser(failUser.id, {
                 subscriptionStatus: 'past_due'

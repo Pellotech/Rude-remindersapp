@@ -32,7 +32,7 @@ import { Reminder } from "@shared/schema";
 
 // Free plan limits
 const FREE_LIMITS = {
-  reminders: 5,
+  reminders: 12, // 12 reminders per month
   voiceCharacters: 3,
   attachments: 1,
 };
@@ -221,9 +221,13 @@ export default function HomeFree() {
     new Date(r.completedAt).toDateString() === new Date().toDateString()
   );
 
+  // Calculate monthly usage from stats
+  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+  const monthlyUsage = stats?.monthlyReminderUsage?.[currentMonth] || 0;
+  
   // Calculate free usage
   const freeUsage = {
-    reminders: activeReminders.length,
+    reminders: monthlyUsage,
     voiceCharacters: Math.min(voices.length, FREE_LIMITS.voiceCharacters),
   };
 
@@ -267,7 +271,7 @@ export default function HomeFree() {
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <Bell className="h-4 w-4 text-blue-600" />
-                    <span>{freeUsage.reminders}/{FREE_LIMITS.reminders} reminders</span>
+                    <span>{freeUsage.reminders}/{FREE_LIMITS.reminders} reminders this month</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Volume2 className="h-4 w-4 text-blue-600" />
@@ -333,7 +337,7 @@ export default function HomeFree() {
                 <p className="font-medium text-blue-800">✨ Free Plan Features Active</p>
                 <p>• Template-based motivational responses</p>
                 <p>• Browser & voice notifications</p>
-                <p>• Up to {FREE_LIMITS.reminders} active reminders</p>
+                <p>• Up to {FREE_LIMITS.reminders} reminders per month (resets monthly)</p>
                 <p>• Basic voice characters</p>
                 <div className="pt-2 border-t border-blue-200 mt-3">
                   <p className="text-xs">Notifications use your settings from Settings → Notifications</p>

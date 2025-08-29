@@ -50,6 +50,7 @@ export const users = pgTable("users", {
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   subscriptionPlan: varchar("subscription_plan").default("free"), // free, premium
   subscriptionEndsAt: timestamp("subscription_ends_at"),
+  monthlyReminderUsage: jsonb("monthly_reminder_usage"), // Track reminders per month for free users
 
   // UI Preferences
   simplifiedInterface: boolean("simplified_interface").default(false),
