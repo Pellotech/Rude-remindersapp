@@ -3,7 +3,9 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertReminderSchema, updateReminderSchema, type Reminder, type User } from "@shared/schema";
+import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
@@ -19,7 +21,9 @@ const deepseekService = new DeepSeekService();
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2023-10-16'
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -1017,12 +1021,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user already has an active subscription
       if (user.stripeSubscriptionId) {
         try {
-          const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+          const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId, {
+            expand: ['latest_invoice.payment_intent']
+          });
 
           if (subscription.status === 'active') {
+            const latestInvoice = subscription.latest_invoice as Stripe.Invoice;
+            const paymentIntent = latestInvoice?.payment_intent as Stripe.PaymentIntent;
             return res.json({
               subscriptionId: subscription.id,
-              clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+              clientSecret: paymentIntent?.client_secret,
               status: subscription.status
             });
           }
@@ -1061,37 +1069,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get plan from request body, default to monthly
       const { plan = 'monthly' } = req.body;
 
-      let priceData;
+      // Create product and price separately for the subscription
+      let product, price;
       if (plan === 'yearly') {
-        priceData = {
+        // Create product first
+        product = await stripe.products.create({
+          name: 'Rude Reminder Premium - Yearly',
+          description: 'Premium features including AI-generated responses and unlimited reminders (Yearly)',
+        });
+
+        // Create price for the product
+        price = await stripe.prices.create({
           currency: 'usd',
-          product_data: {
-            name: 'Rude Reminder Premium - Yearly',
-            description: 'Premium features including AI-generated responses and unlimited reminders (Yearly)',
-          },
           unit_amount: 4800, // $48.00 in cents
           recurring: {
             interval: 'year',
           },
-        };
+          product: product.id,
+        });
       } else {
-        priceData = {
+        // Create product first
+        product = await stripe.products.create({
+          name: 'Rude Reminder Premium - Monthly',
+          description: 'Premium features including AI-generated responses and unlimited reminders (Monthly)',
+        });
+
+        // Create price for the product
+        price = await stripe.prices.create({
           currency: 'usd',
-          product_data: {
-            name: 'Rude Reminder Premium - Monthly',
-            description: 'Premium features including AI-generated responses and unlimited reminders (Monthly)',
-          },
           unit_amount: 600, // $6.00 in cents
           recurring: {
             interval: 'month',
           },
-        };
+          product: product.id,
+        });
       }
 
-      // Create the subscription with selected plan
+      // Create the subscription with the created price
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
-        items: [{ price_data: priceData }],
+        items: [{ price: price.id }],
         payment_behavior: 'default_incomplete',
         payment_settings: {
           save_default_payment_method: 'on_subscription',
@@ -1106,9 +1123,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscriptionPlan: 'premium',
       });
 
+      const latestInvoice = subscription.latest_invoice as Stripe.Invoice;
+      const paymentIntent = latestInvoice?.payment_intent as Stripe.PaymentIntent;
       res.json({
         subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+        clientSecret: paymentIntent?.client_secret,
         status: subscription.status
       });
     } catch (error: any) {
@@ -1134,12 +1153,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update user status
       await storage.updateUser(userId, {
         subscriptionStatus: 'canceled',
-        subscriptionEndsAt: new Date(subscription.current_period_end * 1000)
+        subscriptionEndsAt: new Date(subscription.data.current_period_end * 1000)
       });
 
       res.json({
         message: 'Subscription will be canceled at the end of the billing period',
-        endsAt: new Date(subscription.current_period_end * 1000)
+        endsAt: new Date(subscription.data.current_period_end * 1000)
       });
     } catch (error: any) {
       console.error('Error canceling subscription:', error);
@@ -1167,9 +1186,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const subscription = event.data.object as Stripe.Subscription;
           const customerId = subscription.customer as string;
 
-          // Find user by Stripe customer ID
-          const users = await storage.getAllUsers();
-          const user = users.find((u: any) => u.stripeCustomerId === customerId);
+          // Find user by Stripe customer ID - implement this method in storage
+          // For now, use a workaround to find user by customer ID
+          let user;
+          try {
+            // This is a temporary workaround - ideally storage should have getUserByStripeCustomerId
+            const allUsers = await db.select().from(users).where(eq(users.stripeCustomerId, customerId));
+            user = allUsers[0];
+          } catch (error) {
+            console.error('Error finding user by Stripe customer ID:', error);
+            user = null;
+          }
 
           if (user) {
             const status = subscription.status === 'active' ? 'active' : 
@@ -1190,8 +1217,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (invoice.subscription) {
             // Payment successful, ensure user is marked as premium
             const subCustomerId = invoice.customer as string;
-            const subUsers = await storage.getAllUsers();
-            const subUser = subUsers.find((u: any) => u.stripeCustomerId === subCustomerId);
+            let subUser;
+            try {
+              const foundUsers = await db.select().from(users).where(eq(users.stripeCustomerId, subCustomerId));
+              subUser = foundUsers[0];
+            } catch (error) {
+              console.error('Error finding user by Stripe customer ID:', error);
+              subUser = null;
+            }
 
             if (subUser) {
               await storage.updateUser(subUser.id, {
@@ -1206,8 +1239,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const failedInvoice = event.data.object as Stripe.Invoice;
           if (failedInvoice.subscription) {
             const failCustomerId = failedInvoice.customer as string;
-            const failUsers = await storage.getAllUsers();
-            const failUser = failUsers.find((u: any) => u.stripeCustomerId === failCustomerId);
+            let failUser;
+            try {
+              const foundUsers = await db.select().from(users).where(eq(users.stripeCustomerId, failCustomerId));
+              failUser = foundUsers[0];
+            } catch (error) {
+              console.error('Error finding user by Stripe customer ID:', error);
+              failUser = null;
+            }
 
             if (failUser) {
               await storage.updateUser(failUser.id, {
