@@ -25,7 +25,10 @@ import {
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
 import RemindersList from "@/components/RemindersList";
+import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { Reminder } from "@shared/schema";
 
 // Free plan limits
 const FREE_LIMITS = {
@@ -38,6 +41,9 @@ export default function HomeFree() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
+  const [currentReminder, setCurrentReminder] = useState<Reminder | null>(null);
+  const [showRichNotification, setShowRichNotification] = useState(false);
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   
 
   const { data: reminders = [], isLoading } = useQuery({
@@ -70,7 +76,11 @@ export default function HomeFree() {
           if (data.type === "reminder" || data.type === "browser_notification") {
             const { reminder } = data;
 
-            // Show browser notification if enabled
+            // Set the current reminder and show rich notification
+            setCurrentReminder(reminder);
+            setShowRichNotification(true);
+
+            // Show browser notification if enabled (as fallback)
             if (reminder.browserNotification && "Notification" in window) {
               if (Notification.permission === "granted") {
                 const notificationBody = reminder.motivationalQuote 
@@ -83,18 +93,6 @@ export default function HomeFree() {
                 });
               }
             }
-
-            // Show rich toast notification with full content
-            const toastDescription = reminder.motivationalQuote 
-              ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
-              : reminder.rudeMessage;
-
-            toast({
-              title: `⏰ ${reminder.title}`,
-              description: toastDescription,
-              duration: 12000, // Longer duration for more content
-              className: "max-w-lg text-left whitespace-pre-line" // Larger size to match DevPreview
-            });
 
             // Play voice notification if enabled
             if (reminder.voiceNotification && window.speechSynthesis) {
@@ -144,6 +142,78 @@ export default function HomeFree() {
       };
     }
   }, [toast]);
+
+  // Voice playback handler
+  const handleVoicePlay = () => {
+    if (!currentReminder?.rudeMessage) return;
+    
+    setIsPlayingVoice(true);
+    
+    try {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(currentReminder.rudeMessage);
+        
+        // Apply voice character settings
+        const voices = window.speechSynthesis.getVoices();
+        const voiceSettings = {
+          'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
+          'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' },
+          'robot': { rate: 0.8, pitch: 0.6, voiceType: 'male' },
+          'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
+          'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' },
+          'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }
+        };
+
+        const settings = voiceSettings[currentReminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
+        utterance.rate = settings.rate;
+        utterance.pitch = settings.pitch;
+
+        // Try to find appropriate voice
+        const preferredVoice = voices.find(voice => 
+          settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
+          settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
+          voice.name.toLowerCase().includes('en')
+        );
+
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+
+        utterance.onend = () => setIsPlayingVoice(false);
+        utterance.onerror = () => setIsPlayingVoice(false);
+
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (error) {
+      setIsPlayingVoice(false);
+      toast({
+        title: "Voice Error",
+        description: "Failed to play voice notification",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Complete reminder handler
+  const handleCompleteReminder = async () => {
+    if (!currentReminder) return;
+    
+    try {
+      await apiRequest('POST', `/api/reminders/${currentReminder.id}/complete`);
+      setShowRichNotification(false);
+      setCurrentReminder(null);
+      toast({
+        title: "Reminder Completed",
+        description: "Great job getting it done!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to mark reminder as complete",
+        variant: "destructive",
+      });
+    }
+  };
 
   const activeReminders = reminders.filter((r: any) => !r.completed);
   const completedToday = reminders.filter((r: any) => 
@@ -434,6 +504,26 @@ export default function HomeFree() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Rich Reminder Notification Modal */}
+      {currentReminder && (
+        <RichReminderNotification
+          isOpen={showRichNotification}
+          onClose={() => {
+            setShowRichNotification(false);
+            setCurrentReminder(null);
+          }}
+          reminder={currentReminder}
+          isPremium={false} // Free user
+          features={{
+            aiGeneratedResponses: false,
+            aiGeneratedQuotes: false,
+          }}
+          onComplete={handleCompleteReminder}
+          onPlayVoice={handleVoicePlay}
+          isPlayingVoice={isPlayingVoice}
+        />
+      )}
     </div>
   );
 }

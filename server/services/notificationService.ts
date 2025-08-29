@@ -40,14 +40,20 @@ class NotificationService {
           reminder: {
             id: reminder.id,
             title: reminder.title,
+            originalMessage: reminder.originalMessage,
             rudeMessage: reminder.rudeMessage,
             motivationalQuote: reminder.motivationalQuote,
             rudenessLevel: reminder.rudenessLevel,
             browserNotification: reminder.browserNotification,
             voiceNotification: reminder.voiceNotification,
             emailNotification: reminder.emailNotification,
+            voiceCharacter: reminder.voiceCharacter,
             attachments: reminder.attachments || [],
-            responses: reminder.responses || []
+            responses: reminder.responses || [],
+            scheduledFor: reminder.scheduledFor,
+            context: reminder.context,
+            isMultiDay: reminder.isMultiDay,
+            selectedDays: reminder.selectedDays
           },
           userId: user.id,
           displayStyle: 'full' // Show full reminder content, not just basic notification
@@ -120,11 +126,20 @@ class NotificationService {
       reminder: {
         id: reminder.id,
         title: reminder.title,
+        originalMessage: reminder.originalMessage,
         rudeMessage: reminder.rudeMessage,
+        motivationalQuote: reminder.motivationalQuote,
         rudenessLevel: reminder.rudenessLevel,
         browserNotification: reminder.browserNotification,
         voiceNotification: reminder.voiceNotification,
         emailNotification: reminder.emailNotification,
+        voiceCharacter: reminder.voiceCharacter,
+        attachments: reminder.attachments || [],
+        responses: reminder.responses || [],
+        scheduledFor: reminder.scheduledFor,
+        context: reminder.context,
+        isMultiDay: reminder.isMultiDay,
+        selectedDays: reminder.selectedDays
       },
       userId: user.id,
     };
