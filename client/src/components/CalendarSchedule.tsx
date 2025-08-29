@@ -22,15 +22,53 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const today = new Date();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
-  // Full 24-hour time slots in AM/PM format starting from 12 AM
-  const timeSlots = Array.from({ length: 24 }, (_, i) => {
-    const hour = i; // Start from 0 (12 AM) and go to 23 (11 PM)
-    return {
-      value: hour,
-      label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
-      display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
-    };
-  });
+  // Generate time slots - start from current hour if today is selected, otherwise show all hours
+  const generateTimeSlots = () => {
+    const now = new Date();
+    const isSelectedDateToday = selectedDate && isSameDay(selectedDate, now);
+    
+    if (isSelectedDateToday) {
+      // For today, start from current hour and show remaining hours of the day
+      const currentHour = now.getHours();
+      const remainingHours = 24 - currentHour;
+      
+      return Array.from({ length: remainingHours }, (_, i) => {
+        const hour = currentHour + i;
+        return {
+          value: hour,
+          label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
+          display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+        };
+      });
+    } else {
+      // For future dates, show all 24 hours but start from a reasonable hour (6 AM)
+      const startHour = 6; // Start from 6 AM for better UX
+      const slots = [];
+      
+      // Add hours from 6 AM to 11 PM (18 hours)
+      for (let i = 0; i < 18; i++) {
+        const hour = (startHour + i) % 24;
+        slots.push({
+          value: hour,
+          label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
+          display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+        });
+      }
+      
+      // Add remaining hours (12 AM - 5 AM) at the end for completeness
+      for (let hour = 0; hour < 6; hour++) {
+        slots.push({
+          value: hour,
+          label: hour === 0 ? "12 AM" : `${hour} AM`,
+          display: hour === 0 ? "12:00 AM" : `${hour}:00 AM`
+        });
+      }
+      
+      return slots;
+    }
+  };
+
+  const timeSlots = generateTimeSlots();
 
   // Quarter-hour options (15-minute intervals)
   const quarterSlots = [
