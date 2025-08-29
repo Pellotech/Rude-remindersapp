@@ -55,13 +55,24 @@ class ReminderService {
     const delay = reminderTime - now;
 
     if (delay > 0) {
+      // Handle both short-term (minutes) and long-term reminders
       const timeout = setTimeout(async () => {
         await this.triggerReminder(reminder);
         this.scheduledReminders.delete(reminder.id);
       }, delay);
 
       this.scheduledReminders.set(reminder.id, timeout);
-      console.log(`Scheduled reminder ${reminder.id} for ${reminder.scheduledFor}`);
+      
+      const minutesFromNow = Math.round(delay / (1000 * 60));
+      if (minutesFromNow <= 60) {
+        console.log(`Scheduled quick reminder ${reminder.id} for ${minutesFromNow} minute(s) from now`);
+      } else {
+        console.log(`Scheduled reminder ${reminder.id} for ${reminder.scheduledFor}`);
+      }
+    } else {
+      console.log(`Reminder ${reminder.id} is scheduled for the past, triggering immediately`);
+      // If the reminder is scheduled for the past (edge case), trigger it immediately
+      this.triggerReminder(reminder);
     }
   }
 

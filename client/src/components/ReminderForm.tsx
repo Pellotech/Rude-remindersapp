@@ -51,10 +51,11 @@ const formSchema = z.object({
     const scheduledDate = new Date(data.scheduledFor);
     const now = new Date();
     const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    return scheduledDate >= now && scheduledDate <= oneWeekFromNow;
+    const oneMinuteFromNow = new Date(now.getTime() + 60 * 1000); // Allow as short as 1 minute
+    return scheduledDate >= oneMinuteFromNow && scheduledDate <= oneWeekFromNow;
   }
 }, {
-  message: "Please select a valid schedule: either a specific date/time or multiple days",
+  message: "Please select a valid schedule: either a specific date/time or multiple days (minimum 1 minute from now)",
   path: ["scheduledFor"], // This will show the error on the scheduling field
 });
 
@@ -1249,6 +1250,57 @@ export default function ReminderForm({
                   </CollapsibleContent>
                 </Collapsible>
               </>
+            )}
+
+            {/* Quick Reminder Settings - Only show when date is chosen but no specific time */}
+            {!isMultiDay && scheduledForValue && (
+              (() => {
+                const scheduledDate = new Date(scheduledForValue);
+                const now = new Date();
+                const isToday = scheduledDate.toDateString() === now.toDateString();
+                const hasSpecificTime = scheduledDate.getHours() !== 9 || scheduledDate.getMinutes() !== 0; // Check if time was manually set (default is 9:00 AM)
+                
+                if (isToday && !hasSpecificTime) {
+                  return (
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+                      <h3 className="font-medium text-blue-900 mb-3 flex items-center">
+                        <Clock className="mr-2 h-4 w-4" />
+                        Quick Reminder Settings
+                      </h3>
+                      <p className="text-sm text-blue-700 mb-3">Set a reminder for later today:</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { minutes: 5, label: "5 minutes" },
+                          { minutes: 15, label: "15 minutes" },
+                          { minutes: 30, label: "30 minutes" }
+                        ].map(({ minutes, label }) => (
+                          <Button
+                            key={minutes}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="flex flex-col items-center p-3 h-auto bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300"
+                            onClick={() => {
+                              const newTime = new Date();
+                              newTime.setMinutes(newTime.getMinutes() + minutes);
+                              const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");
+                              form.setValue("scheduledFor", formattedDateTime);
+                              toast({
+                                title: "Quick Reminder Set",
+                                description: `Reminder set for ${format(newTime, "h:mm a")} (${label} from now)`,
+                              });
+                            }}
+                          >
+                            <span className="text-lg font-semibold text-blue-600">+{minutes}m</span>
+                            <span className="text-xs text-gray-600">{label}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()
             )}
 
             {/* Notification Settings Info */}
