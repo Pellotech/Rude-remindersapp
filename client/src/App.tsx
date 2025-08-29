@@ -20,7 +20,19 @@ import { DevTools } from "@/components/DevTools";
 import { useEffect, useState } from "react";
 
 function HomeRouter() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  // Show loading while checking user status
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rude-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Check developer mode for testing subscription tiers
   const isDeveloperPremiumMode = localStorage.getItem('dev-premium-mode') === 'true';
@@ -59,17 +71,17 @@ function Router() {
     <Switch>
       {isAuthenticated ? (
         <>
-          <Route path="/" component={HomeRouter} />
-          <Route path="/home-free" component={HomeFree} />
-          <Route path="/home-premium" component={HomePremium} />
-          <Route path="/dev-preview" component={DevPreview} />
-          <Route path="/settings" component={Settings} />
+          <Route path="/settings/billing" component={Billing} />
           <Route path="/settings/personal" component={PersonalInfo} />
           <Route path="/settings/notifications" component={Notifications} />
           <Route path="/settings/appearance" component={Appearance} />
-          <Route path="/settings/billing" component={Billing} />
           <Route path="/settings/history" component={ReminderHistory} />
+          <Route path="/settings" component={Settings} />
+          <Route path="/home-free" component={HomeFree} />
+          <Route path="/home-premium" component={HomePremium} />
+          <Route path="/dev-preview" component={DevPreview} />
           <Route path="/subscribe" component={Subscribe} />
+          <Route path="/" component={HomeRouter} />
         </>
       ) : null}
       <Route component={NotFound} />
