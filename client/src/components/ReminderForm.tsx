@@ -1297,6 +1297,16 @@ export default function ReminderForm({
                             size="sm"
                             className="flex flex-col items-center p-3 h-auto bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300"
                             onClick={() => {
+                              const currentMessage = form.watch("originalMessage");
+                              if (!currentMessage || currentMessage.trim() === "") {
+                                toast({
+                                  title: "Message Required",
+                                  description: "Please enter what you need to be reminded about first",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              
                               const newTime = new Date();
                               newTime.setMinutes(newTime.getMinutes() + minutes);
                               const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");
