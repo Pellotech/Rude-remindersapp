@@ -64,7 +64,7 @@ export default function HomeFree() {
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          
+
           if (data.type === "reminder" || data.type === "browser_notification") {
             const { reminder } = data;
 
@@ -74,7 +74,7 @@ export default function HomeFree() {
                 const notificationBody = reminder.motivationalQuote 
                   ? `${reminder.rudeMessage}\n\n💪 ${reminder.motivationalQuote}`
                   : reminder.rudeMessage;
-                
+
                 new Notification(`Rude Reminder: ${reminder.title}`, {
                   body: notificationBody,
                   icon: "/favicon.ico",
@@ -91,13 +91,13 @@ export default function HomeFree() {
               title: `⏰ ${reminder.title}`,
               description: toastDescription,
               duration: 12000, // Longer duration for more content
-              className: "max-w-md text-left"
+              className: "max-w-lg text-left whitespace-pre-line" // Larger size to match DevPreview
             });
 
             // Play voice notification if enabled
             if (reminder.voiceNotification && window.speechSynthesis) {
               const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
-              
+
               // Apply voice character settings
               const voices = window.speechSynthesis.getVoices();
               const voiceSettings = {
@@ -294,7 +294,7 @@ export default function HomeFree() {
                   <p className="text-purple-700 mb-4">
                     Unlock detailed insights into your productivity patterns and reminder completion trends!
                   </p>
-                  
+
                   {/* Preview of what analytics would show */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 opacity-60 pointer-events-none">
                     <Card className="border-purple-100">
