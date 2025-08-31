@@ -27,7 +27,6 @@ import ReminderForm from "@/components/ReminderForm";
 import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
-import { AdBanner } from "@/components/AdBanner";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder } from "@shared/schema";
@@ -530,9 +529,6 @@ export default function HomeFree() {
           isPlayingVoice={isPlayingVoice}
         />
       )}
-
-      {/* Ad Banner for Free Users */}
-      <AdBanner isPremium={false} isMobile={typeof window !== 'undefined' && window.innerWidth <= 768} />
 
       {/* Floating Help Button */}
       <div className="fixed bottom-4 right-4 z-50">
