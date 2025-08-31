@@ -51,8 +51,7 @@ export default function Navigation() {
 
               {/* Removed the Premium Toggle Input as requested */}
             </div>
-            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0 ml-4">
-              <HelpMenu />
+            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0 ml-4">{/* Removed HelpMenu from top nav to prevent header overlap */}
 
               {/* Show Home button when not on home page */}
               {location !== "/" && (
