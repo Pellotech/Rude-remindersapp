@@ -233,17 +233,6 @@ export default function ReminderForm({
   const platformInfo = getPlatformInfo();
   const isMobileWithCamera = platformInfo.isNative && supportsCamera();
 
-  // Update form defaults when user settings change
-  useEffect(() => {
-    if (userNotificationSettings) {
-      form.setValue("rudenessLevel", (userNotificationSettings as any)?.defaultRudenessLevel || 3);
-      if ((userNotificationSettings as any)?.defaultVoiceCharacter) {
-        setSelectedVoice((userNotificationSettings as any).defaultVoiceCharacter);
-        form.setValue("voiceCharacter", (userNotificationSettings as any).defaultVoiceCharacter);
-      }
-    }
-  }, [userNotificationSettings, form]);
-
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -258,6 +247,17 @@ export default function ReminderForm({
       isMultiDay: false,
     },
   });
+
+  // Update form defaults when user settings change
+  useEffect(() => {
+    if (userNotificationSettings) {
+      form.setValue("rudenessLevel", (userNotificationSettings as any)?.defaultRudenessLevel || 3);
+      if ((userNotificationSettings as any)?.defaultVoiceCharacter) {
+        setSelectedVoice((userNotificationSettings as any).defaultVoiceCharacter);
+        form.setValue("voiceCharacter", (userNotificationSettings as any).defaultVoiceCharacter);
+      }
+    }
+  }, [userNotificationSettings, form]);
 
   const rudenessLevel = form.watch("rudenessLevel");
   const originalMessage = form.watch("originalMessage");
@@ -1371,7 +1371,7 @@ export default function ReminderForm({
                                 rudenessLevel: form.watch("rudenessLevel"),
                                 voiceCharacter: selectedVoice,
                                 attachments: selectedAttachments,
-                                motivationalQuote: selectedCategory ? await generateQuoteForSubmission(selectedCategory) : "",
+                                motivationalQuote: selectedCategory ? (await generateQuoteForSubmission(selectedCategory)) || undefined : undefined,
                                 selectedDays: [],
                                 isMultiDay: false,
                                 browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,

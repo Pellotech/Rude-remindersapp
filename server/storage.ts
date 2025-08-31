@@ -345,6 +345,7 @@ class MemoryStorage implements IStorage {
       lastName: null, // Added lastName for schema compliance
       profileImageUrl: null, // Added profileImageUrl
       defaultRudenessLevel: 3, // Added defaultRudenessLevel
+      defaultVoiceCharacter: 'default', // Added defaultVoiceCharacter
       voiceNotifications: true, // Added voiceNotifications
       emailNotifications: false, // Added emailNotifications
       browserNotifications: true, // Added browserNotifications
@@ -390,6 +391,7 @@ class MemoryStorage implements IStorage {
       lastName: userData.lastName || null,
       profileImageUrl: userData.profileImageUrl || null,
       defaultRudenessLevel: userData.defaultRudenessLevel || 3,
+      defaultVoiceCharacter: userData.defaultVoiceCharacter || 'default',
       voiceNotifications: userData.voiceNotifications ?? true,
       emailNotifications: userData.emailNotifications ?? false,
       browserNotifications: userData.browserNotifications ?? true,
