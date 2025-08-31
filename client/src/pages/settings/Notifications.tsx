@@ -21,7 +21,7 @@ export default function Notifications() {
   const updateSettingsMutation = useMutation({
     mutationFn: async (settings: any) => {
       console.log("Frontend: Making settings request with:", settings);
-      const response = await apiRequest("/api/settings", "PUT", settings);
+      const response = await apiRequest("PUT", "/api/settings", settings);
       console.log("Frontend: Settings response:", response);
       return response;
     },
