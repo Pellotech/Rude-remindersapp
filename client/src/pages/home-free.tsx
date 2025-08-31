@@ -240,24 +240,24 @@ export default function HomeFree() {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Welcome Header - identical to premium */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-                Welcome back{user?.firstName ? `, ${user.firstName}` : ""}! 
-                <Badge className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
-                  <Star className="h-4 w-4 mr-1" />
+        {/* Welcome Header - Mobile Optimized */}
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
+                <span className="truncate">Welcome back{user?.firstName ? `, ${user.firstName}` : ""}!</span>
+                <Badge className="bg-gradient-to-r from-blue-600 to-green-600 text-white text-xs flex-shrink-0">
+                  <Star className="h-3 w-3 mr-1" />
                   Free
                 </Badge>
               </h1>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                 Get started with AI-powered reminders and motivation
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-6 w-6 text-blue-600" />
-              <span className="text-sm font-medium text-blue-600">Free Features Active</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+              <span className="text-xs sm:text-sm font-medium text-blue-600 whitespace-nowrap">Free Features Active</span>
             </div>
           </div>
         </div>
