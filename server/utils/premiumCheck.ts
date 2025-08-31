@@ -30,7 +30,7 @@ export async function checkFreeUserMonthlyLimit(userId: string): Promise<{hasExc
     }
 
     const currentMonth = getCurrentMonthKey();
-    const monthlyUsage = user.monthlyReminderUsage || {};
+    const monthlyUsage = user.monthlyReminderUsage || {} as Record<string, number>;
     const currentMonthUsage = monthlyUsage[currentMonth] || 0;
     const limit = 12;
 
@@ -62,7 +62,7 @@ export async function incrementMonthlyReminderCount(userId: string): Promise<voi
     if (isPremium) return;
 
     const currentMonth = getCurrentMonthKey();
-    const monthlyUsage = user.monthlyReminderUsage || {};
+    const monthlyUsage = user.monthlyReminderUsage || {} as Record<string, number>;
     monthlyUsage[currentMonth] = (monthlyUsage[currentMonth] || 0) + 1;
 
     // Clean up old months (keep only last 3 months)
@@ -87,10 +87,21 @@ export async function incrementMonthlyReminderCount(userId: string): Promise<voi
  * @param userId - User ID to check
  * @returns Promise<boolean> - True if user has premium access
  */
+// Premium email whitelist - these emails get automatic premium access
+const PREMIUM_EMAIL_WHITELIST: string[] = [
+  // Add emails here that should automatically have premium access
+  // Example: 'admin@company.com', 'beta@tester.com'
+];
+
 export async function isUserPremium(userId: string): Promise<boolean> {
   try {
     const user = await storage.getUser(userId);
     if (!user) return false;
+    
+    // Check if user's email is in the premium whitelist
+    if (user.email && PREMIUM_EMAIL_WHITELIST.includes(user.email.toLowerCase())) {
+      return true;
+    }
     
     // Check if user has active premium subscription
     const hasActivePremium = user.subscriptionStatus === 'active' || user.subscriptionPlan === 'premium';
@@ -117,12 +128,49 @@ export async function isUserPremium(userId: string): Promise<boolean> {
 export async function getUserPremiumStatus(userId: string) {
   try {
     const user = await storage.getUser(userId);
-    if (!user) return { isPremium: false, user: null };
+    if (!user) return { isPremium: false, user: null, source: 'not_found' };
     
     const isPremium = await isUserPremium(userId);
-    return { isPremium, user };
+    
+    // Determine the source of premium access
+    let source = 'free';
+    if (isPremium) {
+      if (user.email && PREMIUM_EMAIL_WHITELIST.includes(user.email.toLowerCase())) {
+        source = 'whitelist';
+      } else if (user.subscriptionStatus === 'active' || user.subscriptionPlan === 'premium') {
+        source = 'subscription';
+      }
+    }
+    
+    return { isPremium, user, source };
   } catch (error) {
     console.error('Error getting user premium status:', error);
-    return { isPremium: false, user: null };
+    return { isPremium: false, user: null, source: 'error' };
   }
+}
+
+// Helper function to add an email to the whitelist
+export function addEmailToWhitelist(email: string): boolean {
+  const normalizedEmail = email.toLowerCase().trim();
+  if (!PREMIUM_EMAIL_WHITELIST.includes(normalizedEmail)) {
+    PREMIUM_EMAIL_WHITELIST.push(normalizedEmail);
+    return true;
+  }
+  return false;
+}
+
+// Helper function to remove an email from the whitelist
+export function removeEmailFromWhitelist(email: string): boolean {
+  const normalizedEmail = email.toLowerCase().trim();
+  const index = PREMIUM_EMAIL_WHITELIST.indexOf(normalizedEmail);
+  if (index > -1) {
+    PREMIUM_EMAIL_WHITELIST.splice(index, 1);
+    return true;
+  }
+  return false;
+}
+
+// Helper function to get all whitelisted emails (for admin purposes)
+export function getWhitelistedEmails(): string[] {
+  return [...PREMIUM_EMAIL_WHITELIST];
 }

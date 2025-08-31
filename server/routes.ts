@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
-import { isUserPremium } from "./utils/premiumCheck";
+import { isUserPremium, addEmailToWhitelist, removeEmailFromWhitelist, getWhitelistedEmails } from "./utils/premiumCheck";
 import crypto from 'crypto'; // Import crypto module for UUID generation
 import Stripe from "stripe";
 
@@ -932,10 +932,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/user/premium-status', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const isPremium = await isUserPremium(userId);
+      const { isPremium, user, source } = await import('./utils/premiumCheck').then(m => m.getUserPremiumStatus(userId));
 
       res.json({ 
         isPremium,
+        source, // 'subscription', 'whitelist', 'free', etc.
         features: {
           aiGeneratedResponses: isPremium,
           aiGeneratedQuotes: isPremium,
@@ -1289,6 +1290,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString()
       });
+    }
+  });
+
+  // Admin routes for managing premium email whitelist
+  app.get('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
+    try {
+      const emails = getWhitelistedEmails();
+      res.json({ 
+        emails,
+        count: emails.length 
+      });
+    } catch (error) {
+      console.error("Error getting whitelist:", error);
+      res.status(500).json({ message: "Failed to get whitelist" });
+    }
+  });
+
+  app.post('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || typeof email !== 'string') {
+        return res.status(400).json({ message: "Valid email is required" });
+      }
+
+      const added = addEmailToWhitelist(email);
+      
+      if (added) {
+        console.log(`Added email to premium whitelist: ${email}`);
+        res.json({ 
+          message: "Email added to premium whitelist",
+          email: email.toLowerCase().trim(),
+          success: true
+        });
+      } else {
+        res.status(400).json({ 
+          message: "Email is already in the whitelist",
+          email: email.toLowerCase().trim(),
+          success: false
+        });
+      }
+    } catch (error) {
+      console.error("Error adding email to whitelist:", error);
+      res.status(500).json({ message: "Failed to add email to whitelist" });
+    }
+  });
+
+  app.delete('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || typeof email !== 'string') {
+        return res.status(400).json({ message: "Valid email is required" });
+      }
+
+      const removed = removeEmailFromWhitelist(email);
+      
+      if (removed) {
+        console.log(`Removed email from premium whitelist: ${email}`);
+        res.json({ 
+          message: "Email removed from premium whitelist",
+          email: email.toLowerCase().trim(),
+          success: true
+        });
+      } else {
+        res.status(404).json({ 
+          message: "Email not found in the whitelist",
+          email: email.toLowerCase().trim(),
+          success: false
+        });
+      }
+    } catch (error) {
+      console.error("Error removing email from whitelist:", error);
+      res.status(500).json({ message: "Failed to remove email from whitelist" });
     }
   });
 

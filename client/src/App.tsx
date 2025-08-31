@@ -15,6 +15,7 @@ import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
 import Subscribe from "@/pages/subscribe";
+import AdminPage from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 import { DevTools } from "@/components/DevTools";
 import { useEffect, useState } from "react";
@@ -81,6 +82,7 @@ function Router() {
           <Route path="/home-premium" component={HomePremium} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/subscribe" component={Subscribe} />
+          <Route path="/admin" component={AdminPage} />
           <Route path="/" component={HomeRouter} />
         </>
       ) : null}
