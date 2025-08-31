@@ -313,11 +313,11 @@ export default function Billing() {
                 </div>
               </div>
               <Button 
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
                 onClick={() => window.location.href = '/subscribe'}
               >
-                <Crown className="h-4 w-4 mr-2" />
-                Upgrade
+                <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="whitespace-nowrap">Upgrade</span>
               </Button>
             </div>
           </div>
@@ -356,13 +356,12 @@ export default function Billing() {
       <div className="text-center space-y-4">
         <div className="space-y-3">
           <Button 
-            size="lg"
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white w-full max-w-sm mx-auto text-sm sm:text-base px-4 sm:px-8 py-3 sm:py-4"
             onClick={() => window.location.href = '/subscribe'}
             data-testid="button-upgrade-premium"
           >
-            <Crown className="h-5 w-5 mr-2" />
-            Choose Your Plan - From $4/month
+            <Crown className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+            <span className="text-center">Choose Your Plan<br className="sm:hidden" /><span className="text-xs sm:text-sm">From $4/month</span></span>
           </Button>
           <p className="text-sm text-muted-foreground">
             30-day money-back guarantee • Cancel anytime

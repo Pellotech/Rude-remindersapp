@@ -296,11 +296,11 @@ export default function HomeFree() {
               </div>
               <Button 
                 variant="outline" 
-                className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                className="border-blue-300 text-blue-700 hover:bg-blue-100 text-xs sm:text-sm px-2 sm:px-4"
                 onClick={() => window.location.href = '/subscribe'}
               >
-                <Crown className="h-4 w-4 mr-2" />
-                Upgrade for Unlimited
+                <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="whitespace-nowrap">Upgrade</span>
               </Button>
             </div>
           </CardContent>
@@ -436,12 +436,12 @@ export default function HomeFree() {
                         <li>• Weekly and monthly progress reports</li>
                       </ul>
                       <Button 
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white w-full text-xs sm:text-sm px-3 sm:px-6"
                         onClick={() => window.location.href = '/subscribe'}
                         data-testid="button-upgrade-premium-analytics"
                       >
-                        <Crown className="h-4 w-4 mr-2" />
-                        Upgrade to Premium - From $4/month
+                        <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="whitespace-nowrap">Upgrade - From $4/mo</span>
                       </Button>
                     </div>
                   </div>
@@ -496,12 +496,12 @@ export default function HomeFree() {
                       <div className="text-sm text-purple-600">$48 yearly or $6 monthly</div>
                     </div>
                     <Button 
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-xs sm:text-sm px-3 sm:px-6 py-2 sm:py-3"
                       onClick={() => window.location.href = '/settings/billing'}
                       data-testid="button-upgrade-premium-main"
                     >
-                      <Crown className="h-4 w-4 mr-2" />
-                      Choose Your Plan
+                      <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      <span className="whitespace-nowrap">Choose Your Plan</span>
                     </Button>
                   </div>
                 </div>
