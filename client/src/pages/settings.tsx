@@ -687,6 +687,35 @@ export default function Settings() {
 
               <Separator />
 
+              {/* Default Voice Character */}
+              <div className="space-y-3">
+                <Label className="text-base font-medium">Default Voice Character</Label>
+                <p className="text-sm text-muted-foreground">
+                  Choose the voice that will deliver your reminders by default
+                </p>
+                <Select
+                  value={currentSettings.defaultVoiceCharacter || "default"}
+                  onValueChange={(value) => updateSetting("defaultVoiceCharacter", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select voice character" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Scarlett - Professional</SelectItem>
+                    <SelectItem value="drill-sergeant">Dan - Tough Motivator</SelectItem>
+                    <SelectItem value="robot">Will - Robotic Assistant</SelectItem>
+                    <SelectItem value="british-butler">Gerald - British Butler</SelectItem>
+                    <SelectItem value="mom">Jane - Disappointed Mom</SelectItem>
+                    <SelectItem value="confident-leader">Will - Executive Leader</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="text-xs text-muted-foreground text-center">
+                  This will be the default voice for new reminders (you can still change it for each individual reminder)
+                </div>
+              </div>
+
+              <Separator />
+
               {/* Auto-complete */}
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -998,6 +1027,21 @@ export default function Settings() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Save Button */}
+      {hasChanges && (
+        <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 -mx-6 -mb-6">
+          <div className="max-w-4xl mx-auto flex justify-end">
+            <Button
+              onClick={saveSettings}
+              disabled={updateSettingsMutation.isPending}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

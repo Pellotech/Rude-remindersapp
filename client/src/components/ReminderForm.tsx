@@ -262,53 +262,13 @@ export default function ReminderForm({
     }
   }, [userNotificationSettings, form]);
 
-  // Function to save user preferences automatically
-  const saveUserPreferences = async (updates: { defaultRudenessLevel?: number; defaultVoiceCharacter?: string }) => {
-    try {
-      const response = await apiRequest("PATCH", "/api/user/settings", updates);
-      if (response.ok) {
-        // Invalidate user data cache to reflect changes
-        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-        
-        // Show subtle feedback to user
-        const updateType = updates.defaultRudenessLevel ? "rudeness level" : "voice character";
-        toast({
-          title: "Settings Saved",
-          description: `Your default ${updateType} has been updated and will be used for new reminders.`,
-          duration: 2000,
-        });
-      }
-    } catch (error) {
-      console.error("Failed to save user preferences:", error);
-    }
-  };
-
-  // Watch for changes in rudeness level and save as default
   const rudenessLevel = form.watch("rudenessLevel");
-  useEffect(() => {
-    // Only save if user has interacted with the form and the value is different from saved default
-    if (userNotificationSettings && rudenessLevel !== (userNotificationSettings as any)?.defaultRudenessLevel) {
-      const timeoutId = setTimeout(() => {
-        saveUserPreferences({ defaultRudenessLevel: rudenessLevel });
-      }, 1000); // Debounce for 1 second
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [rudenessLevel, userNotificationSettings]);
-
-  // Watch for changes in voice character and save as default
   const voiceCharacter = form.watch("voiceCharacter");
+
+  // Update selectedVoice when form voiceCharacter changes
   useEffect(() => {
-    // Only save if user has interacted with the form and the value is different from saved default
-    if (userNotificationSettings && voiceCharacter !== (userNotificationSettings as any)?.defaultVoiceCharacter) {
-      const timeoutId = setTimeout(() => {
-        saveUserPreferences({ defaultVoiceCharacter: voiceCharacter });
-        setSelectedVoice(voiceCharacter);
-      }, 1000); // Debounce for 1 second
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [voiceCharacter, userNotificationSettings]);
+    setSelectedVoice(voiceCharacter);
+  }, [voiceCharacter]);
 
   const originalMessage = form.watch("originalMessage");
 
