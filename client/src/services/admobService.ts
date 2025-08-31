@@ -1,23 +1,23 @@
-import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, InterstitialAdOptions, RewardAdOptions } from '@capacitor-community/admob';
+import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, RewardAdOptions } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
 
 export class AdMobService {
   private static instance: AdMobService;
   private isInitialized = false;
   
-  // Test Ad Unit IDs (replace with your real ones)
+  // Real Ad Unit IDs from environment variables
   private readonly adUnitIds = {
     banner: {
-      android: 'ca-app-pub-3940256099942544/6300978111', // Test banner
-      ios: 'ca-app-pub-3940256099942544/2934735716' // Test banner
+      android: import.meta.env.VITE_ADMOB_ANDROID_BANNER_ID || 'ca-app-pub-3940256099942544/6300978111',
+      ios: import.meta.env.VITE_ADMOB_IOS_BANNER_ID || 'ca-app-pub-3940256099942544/2934735716'
     },
     interstitial: {
-      android: 'ca-app-pub-3940256099942544/1033173712', // Test interstitial
-      ios: 'ca-app-pub-3940256099942544/4411468910' // Test interstitial  
+      android: import.meta.env.VITE_ADMOB_ANDROID_INTERSTITIAL_ID || 'ca-app-pub-3940256099942544/1033173712',
+      ios: import.meta.env.VITE_ADMOB_IOS_INTERSTITIAL_ID || 'ca-app-pub-3940256099942544/4411468910'
     },
     reward: {
-      android: 'ca-app-pub-3940256099942544/5224354917', // Test reward
-      ios: 'ca-app-pub-3940256099942544/1712485313' // Test reward
+      android: import.meta.env.VITE_ADMOB_ANDROID_REWARD_ID || 'ca-app-pub-3940256099942544/5224354917',
+      ios: import.meta.env.VITE_ADMOB_IOS_REWARD_ID || 'ca-app-pub-3940256099942544/1712485313'
     }
   };
 
@@ -36,9 +36,8 @@ export class AdMobService {
 
     try {
       await AdMob.initialize({
-        requestTrackingAuthorization: true,
-        testingDevices: ['YOUR_DEVICE_ID'], // Replace with your test device ID
-        initializeForTesting: true, // Set to false for production
+        testingDevices: [], // Add your test device IDs here if needed
+        initializeForTesting: false, // Production mode
       });
       
       this.isInitialized = true;
@@ -64,7 +63,7 @@ export class AdMobService {
         adSize: BannerAdSize.BANNER,
         position: position,
         margin: 0,
-        isTesting: true, // Set to false for production
+        isTesting: false, // Production mode
       };
 
       await AdMob.showBanner(options);
@@ -93,9 +92,9 @@ export class AdMobService {
     }
 
     try {
-      const options: InterstitialAdOptions = {
+      const options = {
         adId: this.getAdUnitId('interstitial'),
-        isTesting: true, // Set to false for production
+        isTesting: false, // Production mode
       };
 
       await AdMob.prepareInterstitial(options);
@@ -114,14 +113,14 @@ export class AdMobService {
     try {
       const options: RewardAdOptions = {
         adId: this.getAdUnitId('reward'),
-        isTesting: true, // Set to false for production
+        isTesting: false, // Production mode
       };
 
       await AdMob.prepareRewardVideoAd(options);
       const result = await AdMob.showRewardVideoAd();
       
       console.log('Reward ad shown successfully');
-      return result.rewarded;
+      return Boolean(result);
     } catch (error) {
       console.error('Failed to show reward ad:', error);
       return false;

@@ -7,8 +7,8 @@
   },
   "plugins": {
     "AdMob": {
-      "appId": "ca-app-pub-3940256099942544~3347511713",
-      "initializeForTesting": true
+      "appId": "ca-app-pub-2730939178232394~3691189109",
+      "initializeForTesting": false
     },
     "SplashScreen": {
       "launchShowDuration": 2000,
