@@ -249,35 +249,45 @@ Manage your notifications in your account settings
           address: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com'
         },
         to: userEmail,
-        subject: '🔔 Test Email from Rude Reminders',
+        subject: '🔔 Test Email from Rude Reminders - Gmail Updated!',
         html: `
-          <h2>🎉 Email Service is Working!</h2>
-          <p>This is a test email to confirm that your Rude Reminders email notifications are working properly.</p>
-          <p><strong>Share features available:</strong></p>
+          <h2>🎉 Gmail Service is Working!</h2>
+          <p>This test confirms your updated Gmail settings are working perfectly!</p>
+          <p><strong>Email configured for:</strong> ruderemindersinfo@gmail.com</p>
+          <p><strong>Share features available in your app:</strong></p>
           <ul>
             <li>✅ Twitter/X sharing</li>
             <li>✅ Facebook sharing</li>
             <li>✅ LinkedIn sharing</li>
             <li>✅ WhatsApp sharing</li>
             <li>✅ Copy link to clipboard</li>
-            <li>✅ Native mobile sharing</li>
+            <li>✅ Native mobile sharing (iOS/Android)</li>
+            <li>✅ Direct email sharing</li>
           </ul>
-          <p>Your reminders will now be sent to this email address when triggered!</p>
+          <p>Your reminder notifications will now be sent from <strong>ruderemindersinfo@gmail.com</strong> to your email address!</p>
+          <hr>
+          <p><small>This test email was sent to verify your Gmail configuration update.</small></p>
         `,
         text: `
-🎉 EMAIL SERVICE IS WORKING!
+🎉 GMAIL SERVICE IS WORKING!
 
-This is a test email to confirm that your Rude Reminders email notifications are working properly.
+This test confirms your updated Gmail settings are working perfectly!
 
-Share features available:
+Email configured for: ruderemindersinfo@gmail.com
+
+Share features available in your app:
 ✅ Twitter/X sharing
 ✅ Facebook sharing  
 ✅ LinkedIn sharing
 ✅ WhatsApp sharing
 ✅ Copy link to clipboard
-✅ Native mobile sharing
+✅ Native mobile sharing (iOS/Android)
+✅ Direct email sharing
 
-Your reminders will now be sent to this email address when triggered!
+Your reminder notifications will now be sent from ruderemindersinfo@gmail.com to your email address!
+
+---
+This test email was sent to verify your Gmail configuration update.
         `
       };
 
@@ -289,6 +299,11 @@ Your reminders will now be sent to this email address when triggered!
       console.error(`❌ Failed to send test email to ${userEmail}:`, error);
       return false;
     }
+  }
+
+  // Method to send test email from API endpoint
+  async sendTestEmailToUser(): Promise<boolean> {
+    return this.sendTestEmail('ruderemindersinfo@gmail.com');
   }
 
   async sendRealtimeNotification(reminder: Reminder, user: User) {
