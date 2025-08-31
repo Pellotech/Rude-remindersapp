@@ -353,17 +353,25 @@ export default function Billing() {
       </div>
 
       {/* Action Buttons */}
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 px-4">
         <div className="space-y-3">
+          {/* Pricing Display - Mobile Optimized */}
+          <div className="text-center p-3 sm:p-4 bg-white rounded-lg border border-purple-200 max-w-sm mx-auto">
+            <div className="text-xl sm:text-2xl font-bold text-purple-800">From $4/month</div>
+            <div className="text-xs sm:text-sm text-purple-600">$48 yearly or $6 monthly</div>
+          </div>
+          
+          {/* Upgrade Button - Mobile Optimized */}
           <Button 
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white w-full max-w-sm mx-auto text-sm sm:text-base px-4 sm:px-8 py-3 sm:py-4"
+            className="w-full max-w-sm mx-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm sm:text-base px-4 sm:px-6 py-3 sm:py-4"
             onClick={() => window.location.href = '/subscribe'}
             data-testid="button-upgrade-premium"
           >
             <Crown className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-            <span className="text-center">Choose Your Plan<br className="sm:hidden" /><span className="text-xs sm:text-sm">From $4/month</span></span>
+            <span className="whitespace-nowrap">Choose Your Plan</span>
           </Button>
-          <p className="text-sm text-muted-foreground">
+          
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto">
             30-day money-back guarantee • Cancel anytime
           </p>
         </div>
