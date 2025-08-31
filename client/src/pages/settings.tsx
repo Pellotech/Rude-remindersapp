@@ -15,6 +15,9 @@ import { apiRequest } from "@/lib/queryClient";
 import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon, CreditCard, Crown, Check, X, ArrowLeft, Home } from "lucide-react";
 import { Link } from "wouter";
 import { BackNavigation } from "@/components/BackNavigation";
+import { AdMobManager } from "@/components/AdMobManager";
+import { AdSettings } from "@/components/AdSettings";
+import { usePremium } from "@/hooks/usePremium";
 
 interface UserSettings {
   id: string;
@@ -73,6 +76,7 @@ const ethnicityOptions = [
 
 export default function Settings() {
   const { toast } = useToast();
+  const { isPremium } = usePremium();
   const queryClient = useQueryClient();
   
   const { data: user, isLoading } = useQuery<any>({
@@ -1028,6 +1032,9 @@ export default function Settings() {
         </CardContent>
       </Card>
 
+      {/* Ad Settings */}
+      <AdSettings isPremium={isPremium} />
+
       {/* Save Button - Always visible but disabled when no changes */}
       <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 -mx-6 -mb-6">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
@@ -1043,6 +1050,17 @@ export default function Settings() {
           </Button>
         </div>
       </div>
+
+      {/* AdMob Integration for Free Users */}
+      <AdMobManager 
+        isPremium={isPremium}
+        onRewardEarned={() => {
+          toast({
+            title: "Reward Earned!",
+            description: "Thanks for watching the ad! You've helped support the app.",
+          });
+        }}
+      />
     </div>
   );
 }

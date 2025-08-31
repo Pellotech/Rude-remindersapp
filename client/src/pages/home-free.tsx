@@ -28,9 +28,10 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
+import { RewardAdBanner } from "@/components/RewardAdBanner";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Reminder } from "@shared/schema";
+import { Reminder, User } from "@shared/schema";
 
 // Free plan limits
 const FREE_LIMITS = {
@@ -46,17 +47,21 @@ export default function HomeFree() {
   const [currentReminder, setCurrentReminder] = useState<Reminder | null>(null);
   const [showRichNotification, setShowRichNotification] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+  const [rewardedFeatures, setRewardedFeatures] = useState({
+    extraReminders: 0, // Extra reminders from watching ads
+    premiumVoicesUntil: 0, // Timestamp when premium voices expire
+  });
   
 
-  const { data: reminders = [], isLoading } = useQuery({
+  const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
     queryKey: ["/api/reminders"],
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{ total: number; completed: number; pending: number; overdue: number; monthlyReminderUsage?: Record<string, number> }>({
     queryKey: ["/api/stats"],
   });
 
-  const { data: voices = [] } = useQuery({
+  const { data: voices = [] } = useQuery<{ id: string; name: string; }[]>({
     queryKey: ["/api/voices"],
   });
 
@@ -111,7 +116,7 @@ export default function HomeFree() {
                 'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }
               };
 
-              const settings = voiceSettings[reminder.voiceCharacter] || voiceSettings.default;
+              const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
               utterance.rate = settings.rate;
               utterance.pitch = settings.pitch;
 
@@ -217,9 +222,9 @@ export default function HomeFree() {
     }
   };
 
-  const activeReminders = reminders.filter((r: any) => !r.completed);
-  const completedToday = reminders.filter((r: any) => 
-    r.completed && 
+  const activeReminders = reminders.filter((r: Reminder) => !r.completed);
+  const completedToday = reminders.filter((r: Reminder) => 
+    r.completed && r.completedAt &&
     new Date(r.completedAt).toDateString() === new Date().toDateString()
   );
 
@@ -227,10 +232,14 @@ export default function HomeFree() {
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
   const monthlyUsage = stats?.monthlyReminderUsage?.[currentMonth] || 0;
   
-  // Calculate free usage
+  // Calculate free usage with rewarded bonuses
+  const effectiveReminderLimit = FREE_LIMITS.reminders + rewardedFeatures.extraReminders;
+  const hasTemporaryPremiumVoices = rewardedFeatures.premiumVoicesUntil > Date.now();
+  
   const freeUsage = {
     reminders: monthlyUsage,
     voiceCharacters: Math.min(voices.length, FREE_LIMITS.voiceCharacters),
+    effectiveLimit: effectiveReminderLimit,
   };
 
   
@@ -245,7 +254,7 @@ export default function HomeFree() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
-                <span className="truncate">Welcome back{user?.firstName ? `, ${user.firstName}` : ""}!</span>
+                <span className="truncate">Welcome back{(user as User)?.firstName ? `, ${(user as User).firstName}` : ""}!</span>
                 <Badge className="bg-gradient-to-r from-blue-600 to-green-600 text-white text-xs flex-shrink-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free
@@ -273,23 +282,33 @@ export default function HomeFree() {
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <Bell className="h-4 w-4 text-blue-600" />
-                    <span>{freeUsage.reminders}/{FREE_LIMITS.reminders} reminders this month</span>
+                    <span>{freeUsage.reminders}/{freeUsage.effectiveLimit} reminders this month</span>
+                    {rewardedFeatures.extraReminders > 0 && (
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                        +{rewardedFeatures.extraReminders} bonus
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Volume2 className="h-4 w-4 text-blue-600" />
                     <span>{freeUsage.voiceCharacters}/{FREE_LIMITS.voiceCharacters} voice characters</span>
+                    {hasTemporaryPremiumVoices && (
+                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                        Premium active
+                      </span>
+                    )}
                   </div>
                 </div>
                 {/* Progress bar for reminders */}
                 <div className="w-48">
                   <div className="flex justify-between text-xs text-blue-600 mb-1">
                     <span>Reminders Used</span>
-                    <span>{Math.round((freeUsage.reminders / FREE_LIMITS.reminders) * 100)}%</span>
+                    <span>{Math.round((freeUsage.reminders / freeUsage.effectiveLimit) * 100)}%</span>
                   </div>
                   <div className="w-full bg-blue-200 rounded-full h-2">
                     <div 
                       className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${Math.min((freeUsage.reminders / FREE_LIMITS.reminders) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((freeUsage.reminders / freeUsage.effectiveLimit) * 100, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -305,6 +324,37 @@ export default function HomeFree() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Reward Ad Banner */}
+        <RewardAdBanner 
+          onRewardEarned={() => {
+            const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
+            
+            if (rewardType === 'reminders') {
+              setRewardedFeatures(prev => ({
+                ...prev,
+                extraReminders: prev.extraReminders + 3
+              }));
+              toast({
+                title: "Reward Earned! 🎁",
+                description: "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
+              });
+            } else {
+              const premiumUntil = Date.now() + (30 * 60 * 1000); // 30 minutes
+              setRewardedFeatures(prev => ({
+                ...prev,
+                premiumVoicesUntil: premiumUntil
+              }));
+              toast({
+                title: "Reward Earned! 🔊",
+                description: "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters.",
+              });
+            }
+          }}
+          currentReminders={freeUsage.reminders}
+          maxReminders={freeUsage.effectiveLimit}
+          hasTemporaryPremiumVoices={hasTemporaryPremiumVoices}
+        />
 
         {/* Main Content Tabs - analytics shows upgrade prompt for free users */}
         <Tabs defaultValue="create" className="space-y-6">
@@ -331,7 +381,8 @@ export default function HomeFree() {
             <ReminderForm 
               isFreePlan={true} 
               currentReminderCount={freeUsage.reminders}
-              maxReminders={FREE_LIMITS.reminders}
+              maxReminders={freeUsage.effectiveLimit}
+              hasTemporaryPremiumVoices={hasTemporaryPremiumVoices}
             />
             {/* Free Plan Features Info */}
             <div className="text-center text-sm text-muted-foreground p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
@@ -339,7 +390,13 @@ export default function HomeFree() {
                 <p className="font-medium text-blue-800">✨ Free Plan Features Active</p>
                 <p>• Template-based motivational responses</p>
                 <p>• Browser & voice notifications</p>
-                <p>• Up to {FREE_LIMITS.reminders} reminders per month (resets monthly)</p>
+                <p>• Up to {freeUsage.effectiveLimit} reminders per month (resets monthly)</p>
+                {rewardedFeatures.extraReminders > 0 && (
+                  <p className="text-green-700 font-medium">• +{rewardedFeatures.extraReminders} bonus reminders from watching ads!</p>
+                )}
+                {hasTemporaryPremiumVoices && (
+                  <p className="text-purple-700 font-medium">• Premium voices unlocked for {Math.ceil((rewardedFeatures.premiumVoicesUntil - Date.now()) / 60000)} minutes!</p>
+                )}
                 <p>• Basic voice characters</p>
                 <div className="pt-2 border-t border-blue-200 mt-3">
                   <p className="text-xs">Notifications use your settings from Settings → Notifications</p>
@@ -535,10 +592,28 @@ export default function HomeFree() {
       <AdMobManager 
         isPremium={false}
         onRewardEarned={() => {
-          toast({
-            title: "Reward Earned!",
-            description: "Thanks for watching the ad! You've earned bonus features.",
-          });
+          const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
+          
+          if (rewardType === 'reminders') {
+            setRewardedFeatures(prev => ({
+              ...prev,
+              extraReminders: prev.extraReminders + 3
+            }));
+            toast({
+              title: "Reward Earned! 🎁",
+              description: "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
+            });
+          } else {
+            const premiumUntil = Date.now() + (30 * 60 * 1000); // 30 minutes
+            setRewardedFeatures(prev => ({
+              ...prev,
+              premiumVoicesUntil: premiumUntil
+            }));
+            toast({
+              title: "Reward Earned! 🔊",
+              description: "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters.",
+            });
+          }
         }}
       />
 
