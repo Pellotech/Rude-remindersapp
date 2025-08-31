@@ -186,7 +186,7 @@ export default function ReminderForm({
 
   // Get user notification preferences from settings
   const { data: userNotificationSettings } = useQuery({
-    queryKey: ["/api/settings"],
+    queryKey: ["/api/auth/user"],
     enabled: !!user,
   });
 
@@ -203,8 +203,13 @@ export default function ReminderForm({
     }
   });
 
-  // Voice character state - randomly select initial voice
+  // Voice character state - use user's default or random selection
   const [selectedVoice, setSelectedVoice] = useState(() => {
+    // First try to use user's saved preference
+    if ((userNotificationSettings as any)?.defaultVoiceCharacter) {
+      return (userNotificationSettings as any).defaultVoiceCharacter;
+    }
+    // Fallback to random selection if no preference saved
     const randomIndex = Math.floor(Math.random() * voiceCharacters.length);
     return voiceCharacters[randomIndex]?.id || "default";
   });
@@ -228,6 +233,17 @@ export default function ReminderForm({
   const platformInfo = getPlatformInfo();
   const isMobileWithCamera = platformInfo.isNative && supportsCamera();
 
+  // Update form defaults when user settings change
+  useEffect(() => {
+    if (userNotificationSettings) {
+      form.setValue("rudenessLevel", (userNotificationSettings as any)?.defaultRudenessLevel || 3);
+      if ((userNotificationSettings as any)?.defaultVoiceCharacter) {
+        setSelectedVoice((userNotificationSettings as any).defaultVoiceCharacter);
+        form.setValue("voiceCharacter", (userNotificationSettings as any).defaultVoiceCharacter);
+      }
+    }
+  }, [userNotificationSettings, form]);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -235,7 +251,7 @@ export default function ReminderForm({
       context: "",
       scheduledFor: "",
       rudenessLevel: (userNotificationSettings as any)?.defaultRudenessLevel || 3,
-      voiceCharacter: "default",
+      voiceCharacter: (userNotificationSettings as any)?.defaultVoiceCharacter || "default",
       attachments: [],
       motivationalQuote: "",
       selectedDays: [],
@@ -306,11 +322,22 @@ export default function ReminderForm({
           : `Your reminder has been created ${result.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
       });
 
-      form.reset();
+      // Reset form while preserving user defaults
+      form.reset({
+        originalMessage: "",
+        context: "",
+        scheduledFor: "",
+        rudenessLevel: (userNotificationSettings as any)?.defaultRudenessLevel || 3,
+        voiceCharacter: (userNotificationSettings as any)?.defaultVoiceCharacter || "default",
+        attachments: [],
+        motivationalQuote: "",
+        selectedDays: [],
+        isMultiDay: false,
+      });
 
-      // Reset all custom state variables
-      const randomIndex = Math.floor(Math.random() * voiceCharacters.length);
-      setSelectedVoice(voiceCharacters[randomIndex]?.id || "default");
+      // Reset all custom state variables but preserve user defaults
+      const defaultVoice = (userNotificationSettings as any)?.defaultVoiceCharacter || "default";
+      setSelectedVoice(defaultVoice);
       setSelectedAttachments([]);
       setSelectedCategory("");
       setSelectedContextCategory("");

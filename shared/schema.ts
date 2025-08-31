@@ -33,6 +33,7 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   defaultRudenessLevel: integer("default_rudeness_level").default(3),
+  defaultVoiceCharacter: varchar("default_voice_character").default("default"),
   voiceNotifications: boolean("voice_notifications").default(true),
   emailNotifications: boolean("email_notifications").default(false),
   browserNotifications: boolean("browser_notifications").default(true),
