@@ -1264,6 +1264,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test email endpoint - Add this route for manual testing
+  app.get('/api/test-email', async (req, res) => {
+    try {
+      const testEmail = req.query.email as string || 'ruderemindersinfo@gmail.com';
+      const success = await notificationService.sendTestEmail(testEmail);
+
+      if (success) {
+        res.json({ 
+          message: `✅ Test email sent successfully to ${testEmail}`,
+          timestamp: new Date().toISOString(),
+          recipient: testEmail
+        });
+      } else {
+        res.status(500).json({ 
+          message: `❌ Failed to send test email to ${testEmail} - check email configuration`,
+          timestamp: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      console.error('Test email error:', error);
+      res.status(500).json({ 
+        message: '❌ Test email failed', 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket setup for real-time notifications
