@@ -236,6 +236,61 @@ Manage your notifications in your account settings
     `.trim();
   }
 
+  async sendTestEmail(userEmail: string): Promise<boolean> {
+    if (!this.emailTransporter) {
+      console.error('Email service not available for test');
+      return false;
+    }
+
+    try {
+      const testMailOptions = {
+        from: {
+          name: 'Rude Reminders',
+          address: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com'
+        },
+        to: userEmail,
+        subject: '🔔 Test Email from Rude Reminders',
+        html: `
+          <h2>🎉 Email Service is Working!</h2>
+          <p>This is a test email to confirm that your Rude Reminders email notifications are working properly.</p>
+          <p><strong>Share features available:</strong></p>
+          <ul>
+            <li>✅ Twitter/X sharing</li>
+            <li>✅ Facebook sharing</li>
+            <li>✅ LinkedIn sharing</li>
+            <li>✅ WhatsApp sharing</li>
+            <li>✅ Copy link to clipboard</li>
+            <li>✅ Native mobile sharing</li>
+          </ul>
+          <p>Your reminders will now be sent to this email address when triggered!</p>
+        `,
+        text: `
+🎉 EMAIL SERVICE IS WORKING!
+
+This is a test email to confirm that your Rude Reminders email notifications are working properly.
+
+Share features available:
+✅ Twitter/X sharing
+✅ Facebook sharing  
+✅ LinkedIn sharing
+✅ WhatsApp sharing
+✅ Copy link to clipboard
+✅ Native mobile sharing
+
+Your reminders will now be sent to this email address when triggered!
+        `
+      };
+
+      const info = await this.emailTransporter.sendMail(testMailOptions);
+      console.log(`✅ Test email sent successfully to ${userEmail}:`, info.messageId);
+      return true;
+      
+    } catch (error) {
+      console.error(`❌ Failed to send test email to ${userEmail}:`, error);
+      return false;
+    }
+  }
+
   async sendRealtimeNotification(reminder: Reminder, user: User) {
     if (!this.wss) return;
 
