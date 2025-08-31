@@ -302,22 +302,25 @@ export default function Billing() {
           </div>
 
           <div className="mt-4 p-4 bg-white/70 rounded-lg border border-purple-200">
-            <div className="flex items-center justify-between mb-4">
+            <div className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground">Free Plan Usage</p>
-                <div className="w-64 h-2 bg-gray-200 rounded-full mt-1">
+                <p className="text-sm text-muted-foreground mb-2">Free Plan Usage</p>
+                <div className="w-full max-w-md h-2 bg-gray-200 rounded-full">
                   <div 
                     className="h-full bg-purple-600 rounded-full transition-all" 
                     style={{width: `${(currentUsage / monthlyLimit) * 100}%`}}
                   />
                 </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {currentUsage}/{monthlyLimit} reminders used this month
+                </p>
               </div>
               <Button 
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm px-4 py-2"
                 onClick={() => window.location.href = '/subscribe'}
               >
-                <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="whitespace-nowrap">Upgrade</span>
+                <Crown className="h-4 w-4 mr-2" />
+                <span>Upgrade to Premium</span>
               </Button>
             </div>
           </div>
