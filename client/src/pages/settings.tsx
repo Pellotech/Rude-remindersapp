@@ -1028,20 +1028,21 @@ export default function Settings() {
         </CardContent>
       </Card>
 
-      {/* Save Button */}
-      {hasChanges && (
-        <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 -mx-6 -mb-6">
-          <div className="max-w-4xl mx-auto flex justify-end">
-            <Button
-              onClick={saveSettings}
-              disabled={updateSettingsMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
-            </Button>
+      {/* Save Button - Always visible but disabled when no changes */}
+      <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 -mx-6 -mb-6">
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <div className="text-sm text-muted-foreground">
+            {hasChanges ? `${Object.keys(localSettings).length} unsaved changes` : "No changes to save"}
           </div>
+          <Button
+            onClick={saveSettings}
+            disabled={updateSettingsMutation.isPending || !hasChanges}
+            className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400"
+          >
+            {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
+          </Button>
         </div>
-      )}
+      </div>
     </div>
   );
 }
