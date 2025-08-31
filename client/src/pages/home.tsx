@@ -6,6 +6,7 @@ import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
 
 import Sidebar from "@/components/Sidebar";
+import { ShareButton } from "@/components/ShareButton";
 
 export default function Home() {
   const { toast } = useToast();
@@ -184,9 +185,23 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
         <Navigation />
-        <div className="flex pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Rude Reminders
+            </h1>
+            <p className="text-muted-foreground">
+              Get things done with the perfect amount of motivation
+            </p>
+          </div>
+          <ShareButton
+            title="Discover Rude Reminders!"
+            message="Found this amazing productivity app that gives me just the right push to get things done! Check out Rude Reminders."
+            hashtags={["RudeReminders", "Productivity", "GetThingsDone", "Motivation"]}
+          />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Form Section */}
             <div className="lg:col-span-2">
               <ReminderForm />
