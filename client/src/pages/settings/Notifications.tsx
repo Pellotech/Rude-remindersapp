@@ -216,61 +216,6 @@ export default function Notifications() {
               This will be the default voice character for new reminders
             </p>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Reminder Settings
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="defaultRudenessLevel">Default Rudeness Level</Label>
-            <Select
-              value={currentSettings.defaultRudenessLevel?.toString() || "3"}
-              onValueChange={(value) => updateSetting("defaultRudenessLevel", parseInt(value))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">⭐ Gentle - Polite and encouraging</SelectItem>
-                <SelectItem value="2">⭐⭐ Motivational - Supportive with energy</SelectItem>
-                <SelectItem value="3">⭐⭐⭐ Direct - Straightforward reminders</SelectItem>
-                <SelectItem value="4">⭐⭐⭐⭐ Assertive - Firm and persistent</SelectItem>
-                <SelectItem value="5">⭐⭐⭐⭐⭐ Savage - No mercy, pure energy</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              This will be the default rudeness level for new reminders
-            </p>
-          </div>
-
-          <div>
-            <Label htmlFor="defaultVoiceCharacter">Default Voice Character</Label>
-            <Select
-              value={currentSettings.defaultVoiceCharacter || "default"}
-              onValueChange={(value) => updateSetting("defaultVoiceCharacter", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Default - Standard reminder voice</SelectItem>
-                <SelectItem value="drill-sergeant">Drill Sergeant - Military-style motivation</SelectItem>
-                <SelectItem value="robot">Robot - Robotic and direct</SelectItem>
-                <SelectItem value="british-butler">British Butler - Polite and proper</SelectItem>
-                <SelectItem value="mom">Mom - Caring but persistent</SelectItem>
-                <SelectItem value="confident-leader">Confident Leader - Authoritative motivation</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              This will be the default voice character for new reminders
-            </p>
-          </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
