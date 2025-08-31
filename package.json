@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^7.0.3",
     "@capacitor/android": "^7.4.2",
     "@capacitor/camera": "^7.0.2",
     "@capacitor/cli": "^7.4.2",
