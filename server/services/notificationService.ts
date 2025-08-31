@@ -1,8 +1,41 @@
 import type { WebSocketServer } from "ws";
 import type { Reminder, User } from "@shared/schema";
+import nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 
 class NotificationService {
   private wss: WebSocketServer | null = null;
+  private emailTransporter: Transporter | null = null;
+
+  constructor() {
+    this.initializeEmailService();
+  }
+
+  private initializeEmailService() {
+    // Initialize email transporter with Gmail SMTP
+    try {
+      this.emailTransporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com',
+          pass: process.env.EMAIL_APP_PASSWORD // This should be an App Password, not the regular password
+        }
+      });
+
+      // Verify the connection
+      this.emailTransporter.verify((error, success) => {
+        if (error) {
+          console.error('Email service initialization failed:', error);
+          this.emailTransporter = null;
+        } else {
+          console.log('✅ Email service initialized successfully');
+        }
+      });
+    } catch (error) {
+      console.error('Failed to initialize email service:', error);
+      this.emailTransporter = null;
+    }
+  }
 
   setWebSocketServer(wss: WebSocketServer) {
     this.wss = wss;
@@ -98,24 +131,109 @@ class NotificationService {
   }
 
   async sendEmailNotification(reminder: Reminder, user: User) {
-    // In a real implementation, you would use a service like Nodemailer
-    // For now, we'll log the email that would be sent
-    console.log(`Email notification to ${user.email}:`);
-    console.log(`Subject: Rude Reminder: ${reminder.title}`);
-    console.log(`Body: ${reminder.rudeMessage}`);
-    console.log(`Scheduled for: ${reminder.scheduledFor}`);
+    if (!this.emailTransporter) {
+      console.error('Email service not available - falling back to console log');
+      console.log(`Would send email to ${user.email}: ${reminder.rudeMessage}`);
+      return;
+    }
 
-    // TODO: Implement actual email sending with Nodemailer
-    // const transporter = nodemailer.createTransporter({...});
-    // await transporter.sendMail({
-    //   to: user.email,
-    //   subject: `Rude Reminder: ${reminder.title}`,
-    //   html: `
-    //     <h2>Your Rude Reminder</h2>
-    //     <p><strong>${reminder.rudeMessage}</strong></p>
-    //     <p>Originally scheduled for: ${reminder.scheduledFor}</p>
-    //   `
-    // });
+    try {
+      const emailContent = this.generateEmailContent(reminder, user);
+      
+      const mailOptions = {
+        from: {
+          name: 'Rude Reminders',
+          address: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com'
+        },
+        to: user.email,
+        subject: `🔔 Rude Reminder: ${reminder.title}`,
+        html: emailContent,
+        text: this.generatePlainTextEmail(reminder)
+      };
+
+      const info = await this.emailTransporter.sendMail(mailOptions);
+      console.log(`✅ Email sent successfully to ${user.email}:`, info.messageId);
+      
+    } catch (error) {
+      console.error(`❌ Failed to send email to ${user.email}:`, error);
+      // Fallback to console log if email fails
+      console.log(`Fallback - Would send: ${reminder.rudeMessage}`);
+    }
+  }
+
+  private generateEmailContent(reminder: Reminder, user: User): string {
+    const formattedDate = new Date(reminder.scheduledFor).toLocaleString();
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Rude Reminder</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #ef4444; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+          .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; border: 1px solid #ddd; }
+          .reminder-text { background: white; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #ef4444; }
+          .quote { background: #e7f3ff; padding: 10px; border-radius: 5px; margin: 10px 0; font-style: italic; }
+          .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>🔔 Rude Reminder Alert!</h1>
+        </div>
+        <div class="content">
+          <h2>Hey ${user.firstName || 'there'}!</h2>
+          
+          <div class="reminder-text">
+            <h3>📋 ${reminder.title}</h3>
+            <p><strong>${reminder.rudeMessage}</strong></p>
+          </div>
+
+          ${reminder.motivationalQuote ? `
+            <div class="quote">
+              <p>💪 <em>${reminder.motivationalQuote}</em></p>
+            </div>
+          ` : ''}
+
+          <p><strong>⏰ Originally scheduled for:</strong> ${formattedDate}</p>
+          
+          ${reminder.context ? `<p><strong>📂 Category:</strong> ${reminder.context}</p>` : ''}
+          
+          <p>Time to take action! 🚀</p>
+        </div>
+        
+        <div class="footer">
+          <p>This reminder was sent by Rude Reminders</p>
+          <p>Manage your notifications in your account settings</p>
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  private generatePlainTextEmail(reminder: Reminder): string {
+    const formattedDate = new Date(reminder.scheduledFor).toLocaleString();
+    
+    return `
+🔔 RUDE REMINDER ALERT!
+
+📋 ${reminder.title}
+
+${reminder.rudeMessage}
+
+${reminder.motivationalQuote ? `💪 ${reminder.motivationalQuote}\n` : ''}
+
+⏰ Originally scheduled for: ${formattedDate}
+
+Time to take action! 🚀
+
+---
+This reminder was sent by Rude Reminders
+Manage your notifications in your account settings
+    `.trim();
   }
 
   async sendRealtimeNotification(reminder: Reminder, user: User) {
