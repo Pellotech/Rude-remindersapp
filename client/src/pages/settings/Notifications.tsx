@@ -66,17 +66,26 @@ export default function Notifications() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" showMainPageButton={true} />
 
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Notification Preferences</h1>
-        <p className="text-muted-foreground">Choose how you want to receive reminders</p>
-        {hasChanges && (
-          <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-md">
-            <p className="text-sm text-orange-700 flex items-center gap-2">
-              <Bell className="h-4 w-4" />
-              You have unsaved changes. Remember to save your settings!
-            </p>
-          </div>
-        )}
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Notification Preferences</h1>
+          <p className="text-muted-foreground">Choose how you want to receive reminders</p>
+          {hasChanges && (
+            <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-md">
+              <p className="text-sm text-orange-700 flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                You have unsaved changes. Remember to save your settings!
+              </p>
+            </div>
+          )}
+        </div>
+        <Button
+          onClick={saveSettings}
+          disabled={updateSettingsMutation.isPending || !hasChanges}
+          className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 ml-4"
+        >
+          {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
+        </Button>
       </div>
 
       <Card>
@@ -276,22 +285,6 @@ export default function Notifications() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Sticky Save Button */}
-      <div className="sticky bottom-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 -mx-6 -mb-6">
-        <div className="max-w-2xl mx-auto flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">
-            {hasChanges ? `${Object.keys(localSettings).length} unsaved changes` : "No changes to save"}
-          </div>
-          <Button
-            onClick={saveSettings}
-            disabled={updateSettingsMutation.isPending || !hasChanges}
-            className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400"
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
