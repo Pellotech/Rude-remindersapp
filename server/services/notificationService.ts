@@ -14,7 +14,7 @@ class NotificationService {
   private initializeEmailService() {
     // Initialize email transporter with Gmail SMTP
     try {
-      this.emailTransporter = nodemailer.createTransporter({
+      this.emailTransporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com',
