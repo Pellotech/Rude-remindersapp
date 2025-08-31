@@ -20,40 +20,31 @@ export default function Notifications() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (settings: any) => {
-      console.log("Frontend: Sending settings update:", settings);
-      try {
-        const response = await fetch("/api/settings", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(settings),
-          credentials: "include",
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        
-        console.log("Frontend: Settings successfully updated");
-        return response;
-      } catch (error) {
-        console.error("Frontend: Detailed error:", error);
-        throw error;
+      const response = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
+      
+      return response;
     },
     onSuccess: () => {
-      console.log("Frontend: Mutation success callback");
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Notification settings updated",
+        title: "Settings saved!",
         description: "Your preferences have been saved successfully.",
       });
     },
     onError: (error) => {
-      console.error("Frontend: Mutation error callback:", error);
       toast({
         title: "Error",
-        description: "Failed to update notification settings. Please try again.",
+        description: "Failed to update settings. Please try again.",
         variant: "destructive",
       });
     },

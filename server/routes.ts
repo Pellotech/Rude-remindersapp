@@ -63,8 +63,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const updates = req.body;
 
-      console.log("Settings update request:", { userId, updates });
-
       // Ensure notification settings are properly stored
       const allowedSettings = [
         'firstName', 'lastName', 'timezone', 'darkMode', 'simplifiedInterface',
@@ -81,11 +79,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return obj;
         }, {} as any);
 
-      console.log("Sanitized updates:", sanitizedUpdates);
-
       // Update user in storage
-      const result = await storage.updateUser(userId, sanitizedUpdates);
-      console.log("Storage update result:", result);
+      await storage.updateUser(userId, sanitizedUpdates);
 
       res.json({ success: true });
     } catch (error) {
