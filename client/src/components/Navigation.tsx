@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Megaphone, Settings, Home, Crown, Star, Bell } from "lucide-react";
+import { Megaphone, Settings, Home, Crown, Star, Bell, Shield } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import { HelpMenu } from "./HelpMenu";
 import { Link, useLocation, useRoute } from "wouter";
@@ -65,6 +65,17 @@ export default function Navigation() {
                   </Button>
                 </Link>
               )}
+
+              <Link href="/admin">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`text-gray-500 hover:text-gray-700 p-2 ${location === "/admin" ? "bg-gray-100 text-gray-900" : ""}`}
+                  title="Admin Panel"
+                >
+                  <Shield className="h-4 w-4" />
+                </Button>
+              </Link>
 
               <Link href="/settings">
                 <Button
