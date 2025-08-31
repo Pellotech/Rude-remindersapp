@@ -19,16 +19,22 @@ export default function Notifications() {
   });
 
   const updateSettingsMutation = useMutation({
-    mutationFn: (settings: any) =>
-      apiRequest("/api/settings", "PUT", settings),
+    mutationFn: async (settings: any) => {
+      console.log("Frontend: Making settings request with:", settings);
+      const response = await apiRequest("/api/settings", "PUT", settings);
+      console.log("Frontend: Settings response:", response);
+      return response;
+    },
     onSuccess: () => {
+      console.log("Frontend: Settings update successful");
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Notification settings updated",
         description: "Your preferences have been saved successfully.",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Frontend: Settings update error:", error);
       toast({
         title: "Error",
         description: "Failed to update notification settings. Please try again.",
