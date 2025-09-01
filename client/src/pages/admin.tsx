@@ -9,7 +9,7 @@ export default function AdminPage() {
   const { user } = useAuth();
   
   // Only allow access to your specific email
-  const isAdmin = user?.email === 'your-email@example.com'; // Replace with your actual email
+  const isAdmin = user?.email === 'letmeknow6@icloud.com';
   
   if (!isAdmin) {
     return (

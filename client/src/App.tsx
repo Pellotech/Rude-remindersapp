@@ -113,14 +113,14 @@ function App() {
 // Wrapper component that only shows dev tools to admin
 function AdminDevTools({ isVisible, onToggle }: { isVisible: boolean; onToggle: () => void }) {
   const { user } = useAuth();
-  
+
   // Only show dev tools to your specific email
-  const isAdmin = user?.email === 'your-email@example.com'; // Replace with your actual email
-  
+  const isAdmin = user?.email === 'letmeknow6@icloud.com'; // Replace with your actual email
+
   if (!isAdmin) {
     return null;
   }
-  
+
   return (
     <DevTools 
       isVisible={isVisible} 

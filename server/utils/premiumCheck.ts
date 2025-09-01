@@ -91,7 +91,7 @@ export async function incrementMonthlyReminderCount(userId: string): Promise<voi
 const PREMIUM_EMAIL_WHITELIST: string[] = [
   // Add emails here that should automatically have premium access
   // Example: 'admin@company.com', 'beta@tester.com'
-  'your-email@example.com',  // Replace with your actual email
+  'letmeknow6@icloud.com',  // Your admin email
 ];
 
 export async function isUserPremium(userId: string): Promise<boolean> {
