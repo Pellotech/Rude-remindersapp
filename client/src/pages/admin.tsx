@@ -3,8 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AdminWhitelist } from '@/components/AdminWhitelist';
 import { BackNavigation } from '@/components/BackNavigation';
 import { Shield, Settings, Users, Crown } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function AdminPage() {
+  const { user } = useAuth();
+  
+  // Only allow access to your specific email
+  const isAdmin = user?.email === 'your-email@example.com'; // Replace with your actual email
+  
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Card className="w-full max-w-md mx-4">
+          <CardContent className="pt-6">
+            <div className="flex mb-4 gap-2">
+              <Shield className="h-8 w-8 text-red-500" />
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Access Denied</h1>
+            </div>
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              You don't have permission to access the admin panel.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto p-6 space-y-6">

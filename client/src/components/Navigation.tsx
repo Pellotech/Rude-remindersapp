@@ -29,6 +29,9 @@ export default function Navigation() {
     }
   };
 
+  // Only show admin features to your specific email
+  const isAdmin = user?.email === 'your-email@example.com'; // Replace with your actual email
+
   return (
     <>
       <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 relative z-50">
@@ -67,16 +70,21 @@ export default function Navigation() {
                 </Link>
               )}
 
-              <Link href="/admin">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`text-gray-500 hover:text-gray-700 p-2 ${location === "/admin" ? "bg-gray-100 text-gray-900" : ""}`}
-                  title="Admin Panel"
-                >
-                  <Shield className="h-4 w-4" />
-                </Button>
-              </Link>
+              {isAdmin && (
+                <Link href="/admin">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="relative hover:bg-rude-red/10 dark:hover:bg-rude-red/20"
+                  >
+                    <Shield className="h-4 w-4 text-rude-red" />
+                    <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 bg-rude-red text-white text-xs flex items-center justify-center">
+                      A
+                    </Badge>
+                  </Button>
+                </Link>
+              )}
+
 
               <Link href="/settings">
                 <Button
@@ -113,9 +121,9 @@ export default function Navigation() {
         </div>
       </nav>
 
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </>
   );
