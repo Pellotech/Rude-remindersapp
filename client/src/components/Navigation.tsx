@@ -33,21 +33,23 @@ export default function Navigation() {
     <>
       <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 relative z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center gap-3 ml-2 flex-1 min-w-0">
-              <div className="flex-shrink-0 flex items-center gap-3">
+          <div className="flex justify-between h-20">
+            <div className="flex items-center gap-4 ml-2 flex-1 min-w-0">
+              <div className="flex-shrink-0 flex items-center gap-4">
                 <div className="p-2 bg-rude-red rounded-lg">
-                  <Volume2 className="h-6 w-6 text-white" />
+                  <Volume2 className="h-7 w-7 text-white" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Rude Reminders
-                  </h1>
-                  <Megaphone className="h-5 w-5 text-red-600" />
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                      Rude Reminders
+                    </h1>
+                    <Megaphone className="h-6 w-6 text-red-600" />
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    The reminder that talks back
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  The reminder that talks back
-                </p>
               </div>
 
               {/* Removed the Premium Toggle Input as requested */}
