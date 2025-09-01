@@ -433,6 +433,14 @@ export default function RemindersList() {
 
                                 <div className="flex items-center gap-1 flex-shrink-0">
                                   {/* Accomplishment tracking buttons for overdue items */}
+                                  <ShareButton
+                                    title={`Check out my reminder: ${reminder.title}`}
+                                    message={`Working on staying accountable with this reminder: "${reminder.originalMessage}". Using Rude Reminders to get things done!`}
+                                    hashtags={["RudeReminders", "Productivity", "Goals", "Accountability"]}
+                                    className="h-8 w-8 p-0"
+                                    iconOnly={true}
+                                  />
+
                                   <Button
                                     variant="ghost"
                                     size="sm"

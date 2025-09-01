@@ -16,6 +16,7 @@ interface ShareButtonProps {
   url?: string;
   hashtags?: string[];
   className?: string;
+  iconOnly?: boolean;
 }
 
 export function ShareButton({
@@ -23,7 +24,8 @@ export function ShareButton({
   message = "Just completed my goal with this amazing reminder app!",
   url = window.location.origin,
   hashtags = ["RudeReminders", "Productivity", "Goals"],
-  className = ""
+  className = "",
+  iconOnly = false
 }: ShareButtonProps) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
@@ -98,9 +100,13 @@ export function ShareButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className={className}>
-          <Share2 className="h-4 w-4 mr-2" />
-          Share
+        <Button 
+          variant={iconOnly ? "ghost" : "outline"} 
+          size="sm" 
+          className={`${className} ${iconOnly ? 'text-gray-400 hover:text-blue-600' : ''}`}
+        >
+          <Share2 className={`h-4 w-4 ${iconOnly ? '' : 'mr-2'}`} />
+          {!iconOnly && "Share"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
