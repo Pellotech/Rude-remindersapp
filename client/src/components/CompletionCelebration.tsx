@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ShareButton } from "./ShareButton";
 import { Trophy, Star, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -80,15 +79,7 @@ export function CompletionCelebration({
           </p>
           
           <div className="space-y-3">
-            <ShareButton
-              title={celebration.title}
-              message={celebration.message}
-              hashtags={["RudeReminders", "TaskComplete", "Productivity", "Motivation", "Success"]}
-              className="w-full"
-            />
-            
             <Button 
-              variant="outline" 
               onClick={onClose}
               className="w-full"
             >
