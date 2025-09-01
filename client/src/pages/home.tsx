@@ -4,13 +4,14 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
-
+import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import Sidebar from "@/components/Sidebar";
 import { ShareButton } from "@/components/ShareButton";
 
 export default function Home() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
+  const { showIntro, closeIntro } = useIntroTour();
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -216,6 +217,9 @@ export default function Home() {
 
         </div>
       </div>
+      
+      {/* Intro Tour */}
+      <IntroTour isOpen={showIntro} onClose={closeIntro} />
     </div>
   );
 }

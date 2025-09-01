@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { 
   HelpCircle, 
   ChevronDown, 
@@ -18,11 +19,13 @@ import {
   Bell, 
   Smartphone,
   CreditCard,
-  Shield
+  Shield,
+  Zap
 } from "lucide-react";
 
 export function HelpMenu() {
   const [open, setOpen] = useState(false);
+  const { showIntro, closeIntro, showIntroManually } = useIntroTour();
   const [openSections, setOpenSections] = useState({
     gettingStarted: false,
     reminders: false,
@@ -56,6 +59,33 @@ export function HelpMenu() {
         </DialogHeader>
         
         <div className="space-y-4">
+          {/* Quick Actions */}
+          <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-start gap-3">
+                  <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-1" />
+                  <div className="space-y-2">
+                    <h3 className="font-medium text-blue-900 dark:text-blue-100">
+                      New to Rude Reminders?
+                    </h3>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Take a quick tour to discover our unique features and see what makes this app special.
+                    </p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={showIntroManually}
+                  variant="outline" 
+                  size="sm"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                >
+                  Start Tour
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Getting Started */}
           <Card>
             <Collapsible open={openSections.gettingStarted} onOpenChange={() => toggleSection('gettingStarted')}>
@@ -361,6 +391,9 @@ export function HelpMenu() {
           </Card>
         </div>
       </DialogContent>
+      
+      {/* Intro Tour Component */}
+      <IntroTour isOpen={showIntro} onClose={closeIntro} />
     </Dialog>
   );
 }
