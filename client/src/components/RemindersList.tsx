@@ -35,7 +35,6 @@ import {
 import type { Reminder } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { ShareButton } from "./ShareButton";
-import { CompletionCelebration } from "./CompletionCelebration";
 
 const rudenessLevelColors = {
   1: "bg-green-100 text-green-800",
@@ -59,11 +58,6 @@ export default function RemindersList() {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [previewReminder, setPreviewReminder] = useState<Reminder | null>(null);
-  const [celebrationData, setCelebrationData] = useState({
-    isOpen: false,
-    reminderTitle: "",
-    completionStreak: 0,
-  });
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -71,17 +65,7 @@ export default function RemindersList() {
 
   const completeReminderMutation = useMutation({
     mutationFn: (id: string) => apiRequest("PUT", `/api/reminders/${id}/complete`),
-    onSuccess: (_, completedId) => {
-      const completedReminder = reminders?.find(r => r.id === completedId);
-      if (completedReminder) {
-        // Show celebration dialog
-        setCelebrationData({
-          isOpen: true,
-          reminderTitle: completedReminder.originalMessage,
-          completionStreak: Math.floor(Math.random() * 10) + 1 // You can track this properly
-        });
-      }
-
+    onSuccess: () => {
       toast({
         title: "Reminder completed!",
         description: "Great job! Keep up the good work.",
@@ -550,13 +534,6 @@ export default function RemindersList() {
           })()
         )}
       </CardContent>
-
-      <CompletionCelebration
-        isOpen={celebrationData.isOpen}
-        onClose={() => setCelebrationData(prev => ({ ...prev, isOpen: false }))}
-        reminderTitle={celebrationData.reminderTitle}
-        completionStreak={celebrationData.completionStreak}
-      />
 
       {/* Preview Modal */}
       {previewReminder && (
