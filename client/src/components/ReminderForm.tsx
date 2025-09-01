@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -216,6 +216,7 @@ export default function ReminderForm({
   const [selectedAttachments, setSelectedAttachments] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedContextCategory, setSelectedContextCategory] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Collapsible states for advanced sections
   const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
@@ -232,6 +233,70 @@ export default function ReminderForm({
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
   const isMobileWithCamera = platformInfo.isNative && supportsCamera();
+
+  // File upload handlers
+  const handlePhotoAttachment = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const maxFiles = isFreePlan ? 1 : 5;
+    const currentCount = selectedAttachments.length;
+    const remainingSlots = maxFiles - currentCount;
+
+    if (remainingSlots <= 0) {
+      toast({
+        title: "Limit reached",
+        description: `Maximum ${maxFiles} files allowed`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const filesToProcess = Array.from(files).slice(0, remainingSlots);
+
+    for (const file of filesToProcess) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const { filePath } = await response.json();
+          setSelectedAttachments(prev => [...prev, filePath]);
+          toast({
+            title: "File uploaded",
+            description: "File added to your reminder",
+          });
+        } else {
+          throw new Error('Upload failed');
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        toast({
+          title: "Upload error",
+          description: "Failed to upload file. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+
+    // Reset the input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setSelectedAttachments(prev => prev.filter((_, i) => i !== index));
+  };
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -254,7 +319,7 @@ export default function ReminderForm({
       const userData = userNotificationSettings as any;
       const defaultRudeness = userData?.defaultRudenessLevel || 3;
       const defaultVoice = userData?.defaultVoiceCharacter || "default";
-      
+
       // Update form values with user's saved preferences
       form.setValue("rudenessLevel", defaultRudeness);
       form.setValue("voiceCharacter", defaultVoice);
@@ -273,7 +338,6 @@ export default function ReminderForm({
   const originalMessage = form.watch("originalMessage");
 
   // Convert form's scheduledFor string to Date for calendar component
-  const scheduledForValue = form.watch("scheduledFor");
   const selectedDateTime = scheduledForValue ? new Date(scheduledForValue) : null;
 
   // Handle calendar date/time selection
@@ -316,6 +380,7 @@ export default function ReminderForm({
         ...data,
         title: data.originalMessage, // Use the original message as the title
         scheduledFor: data.scheduledFor ? new Date(data.scheduledFor).toISOString() : undefined,
+        attachments: selectedAttachments, // Ensure attachments are included
       };
 
       const response = await apiRequest("POST", "/api/reminders", submissionData);
@@ -595,50 +660,9 @@ export default function ReminderForm({
     }
   };
 
-  // Photo attachment simulation (for web demo)
-  const handlePhotoAttachment = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*,video/*';
-    input.multiple = true;
-    input.onchange = (e) => {
-      const files = (e.target as HTMLInputElement).files;
-      if (files) {
-        const newAttachments = Array.from(files).map(file => {
-          const objectUrl = URL.createObjectURL(file);
-          console.log(`Created object URL for ${file.name}:`, objectUrl);
-          return objectUrl;
-        });
-        setSelectedAttachments(prev => {
-          const updated = [...prev, ...newAttachments].slice(0, isFreePlan ? 1 : 5);
-          console.log('Updated attachments array:', updated);
-          return updated;
-        });
-        toast({
-          title: "Media Added",
-          description: `Added ${files.length} file(s) to your reminder`,
-        });
-      }
-    };
-    input.click();
-  };
-
-  const removeAttachment = (index: number) => {
-    setSelectedAttachments(prev => prev.filter((_, i) => i !== index));
-  };
-
-  // Handle context category selection
-  const handleContextCategorySelect = (category: typeof contextCategories[0]) => {
-    if (selectedContextCategory === category.id) {
-      // Deselect if already selected
-      setSelectedContextCategory("");
-      form.setValue("context", "");
-    } else {
-      // Select new category
-      setSelectedContextCategory(category.id);
-      // Set the context field with the category ID for AI analysis
-      form.setValue("context", category.id);
-    }
+  // Handle category selection without auto-generating quotes
+  const handleCategorySelection = (categoryId: string) => {
+    setSelectedCategory(categoryId);
   };
 
   // Multi-day selection helper functions
@@ -735,10 +759,20 @@ export default function ReminderForm({
     }
   };
 
-  // Handle category selection without auto-generating quotes
-  const handleCategorySelection = (categoryId: string) => {
-    setSelectedCategory(categoryId);
+  // Handle context category selection
+  const handleContextCategorySelect = (category: typeof contextCategories[0]) => {
+    if (selectedContextCategory === category.id) {
+      // Deselect if already selected
+      setSelectedContextCategory("");
+      form.setValue("context", "");
+    } else {
+      // Select new category
+      setSelectedContextCategory(category.id);
+      // Set the context field with the category ID for AI analysis
+      form.setValue("context", category.id);
+    }
   };
+
 
   const onSubmit = async (data: FormData) => {
     let scheduledDateTime;
@@ -1230,19 +1264,29 @@ export default function ReminderForm({
                         currentCount={selectedAttachments.length}
                       />
                     ) : (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full"
-                        onClick={handlePhotoAttachment}
-                        disabled={isFreePlan && selectedAttachments.length >= 1}
-                      >
-                        <Camera className="mr-2 h-4 w-4" />
-                        Add Photos/Videos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
-                        {isFreePlan && selectedAttachments.length >= 1 && (
-                          <span className="ml-2 text-xs text-amber-600">(Upgrade for more)</span>
-                        )}
-                      </Button>
+                      <>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept="image/*,video/*"
+                          multiple
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                          onClick={handlePhotoAttachment}
+                          disabled={isFreePlan && selectedAttachments.length >= 1}
+                        >
+                          <Camera className="mr-2 h-4 w-4" />
+                          Add Photos/Videos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
+                          {isFreePlan && selectedAttachments.length >= 1 && (
+                            <span className="ml-2 text-xs text-amber-600">(Upgrade for more)</span>
+                          )}
+                        </Button>
+                      </>
                     )}
 
                     {selectedAttachments.length > 0 && (
@@ -1372,7 +1416,7 @@ export default function ReminderForm({
                               newTime.setMinutes(newTime.getMinutes() + minutes);
                               const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");
                               form.setValue("scheduledFor", formattedDateTime);
-                              
+
                               // Create quick reminder with current form data
                               const quickReminderData = {
                                 originalMessage: currentMessage,
@@ -1391,7 +1435,7 @@ export default function ReminderForm({
 
                               // Submit the reminder
                               createReminderMutation.mutate(quickReminderData);
-                              
+
                               toast({
                                 title: "Quick Reminder Created",
                                 description: `Reminder set for ${format(newTime, "h:mm a")} (${label} from now)`,

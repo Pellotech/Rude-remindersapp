@@ -15,6 +15,11 @@ import Stripe from "stripe";
 
 import { DeepSeekService } from './services/deepseekService';
 
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
 const deepseekService = new DeepSeekService();
 
 // Initialize Stripe
@@ -1310,13 +1315,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email || typeof email !== 'string') {
         return res.status(400).json({ message: "Valid email is required" });
       }
 
       const added = addEmailToWhitelist(email);
-      
+
       if (added) {
         console.log(`Added email to premium whitelist: ${email}`);
         res.json({ 
@@ -1340,13 +1345,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email || typeof email !== 'string') {
         return res.status(400).json({ message: "Valid email is required" });
       }
 
       const removed = removeEmailFromWhitelist(email);
-      
+
       if (removed) {
         console.log(`Removed email from premium whitelist: ${email}`);
         res.json({ 

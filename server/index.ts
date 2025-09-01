@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import * as path from 'path';
 
 const app = express();
 app.use(express.json());
@@ -46,6 +47,12 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
     throw err;
   });
+
+  // Serve static files from client dist
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+
+  // Serve uploaded attachments
+  app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
