@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Volume2, Settings, Home, Crown, Star, Bell, Shield } from "lucide-react";
+import { Volume2, Settings, Home, Crown, Star, Bell, Shield, Megaphone } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import { HelpMenu } from "./HelpMenu";
 import { Link, useLocation, useRoute } from "wouter";
@@ -39,14 +39,15 @@ export default function Navigation() {
                 <div className="p-2 bg-rude-red rounded-lg">
                   <Volume2 className="h-6 w-6 text-white" />
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
                   <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                     Rude Reminders
                   </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    The reminder that talks back
-                  </p>
+                  <Megaphone className="h-5 w-5 text-red-600" />
                 </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  The reminder that talks back
+                </p>
               </div>
 
               {/* Removed the Premium Toggle Input as requested */}
