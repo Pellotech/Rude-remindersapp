@@ -82,7 +82,8 @@ function Router() {
           <Route path="/home-premium" component={HomePremium} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/subscribe" component={Subscribe} />
-          <Route path="/secret-admin-panel-b5ac04f4" component={HiddenAdminRoute} />
+          <Route path="/admin" component={AdminPage} />
+          <Route path="/secret-admin-panel-b5ac04f4" component={AdminPage} />
           <Route path="/" component={HomeRouter} />
         </>
       ) : null}
@@ -108,19 +109,6 @@ function App() {
   );
 }
 
-// Hidden Admin Route Component - only accessible to your email
-function HiddenAdminRoute() {
-  const { user } = useAuth();
-  
-  // Only allow access to your specific email
-  const isAdmin = user?.email === 'your-email@example.com'; // Replace with your actual email
-  
-  if (!isAdmin) {
-    return <NotFound />;
-  }
-  
-  return <AdminPage />;
-}
 
 // Wrapper component that only shows dev tools to admin
 function AdminDevTools({ isVisible, onToggle }: { isVisible: boolean; onToggle: () => void }) {
