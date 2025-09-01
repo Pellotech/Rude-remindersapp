@@ -336,9 +336,9 @@ export default function ReminderForm({
   }, [voiceCharacter]);
 
   const originalMessage = form.watch("originalMessage");
+  const scheduledForValue = form.watch("scheduledFor");
 
   // Convert form's scheduledFor string to Date for calendar component
-  const scheduledForValue = form.watch("scheduledFor");
   const selectedDateTime = scheduledForValue ? new Date(scheduledForValue) : null;
 
   // Handle calendar date/time selection
