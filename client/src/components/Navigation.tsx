@@ -47,8 +47,7 @@ export default function Navigation() {
                               color: '#ef4444',
                               background: 'linear-gradient(to bottom, #f87171, #dc2626)',
                               WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                              textShadow: '3px 3px 0px #000, 6px 6px 0px #333'
+                              WebkitTextFillColor: 'transparent'
                             }}>
                         Rude Reminders
                       </span>
