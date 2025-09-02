@@ -41,8 +41,14 @@ export default function Navigation() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                      Rude Reminders
+                    <h1 className="text-2xl sm:text-3xl font-bold relative">
+                      <span className="relative inline-block text-transparent bg-gradient-to-b from-red-400 to-red-600 bg-clip-text" 
+                            style={{
+                              textShadow: '2px 2px 0px #000, 4px 4px 0px #333, 6px 6px 0px #666',
+                              WebkitTextStroke: '1px #000'
+                            }}>
+                        Rude Reminders
+                      </span>
                     </h1>
                     <Megaphone className="h-6 w-6 text-red-600" />
                   </div>
