@@ -21,7 +21,8 @@ import {
   Zap,
   Crown,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  BarChart3
 } from "lucide-react";
 
 interface IntroTourProps {
@@ -88,6 +89,13 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
       description: "Customize everything! Set personal info for tailored content, choose notification preferences, themes, and advanced reminder options.",
       badge: "Customization",
       badgeColor: "bg-gray-100 text-gray-800"
+    },
+    {
+      icon: <BarChart3 className="h-6 w-6 text-indigo-600" />,
+      title: "Detailed Analytics & Progress Tracking",
+      description: "Track your productivity with comprehensive analytics! Monitor completion rates, streaks, and category breakdowns - so you can beat those allegations of procrastination from your family members with statistical proof!",
+      badge: "Premium Analytics",
+      badgeColor: "bg-indigo-100 text-indigo-800"
     }
   ];
 
