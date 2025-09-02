@@ -240,7 +240,7 @@ export default function HomePremium() {
                 </Badge>
               </h1>
               <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                Unleash the full power of AI-driven motivation with unlimited features
+                From funny to gentle warm reminders to get your goals done, with unlimited responses (in premium)
               </p>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
