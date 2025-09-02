@@ -42,10 +42,13 @@ export default function Navigation() {
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl sm:text-3xl font-bold relative">
-                      <span className="relative inline-block text-transparent bg-gradient-to-b from-red-400 to-red-600 bg-clip-text" 
+                      <span className="relative inline-block" 
                             style={{
-                              textShadow: '2px 2px 0px #000, 4px 4px 0px #333, 6px 6px 0px #666',
-                              WebkitTextStroke: '1px #000'
+                              color: '#ef4444',
+                              background: 'linear-gradient(to bottom, #f87171, #dc2626)',
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              textShadow: '3px 3px 0px #000, 6px 6px 0px #333'
                             }}>
                         Rude Reminders
                       </span>
