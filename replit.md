@@ -3,7 +3,16 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
-## Recent Changes (August 28, 2025)
+## Recent Changes (September 4, 2025)
+- **AdMob Integration Fixed**: Resolved mobile app crashes by configuring correct AdMob App IDs
+  - Android: `ca-app-pub-2730939178232394~9135087475`
+  - iOS: `ca-app-pub-2730939178232394~3691189109`
+- **Mobile Setup Documentation**: Created comprehensive setup guide to prevent manual reconfiguration
+- **iOS Project Structure**: Properly configured Capacitor iOS project with CocoaPods integration
+- **Build System**: Verified web asset compilation and mobile sync process
+- **Xcode Integration**: Resolved command line tools path issues for iOS development
+
+## Previous Changes (August 28, 2025)
 - **Stripe Subscription System**: Implemented comprehensive payment processing with dual pricing tiers
 - **Flexible Pricing Model**: Monthly subscription at $6/month and yearly at $48/year ($4/month effective rate)
 - **Early Subscriber Benefits**: Yearly plan positioned as special early subscriber rate with 33% savings
@@ -40,7 +49,8 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Dynamic AI Responses**: Integration with DeepSeek AI for personalized, context-aware motivational messages with adjustable humor levels (Level 1-5).
 - **Subscription System**: Differentiates features for free and premium users, including access to AI-generated content.
 - **Comprehensive User Personalization**: Allows gender and cultural background selection for tailored content, including culturally-specific quotes.
-- **Mobile-First Design**: Optimized for mobile with native camera integration, rich push notifications, and cross-platform data synchronization.
+- **Mobile-Native Architecture**: Full native iOS/Android support via Capacitor with proper AdMob integration, local notifications, and camera access.
+- **Development Workflow**: Automated mobile sync process with comprehensive setup documentation to prevent manual reconfiguration.
 
 ### Key Components
 - **Database Schema**: Includes `Users`, `Reminders`, `Rude Phrases`, and `Sessions` tables.
