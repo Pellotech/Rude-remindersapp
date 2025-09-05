@@ -5,29 +5,8 @@
  * Run this to check if your Stripe keys are properly configured
  */
 
-const fs = require('fs');
-const path = require('path');
-
-// Custom .env loader
-const envPath = path.join(__dirname, '..', '.env');
-if (fs.existsSync(envPath)) {
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  const envLines = envContent.split('\n');
-  
-  // Set environment variables for the current process
-  envLines.forEach(line => {
-    if (line && !line.startsWith('#')) {
-      const [key, value] = line.split('=');
-      if (key && value) {
-        process.env[key.trim()] = value.trim();
-      }
-    }
-  });
-  
-  console.log('📁 Environment variables loaded from .env file');
-} else {
-  console.log('📁 No .env file found, using system environment variables');
-}
+// Use the same environment loading logic as the main app
+require('./load-env.cjs');
 
 console.log('🔑 Verifying Stripe API Keys Configuration...\n');
 
@@ -47,11 +26,12 @@ if (secretKey) {
   console.log('❌ STRIPE_SECRET_KEY not found');
 }
 
-// Check frontend publishable key
-const publishableKey = process.env.VITE_STRIPE_PUBLISHABLE_KEY;
-console.log('\nFrontend Environment (VITE_STRIPE_PUBLISHABLE_KEY):');
+// Check frontend publishable key (check both naming conventions)
+const publishableKey = process.env.VITE_STRIPE_PUBLISHABLE_KEY || process.env.VITE_STRIPE_PUBLIC_KEY;
+console.log('\nFrontend Environment:');
 if (publishableKey) {
-  console.log(`✅ VITE_STRIPE_PUBLISHABLE_KEY found: ${publishableKey.substring(0, 12)}...`);
+  const keyName = process.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'VITE_STRIPE_PUBLISHABLE_KEY' : 'VITE_STRIPE_PUBLIC_KEY';
+  console.log(`✅ ${keyName} found: ${publishableKey.substring(0, 12)}...`);
   
   // Validate key format
   if (publishableKey.startsWith('pk_test_') || publishableKey.startsWith('pk_live_')) {
@@ -60,7 +40,7 @@ if (publishableKey) {
     console.log('❌ Invalid key format - should start with pk_test_ or pk_live_');
   }
 } else {
-  console.log('❌ VITE_STRIPE_PUBLISHABLE_KEY not found');
+  console.log('❌ Neither VITE_STRIPE_PUBLISHABLE_KEY nor VITE_STRIPE_PUBLIC_KEY found');
 }
 
 // Check if keys match environments
@@ -128,7 +108,7 @@ if (secretKey && publishableKey) {
     }
   };
 
-  await testStripeConnection();
+  testStripeConnection();
 }
 
 console.log('\n💡 Usage in your code:');
