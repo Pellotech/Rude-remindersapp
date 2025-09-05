@@ -5,7 +5,29 @@
  * Run this to check if your Stripe keys are properly configured
  */
 
-import 'dotenv/config';
+const fs = require('fs');
+const path = require('path');
+
+// Custom .env loader
+const envPath = path.join(__dirname, '..', '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  const envLines = envContent.split('\n');
+  
+  // Set environment variables for the current process
+  envLines.forEach(line => {
+    if (line && !line.startsWith('#')) {
+      const [key, value] = line.split('=');
+      if (key && value) {
+        process.env[key.trim()] = value.trim();
+      }
+    }
+  });
+  
+  console.log('📁 Environment variables loaded from .env file');
+} else {
+  console.log('📁 No .env file found, using system environment variables');
+}
 
 console.log('🔑 Verifying Stripe API Keys Configuration...\n');
 
@@ -67,23 +89,46 @@ if (secretKey && publishableKey) {
   console.log('\n🔧 Testing Stripe connection...');
   
   // Test the secret key with a simple API call
-  try {
-    const response = await fetch('https://api.stripe.com/v1/payment_methods', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${secretKey}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-    
-    if (response.ok) {
-      console.log('✅ Stripe API connection successful!');
-    } else {
-      console.log(`❌ Stripe API error: ${response.status} ${response.statusText}`);
+  const testStripeConnection = async () => {
+    try {
+      const https = require('https');
+      const options = {
+        hostname: 'api.stripe.com',
+        path: '/v1/balance',
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${secretKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      };
+
+      return new Promise((resolve, reject) => {
+        const req = https.request(options, (res) => {
+          let data = '';
+          res.on('data', (chunk) => data += chunk);
+          res.on('end', () => {
+            if (res.statusCode === 200) {
+              console.log('✅ Stripe API connection successful!');
+            } else {
+              console.log(`❌ Stripe API error: ${res.statusCode} ${res.statusMessage}`);
+            }
+            resolve();
+          });
+        });
+        
+        req.on('error', (error) => {
+          console.log(`❌ Network error connecting to Stripe: ${error.message}`);
+          resolve();
+        });
+        
+        req.end();
+      });
+    } catch (error) {
+      console.log(`❌ Error testing Stripe connection: ${error.message}`);
     }
-  } catch (error) {
-    console.log(`❌ Network error connecting to Stripe: ${error.message}`);
-  }
+  };
+
+  await testStripeConnection();
 }
 
 console.log('\n💡 Usage in your code:');
