@@ -1,0 +1,25 @@
+App
+Run script build phase '[CP] Copy Pods Resources' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase.
+
+Run script build phase '[CP] Embed Pods Frameworks' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase.
+
+CapacitorCommunityAdmob
+/Users/macbookpro/Documents/Rude-remindersapp-main/node_modules/@capacitor-community/admob/ios/Sources/AdMobPlugin/Banner/BannerExecutor.swift
+/Users/macbookpro/Documents/Rude-remindersapp-main/node_modules/@capacitor-community/admob/ios/Sources/AdMobPlugin/Banner/BannerExecutor.swift:35:30 'kGADAdSizeSmartBannerPortrait' is deprecated: Use GADPortraitAnchoredAdaptiveBannerAdSizeWithWidth.
+
+CapacitorFilesystem
+/Users/macbookpro/Documents/Rude-remindersapp-main/node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/LegacyFilesystemImplementation.swift
+/Users/macbookpro/Documents/Rude-remindersapp-main/node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/LegacyFilesystemImplementation.swift:77:13 Initialization of immutable value 'responseType' was never used; consider replacing with assignment to '_' or removing it
+
+CapacitorLocalNotifications
+/Users/macbookpro/Documents/Rude-remindersapp-main/node_modules/@capacitor/local-notifications/ios/Sources/LocalNotificationsPlugin/LocalNotificationsHandler.swift
+/Users/macbookpro/Documents/Rude-remindersapp-main/node_modules/@capacitor/local-notifications/ios/Sources/LocalNotificationsPlugin/LocalNotificationsHandler.swift:41:14 'alert' was deprecated in iOS 14.0
+
+Google-Mobile-Ads-SDK
+Run script build phase '[CP] Copy XCFrameworks' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase.
+
+GoogleUserMessagingPlatform
+Run script build phase '[CP] Copy XCFrameworks' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase.
+
+IONFilesystemLib
+Run script build phase '[CP] Copy XCFrameworks' will be run during every build because it does not specify any outputs. To address this issue, either add output dependencies to the script phase, or configure it to run in every build by unchecking "Based on dependency analysis" in the script phase.
