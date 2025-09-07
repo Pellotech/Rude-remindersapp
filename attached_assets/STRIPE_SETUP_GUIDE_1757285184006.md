@@ -7,11 +7,11 @@ This guide helps you properly configure Stripe API keys for the Rude Reminders a
 ### 1. Backend (Server-side)
 - **Variable**: `STRIPE_SECRET_KEY`
 - **Format**: `sk_test_...` (test) or `sk_live_...` (live)
-- **Used for**: Payment processing, subscription management
+- **Used for**: Payment processing, subscriptio n management
 - **Access**: Server-side only (never exposed to frontend)
 
 ### 2. Frontend (Client-side)
-- **Variable**: `VITE_STRIPE_PUBLIC_KEY`
+- **Variable**: `VITE_STRIPE_PUBLISHABLE_KEY`
 - **Format**: `pk_test_...` (test) or `pk_live_...` (live)
 - **Used for**: Stripe Elements, payment forms
 - **Access**: Frontend safe (can be publicly visible)
@@ -22,7 +22,7 @@ This guide helps you properly configure Stripe API keys for the Rude Reminders a
 2. **Navigate to**: Developers → API Keys
 3. **Copy both keys**:
    - **Secret key** → `STRIPE_SECRET_KEY`
-   - **Publishable key** → `VITE_STRIPE_PUBLIC_KEY`
+   - **Publishable key** → `VITE_STRIPE_PUBLISHABLE_KEY`
 
 ## Adding Keys to Replit
 
@@ -30,13 +30,13 @@ This guide helps you properly configure Stripe API keys for the Rude Reminders a
 1. Click **Tools** → **Secrets**
 2. Add both environment variables:
    - `STRIPE_SECRET_KEY`: `sk_test_your_secret_key_here`
-   - `VITE_STRIPE_PUBLIC_KEY`: `pk_test_your_publishable_key_here`
+   - `VITE_STRIPE_PUBLISHABLE_KEY`: `pk_test_your_publishable_key_here`
 
 ### Option 2: .env File (Local Development)
 Create a `.env` file in project root:
 ```bash
 STRIPE_SECRET_KEY=sk_test_your_secret_key_here
-VITE_STRIPE_PUBLIC_KEY=pk_test_your_publishable_key_here
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
 ```
 
 ## Verification
@@ -68,7 +68,7 @@ const subscription = await stripe.subscriptions.create({
 ### Frontend (React Components)
 ```javascript
 // Stripe Elements
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 // In component
 const stripe = useStripe();
