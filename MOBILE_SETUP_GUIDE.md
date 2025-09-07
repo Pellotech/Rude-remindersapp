@@ -24,23 +24,33 @@ This guide ensures you can quickly set up the mobile development environment wit
 
 ## Quick Mobile Setup
 
-### 1. Build the Web Assets
+### If Downloaded from Replit:
 ```bash
+# 1. Set up environment variables
+cp .env.example .env
+# Edit .env and add your actual Stripe keys
+
+# 2. Install and build
+npm install
 npm run build
-```
 
-### 2. Sync iOS Project
-```bash
+# 3. Sync mobile platforms
 npx cap sync ios
-```
-
-### 3. Open iOS Project in Xcode
-```bash
 npx cap open ios
 ```
 
-### 4. For Android
+### If Working in Replit:
 ```bash
+# 1. Build the web assets
+npm run build
+
+# 2. Sync iOS project
+npx cap sync ios
+
+# 3. Open iOS project in Xcode
+npx cap open ios
+
+# 4. For Android
 npx cap sync android
 npx cap open android
 ```
