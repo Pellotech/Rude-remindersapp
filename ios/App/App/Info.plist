@@ -47,5 +47,12 @@
         <true/>
         <key>GADApplicationIdentifier</key>
         <string>ca-app-pub-2730939178232394~3691189109</string>
+        <key>EnvironmentVariables</key>
+        <dict>
+		<key>ADMOB_APP_ID</key>
+		<string>ca-app-pub-2730939178232394~3691189109</string>
+		<key>STRIPE_PUBLISHABLE_KEY</key>
+		<string>pk_test_your_key_here</string>
+	</dict>
 </dict>
 </plist>
