@@ -1,78 +1,64 @@
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Check, X } from "lucide-react";
+import { Loader2, Check, X, Smartphone, ArrowRight } from "lucide-react";
 
-// Make sure to call `loadStripe` outside of a component's render to avoid
-// recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+// RevenueCat integration - subscriptions managed through mobile app stores
 
-const SubscribeForm = ({ selectedPlan }: { selectedPlan: string }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const planPrice = selectedPlan === 'yearly' ? '$48/year (save 33%)' : '$6/month';
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('Download our mobile app to subscribe!')}`;
 
-  const buttonText = selectedPlan === 'yearly' ? 'Subscribe for $48/year' : 'Subscribe for $6/month';
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    if (!stripe || !elements) {
-      setIsSubmitting(false);
-      return;
-    }
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/settings?payment=success`,
-      },
+  const handleDownloadPrompt = () => {
+    toast({
+      title: "Download Required",
+      description: "Please download our mobile app from the App Store or Google Play to subscribe.",
     });
-
-    if (error) {
-      toast({
-        title: "Payment Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Payment Successful",
-        description: "Welcome to Premium! You now have access to AI-generated reminders.",
-      });
-    }
-    
-    setIsSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" data-testid="subscription-form">
-      <PaymentElement />
-      <Button 
-        type="submit" 
-        disabled={!stripe || isSubmitting}
-        className="w-full"
-        data-testid="button-subscribe"
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing...
-          </>
-        ) : (
-          buttonText
-        )}
-      </Button>
-    </form>
+    <div className="space-y-6" data-testid="mobile-subscribe-prompt">
+      <div className="text-center space-y-4">
+        <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
+        <div>
+          <h3 className="text-xl font-semibold">Mobile App Required</h3>
+          <p className="text-muted-foreground">Subscriptions are managed through our mobile app for the best experience</p>
+        </div>
+        
+        <div className="p-4 bg-blue-50 rounded-lg">
+          <img src={qrCodeUrl} alt="QR Code" className="w-32 h-32 mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">Scan with your phone to download</p>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Button 
+          onClick={handleDownloadPrompt}
+          className="w-full bg-black text-white hover:bg-gray-800"
+          data-testid="button-ios-download"
+        >
+          <ArrowRight className="mr-2 h-4 w-4" />
+          Download for iOS
+        </Button>
+        <Button 
+          onClick={handleDownloadPrompt}
+          className="w-full bg-green-600 text-white hover:bg-green-700"
+          data-testid="button-android-download"
+        >
+          <ArrowRight className="mr-2 h-4 w-4" />
+          Download for Android
+        </Button>
+      </div>
+      
+      <div className="text-center text-sm text-muted-foreground">
+        <p>Selected plan: {planPrice}</p>
+        <p>You'll be able to choose and purchase this plan in the mobile app</p>
+      </div>
+    </div>
   );
 };
 
@@ -110,7 +96,7 @@ const PremiumFeatures = () => {
       <CardHeader>
         <CardTitle>Premium Features</CardTitle>
         <CardDescription>
-          Everything you get with your $5/month subscription
+          Everything you get with your premium subscription
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -175,36 +161,36 @@ const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, on
 };
 
 export default function Subscribe() {
-  const [clientSecret, setClientSecret] = useState("");
+  const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPlan, setSelectedPlan] = useState('yearly'); // Default to yearly for better value
 
-  const createSubscription = (plan: string) => {
+  const fetchCustomerInfo = () => {
     setLoading(true);
     setError("");
     
-    // Create subscription with selected plan
-    apiRequest("POST", "/api/create-subscription", { plan })
+    // Fetch current subscription status
+    apiRequest("GET", "/api/customer-info")
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
           throw new Error(data.error.message);
         }
-        setClientSecret(data.clientSecret);
+        setCustomerInfo(data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Subscription creation failed:', error);
-        setError(error.message || 'Failed to create subscription');
+        console.error('Failed to fetch customer info:', error);
+        setError(error.message || 'Failed to fetch subscription status');
         setLoading(false);
       });
   };
 
   useEffect(() => {
-    // Create subscription when component mounts or plan changes
-    createSubscription(selectedPlan);
-  }, [selectedPlan]);
+    // Fetch customer info when component mounts
+    fetchCustomerInfo();
+  }, []);
 
   const handlePlanChange = (plan: string) => {
     setSelectedPlan(plan);
@@ -215,7 +201,7 @@ export default function Subscribe() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Setting up your subscription...</p>
+          <p>Loading subscription information...</p>
         </div>
       </div>
     );
@@ -228,7 +214,7 @@ export default function Subscribe() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <X className="h-5 w-5 text-red-500 mr-2" />
-              Subscription Error
+              Error Loading Subscription
             </CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
@@ -246,10 +232,30 @@ export default function Subscribe() {
     );
   }
 
-  if (!clientSecret) {
+  // Show current subscription status if user is already premium
+  if (customerInfo?.subscriptionStatus === 'active') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" aria-label="Loading"/>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="text-center">
+            <Check className="h-16 w-16 mx-auto text-green-500 mb-4" />
+            <h1 className="text-3xl font-bold">You're Already Premium!</h1>
+            <p className="text-muted-foreground mt-2">
+              You have an active {customerInfo.subscriptionPlan} subscription
+            </p>
+          </div>
+          
+          <PremiumFeatures />
+          
+          <div className="text-center">
+            <Button 
+              onClick={() => window.location.href = '/settings'}
+              data-testid="button-manage-subscription"
+            >
+              Manage Subscription
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -271,15 +277,13 @@ export default function Subscribe() {
           
           <Card>
             <CardHeader>
-              <CardTitle>Payment Details</CardTitle>
+              <CardTitle>Get Premium Access</CardTitle>
               <CardDescription>
-                Secure payment powered by Stripe
+                Download our mobile app to subscribe and unlock premium features
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <SubscribeForm selectedPlan={selectedPlan} />
-              </Elements>
+              <MobileSubscribePrompt selectedPlan={selectedPlan} />
             </CardContent>
           </Card>
         </div>

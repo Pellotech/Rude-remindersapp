@@ -17,24 +17,24 @@ export default function Billing() {
     queryKey: ["/api/auth/user"],
   });
 
-  const { data: usageData } = useQuery<any>({
-    queryKey: ["/api/user/premium-status"],
+  const { data: customerInfo } = useQuery<any>({
+    queryKey: ["/api/customer-info"],
   });
 
   const cancelSubscriptionMutation = useMutation({
     mutationFn: () => apiRequest("/api/cancel-subscription", "POST"),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user/premium-status"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/customer-info"] });
       toast({
-        title: "Subscription cancelled",
-        description: data.message || "Your subscription will be cancelled at the end of the billing period.",
+        title: "Cancellation Instructions",
+        description: data.message || "Please use your device settings to cancel your subscription.",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to cancel subscription. Please try again.",
+        description: error.message || "Failed to get cancellation instructions. Please try again.",
         variant: "destructive",
       });
     },
@@ -47,8 +47,8 @@ export default function Billing() {
   const isSubscribed = user?.subscriptionStatus === "active";
   const subscriptionPlan = user?.subscriptionPlan || "free";
   const subscriptionEndsAt = user?.subscriptionEndsAt;
-  const currentUsage = usageData?.currentUsage || 0;
-  const monthlyLimit = usageData?.monthlyLimit || 12;
+  const currentUsage = customerInfo?.currentUsage || 0;
+  const monthlyLimit = customerInfo?.monthlyLimit || 12;
 
   const premiumFeatures = [
     {
@@ -145,7 +145,7 @@ export default function Billing() {
               data-testid="button-cancel-subscription"
               className="w-full"
             >
-              {cancelSubscriptionMutation.isPending ? "Cancelling..." : "Cancel Subscription"}
+              {cancelSubscriptionMutation.isPending ? "Getting Instructions..." : "Cancel Subscription"}
             </Button>
           </CardContent>
         </Card>
@@ -184,68 +184,69 @@ export default function Billing() {
           </CardContent>
         </Card>
 
-        {/* Payment Methods */}
+        {/* Subscription Management */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Payment Methods
+              <Smartphone className="h-5 w-5" />
+              Subscription Management
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <CreditCard className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">•••• •••• •••• 4242</p>
-                    <p className="text-sm text-muted-foreground">Expires 12/25</p>
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="font-medium text-sm mb-2">Mobile App Store Subscription</p>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Your subscription is managed through your device's app store. To make changes:
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    <span><strong>iOS:</strong> Settings → Your Name → Subscriptions</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span><strong>Android:</strong> Google Play Store → Account → Subscriptions</span>
                   </div>
                 </div>
-                <Badge variant="outline">Primary</Badge>
               </div>
-              
-              <Button variant="outline" className="w-full" data-testid="button-add-payment-method">
-                Add Payment Method
-              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Billing History */}
+        {/* Subscription Details */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Billing History
+              Subscription Details
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <p className="font-medium">January 2025</p>
-                  <p className="text-sm text-muted-foreground">Premium Plan</p>
+              <div className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Plan Type</span>
+                  <span className="text-sm text-muted-foreground">{subscriptionPlan === 'premium' ? 'Premium' : 'Free'}</span>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">$48.00</p>
-                  <Badge variant="outline" className="text-xs">
-                    Paid
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Status</span>
+                  <Badge className="bg-green-100 text-green-800">
+                    {user?.subscriptionStatus === 'active' ? 'Active' : 'Inactive'}
                   </Badge>
                 </div>
+                {subscriptionEndsAt && (
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">Renewal Date</span>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(subscriptionEndsAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
               </div>
               
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <p className="font-medium">December 2024</p>
-                  <p className="text-sm text-muted-foreground">Premium Plan (Monthly)</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">$6.00</p>
-                  <Badge variant="outline" className="text-xs">
-                    Paid
-                  </Badge>
-                </div>
+              <div className="text-sm text-muted-foreground p-3 bg-gray-50 rounded">
+                <strong>Note:</strong> Billing history and payment details are available in your device's app store account.
               </div>
             </div>
           </CardContent>
@@ -258,7 +259,7 @@ export default function Billing() {
             disabled={cancelSubscriptionMutation.isPending}
             data-testid="button-cancel-subscription-footer"
           >
-            {cancelSubscriptionMutation.isPending ? "Cancelling..." : "Cancel Subscription"}
+            {cancelSubscriptionMutation.isPending ? "Getting Instructions..." : "How to Cancel Subscription"}
           </Button>
         </div>
       </div>
