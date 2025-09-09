@@ -47,8 +47,8 @@ export const users = pgTable("users", {
 
   // Subscription fields
   subscriptionStatus: varchar("subscription_status").default("free"), // free, active, canceled, past_due
-  stripeCustomerId: varchar("stripe_customer_id"),
-  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  revenueCatCustomerId: varchar("revenuecat_customer_id"),
+  revenueCatEntitlements: jsonb("revenuecat_entitlements"), // Store active entitlements from RevenueCat
   subscriptionPlan: varchar("subscription_plan").default("free"), // free, premium
   subscriptionEndsAt: timestamp("subscription_ends_at"),
   monthlyReminderUsage: jsonb("monthly_reminder_usage"), // Track reminders per month for free users
