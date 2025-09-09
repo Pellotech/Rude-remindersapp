@@ -28,7 +28,7 @@ This guide ensures you can quickly set up the mobile development environment wit
 ```bash
 # 1. Set up environment variables
 cp .env.example .env
-# Edit .env and add your actual Stripe keys
+# Edit .env and add your actual RevenueCat keys
 
 # 2. Install and build
 npm install
@@ -61,9 +61,13 @@ npx cap open android
 - **Android:** `ca-app-pub-2730939178232394~9135087475`
 - **iOS:** `ca-app-pub-2730939178232394~3691189109`
 
+### RevenueCat Configuration (Needs Setup)
+- **iOS:** Update `REVENUECAT_API_KEY` in `ios/App/App/Info.plist`
+- **Android:** Update `com.revenuecat.android.API_KEY` in `android/app/src/main/AndroidManifest.xml`
+
 ### Key Files Already Set Up
-- `ios/App/App/Info.plist` - iOS AdMob configuration
-- `android/app/src/main/AndroidManifest.xml` - Android AdMob configuration
+- `ios/App/App/Info.plist` - iOS AdMob & RevenueCat configuration
+- `android/app/src/main/AndroidManifest.xml` - Android AdMob & RevenueCat configuration
 - `capacitor.config.ts` - Capacitor configuration
 - `ios/App/Podfile` - iOS dependencies
 
@@ -103,6 +107,8 @@ npx cap open android
 - **Authentication:** Uses Replit Auth
 - **Database:** PostgreSQL with Drizzle ORM
 - **Push Notifications:** Capacitor Local Notifications (no Firebase needed)
+- **Subscriptions:** RevenueCat for mobile app store subscription management
+- **Payment Processing:** App Store (iOS) and Google Play (Android) handle billing
 
 ## Project Structure
 ```

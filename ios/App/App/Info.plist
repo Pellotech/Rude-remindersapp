@@ -51,8 +51,8 @@
         <dict>
                 <key>ADMOB_APP_ID</key>
                 <string>ca-app-pub-2730939178232394~3691189109</string>
-                <key>STRIPE_PUBLISHABLE_KEY</key>
-                <string>pk_live_51S14S7Gk1BDCivRCrBuuowLn1yHq6c0162KrNo8wTckp4erNzTe5gBU2PV0Qv1mfxlvOpbC0cAzKvPKRbzLUUF3A00IZhfIabg</string>
+                <key>REVENUECAT_API_KEY</key>
+                <string>YOUR_REVENUECAT_IOS_API_KEY_HERE</string>
         </dict>
 </dict>
 </plist>
