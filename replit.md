@@ -3,7 +3,15 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
-## Recent Changes (September 4, 2025)
+## Recent Changes (September 9, 2025)
+- **RevenueCat Migration Completed**: Successfully migrated from Stripe to RevenueCat for mobile-first subscription management
+  - Backend: Replaced all Stripe API routes with RevenueCat webhook handlers (`/api/webhooks/revenuecat`)
+  - Database: Updated schema to use RevenueCat fields (`revenueCatCustomerId`, `revenueCatEntitlements`)
+  - Frontend: Updated subscription pages to show mobile app download prompts instead of web payment forms
+  - Mobile Config: Added RevenueCat API key placeholders to iOS Info.plist and Android manifest
+  - Documentation: Created comprehensive RevenueCat setup guide (`revenuecat-setup.md`)
+
+## Previous Changes (September 4, 2025)
 - **AdMob Integration Fixed**: Resolved mobile app crashes by configuring correct AdMob App IDs
   - Android: `ca-app-pub-2730939178232394~9135087475`
   - iOS: `ca-app-pub-2730939178232394~3691189109`
@@ -13,11 +21,11 @@ The Rude Daily Reminder App is a full-stack application designed to deliver dail
 - **Xcode Integration**: Resolved command line tools path issues for iOS development
 
 ## Previous Changes (August 28, 2025)
-- **Stripe Subscription System**: Implemented comprehensive payment processing with dual pricing tiers
+- **RevenueCat Subscription System**: Migrated from Stripe to RevenueCat for better mobile app store integration
 - **Flexible Pricing Model**: Monthly subscription at $6/month and yearly at $48/year ($4/month effective rate)
-- **Early Subscriber Benefits**: Yearly plan positioned as special early subscriber rate with 33% savings
+- **Mobile-First Approach**: Subscriptions now managed through iOS App Store and Google Play Store
 - **Premium Feature Gating**: AI-generated responses, cultural personalization, and advanced features require subscription
-- **Subscription Management**: Full billing interface with plan selection, cancellation, and payment history
+- **App Store Integration**: Native subscription management with automatic renewal and family sharing support
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -57,6 +65,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Core Services**: Reminder Service, Notification Service, Storage Service, Mobile Services.
 - **Authentication System**: Replit Auth, secure session management, and user profile management.
 - **Real-time Features**: WebSocket for live updates, browser notifications, and Unreal Speech API for voice notifications.
+- **Subscription Integration**: RevenueCat webhooks for real-time subscription status updates from mobile app stores.
 
 ## External Dependencies
 - **React Ecosystem**: React, React DOM, Wouter (React Router).
@@ -72,3 +81,4 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **AI Integration**: DeepSeek API.
 - **Voice Synthesis**: Unreal Speech API.
 - **Mobile Development**: Capacitor (for iOS and Android conversion).
+- **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
