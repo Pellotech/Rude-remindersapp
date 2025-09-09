@@ -354,8 +354,8 @@ class MemoryStorage implements IStorage {
       ethnicity: null, // Added ethnicity
       ethnicitySpecificQuotes: false, // Added ethnicitySpecificQuotes
       subscriptionStatus: 'active', // Updated to active for premium testing
-      stripeCustomerId: null, // Added stripeCustomerId
-      stripeSubscriptionId: null, // Added stripeSubscriptionId
+      revenueCatCustomerId: null, // Added revenueCatCustomerId
+      revenueCatEntitlements: {}, // Added revenueCatEntitlements
       subscriptionPlan: 'premium', // Updated to premium
       subscriptionEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
       monthlyReminderUsage: null, // Added monthlyReminderUsage
@@ -400,8 +400,8 @@ class MemoryStorage implements IStorage {
       ethnicity: userData.ethnicity || null,
       ethnicitySpecificQuotes: userData.ethnicitySpecificQuotes ?? false,
       subscriptionStatus: userData.subscriptionStatus || "free",
-      stripeCustomerId: userData.stripeCustomerId || null,
-      stripeSubscriptionId: userData.stripeSubscriptionId || null,
+      revenueCatCustomerId: userData.revenueCatCustomerId || null,
+      revenueCatEntitlements: userData.revenueCatEntitlements || {},
       subscriptionPlan: userData.subscriptionPlan || "free",
       subscriptionEndsAt: userData.subscriptionEndsAt || null,
       monthlyReminderUsage: userData.monthlyReminderUsage || null,

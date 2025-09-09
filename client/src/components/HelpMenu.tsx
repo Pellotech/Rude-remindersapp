@@ -327,7 +327,7 @@ export function HelpMenu() {
                   <div>
                     <h4 className="font-medium mb-2">Payment Security</h4>
                     <p className="text-sm text-muted-foreground">
-                      All payments are processed securely through Stripe. We never store your credit card information.
+                      All payments are processed securely through your device's app store. We never store your payment information.
                     </p>
                   </div>
                 </CardContent>
