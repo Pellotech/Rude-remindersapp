@@ -19,6 +19,7 @@ import AdminPage from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 import { DevTools } from "@/components/DevTools";
 import { useEffect, useState } from "react";
+import { revenueCatService } from "@/services/revenueCatService";
 
 function HomeRouter() {
   const { user, isLoading } = useAuth();
@@ -94,6 +95,11 @@ function Router() {
 
 function App() {
   const [showDevTools, setShowDevTools] = useState(false);
+
+  useEffect(() => {
+    // Initialize RevenueCat when app starts
+    revenueCatService.initialize().catch(console.error);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
