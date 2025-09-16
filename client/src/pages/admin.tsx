@@ -7,11 +7,11 @@ import { useAuth } from '@/hooks/useAuth';
 
 export default function AdminPage() {
   const { user } = useAuth();
-  
-  // Only allow access to your specific email
-  const isAdmin = user?.email === 'letmeknow6@icloud.com';
-  
-  if (!isAdmin) {
+
+  // Only allow access to specific email or developer email
+  const isAuthorized = user?.email === 'letmeknow6@icloud.com' || user?.email === 'developer@example.com';
+
+  if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <Card className="w-full max-w-md mx-4">
@@ -33,7 +33,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         <BackNavigation />
-        
+
         <div className="space-y-6">
           <Card className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950 dark:to-blue-950 border-purple-200 dark:border-purple-800">
             <CardHeader>
@@ -49,7 +49,7 @@ export default function AdminPage() {
 
           <div className="grid gap-6">
             <AdminWhitelist />
-            
+
             {/* Future admin features can go here */}
             <Card className="border-dashed border-2 border-gray-300 dark:border-gray-600">
               <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
