@@ -120,8 +120,8 @@ function App() {
 function AdminDevTools({ isVisible, onToggle }: { isVisible: boolean; onToggle: () => void }) {
   const { user } = useAuth();
 
-  // Only show dev tools to your specific email
-  const isAdmin = user?.email === 'letmeknow6@icloud.com'; // Replace with your actual email
+  // Only show dev tools to your specific email and developer email
+  const isAdmin = user?.email === 'letmeknow6@icloud.com' || user?.email === 'developer@example.com';
 
   if (!isAdmin) {
     return null;
