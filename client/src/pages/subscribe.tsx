@@ -10,7 +10,7 @@ import { Loader2, Check, X, Smartphone, ArrowRight } from "lucide-react";
 const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
   const { toast } = useToast();
   
-  const planPrice = selectedPlan === 'yearly' ? '$49.99/year' : '$6.99/month';
+  const planPrice = selectedPlan === 'yearly' ? '$44.99/year USD' : '$5.99/month USD';
 
   const handleDownloadPrompt = () => {
     toast({
@@ -114,7 +114,7 @@ const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, on
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">$6.99<span className="text-lg text-muted-foreground">/month</span></div>
+          <div className="text-3xl font-bold">$5.99<span className="text-lg text-muted-foreground">/month USD</span></div>
           <p className="text-sm text-muted-foreground mt-1">Renews monthly</p>
         </CardContent>
       </Card>
@@ -134,8 +134,8 @@ const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, on
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">$49.99<span className="text-lg text-muted-foreground">/year</span></div>
-          <p className="text-sm text-muted-foreground mt-1">Save 40% annually</p>
+          <div className="text-3xl font-bold">$44.99<span className="text-lg text-muted-foreground">/year USD</span></div>
+          <p className="text-sm text-muted-foreground mt-1">Save 37% annually</p>
         </CardContent>
       </Card>
     </div>
