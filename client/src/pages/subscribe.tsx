@@ -10,13 +10,12 @@ import { Loader2, Check, X, Smartphone, ArrowRight } from "lucide-react";
 const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
   const { toast } = useToast();
   
-  const planPrice = selectedPlan === 'yearly' ? '$48/year (save 33%)' : '$6/month';
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('Download our mobile app to subscribe!')}`;
+  const planPrice = selectedPlan === 'yearly' ? '$49.99/year' : '$6.99/month';
 
   const handleDownloadPrompt = () => {
     toast({
       title: "Download Required",
-      description: "Please download our mobile app from the App Store or Google Play to subscribe.",
+      description: "Please download our mobile app to subscribe.",
     });
   };
 
@@ -25,13 +24,8 @@ const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
       <div className="text-center space-y-4">
         <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
         <div>
-          <h3 className="text-xl font-semibold">Mobile App Required</h3>
-          <p className="text-muted-foreground">Subscriptions are managed through our mobile app for the best experience</p>
-        </div>
-        
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <img src={qrCodeUrl} alt="QR Code" className="w-32 h-32 mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">Scan with your phone to download</p>
+          <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
+          <p className="text-muted-foreground">Download the app to start your premium subscription</p>
         </div>
       </div>
       
@@ -42,7 +36,7 @@ const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
           data-testid="button-ios-download"
         >
           <ArrowRight className="mr-2 h-4 w-4" />
-          Download for iOS
+          App Store
         </Button>
         <Button 
           onClick={handleDownloadPrompt}
@@ -50,13 +44,12 @@ const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
           data-testid="button-android-download"
         >
           <ArrowRight className="mr-2 h-4 w-4" />
-          Download for Android
+          Google Play
         </Button>
       </div>
       
       <div className="text-center text-sm text-muted-foreground">
-        <p>Selected plan: {planPrice}</p>
-        <p>You'll be able to choose and purchase this plan in the mobile app</p>
+        <p>Selected: {planPrice}</p>
       </div>
     </div>
   );
@@ -66,37 +59,27 @@ const PremiumFeatures = () => {
   const features = [
     {
       icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "AI-Generated Responses",
-      description: "Get personalized, contextually-aware rude reminders powered by advanced AI"
-    },
-    {
-      icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "Cultural & Gender Personalization",
-      description: "Reminders tailored to your cultural background and personal preferences"
-    },
-    {
-      icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "Premium Motivational Quotes",
-      description: "Access to an extensive library of culturally-specific motivational content"
-    },
-    {
-      icon: <Check className="h-5 w-5 text-green-500" />,
       title: "Unlimited Reminders",
-      description: "Create as many reminders as you need without restrictions"
+      description: "Create as many reminders as you need"
     },
     {
       icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "Advanced Voice Characters",
-      description: "Premium voice personalities for more engaging reminder experiences"
+      title: "Premium Content",
+      description: "Access to exclusive reminder features"
+    },
+    {
+      icon: <Check className="h-5 w-5 text-green-500" />,
+      title: "Ad-Free Experience",
+      description: "Enjoy the app without advertisements"
     }
   ];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Premium Features</CardTitle>
+        <CardTitle>Premium Benefits</CardTitle>
         <CardDescription>
-          Everything you get with your premium subscription
+          Upgrade to unlock premium features
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -126,13 +109,13 @@ const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, on
       >
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Monthly Plan</span>
+            <span>Monthly</span>
             {selectedPlan === 'monthly' && <Check className="h-5 w-5 text-blue-500" />}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">$6<span className="text-lg text-muted-foreground">/month</span></div>
-          <p className="text-sm text-muted-foreground mt-1">Billed monthly</p>
+          <div className="text-3xl font-bold">$6.99<span className="text-lg text-muted-foreground">/month</span></div>
+          <p className="text-sm text-muted-foreground mt-1">Renews monthly</p>
         </CardContent>
       </Card>
 
@@ -142,18 +125,17 @@ const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, on
         data-testid="plan-yearly"
       >
         <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-          Save 33%
+          Best Value
         </div>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Yearly Plan</span>
+            <span>Annual</span>
             {selectedPlan === 'yearly' && <Check className="h-5 w-5 text-green-500" />}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold">$48<span className="text-lg text-muted-foreground">/year</span></div>
-          <p className="text-sm text-muted-foreground mt-1">$4/month (billed yearly)</p>
-          <p className="text-xs text-green-600 font-medium">Early subscriber special!</p>
+          <div className="text-3xl font-bold">$49.99<span className="text-lg text-muted-foreground">/year</span></div>
+          <p className="text-sm text-muted-foreground mt-1">Save 40% annually</p>
         </CardContent>
       </Card>
     </div>
@@ -264,9 +246,9 @@ export default function Subscribe() {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">Upgrade to Premium</h1>
+          <h1 className="text-3xl font-bold">Premium Subscription</h1>
           <p className="text-muted-foreground mt-2">
-            Choose your plan and unlock AI-powered personalized reminders
+            Choose your plan to unlock premium features
           </p>
         </div>
 
