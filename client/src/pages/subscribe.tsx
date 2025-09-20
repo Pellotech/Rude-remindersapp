@@ -3,7 +3,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Check, X, Smartphone, ArrowRight } from "lucide-react";
+import { Loader2, Check, X, Smartphone, ArrowRight, ArrowLeft, Home } from "lucide-react";
 
 // RevenueCat integration - subscriptions managed through mobile app stores
 
@@ -191,25 +191,49 @@ export default function Subscribe() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <X className="h-5 w-5 text-red-500 mr-2" />
-              Error Loading Subscription
-            </CardTitle>
-            <CardDescription>{error}</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Navigation Header */}
+          <div className="flex items-center justify-between mb-4">
             <Button 
-              onClick={() => window.location.href = '/settings'}
-              className="w-full"
-              data-testid="button-back-to-settings"
+              variant="outline" 
+              onClick={() => window.history.back()}
+              className="flex items-center gap-2"
             >
-              Back to Settings
+              <ArrowLeft className="h-4 w-4" />
+              Back
             </Button>
-          </CardContent>
-        </Card>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.href = '/'}
+              className="flex items-center gap-2"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <X className="h-5 w-5 text-red-500 mr-2" />
+                  Error Loading Subscription
+                </CardTitle>
+                <CardDescription>{error}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  onClick={() => window.location.href = '/'}
+                  className="w-full"
+                  data-testid="button-back-to-home"
+                >
+                  Back to Home
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -219,6 +243,26 @@ export default function Subscribe() {
     return (
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-2xl mx-auto space-y-6">
+          {/* Navigation Header */}
+          <div className="flex items-center justify-between mb-4">
+            <Button 
+              variant="outline" 
+              onClick={() => window.history.back()}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.href = '/'}
+              className="flex items-center gap-2"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Button>
+          </div>
+
           <div className="text-center">
             <Check className="h-16 w-16 mx-auto text-green-500 mb-4" />
             <h1 className="text-3xl font-bold">You're Already Premium!</h1>
@@ -245,6 +289,26 @@ export default function Subscribe() {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-2xl mx-auto space-y-6">
+        {/* Navigation Header */}
+        <div className="flex items-center justify-between mb-4">
+          <Button 
+            variant="outline" 
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => window.location.href = '/'}
+            className="flex items-center gap-2"
+          >
+            <Home className="h-4 w-4" />
+            Home
+          </Button>
+        </div>
+
         <div className="text-center">
           <h1 className="text-3xl font-bold">Premium Subscription</h1>
           <p className="text-muted-foreground mt-2">

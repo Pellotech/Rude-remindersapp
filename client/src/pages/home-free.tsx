@@ -51,7 +51,7 @@ export default function HomeFree() {
     extraReminders: 0, // Extra reminders from watching ads
     premiumVoicesUntil: 0, // Timestamp when premium voices expire
   });
-  
+
 
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
     queryKey: ["/api/reminders"],
@@ -153,13 +153,13 @@ export default function HomeFree() {
   // Voice playback handler
   const handleVoicePlay = () => {
     if (!currentReminder?.rudeMessage) return;
-    
+
     setIsPlayingVoice(true);
-    
+
     try {
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(currentReminder.rudeMessage);
-        
+
         // Apply voice character settings
         const voices = window.speechSynthesis.getVoices();
         const voiceSettings = {
@@ -204,7 +204,7 @@ export default function HomeFree() {
   // Complete reminder handler
   const handleCompleteReminder = async () => {
     if (!currentReminder) return;
-    
+
     try {
       await apiRequest('POST', `/api/reminders/${currentReminder.id}/complete`);
       setShowRichNotification(false);
@@ -231,18 +231,18 @@ export default function HomeFree() {
   // Calculate monthly usage from stats
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
   const monthlyUsage = stats?.monthlyReminderUsage?.[currentMonth] || 0;
-  
+
   // Calculate free usage with rewarded bonuses
   const effectiveReminderLimit = FREE_LIMITS.reminders + rewardedFeatures.extraReminders;
   const hasTemporaryPremiumVoices = rewardedFeatures.premiumVoicesUntil > Date.now();
-  
+
   const freeUsage = {
     reminders: monthlyUsage,
     voiceCharacters: Math.min(voices.length, FREE_LIMITS.voiceCharacters),
     effectiveLimit: effectiveReminderLimit,
   };
 
-  
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -329,7 +329,7 @@ export default function HomeFree() {
         <RewardAdBanner 
           onRewardEarned={() => {
             const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
-            
+
             if (rewardType === 'reminders') {
               setRewardedFeatures(prev => ({
                 ...prev,
@@ -416,7 +416,7 @@ export default function HomeFree() {
           <TabsContent value="manage" className="space-y-6">
             <RemindersList />
 
-            
+
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
@@ -549,12 +549,12 @@ export default function HomeFree() {
 
                   <div className="space-y-4">
                     <div className="text-center p-4 bg-white rounded-lg border border-purple-200">
-                      <div className="text-2xl font-bold text-purple-800">From $4/month</div>
-                      <div className="text-sm text-purple-600">$48 yearly or $6 monthly</div>
+                      <div className="text-2xl font-bold text-purple-800">From $5.99/month</div>
+                      <div className="text-sm text-purple-600">$44.99 yearly or $5.99 monthly</div>
                     </div>
                     <Button 
                       className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-xs sm:text-sm px-3 sm:px-6 py-2 sm:py-3"
-                      onClick={() => window.location.href = '/settings/billing'}
+                      onClick={() => window.location.href = '/subscribe'}
                       data-testid="button-upgrade-premium-main"
                     >
                       <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -593,7 +593,7 @@ export default function HomeFree() {
         isPremium={false}
         onRewardEarned={() => {
           const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
-          
+
           if (rewardType === 'reminders') {
             setRewardedFeatures(prev => ({
               ...prev,
