@@ -42,7 +42,7 @@
         <!-- RevenueCat API Key -->
         <meta-data
             android:name="com.revenuecat.android.API_KEY"
-            android:value="YOUR_REVENUECAT_ANDROID_API_KEY_HERE"/>
+            android:value="goog_toKBkiOYlLLEWPbPmwtiOGzmTcN"/>
     </application>
 
     <!-- Permissions -->
