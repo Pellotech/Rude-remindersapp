@@ -90,7 +90,7 @@ export class DeepSeekService {
     
     const rudenessMap = {
       1: 'gentle and encouraging',
-      2: 'friendly but motivating',
+      2: 'motivational and uplifting',
       3: 'direct and no-nonsense with sarcastic humor - be witty and clever',
       4: 'tough love and brutally honest with joking tone at the end - roast them but make them laugh',
       5: 'harshly motivating and unfiltered with humor at the end - be savage but hilarious'

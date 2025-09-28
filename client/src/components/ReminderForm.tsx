@@ -69,7 +69,7 @@ interface ReminderFormProps {
 
 const rudenessLabels = [
   { level: 1, emoji: "😊", label: "Gentle" },
-  { level: 2, emoji: "🙂", label: "Firm" },
+  { level: 2, emoji: "🙂", label: "Motivational" },
   { level: 3, emoji: "😏", label: "Sarcastic" },
   { level: 4, emoji: "😠", label: "Harsh" },
   { level: 5, emoji: "🤬", label: "Savage" },
