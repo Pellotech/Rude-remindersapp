@@ -138,15 +138,25 @@ export default function Billing() {
               </div>
             )}
 
-            <Button 
-              variant="outline"
-              onClick={() => cancelSubscriptionMutation.mutate()}
-              disabled={cancelSubscriptionMutation.isPending}
-              data-testid="button-cancel-subscription"
-              className="w-full"
-            >
-              {cancelSubscriptionMutation.isPending ? "Getting Instructions..." : "Cancel Subscription"}
-            </Button>
+            <div className="space-y-3">
+              <Button 
+                variant="outline"
+                onClick={() => window.location.href = '/subscribe'}
+                className="w-full"
+                data-testid="button-review-subscription"
+              >
+                Review Subscription Plans
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => cancelSubscriptionMutation.mutate()}
+                disabled={cancelSubscriptionMutation.isPending}
+                data-testid="button-cancel-subscription"
+                className="w-full"
+              >
+                {cancelSubscriptionMutation.isPending ? "Getting Instructions..." : "Cancel Subscription"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -209,6 +219,23 @@ export default function Billing() {
                     <span><strong>Android:</strong> Google Play Store → Account → Subscriptions</span>
                   </div>
                 </div>
+              </div>
+              
+              {/* Review Plans Button */}
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="font-medium text-sm mb-2 text-purple-800">Want to Review Available Plans?</p>
+                <p className="text-sm text-purple-600 mb-3">
+                  Check out all available subscription options and compare features.
+                </p>
+                <Button 
+                  variant="outline"
+                  onClick={() => window.location.href = '/subscribe'}
+                  className="w-full border-purple-300 text-purple-700 hover:bg-purple-100"
+                  data-testid="button-review-plans"
+                >
+                  <Crown className="h-4 w-4 mr-2" />
+                  Review All Plans
+                </Button>
               </div>
             </div>
           </CardContent>
