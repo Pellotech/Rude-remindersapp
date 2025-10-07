@@ -1,0 +1,95 @@
+PROJECT UPDATE: Android Build Fixes Required
+TO: Replit Project Maintainers
+FROM: Mobile Deployment Team
+SUBJECT: Critical Android build fixes needed to prevent deployment blockers
+
+Executive Summary
+The current project configuration causes fatal Gradle build errors when generating Android App Bundles (.aab) for Google Play Store. These issues must be resolved in the source code to enable successful Android deployments.
+
+Critical Issues Identified & Required Fixes
+1. DUPLICATE SPLASH SCREEN RESOURCES
+Problem: Both XML and PNG splash screens cause resource conflicts
+Location: android/app/src/main/res/drawable/
+Current State:
+
+splash.xml (vector, preferred)
+
+splash.png + multiple density variants (redundant bitmaps)
+
+Required Action:
+
+bash
+# Remove all PNG splash screens, keep only XML
+rm android/app/src/main/res/drawable/splash.png
+rm android/app/src/main/res/drawable/splash-hdpi.png
+rm android/app/src/main/res/drawable/splash-mdpi.png
+# ... remove all other splash.png variants
+2. DUPLICATE LAUNCHER BACKGROUND RESOURCES
+Problem: ic_launcher_background defined as both color and drawable
+Location:
+
+android/app/src/main/res/values/colors.xml (color definition)
+
+android/app/src/main/res/values/ic_launcher_background.xml (duplicate drawable)
+
+Required Action:
+
+bash
+# Remove the duplicate drawable file
+rm android/app/src/main/res/values/ic_launcher_background.xml
+3. BUILD SCRIPT IMPROVEMENTS
+Recommended additions to package.json:
+
+json
+{
+  "scripts": {
+    "build:clean": "npm run build && npx cap sync",
+    "android:open": "npx cap open android",
+    "android:build": "cd android && ./gradlew clean bundleRelease",
+    "prebuild:android": "npm run build:clean"
+  }
+}
+Required Configuration Changes
+1. Capacitor Configuration (capacitor.config.ts)
+Ensure proper webDir configuration:
+
+typescript
+const config: CapacitorConfig = {
+  appId: 'com.yourcompany.yourapp',
+  appName: 'Your App',
+  webDir: 'dist/public',
+  // ... other config
+};
+2. Build Process Documentation
+Add to project README:
+
+markdown
+## Android Build Prerequisites
+1. Run `npm run build:clean` before Android builds
+2. Use `npx cap open android` (NOT direct folder opening)
+3. Delete duplicate resources if build fails
+Testing Protocol
+After implementing fixes, verify:
+
+npm run build:clean completes without errors
+
+npx cap open android successfully opens project
+
+Android Studio → Build → Generate Signed Bundle works
+
+No "duplicate resources" errors in build logs
+
+Impact Assessment
+No functional changes to app behavior
+
+Fixes deployment pipeline only
+
+Required for Google Play Store submission
+
+Does not affect iOS builds
+
+Urgency: HIGH
+These changes are blocking Google Play Store deployment and must be implemented before any Android release attempts.
+
+This summary provides Replit maintainers with actionable steps to fix the Android build pipeline permanently. The changes are minimal but critical for successful app store deployment.
+
