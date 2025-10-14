@@ -5,7 +5,11 @@ const config: CapacitorConfig = {
   appName: 'Rude Reminders',
   webDir: 'dist/public',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    // For development/demo - point iOS to your Replit backend
+    // Comment this out before building for App Store production!
+    url: 'https://b5ac04f4-914d-4b4c-9d0e-8469759b5af1-00-qkc03alh73v0.janeway.replit.dev',
+    cleartext: true
   },
   plugins: {
     Camera: {
