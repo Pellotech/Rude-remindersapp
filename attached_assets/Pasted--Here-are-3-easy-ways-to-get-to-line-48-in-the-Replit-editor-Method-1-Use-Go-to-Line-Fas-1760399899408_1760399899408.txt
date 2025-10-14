@@ -1,0 +1,34 @@
+
+Here are **3 easy ways** to get to line 48 in the Replit editor: ## **Method 1: Use Go to Line (Fastest)** 1. Open the file: `ios/App/App/Info.plist` 2. Press **Ctrl+G** (Windows/Linux) or **Cmd+G** (Mac) 3. Type `48` and press Enter 4. You'll jump right to line 48! ## **Method 2: Use File Search** 1. In the left sidebar, click the **Files** icon 2. Navigate to: `ios` → `App` → `App` → `Info.plist` 3. Click to open the file 4. Look for line numbers on the left side of the editor 5. Scroll to line 48 ## **Method 3: I Can Show You the Content** Or I can just show you exactly what needs to be changed - you don't even need to find the line yourself! **What needs to change:** ```xml <!-- CURRENT (line 48-49): --> <key>REVENUECAT_API_KEY</key> <string>YOUR_REVENUECAT_IOS_API_KEY_HERE</string> <!-- CHANGE TO: --> <key>REVENUECAT_API_KEY</key> <string>your_actual_ios_key_from_revenuecat</string> ``` **Same change needed at line 56-57 too!** --- **Easiest solution:** Just give me your iOS API key from RevenueCat, and I'll update both lines for you automatically. No need to navigate manually! Which method would you prefer?
+1 day ago
+Improve time selection options for scheduling reminders
+45 seconds of work
+appl_EcOTAAHXxtTgOjDXhasLTEmAbPP
+
+1 day ago
+
+2 messages & 4 actions
+Perfect! I'll update both instances in your Info.plist file right now with your iOS API key.
+1 day ago
+Update API keys for ad and subscription services
+28 seconds of work
+im getting this message when trying to upload the app to xcode
+
+2 minutes ago
+im getting this message when triying to upload app to xcode only set suggestions for an active session. sessionID = 48AC72C4-187F-473B-AAE1-0EF43E83FFCE
+⚡️ WebView loaded
+⚡️ [error] - Failed to get current user: {"line":460,"column":20102,"sourceURL":"capacitor://localhost/assets/index-Bci8UC46.js"}
+⚡️ [log] - RevenueCat initialized successfully
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:] Can only set suggestions for an active session. sessionID = 48AC72C4-187F-473B-AAE1-0EF43E83FFCE
+⚡️ WebView loaded
+⚡️ [error] - Failed to get current user: {"line":460,"column":20102,"sourceURL":"capacitor://localhost/assets/index-Bci8UC46.js"}
+⚡️ [log] - RevenueCat initialized successfully
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:] Can only set suggestions for an active session. sessionID = 48AC72C4-187F-473B-AAE1-0EF43E83FFCE
+⚡️ WebView loaded
+⚡️ [error] - Failed to get current user: {"line":460,"column":20102,"sourceURL":"capacitor://localhost/assets/index-Bci8UC46.js"}
+⚡️ [log] - RevenueCat initialized successfully
+
+Just now
+
+Scroll to latest
+Working.
