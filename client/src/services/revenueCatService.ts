@@ -18,17 +18,24 @@ export class RevenueCatService {
     }
 
     try {
-      // RevenueCat will be initialized with the API keys from Info.plist (iOS) 
-      // and AndroidManifest.xml (Android) when the native app starts
-      // No additional configuration needed here for API keys
-      
       // Import RevenueCat plugin dynamically to avoid web build issues
       const { Purchases } = await import('@revenuecat/purchases-capacitor');
       
-      // Configure with your app user ID (from your auth system)
+      // Configure RevenueCat with API key from Info.plist/AndroidManifest.xml
+      // This must be called before any other Purchases methods
+      const platform = Capacitor.getPlatform();
+      const apiKey = platform === 'ios' 
+        ? 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP'  // iOS API key
+        : 'goog_toKBkiOYlLLEWPbPmwtiOGzmTcN'; // Android API key
+      
+      await Purchases.configure({ apiKey });
+      console.log('RevenueCat configured for platform:', platform);
+      
+      // Now log in with your app user ID (from your auth system)
       const userId = await this.getCurrentUserId();
       if (userId) {
         await Purchases.logIn({ appUserID: userId });
+        console.log('RevenueCat user logged in:', userId);
       }
 
       this.isInitialized = true;
