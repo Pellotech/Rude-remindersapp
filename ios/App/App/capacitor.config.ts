@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.rudereminders.app',
+  appId: 'com.goosebumpsmw.rudereminders',
   appName: 'Rude Reminders',
   webDir: 'dist/public',
   server: {
