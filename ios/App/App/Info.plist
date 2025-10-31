@@ -46,9 +46,13 @@
                 <string>UIInterfaceOrientationLandscapeRight</string>
         </array>
         <key>UIViewControllerBasedStatusBarAppearance</key>
-        <true/>
-        <key>REVENUECAT_API_KEY</key>
-        <string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
+	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Rude Reminders needs access to your photo library to attach images to your reminders.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Rude Reminders needs access to your camera to take photos for your reminders.</string>
+	<key>REVENUECAT_API_KEY</key>
+	<string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
         <key>GADApplicationIdentifier</key>
         <string>ca-app-pub-2730939178232394~3691189109</string>
         <key>EnvironmentVariables</key>
