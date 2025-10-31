@@ -29,6 +29,11 @@ export class AdMobService {
   }
 
   async initialize(): Promise<void> {
+    // TEMPORARILY DISABLED FOR TESTING - AdMob causing crashes
+    console.log('AdMob initialization disabled for testing');
+    return;
+    
+    /* ORIGINAL CODE - RE-ENABLE WHEN READY
     if (!Capacitor.isNativePlatform()) {
       console.log('AdMob not available on web platform');
       return;
@@ -45,6 +50,7 @@ export class AdMobService {
     } catch (error) {
       console.error('Failed to initialize AdMob:', error);
     }
+    */
   }
 
   private getAdUnitId(type: 'banner' | 'interstitial' | 'reward'): string {
