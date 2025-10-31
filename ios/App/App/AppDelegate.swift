@@ -1,6 +1,6 @@
 import UIKit
 import Capacitor
-import GoogleMobileAds
+// import GoogleMobileAds  // TEMPORARILY DISABLED FOR TESTING
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -8,8 +8,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Initialize Google Mobile Ads SDK
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        // TEMPORARILY DISABLED: Initialize Google Mobile Ads SDK
+        // GADMobileAds.sharedInstance().start(completionHandler: nil)
         
         // Override point for customization after application launch.
         return true
