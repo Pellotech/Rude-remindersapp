@@ -43,8 +43,18 @@ export function useMobileNotifications(): MobileNotificationService {
       (notification: ActionPerformed) => {
         console.log('Notification action performed:', notification);
         
-        // Handle notification tap - could open specific reminder
+        // Handle notification tap - app just opened, play voice if enabled
         if (notification.actionId === 'tap') {
+          const extra = notification.notification.extra;
+          
+          // Play voice when user taps notification and app opens
+          if (extra?.shouldPlayVoice && extra?.voiceCharacter && window.speechSynthesis) {
+            // Small delay to ensure app is fully in foreground
+            setTimeout(() => {
+              playVoiceNotification(notification.notification.body, extra.voiceCharacter);
+            }, 500);
+          }
+          
           toast({
             title: "Reminder opened",
             description: notification.notification.title,
