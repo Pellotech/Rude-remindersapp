@@ -420,7 +420,9 @@ export default function ReminderForm({
                 body: reminder.rudeMessage || reminder.originalMessage,
                 scheduledFor: new Date(reminder.scheduledFor),
                 attachments: reminder.attachments || [],
-                motivationalQuote: reminder.motivationalQuote
+                motivationalQuote: reminder.motivationalQuote,
+                voiceNotification: reminder.voiceNotification,
+                voiceCharacter: reminder.voiceCharacter
               });
             }
             
