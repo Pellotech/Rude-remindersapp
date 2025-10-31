@@ -7,16 +7,28 @@ import {
 } from "@capacitor/local-notifications";
 import { useToast } from "@/hooks/use-toast";
 
+// Convert UUID string to numeric ID for LocalNotifications
+// Uses a simple hash function to generate consistent numeric IDs from UUID strings
+function uuidToNumericId(uuid: string): number {
+  let hash = 0;
+  for (let i = 0; i < uuid.length; i++) {
+    const char = uuid.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
 interface MobileNotificationService {
   scheduleReminder: (reminder: {
-    id: number;
+    id: string; // Changed from number to string to accept UUID
     title: string;
     body: string;
     scheduledFor: Date;
     attachments?: string[];
     motivationalQuote?: string;
   }) => Promise<void>;
-  cancelReminder: (id: number) => Promise<void>;
+  cancelReminder: (id: string) => Promise<void>; // Changed from number to string
   requestPermissions: () => Promise<boolean>;
 }
 
@@ -55,7 +67,7 @@ export function useMobileNotifications(): MobileNotificationService {
   };
 
   const scheduleReminder = async (reminder: {
-    id: number;
+    id: string;
     title: string;
     body: string;
     scheduledFor: Date;
@@ -74,6 +86,9 @@ export function useMobileNotifications(): MobileNotificationService {
         return;
       }
 
+      // Convert UUID to numeric ID for LocalNotifications
+      const numericId = uuidToNumericId(reminder.id);
+
       // Prepare notification body with motivation
       let notificationBody = reminder.body;
       if (reminder.motivationalQuote) {
@@ -85,7 +100,7 @@ export function useMobileNotifications(): MobileNotificationService {
           {
             title: reminder.title,
             body: notificationBody,
-            id: reminder.id,
+            id: numericId,
             schedule: { at: reminder.scheduledFor },
             sound: 'beep.wav',
             attachments: reminder.attachments?.map(url => ({
@@ -122,9 +137,12 @@ export function useMobileNotifications(): MobileNotificationService {
     }
   };
 
-  const cancelReminder = async (id: number) => {
+  const cancelReminder = async (id: string) => {
     try {
-      await LocalNotifications.cancel({ notifications: [{ id }] });
+      // Convert UUID to numeric ID to match the scheduled notification
+      const numericId = uuidToNumericId(id);
+      await LocalNotifications.cancel({ notifications: [{ id: numericId }] });
+      console.log(`Cancelled notification with ID: ${id} (numeric: ${numericId})`);
     } catch (error) {
       console.error('Error canceling notification:', error);
     }

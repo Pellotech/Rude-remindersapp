@@ -3,7 +3,16 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
-## Recent Changes (October 28, 2025)
+## Recent Changes (October 31, 2025)
+- **Native iOS/Android Notifications Fixed**: Reminders now work when app is closed!
+  - Fixed critical issue: Reminders now schedule native iOS/Android notifications using Capacitor LocalNotifications
+  - ReminderForm: Automatically schedules native notifications when reminders are created
+  - RemindersList: Cancels native notifications when reminders are deleted or completed
+  - Permissions: Requests notification permissions automatically and guides users to enable them
+  - Works for both single reminders and multi-day recurring reminders
+  - Notifications now appear as system notifications even when app is completely closed
+
+## Previous Changes (October 28, 2025)
 - **iOS App Store Preparation Completed**: Fixed all build issues and prepared app for App Store submission
   - App Icon: Generated complete AppIcon asset catalog using smiley face branding (1024x1024)
   - Build Settings: Added `-Wno-quoted-include-in-framework-header` flag to suppress Cordova header warnings

@@ -35,6 +35,8 @@ import {
 import type { Reminder } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { ShareButton } from "./ShareButton";
+import { useMobileNotifications } from "./MobileNotifications";
+import { supportsNotifications } from "@/utils/platformDetection";
 
 const rudenessLevelColors = {
   1: "bg-green-100 text-green-800",
@@ -46,7 +48,7 @@ const rudenessLevelColors = {
 
 const rudenessLevelLabels = {
   1: "Gentle",
-  2: "Firm", 
+  2: "Motivational", 
   3: "Sarcastic",
   4: "Harsh",
   5: "Savage",
@@ -58,14 +60,25 @@ export default function RemindersList() {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [previewReminder, setPreviewReminder] = useState<Reminder | null>(null);
+  const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
   });
 
   const completeReminderMutation = useMutation({
-    mutationFn: (id: string) => apiRequest("PUT", `/api/reminders/${id}/complete`),
-    onSuccess: () => {
+    mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/complete`, { method: "PUT" }),
+    onSuccess: async (_, id) => {
+      // Cancel the native notification when reminder is completed
+      if (supportsNotifications()) {
+        try {
+          await cancelNativeNotification(id);
+          console.log(`✅ Cancelled native notification for reminder ${id}`);
+        } catch (error) {
+          console.error('Failed to cancel native notification:', error);
+        }
+      }
+      
       toast({
         title: "Reminder completed!",
         description: "Great job! Keep up the good work.",
@@ -95,9 +108,19 @@ export default function RemindersList() {
 
   const deleteReminderMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/reminders/${id}`);
+      await apiRequest(`/api/reminders/${id}`, { method: "DELETE" });
     },
-    onSuccess: () => {
+    onSuccess: async (_, id) => {
+      // Cancel the native notification when reminder is deleted
+      if (supportsNotifications()) {
+        try {
+          await cancelNativeNotification(id);
+          console.log(`✅ Cancelled native notification for reminder ${id}`);
+        } catch (error) {
+          console.error('Failed to cancel native notification:', error);
+        }
+      }
+      
       toast({
         title: "Deleted!",
         description: "Reminder has been deleted.",
@@ -153,9 +176,9 @@ export default function RemindersList() {
     }
   });
 
-  const formatTimeRemaining = (scheduledFor: string) => {
+  const formatTimeRemaining = (scheduledFor: string | Date) => {
     const now = new Date();
-    const reminderTime = new Date(scheduledFor);
+    const reminderTime = typeof scheduledFor === 'string' ? new Date(scheduledFor) : scheduledFor;
     const timeDiff = reminderTime.getTime() - now.getTime();
 
     if (timeDiff < 0) {
