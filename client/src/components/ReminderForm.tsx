@@ -27,10 +27,11 @@ import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
 import { CulturalQuotesService } from "@/services/culturalQuotesService";
 import { MobileCamera } from "./MobileCamera";
-import { getPlatformInfo, supportsCamera } from "@/utils/platformDetection";
+import { getPlatformInfo, supportsCamera, supportsNotifications } from "@/utils/platformDetection";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { useMobileNotifications } from "./MobileNotifications";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -177,6 +178,7 @@ export default function ReminderForm({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { scheduleReminder: scheduleNativeNotification, requestPermissions } = useMobileNotifications();
 
   // Get user settings for simplified interface
   const { data: userSettings } = useQuery({
@@ -384,10 +386,13 @@ export default function ReminderForm({
         attachments: selectedAttachments, // Ensure attachments are included
       };
 
-      const response = await apiRequest("POST", "/api/reminders", submissionData);
+      const response = await apiRequest("/api/reminders", { 
+        method: "POST",
+        body: submissionData as any
+      });
       return response.json();
     },
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       // Handle both single reminder and multi-day reminder responses
       const isMultiDayResult = result.count && result.reminders;
 
@@ -397,6 +402,43 @@ export default function ReminderForm({
           ? `Created ${result.count} recurring reminders with AI responses and motivational quotes!`
           : `Your reminder has been created ${result.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
       });
+
+      // Schedule native iOS/Android notifications if on mobile platform
+      if (supportsNotifications()) {
+        try {
+          // Request notification permissions first
+          const hasPermission = await requestPermissions();
+          
+          if (hasPermission) {
+            // Handle both single and multi-day reminders
+            const remindersToSchedule = isMultiDayResult ? result.reminders : [result];
+            
+            for (const reminder of remindersToSchedule) {
+              await scheduleNativeNotification({
+                id: reminder.id,
+                title: reminder.title || reminder.originalMessage,
+                body: reminder.rudeMessage || reminder.originalMessage,
+                scheduledFor: new Date(reminder.scheduledFor),
+                attachments: reminder.attachments || [],
+                motivationalQuote: reminder.motivationalQuote,
+                voiceNotification: reminder.voiceNotification,
+                voiceCharacter: reminder.voiceCharacter
+              });
+            }
+            
+            console.log(`✅ Scheduled ${remindersToSchedule.length} native notification(s)`);
+          } else {
+            toast({
+              title: "Notification Permissions Required",
+              description: "Please enable notifications in Settings to receive reminders when the app is closed.",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          console.error('Failed to schedule native notifications:', error);
+          // Don't block the success flow, just log the error
+        }
+      }
 
       // Reset form while preserving user defaults
       form.reset({

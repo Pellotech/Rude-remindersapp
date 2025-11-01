@@ -1,0 +1,71 @@
+App Clip Configuration Fix Summary
+Problem
+Xcode 16+ App Clip embedding showing "Embed Without Signing" despite attempts to change it to "Embed & Sign" in the General tab.
+
+Root Cause
+Xcode's General tab UI sometimes fails to properly apply code signing settings for embedded App Clips
+
+The traditional "App Clip" selector field no longer exists in newer Xcode versions
+
+Solution Implemented
+1. Proper App Clip Target Setup
+text
+Target Requirements:
+- Bundle ID: {main_app_bundle_id}.Clip
+- Team: Same as main app
+- Signing: Automatic management enabled
+- Code Signing Identity: "Apple Development"
+2. Build Phases Configuration (CRITICAL FIX)
+Instead of relying on General → Frameworks, Libraries, and Embedded Content:
+
+In Main App Target → Build Phases:
+
+text
+- Add "Embed App Clips" phase if not present:
+  - Click "+" → "New Copy Files Phase"
+  - Rename to "Embed App Clips"
+  - Set Destination: "App Clips"
+  - Subpath: (empty)
+  - Copy only when installing: (unchecked)
+
+- Add App Clip to this phase:
+  - Click "+" in Embed App Clips section
+  - Select "{AppName} App Clip.app"
+  - VERIFY: "Code Sign On Copy" checkbox MUST be checked
+3. Verification Steps
+text
+✅ Check: "Embed App Clips" phase exists in Build Phases
+✅ Check: App Clip .app file listed in the phase
+✅ Check: "Code Sign On Copy" checkbox is CHECKED
+✅ Check: Destination = "App Clips"
+✅ Clean: Product → Clean Build Folder (Shift+Cmd+K)
+✅ Rebuild: Product → Build (Cmd+B)
+Expected Result
+App Clip properly embedded and code-signed with main app
+
+No more "Embed Without Signing" issues
+
+App Store submission ready
+
+For Replit Automation
+If building this process into Replit's iOS app generation:
+
+yaml
+app_clip_configuration:
+  - create_target: true
+  - bundle_id: "${main_app_bundle_id}.Clip"
+  - signing_inheritance: "main_app"
+  - build_phases:
+      embed_app_clips:
+        destination: "App Clips"
+        code_sign_on_copy: true
+        subpath: ""
+Testing
+Use Xcode's "Test App Clip Experience" (Product menu)
+
+Verify both main app and App Clip build without signing errors
+
+Test URL invocation locally before submission
+
+This configuration ensures App Clips are properly embedded and signed, resolving the persistent "Embed Without Signing" issue in Xcode 16+.
+

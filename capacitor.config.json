@@ -1,5 +1,5 @@
 {
-  "appId": "com.rudereminders.app",
+  "appId": "com.goosebumpsmw.rudereminders",
   "appName": "Rude Daily Reminders",
   "webDir": "client/dist",
   "server": {
