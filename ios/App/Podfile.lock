@@ -1,0 +1,100 @@
+PODS:
+  - Capacitor (7.4.2):
+    - CapacitorCordova
+  - CapacitorCamera (7.0.2):
+    - Capacitor
+  - CapacitorCommunityAdmob (7.0.3):
+    - Capacitor
+    - Google-Mobile-Ads-SDK (= 11.3.0)
+    - GoogleUserMessagingPlatform (< 3.0.0, >= 2.7.0)
+  - CapacitorCordova (7.4.2)
+  - CapacitorDevice (7.0.2):
+    - Capacitor
+  - CapacitorFilesystem (7.1.4):
+    - Capacitor
+    - IONFilesystemLib (~> 1.0.1)
+  - CapacitorLocalNotifications (7.0.2):
+    - Capacitor
+  - CapacitorNetwork (7.0.2):
+    - Capacitor
+  - CapacitorSplashScreen (7.0.2):
+    - Capacitor
+  - CapacitorStatusBar (7.0.2):
+    - Capacitor
+  - Google-Mobile-Ads-SDK (11.3.0):
+    - GoogleUserMessagingPlatform (>= 1.1)
+  - GoogleUserMessagingPlatform (2.7.0)
+  - IONFilesystemLib (1.0.1)
+  - PurchasesHybridCommon (17.6.0):
+    - RevenueCat (= 5.38.2)
+  - RevenueCat (5.38.2)
+  - RevenuecatPurchasesCapacitor (11.2.1):
+    - Capacitor
+    - PurchasesHybridCommon (= 17.6.0)
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
+  - "CapacitorCommunityAdmob (from `../../node_modules/@capacitor-community/admob`)"
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorDevice (from `../../node_modules/@capacitor/device`)"
+  - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
+  - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
+  - "CapacitorNetwork (from `../../node_modules/@capacitor/network`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "RevenuecatPurchasesCapacitor (from `../../node_modules/@revenuecat/purchases-capacitor`)"
+
+SPEC REPOS:
+  trunk:
+    - Google-Mobile-Ads-SDK
+    - GoogleUserMessagingPlatform
+    - IONFilesystemLib
+    - PurchasesHybridCommon
+    - RevenueCat
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorCamera:
+    :path: "../../node_modules/@capacitor/camera"
+  CapacitorCommunityAdmob:
+    :path: "../../node_modules/@capacitor-community/admob"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorDevice:
+    :path: "../../node_modules/@capacitor/device"
+  CapacitorFilesystem:
+    :path: "../../node_modules/@capacitor/filesystem"
+  CapacitorLocalNotifications:
+    :path: "../../node_modules/@capacitor/local-notifications"
+  CapacitorNetwork:
+    :path: "../../node_modules/@capacitor/network"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
+  RevenuecatPurchasesCapacitor:
+    :path: "../../node_modules/@revenuecat/purchases-capacitor"
+
+SPEC CHECKSUMS:
+  Capacitor: 156d98aba46ec01dde72c4bbb92fa626837cad29
+  CapacitorCamera: 6e18d54c8ab30d7dc7b8cd93d96f9b4f57e9202a
+  CapacitorCommunityAdmob: 9267ae3b473314fa65765ce4bead9a9175902ab2
+  CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
+  CapacitorDevice: a50a45f0d075e55e2392c7a4be5404d4f69515de
+  CapacitorFilesystem: ac0a386949ed6c295a3dffa129ecd26b881ae5be
+  CapacitorLocalNotifications: 0964df8c14ec51aadf2bb4fd6d55fdb1ccfd6721
+  CapacitorNetwork: 9b9eaeb417ec0ffa22e2bc33a4c71df10e1d6f06
+  CapacitorSplashScreen: 8d6c8cb0542a8e81585c593815db8785ed8ce454
+  CapacitorStatusBar: 5526833b87fa9c96a2a90c1322bb1f663c04505f
+  Google-Mobile-Ads-SDK: 301a16c461c331ba34ff4dab40a22ab7c147af61
+  GoogleUserMessagingPlatform: a8b56893477f67212fbc8411c139e61d463349f5
+  IONFilesystemLib: 89258b8e3e85465da93127d25d7ce37f977e8a6f
+  PurchasesHybridCommon: 3e27aec7bccba3d3d34cd66a7033ba9b268caa5e
+  RevenueCat: f6b7c7e55f548a2bf304a3abbed0cc2447364427
+  RevenuecatPurchasesCapacitor: 8e063564e6c44a23642d6080dde6299180f94c07
+
+PODFILE CHECKSUM: 32811bf39d50fd459d3817597f727f0d96a0aacc
+
+COCOAPODS: 1.16.2
