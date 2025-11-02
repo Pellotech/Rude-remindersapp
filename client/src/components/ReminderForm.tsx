@@ -404,16 +404,28 @@ export default function ReminderForm({
       });
 
       // Schedule native iOS/Android notifications if on mobile platform
-      if (supportsNotifications()) {
+      const notificationsSupported = supportsNotifications();
+      console.log('🔔 Notifications supported:', notificationsSupported);
+      
+      if (notificationsSupported) {
         try {
           // Request notification permissions first
+          console.log('📱 Requesting notification permissions...');
           const hasPermission = await requestPermissions();
+          console.log('🔐 Permission granted:', hasPermission);
           
           if (hasPermission) {
             // Handle both single and multi-day reminders
             const remindersToSchedule = isMultiDayResult ? result.reminders : [result];
+            console.log('📋 Reminders to schedule:', remindersToSchedule.length);
             
             for (const reminder of remindersToSchedule) {
+              console.log('⏰ Scheduling notification for:', {
+                id: reminder.id,
+                title: reminder.title || reminder.originalMessage,
+                scheduledFor: new Date(reminder.scheduledFor)
+              });
+              
               await scheduleNativeNotification({
                 id: reminder.id,
                 title: reminder.title || reminder.originalMessage,
@@ -428,6 +440,7 @@ export default function ReminderForm({
             
             console.log(`✅ Scheduled ${remindersToSchedule.length} native notification(s)`);
           } else {
+            console.warn('⚠️ No notification permission - showing toast');
             toast({
               title: "Notification Permissions Required",
               description: "Please enable notifications in Settings to receive reminders when the app is closed.",
@@ -435,9 +448,11 @@ export default function ReminderForm({
             });
           }
         } catch (error) {
-          console.error('Failed to schedule native notifications:', error);
+          console.error('❌ Failed to schedule native notifications:', error);
           // Don't block the success flow, just log the error
         }
+      } else {
+        console.log('ℹ️ Notifications not supported on this platform');
       }
 
       // Reset form while preserving user defaults
