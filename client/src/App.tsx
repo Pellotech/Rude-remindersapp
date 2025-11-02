@@ -20,6 +20,8 @@ import NotFound from "@/pages/not-found";
 import { DevTools } from "@/components/DevTools";
 import { useEffect, useState } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
+import { Capacitor } from "@capacitor/core";
+import { LocalNotifications } from "@capacitor/local-notifications";
 
 function HomeRouter() {
   const { user, isLoading } = useAuth();
@@ -99,6 +101,25 @@ function App() {
   useEffect(() => {
     // Initialize RevenueCat when app starts
     revenueCatService.initialize().catch(console.error);
+
+    // Request notification permissions on mobile app launch
+    const requestNotificationPermissions = async () => {
+      if (Capacitor.isNativePlatform()) {
+        try {
+          console.log('📱 Mobile app detected - requesting notification permissions...');
+          const permission = await LocalNotifications.requestPermissions();
+          if (permission.display === 'granted') {
+            console.log('✅ Notification permissions granted!');
+          } else {
+            console.warn('⚠️ Notification permissions denied:', permission.display);
+          }
+        } catch (error) {
+          console.error('❌ Error requesting notification permissions:', error);
+        }
+      }
+    };
+
+    requestNotificationPermissions();
   }, []);
 
   return (
