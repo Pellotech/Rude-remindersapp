@@ -1,0 +1,43 @@
+⚡️  Loading app at https://b5ac04f4-914d-4b4c-9d0e-8469759b5af1-00-qkc03alh73v0.janeway.replit.dev...
+⚡️  [debug] - [vite] connecting...
+⚡️  WebView loaded
+⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+⚡️  To Native ->  LocalNotifications requestPermissions 74678698
+⚡️  To Native ->  Purchases configure -1
+⚡️  TO JS {"display":"granted"}
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [log] - ✅ Notification permissions granted!
+⚡️  To Native ->  LocalNotifications addListener 74678699
+⚡️  To Native ->  LocalNotifications addListener 74678700
+⚡️  [log] - Connected to WebSocket
+⚡️  To Native ->  Purchases logIn 74678701
+⚡️  TO JS {"created":false,"customerInfo":{"allPurchasedProductIdentifiers":[],"latestExpirationDateMillis":null,"subscriptionsByProductIdentifier":{},"originalPurchaseDateMillis":null,"allExpirationDatesMillis":{},"firstSeen":"2025-10-19T14:07:16Z","originalPurchas
+⚡️  [log] - RevenueCat user logged in: dev-user-001
+⚡️  [log] - RevenueCat initialized successfully
+⚡️  To Native ->  LocalNotifications ⚡️  [log] - 🧪 TEST: Requesting permissions...
+⚡️  TO JS {"display":"granted"}
+⚡️  To Native ->  LocalNotifications schedule 74678703
+⚡️  [log] - 🧪 TEST: Permission result: {"display":"granted"}
+⚡️  [log] - 🧪 TEST: Scheduling notification for: "2025-11-05T04:14:28.790Z"
+⚡️  TO JS {"notifications":[{"id":999999}]}
+⚡️  [log] - 🧪 TEST: Notification scheduled successfully!
+⚡️  TO JS {"schedule":{"at":"2025-11-05T04:14:28Z"},"body":"If you see this, notifications work!","actionTypeId":"","id":999999,"sound":"default","extra":{},"attachments":[],"title":"TEST NOTIFICATION"}
+⚡️  [log] - Notification received while app is open: {"schedule":{"at":"2025-11-05T04:14:28Z"},"body":"If you see this, notifications work!","actionTypeId":"","id":999999,"sound":"default","extra":{},"attachments":[],"title":"TEST NOTIFICATION"}
+⚡️  TO JS {"actionId":"tap","notification":{"schedule":{"at":"2025-11-05T04:14:28Z"},"body":"If you see this, notifications work!","actionTypeId":"","id":999999,"sound":"default","extra":{},"attachments":[],"title":"TEST NOTIFICATION"}}
+⚡️  [log] - Notification action performed: {"actionId":"tap","notification":{"schedule":{"at":"2025-11-05T04:14:28Z"},"body":"If you see this, notifications work!","actionTypeId":"","id":999999,"sound":"default","extra":{},"attachments":[],"title":"TEST NOTIFICATION"}}
+⚡️  To Native ->  LocalNotifications requestPermissions 74678704
+⚡️  [log] - 🧪 TEST: Requesting permissions...
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - 🧪 TEST: Permission result: {"display":"granted"}
+⚡️  To Native ->  LocalNotifications schedule ⚡️  [log] - 🧪 TEST: Scheduling notification for: "2025-11-05T04:14:49.805Z"
+⚡️  TO JS {"notifications":[{"id":999999}]}
+⚡️  [log] - 🧪 TEST: Notification scheduled successfully!
+⚡️  [log] - 🧪 TEST: Requesting permissions...
+⚡️  To Native ->  LocalNotifications requestPermissions 74678706
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - 🧪 TEST: Permission result: {"display":"granted"}
+⚡️  To Native ->  LocalNotifications schedule 74678707
+⚡️  [log] - 🧪 TEST: Scheduling notification for: "2025-11-05T04:15:11.112Z"
+⚡️  TO JS {"notifications":[{"id":999999}]}
+⚡️  [log] - 🧪 TEST: Notification scheduled successfully!
