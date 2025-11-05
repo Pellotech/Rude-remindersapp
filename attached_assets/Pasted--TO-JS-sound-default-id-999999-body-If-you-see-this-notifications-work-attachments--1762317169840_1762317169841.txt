@@ -1,0 +1,18 @@
+⚡️  TO JS {"sound":"default","id":999999,"body":"If you see this, notifications work!","attachments":[],"schedule":{"at":"2025-11-05T04:25:04Z"},"actionTypeId":"","extra":{},"title":"TEST NOTIFICATION"}
+⚡️  [log] - Notification received while app is open: {"sound":"default","id":999999,"body":"If you see this, notifications work!","attachments":[],"schedule":{"at":"2025-11-05T04:25:04Z"},"actionTypeId":"","extra":{},"title":"TEST NOTIFICATION"}
+⚡️  To Native ->  LocalNotifications requestPermissions 39831466
+⚡️  [log] - 🔔 Notifications supported: true
+⚡️  [log] - 📱 Requesting notification permissions...
+⚡️  TO JS {"display":"granted"}
+⚡️  To Native ->  LocalNotifications requestPermissions 39831467
+⚡️  [log] - 🔐 Permission granted: true
+⚡️  [log] - 📋 Reminders to schedule: 1
+⚡️  [log] - ⏰ Scheduling notification for: {"id":"58c2877e-ab8a-4024-88f5-a8e9172c6b2a","title":"Call exterminator ","scheduledFor":"2025-11-05T04:30:00.000Z"}
+⚡️  TO JS {"display":"granted"}
+⚡️  To Native ->  LocalNotifications schedule 39831468
+⚡️  TO JS {"notifications":[{"id":322689663}]}
+⚡️  [log] - ✅ Scheduled 1 native notification(s)
+⚡️  TO JS {"notification":{"title":"Call exterminator ","attachments":[],"id":322689663,"schedule":{"at":"2025-11-05T04:30:00Z"},"actionTypeId":"OPEN_REMINDER","sound":"beep.wav","extra":{"reminderId":"58c2877e-ab8a-4024-88f5-a8e9172c6b2a","voiceCharacter":"robot","
+⚡️  [log] - Notification action performed: {"notification":{"title":"Call exterminator ","attachments":[],"id":322689663,"schedule":{"at":"2025-11-05T04:30:00Z"},"actionTypeId":"OPEN_REMINDER","sound":"beep.wav","extra":{"reminderId":"58c2877e-ab8a-4024-88f5-a8e9172c6b2a","voiceCharacter":"robot","shouldPlayVoice":true,"hasAttachments":false,"hasMotivation":false},"body":"Time to conquer those pesky workday pests—tackle this call and start your morning with a win!"},"actionId":"tap"}
+⚡️  [log] - 🔊 Playing voice notification with character: robot
+⚡️  [warn] - Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
