@@ -1,0 +1,51 @@
+DEBUG: ℹ️ applicationWillEnterForeground
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/dev-user-001/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/dev-user-001/offerings'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/dev-user-001/offerings' (304)
+ERROR: 🍎‼️ Error fetching offerings - The operation couldn’t be completed. (RevenueCat.OfferingsManager.Error error 1.)
+There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.
+More information: https://rev.cat/why-are-offerings-empty
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/dev-user-001/offerings, 0 requests left in the queue
+⚡️  To Native ->  LocalNotifications removeAllListeners 41143901
+⚡️  To Native ->  LocalNotifications addListener 41143902
+⚡️  To Native ->  LocalNotifications addListener 41143903
+⚡️  TO JS undefined
+Snapshotting a view (0x12c670380, UIKeyboardImpl) that has not been rendered at least once requires afterScreenUpdates:YES.
+Query for com.apple.MobileAsset.VoiceServicesVocalizerVoice failed: 2
+#FactoryInstall Unable to query results, error: 5
+Query for com.apple.MobileAsset.VoiceServicesVocalizerVoice failed: 2
+Could not parse SSML: Could not generate SSML
+Query for com.apple.MobileAsset.VoiceServices.GryphonVoice failed: 2
+Query for com.apple.MobileAsset.VoiceServices.GryphonVoice failed: 2
+Query for com.apple.MobileAsset.VoiceServices.GryphonVoice failed: 2
+Query for com.apple.MobileAsset.VoiceServices.GryphonVoice failed: 2
+Query for com.apple.MobileAsset.VoiceServices.GryphonVoice failed: 2
+Query for com.apple.MobileAsset.VoiceServices.GryphonVoice failed: 2
+          IPCAUClient.cpp:139   IPCAUClient: can't connect to server (-66748)
+⚡️  [warn] - Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+Could not parse SSML: Could not generate SSML
+Interrupted 0x12c47b3c0 _connection 0x118e6ebc0 _server 0x0
+DEBUG: ℹ️ applicationWillEnterForeground
+DEBUG: ℹ️ CustomerInfo cache is stale, updating from network in foreground.
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/dev-user-001/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/dev-user-001/offerings'
+Error enumerating unfinished transactions: Error Domain=ASDErrorDomain Code=509 "No active account" UserInfo={NSLocalizedDescription=No active account}
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/dev-user-001/offerings' (304)
+ERROR: 🍎‼️ Error fetching offerings - The operation couldn’t be completed. (RevenueCat.OfferingsManager.Error error 1.)
+There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.
+More information: https://rev.cat/why-are-offerings-empty
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/dev-user-001/offerings, 0 requests left in the queue
+DEBUG: ℹ️ GetCustomerInfoOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/dev-user-001
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/dev-user-001'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/dev-user-001' (304)
+DEBUG: 😻 CustomerInfo updated from network.
+DEBUG: ℹ️ GetCustomerInfoOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/dev-user-001, 0 requests left in the queue
+Could not parse SSML: Could not generate SSML
