@@ -61,8 +61,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: SettingsData) => {
-      const response = await apiRequest("PATCH", "/api/user/settings", data);
-      return response.json();
+      return await apiRequest("/api/user/settings", { method: 'PATCH', body: data });
     },
     onSuccess: () => {
       toast({

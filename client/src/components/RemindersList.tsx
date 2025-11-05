@@ -67,7 +67,7 @@ export default function RemindersList() {
   });
 
   const completeReminderMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/complete`, { method: "PUT" }),
+    mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" }),
     onSuccess: async (_, id) => {
       // Cancel the native notification when reminder is completed
       if (supportsNotifications()) {

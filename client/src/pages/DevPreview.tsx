@@ -43,8 +43,7 @@ export default function DevPreview() {
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ['/api/reminders'],
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/reminders');
-      return response.json();
+      return await apiRequest('/api/reminders', { method: 'GET' });
     },
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
@@ -62,7 +61,7 @@ export default function DevPreview() {
       if (!reminder.rudeMessage || reminder.rudeMessage === "") {
         try {
           console.log(`Auto-generating missing AI response for reminder: ${reminder.originalMessage}`);
-          await apiRequest('POST', `/api/reminders/${reminder.id}/generate-response`);
+          await apiRequest(`/api/reminders/${reminder.id}/generate-response`, { method: 'POST' });
         } catch (error) {
           console.error(`Failed to generate response for reminder ${reminder.id}:`, error);
         }

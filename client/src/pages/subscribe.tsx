@@ -153,8 +153,7 @@ export default function Subscribe() {
     setError("");
     
     // Fetch current subscription status
-    apiRequest("GET", "/api/customer-info")
-      .then((res) => res.json())
+    apiRequest("/api/customer-info", { method: 'GET' })
       .then((data) => {
         if (data.error) {
           throw new Error(data.error.message);

@@ -207,7 +207,7 @@ export default function HomeFree() {
     if (!currentReminder) return;
 
     try {
-      await apiRequest('POST', `/api/reminders/${currentReminder.id}/complete`);
+      await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
       setShowRichNotification(false);
       setCurrentReminder(null);
       toast({

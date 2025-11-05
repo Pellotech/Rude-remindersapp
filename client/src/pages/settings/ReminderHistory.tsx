@@ -64,8 +64,7 @@ export default function ReminderHistory() {
 
   const completeReminderMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await apiRequest("PATCH", `/api/reminders/${id}/complete`);
-      return response.json();
+      return await apiRequest(`/api/reminders/${id}/complete`, { method: 'PATCH' });
     },
     onSuccess: () => {
       toast({
@@ -97,7 +96,7 @@ export default function ReminderHistory() {
 
   const deleteReminderMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest("DELETE", `/api/reminders/${id}`);
+      await apiRequest(`/api/reminders/${id}`, { method: 'DELETE' });
     },
     onSuccess: () => {
       toast({
