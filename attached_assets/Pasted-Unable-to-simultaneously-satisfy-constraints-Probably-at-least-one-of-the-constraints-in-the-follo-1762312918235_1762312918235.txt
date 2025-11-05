@@ -1,0 +1,93 @@
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+	(Note: If you're seeing NSAutoresizingMaskLayoutConstraints that you don't understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
+(
+    "<NSAutoresizingMaskLayoutConstraint:0x129e9c6e0 h=--& v=--& _UIToolbarContentView:0x129c28500.height == 0   (active)>",
+    "<NSLayoutConstraint:0x124da7930 V:|-(0)-[_UIButtonBarStackView:0x129d1c540]   (active, names: '|':_UIToolbarContentView:0x129c28500 )>",
+    "<NSLayoutConstraint:0x124da7890 _UIButtonBarStackView:0x129d1c540.bottom == _UIToolbarContentView:0x129c28500.bottom   (active)>",
+    "<NSLayoutConstraint:0x129e9cb40 UIImageView:0x124e22800.centerY == _UIModernBarButton:0x129e49800.centerY   (active)>",
+    "<NSLayoutConstraint:0x129e3b430 'IB_Baseline_Baseline' _UIModernBarButton:0x129e49800.lastBaseline == UILayoutGuide:0x129d09260'UIViewLayoutMarginsGuide'.bottom   (active)>",
+    "<NSLayoutConstraint:0x129e3b480 'IB_Top_Top' V:|-(>=0)-[_UIModernBarButton:0x129e49800]   (active, names: '|':_UIButtonBarButton:0x124e22a00 )>",
+    "<NSLayoutConstraint:0x129e3b570 'UIButtonBar.maximumAlignmentSize' _UIButtonBarButton:0x124e22a00.height == UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide'.height   (active)>",
+    "<NSLayoutConstraint:0x124da64e0 'UIView-bottomMargin-guide-constraint' V:[UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide']-(0)-|   (active, names: '|':_UIButtonBarStackView:0x129d1c540 )>",
+    "<NSLayoutConstraint:0x129e3b390 'UIView-bottomMargin-guide-constraint' V:[UILayoutGuide:0x129d09260'UIViewLayoutMarginsGuide']-(11)-|   (active, names: '|':_UIButtonBarButton:0x124e22a00 )>",
+    "<NSLayoutConstraint:0x124da6490 'UIView-topMargin-guide-constraint' V:|-(0)-[UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide']   (active, names: '|':_UIButtonBarStackView:0x129d1c540 )>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x129e9cb40 UIImageView:0x124e22800.centerY == _UIModernBarButton:0x129e49800.centerY   (active)>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+	(Note: If you're seeing NSAutoresizingMaskLayoutConstraints that you don't understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
+(
+    "<NSAutoresizingMaskLayoutConstraint:0x129e9c6e0 h=--& v=--& _UIToolbarContentView:0x129c28500.height == 0   (active)>",
+    "<NSLayoutConstraint:0x124da7930 V:|-(0)-[_UIButtonBarStackView:0x129d1c540]   (active, names: '|':_UIToolbarContentView:0x129c28500 )>",
+    "<NSLayoutConstraint:0x124da7890 _UIButtonBarStackView:0x129d1c540.bottom == _UIToolbarContentView:0x129c28500.bottom   (active)>",
+    "<NSLayoutConstraint:0x129e9cd20 UIImageView:0x124e22400.centerY == _UIModernBarButton:0x129e49b00.centerY   (active)>",
+    "<NSLayoutConstraint:0x129e3b980 'IB_Baseline_Baseline' _UIModernBarButton:0x129e49b00.lastBaseline == UILayoutGuide:0x129d09340'UIViewLayoutMarginsGuide'.bottom   (active)>",
+    "<NSLayoutConstraint:0x129e3b9d0 'IB_Top_Top' V:|-(>=0)-[_UIModernBarButton:0x129e49b00]   (active, names: '|':_UIButtonBarButton:0x124e22600 )>",
+    "<NSLayoutConstraint:0x129e3bac0 'UIButtonBar.maximumAlignmentSize' _UIButtonBarButton:0x124e22600.height == UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide'.height   (active)>",
+    "<NSLayoutConstraint:0x124da64e0 'UIView-bottomMargin-guide-constraint' V:[UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide']-(0)-|   (active, names: '|':_UIButtonBarStackView:0x129d1c540 )>",
+    "<NSLayoutConstraint:0x129e3b8e0 'UIView-bottomMargin-guide-constraint' V:[UILayoutGuide:0x129d09340'UIViewLayoutMarginsGuide']-(11)-|   (active, names: '|':_UIButtonBarButton:0x124e22600 )>",
+    "<NSLayoutConstraint:0x124da6490 'UIView-topMargin-guide-constraint' V:|-(0)-[UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide']   (active, names: '|':_UIButtonBarStackView:0x129d1c540 )>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x129e9cd20 UIImageView:0x124e22400.centerY == _UIModernBarButton:0x129e49b00.centerY   (active)>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+	(Note: If you're seeing NSAutoresizingMaskLayoutConstraints that you don't understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints) 
+(
+    "<NSAutoresizingMaskLayoutConstraint:0x129e9c6e0 h=--& v=--& _UIToolbarContentView:0x129c28500.height == 0   (active)>",
+    "<NSLayoutConstraint:0x124da7930 V:|-(0)-[_UIButtonBarStackView:0x129d1c540]   (active, names: '|':_UIToolbarContentView:0x129c28500 )>",
+    "<NSLayoutConstraint:0x124da7890 _UIButtonBarStackView:0x129d1c540.bottom == _UIToolbarContentView:0x129c28500.bottom   (active)>",
+    "<NSLayoutConstraint:0x129e9cf00 UIButtonLabel:0x124c67480.centerY == _UIModernBarButton:0x129e49e00.centerY + 1.5   (active)>",
+    "<NSLayoutConstraint:0x129e3be30 'TB_Baseline_Baseline' _UIModernBarButton:0x129e49e00.lastBaseline == UILayoutGuide:0x129d09420'UIViewLayoutMarginsGuide'.bottom   (active)>",
+    "<NSLayoutConstraint:0x129e3be80 'TB_Top_Top' V:|-(>=0)-[_UIModernBarButton:0x129e49e00]   (active, names: '|':_UIButtonBarButton:0x124e21e00 )>",
+    "<NSLayoutConstraint:0x129e3bf70 'UIButtonBar.maximumAlignmentSize' _UIButtonBarButton:0x124e21e00.height == UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide'.height   (active)>",
+    "<NSLayoutConstraint:0x124da64e0 'UIView-bottomMargin-guide-constraint' V:[UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide']-(0)-|   (active, names: '|':_UIButtonBarStackView:0x129d1c540 )>",
+    "<NSLayoutConstraint:0x129e3bd90 'UIView-bottomMargin-guide-constraint' V:[UILayoutGuide:0x129d09420'UIViewLayoutMarginsGuide']-(11)-|   (active, names: '|':_UIButtonBarButton:0x124e21e00 )>",
+    "<NSLayoutConstraint:0x124da6490 'UIView-topMargin-guide-constraint' V:|-(0)-[UILayoutGuide:0x129d082a0'UIViewLayoutMarginsGuide']   (active, names: '|':_UIButtonBarStackView:0x129d1c540 )>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x129e9cf00 UIButtonLabel:0x124c67480.centerY == _UIModernBarButton:0x129e49e00.centerY + 1.5   (active)>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 3905FB68-0B34-483B-BE86-49B0D1E04CD7
+App is being debugged, do not track this hang
+Hang detected: 0.32s (debugger attached, not reporting)
+App is being debugged, do not track this hang
+Hang detected: 0.96s (debugger attached, not reporting)
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+[C:4] Error received: Connection interrupted.
+[C:4-1] Error received: Connection interrupted.
+-[RTIInputSystemClient _configureConnection:withMachName:]_block_invoke  Client connection to service was interrupted: <NSXPCConnection: 0x124ca7d40> connection to service with pid -1 named (null)
+Snapshotting a view (0x124c64700, UIKeyboardImpl) that is not in a visible window requires afterScreenUpdates:YES.
