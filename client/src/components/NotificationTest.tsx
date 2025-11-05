@@ -38,7 +38,7 @@ export function NotificationTest() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 left-4 z-50">
       <Button 
         onClick={testNotification}
         className="bg-purple-600 hover:bg-purple-700"
