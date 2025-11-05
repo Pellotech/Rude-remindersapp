@@ -386,11 +386,10 @@ export default function ReminderForm({
         attachments: selectedAttachments, // Ensure attachments are included
       };
 
-      const response = await apiRequest("/api/reminders", { 
+      return await apiRequest("/api/reminders", { 
         method: "POST",
         body: submissionData as any
       });
-      return response.json();
     },
     onSuccess: async (result) => {
       // Handle both single reminder and multi-day reminder responses
