@@ -29,6 +29,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
 import { RewardAdBanner } from "@/components/RewardAdBanner";
+import { NotificationTest } from "@/components/NotificationTest";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -618,9 +619,12 @@ export default function HomeFree() {
       />
 
       {/* Floating Help Button */}
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-4 right-4 z-50 flex gap-2">
         <HelpMenu />
       </div>
+
+      {/* Test Notification Button (temporary for debugging) */}
+      <NotificationTest />
     </div>
   );
 }

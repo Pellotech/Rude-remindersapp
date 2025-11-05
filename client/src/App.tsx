@@ -107,24 +107,15 @@ function App() {
       if (Capacitor.isNativePlatform()) {
         try {
           console.log('📱 Mobile app detected - requesting notification permissions...');
-          
-          // VISUAL TEST - This will prove the new code is running
-          alert('🔔 NEW CODE RUNNING! About to request permissions...');
-          
           const permission = await LocalNotifications.requestPermissions();
           if (permission.display === 'granted') {
             console.log('✅ Notification permissions granted!');
-            alert('✅ Permission GRANTED!');
           } else {
             console.warn('⚠️ Notification permissions denied:', permission.display);
-            alert('⚠️ Permission DENIED: ' + permission.display);
           }
         } catch (error) {
           console.error('❌ Error requesting notification permissions:', error);
-          alert('❌ ERROR: ' + error);
         }
-      } else {
-        alert('ℹ️ Not on mobile platform - no notifications');
       }
     };
 
