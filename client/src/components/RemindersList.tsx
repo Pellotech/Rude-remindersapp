@@ -37,6 +37,7 @@ import { cn } from "@/lib/utils";
 import { ShareButton } from "./ShareButton";
 import { useMobileNotifications } from "./MobileNotifications";
 import { supportsNotifications } from "@/utils/platformDetection";
+import { SwipeableReminderCard } from "./SwipeableReminderCard";
 
 const rudenessLevelColors = {
   1: "bg-green-100 text-green-800",
@@ -285,102 +286,84 @@ export default function RemindersList() {
             );
 
             const renderReminder = (reminder: Reminder) => (
-              <Card key={reminder.id} className={cn(
-                "transition-all duration-200 hover:shadow-md w-full max-w-full",
-                reminder.completed && "opacity-60"
-              )}>
-                <CardContent className="p-4 w-full overflow-x-hidden">
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <h3 className="text-sm sm:text-base font-medium text-gray-900 break-words">
-                            {reminder.title}
-                          </h3>
-                          <Badge 
-                            className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
-                          >
-                            {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                          </Badge>
-                          {reminder.completed && (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
-                              Completed
+              <SwipeableReminderCard
+                key={reminder.id}
+                onDelete={() => deleteReminderMutation.mutate(reminder.id)}
+                disabled={deleteReminderMutation.isPending}
+              >
+                <Card className={cn(
+                  "transition-all duration-200 hover:shadow-md w-full max-w-full",
+                  reminder.completed && "opacity-60"
+                )}>
+                  <CardContent className="p-4 w-full overflow-x-hidden">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 break-words">
+                              {reminder.title}
+                            </h3>
+                            <Badge 
+                              className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
+                            >
+                              {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
                             </Badge>
-                          )}
+                            {reminder.completed && (
+                              <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
+                                Completed
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1 mb-2">
+                            {reminder.browserNotification && (
+                              <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                            )}
+                            {reminder.voiceNotification && (
+                              <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                            )}
+                            {reminder.emailNotification && (
+                              <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                            )}
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-1 mb-2">
-                          {reminder.browserNotification && (
-                            <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                          )}
-                          {reminder.voiceNotification && (
-                            <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                          )}
-                          {reminder.emailNotification && (
-                            <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {!reminder.completed && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
+                              onClick={() => completeReminderMutation.mutate(reminder.id)}
+                              disabled={completeReminderMutation.isPending}
+                              data-testid={`button-complete-${reminder.id}`}
+                            >
+                              <Check className="h-3 w-3" />
+                            </Button>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
-                                    onClick={() => {
-                                      // TODO: Implement edit functionality
-                                      toast({
-                                        title: "Coming Soon",
-                                        description: "Edit functionality will be added soon.",
-                                      });
-                                    }}
-                                  >
-                                    <Edit className="h-3 w-3" />
-                                  </Button>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 break-words">
+                        "{reminder.originalMessage}"
+                      </p>
 
-                                  {!reminder.completed && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
-                                      onClick={() => completeReminderMutation.mutate(reminder.id)}
-                                      disabled={completeReminderMutation.isPending}
-                                    >
-                                      <Check className="h-3 w-3" />
-                                    </Button>
-                                  )}
-
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-gray-400 hover:text-red-600 h-8 w-8 p-0"
-                                    onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                                    disabled={deleteReminderMutation.isPending}
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </Button>
-                                </div>
+                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 flex-wrap">
+                        <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
+                        <span className="break-all">
+                          {new Date(reminder.scheduledFor).toLocaleString()}
+                        </span>
+                        {!reminder.completed && (
+                          <>
+                            <span className="mx-2 flex-shrink-0">•</span>
+                            <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
-
-                    <p className="text-sm text-gray-600 break-words">
-                      "{reminder.originalMessage}"
-                    </p>
-
-                    <div className="flex items-center text-xs text-gray-500 flex-wrap">
-                      <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
-                      <span className="break-all">
-                        {new Date(reminder.scheduledFor).toLocaleString()}
-                      </span>
-                      {!reminder.completed && (
-                        <>
-                          <span className="mx-2 flex-shrink-0">•</span>
-                          <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </SwipeableReminderCard>
             );
 
             return (
@@ -401,123 +384,95 @@ export default function RemindersList() {
                     </div>
                     <div className="max-h-96 overflow-y-auto space-y-3 border border-red-200 rounded-lg p-3 bg-red-50">
                       {overdueReminders.map((reminder: Reminder) => (
-                        <Card key={reminder.id} className={cn(
-                          "transition-all duration-200 hover:shadow-md w-full max-w-full",
-                          reminder.completed && "opacity-60"
-                        )}>
-                          <CardContent className="p-4 w-full overflow-x-hidden">
-                            <div className="space-y-3">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                                    <h3 className="text-sm sm:text-base font-medium text-gray-900 break-words">
-                                      {reminder.title}
-                                    </h3>
-                                    <Badge 
-                                      className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
-                                    >
-                                      {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                                    </Badge>
-                                    {reminder.completed && (
-                                      <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
-                                        Completed
+                        <SwipeableReminderCard
+                          key={reminder.id}
+                          onDelete={() => {
+                            deleteReminderMutation.mutate(reminder.id);
+                            toast({
+                              title: "Deleted",
+                              description: "Reminder removed.",
+                            });
+                          }}
+                          disabled={deleteReminderMutation.isPending}
+                        >
+                          <Card className={cn(
+                            "transition-all duration-200 hover:shadow-md w-full max-w-full",
+                            reminder.completed && "opacity-60"
+                          )}>
+                            <CardContent className="p-4 w-full overflow-x-hidden">
+                              <div className="space-y-3">
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                                      <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 break-words">
+                                        {reminder.title}
+                                      </h3>
+                                      <Badge 
+                                        className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0`}
+                                      >
+                                        {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
                                       </Badge>
-                                    )}
+                                      {reminder.completed && (
+                                        <Badge variant="outline" className="bg-green-50 text-green-700 text-xs flex-shrink-0">
+                                          Completed
+                                        </Badge>
+                                      )}
+                                    </div>
+
+                                    <div className="flex items-center gap-1 mb-2">
+                                      {reminder.browserNotification && (
+                                        <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                                      )}
+                                      {reminder.voiceNotification && (
+                                        <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                                      )}
+                                      {reminder.emailNotification && (
+                                        <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
+                                      )}
+                                    </div>
                                   </div>
 
-                                  <div className="flex items-center gap-1 mb-2">
-                                    {reminder.browserNotification && (
-                                      <Bell className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                                    )}
-                                    {reminder.voiceNotification && (
-                                      <Volume2 className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                                    )}
-                                    {reminder.emailNotification && (
-                                      <Mail className="text-gray-400 h-3 w-3 flex-shrink-0" />
-                                    )}
+                                  <div className="flex items-center gap-1 flex-shrink-0">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-green-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
+                                      onClick={() => {
+                                        completeReminderMutation.mutate(reminder.id);
+                                        toast({
+                                          title: "Added to accomplishments! 🎉",
+                                          description: "Building that mountain of accomplishments!",
+                                        });
+                                      }}
+                                      disabled={completeReminderMutation.isPending}
+                                      title="Mark as accomplished"
+                                      data-testid={`button-accomplish-${reminder.id}`}
+                                    >
+                                      <Check className="h-4 w-4" />
+                                    </Button>
                                   </div>
                                 </div>
 
-                                <div className="flex items-center gap-1 flex-shrink-0">
-                                  {/* Accomplishment tracking buttons for overdue items */}
-                                  <ShareButton
-                                    title={`Check out my reminder: ${reminder.title}`}
-                                    message={`Working on staying accountable with this reminder: "${reminder.originalMessage}". Using Rude Reminders to get things done!`}
-                                    hashtags={["RudeReminders", "Productivity", "Goals", "Accountability"]}
-                                    className="h-8 w-8 p-0"
-                                    iconOnly={true}
-                                  />
+                                <p className="text-sm text-gray-600 dark:text-gray-300 break-words">
+                                  "{reminder.originalMessage}"
+                                </p>
 
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-green-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
-                                    onClick={() => {
-                                      completeReminderMutation.mutate(reminder.id);
-                                      toast({
-                                        title: "Added to accomplishments! 🎉",
-                                        description: "Building that mountain of accomplishments!",
-                                      });
-                                    }}
-                                    disabled={completeReminderMutation.isPending}
-                                    title="Mark as accomplished"
-                                  >
-                                    <Check className="h-4 w-4" />
-                                  </Button>
-
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
-                                    onClick={() => {
-                                      deleteReminderMutation.mutate(reminder.id);
-                                      toast({
-                                        title: "Added to disappointments 😔",
-                                        description: "Another brick in the wall of regret...",
-                                      });
-                                    }}
-                                    disabled={deleteReminderMutation.isPending}
-                                    title="Mark as not accomplished"
-                                  >
-                                    ❌
-                                  </Button>
-
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-gray-400 hover:text-gray-600 h-8 w-8 p-0"
-                                    onClick={() => {
-                                      // TODO: Implement edit functionality
-                                      toast({
-                                        title: "Coming Soon",
-                                        description: "Edit functionality will be added soon.",
-                                      });
-                                    }}
-                                  >
-                                    <Edit className="h-3 w-3" />
-                                  </Button>
+                                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 flex-wrap">
+                                  <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
+                                  <span className="break-all">
+                                    {new Date(reminder.scheduledFor).toLocaleString()}
+                                  </span>
+                                  {!reminder.completed && (
+                                    <>
+                                      <span className="mx-2 flex-shrink-0">•</span>
+                                      <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
+                                    </>
+                                  )}
                                 </div>
                               </div>
-
-                              <p className="text-sm text-gray-600 break-words">
-                                "{reminder.originalMessage}"
-                              </p>
-
-                              <div className="flex items-center text-xs text-gray-500 flex-wrap">
-                                <Clock className="mr-1 h-3 w-3 flex-shrink-0" />
-                                <span className="break-all">
-                                  {new Date(reminder.scheduledFor).toLocaleString()}
-                                </span>
-                                {!reminder.completed && (
-                                  <>
-                                    <span className="mx-2 flex-shrink-0">•</span>
-                                    <span className="flex-shrink-0">{formatTimeRemaining(reminder.scheduledFor)}</span>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                            </CardContent>
+                          </Card>
+                        </SwipeableReminderCard>
                       ))}
                     </div>
                   </div>
