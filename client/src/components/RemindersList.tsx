@@ -386,13 +386,7 @@ export default function RemindersList() {
                       {overdueReminders.map((reminder: Reminder) => (
                         <SwipeableReminderCard
                           key={reminder.id}
-                          onDelete={() => {
-                            deleteReminderMutation.mutate(reminder.id);
-                            toast({
-                              title: "Deleted",
-                              description: "Reminder removed.",
-                            });
-                          }}
+                          onDelete={() => deleteReminderMutation.mutate(reminder.id)}
                           disabled={deleteReminderMutation.isPending}
                         >
                           <Card className={cn(

@@ -1,4 +1,4 @@
-import { useState, useRef, TouchEvent } from "react";
+import { useState, useRef, PointerEvent as ReactPointerEvent } from "react";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,23 +11,27 @@ interface SwipeableReminderCardProps {
 export function SwipeableReminderCard({ children, onDelete, disabled = false }: SwipeableReminderCardProps) {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
-  const touchStartX = useRef(0);
+  const startX = useRef(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const SWIPE_THRESHOLD = 100; // pixels to trigger delete
   const MAX_SWIPE = 150; // maximum swipe distance
 
-  const handleTouchStart = (e: TouchEvent) => {
+  const handlePointerDown = (e: ReactPointerEvent) => {
     if (disabled) return;
-    touchStartX.current = e.touches[0].clientX;
+    
+    // Capture the pointer to continue receiving events even when element moves
+    e.currentTarget.setPointerCapture(e.pointerId);
+    
+    startX.current = e.clientX;
     setIsSwiping(true);
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
+  const handlePointerMove = (e: ReactPointerEvent) => {
     if (disabled || !isSwiping) return;
     
-    const currentX = e.touches[0].clientX;
-    const diff = touchStartX.current - currentX;
+    const currentX = e.clientX;
+    const diff = startX.current - currentX;
     
     // Only allow left swipe (positive diff)
     if (diff > 0) {
@@ -37,18 +41,32 @@ export function SwipeableReminderCard({ children, onDelete, disabled = false }: 
     }
   };
 
-  const handleTouchEnd = () => {
+  const handlePointerUp = (e: ReactPointerEvent) => {
     if (disabled) return;
+    
+    // Release pointer capture
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    
     setIsSwiping(false);
 
     if (swipeOffset >= SWIPE_THRESHOLD) {
-      // Trigger delete
       onDelete();
       setSwipeOffset(0);
     } else {
-      // Reset position
       setSwipeOffset(0);
     }
+  };
+
+  const handlePointerCancel = (e: ReactPointerEvent) => {
+    if (disabled) return;
+    
+    // Release pointer capture
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    
+    setIsSwiping(false);
+    setSwipeOffset(0);
   };
 
   const deleteOpacity = Math.min(swipeOffset / SWIPE_THRESHOLD, 1);
@@ -73,16 +91,18 @@ export function SwipeableReminderCard({ children, onDelete, disabled = false }: 
       <div
         ref={cardRef}
         className={cn(
-          "relative bg-white dark:bg-gray-800 transition-transform",
+          "relative bg-white dark:bg-gray-800 transition-transform cursor-grab touch-none select-none",
+          isSwiping && "cursor-grabbing",
           !isSwiping && "duration-300 ease-out"
         )}
         style={{
           transform: `translateX(-${swipeOffset}px)`,
           zIndex: 1
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
       >
         {children}
       </div>
