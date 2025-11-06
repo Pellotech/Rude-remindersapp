@@ -255,15 +255,12 @@ export default function HomeFree() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
-                <span className="truncate">Welcome back{(user as User)?.firstName ? `, ${(user as User).firstName}` : ""}!</span>
+                <span className="truncate">Hey{(user as User)?.firstName ? `, ${(user as User).firstName}` : ", Developer"}!</span>
                 <Badge className="bg-gradient-to-r from-blue-600 to-green-600 text-white text-xs flex-shrink-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free
                 </Badge>
               </h1>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                From funny to gentle warm reminders to get your goals done, with unlimited responses (in premium)
-              </p>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
@@ -399,17 +396,6 @@ export default function HomeFree() {
                   <p className="text-purple-700 font-medium">• Premium voices unlocked for {Math.ceil((rewardedFeatures.premiumVoicesUntil - Date.now()) / 60000)} minutes!</p>
                 )}
                 <p>• Basic voice characters</p>
-                <div className="pt-2 border-t border-blue-200 mt-3">
-                  <p className="text-xs">Notifications use your settings from Settings → Notifications</p>
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="text-blue-600 hover:text-blue-800 p-0 h-auto text-xs"
-                    onClick={() => window.location.href = '/settings/notifications'}
-                  >
-                    Change notification settings
-                  </Button>
-                </div>
               </div>
             </div>
           </TabsContent>
