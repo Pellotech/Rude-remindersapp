@@ -277,33 +277,6 @@ export default function HomePremium() {
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
             <RemindersList />
-
-            {/* Upgrade Prompt */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Crown className="h-5 w-5 text-purple-600" />
-                  Unlock Premium Features
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-4 text-gray-700 dark:text-gray-300">
-                  You're currently on the free plan. Upgrade to Premium to access unlimited reminders, advanced AI features, exclusive voice options, and more!
-                </p>
-                <div className="flex justify-between items-center">
-                  <Button 
-                    onClick={() => window.location.href = '/settings/billing'}
-                    data-testid="button-manage-subscription"
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
-                  >
-                    Upgrade to Premium
-                  </Button>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Start your journey to peak productivity!
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
