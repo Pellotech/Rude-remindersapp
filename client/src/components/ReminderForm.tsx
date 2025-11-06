@@ -386,7 +386,7 @@ export default function ReminderForm({
         attachments: selectedAttachments, // Ensure attachments are included
       };
 
-      return await apiRequest("/api/reminders", { 
+      return await apiRequest("/api/reminders", {
         method: "POST",
         body: submissionData as any
       });
@@ -405,26 +405,26 @@ export default function ReminderForm({
       // Schedule native iOS/Android notifications if on mobile platform
       const notificationsSupported = supportsNotifications();
       console.log('🔔 Notifications supported:', notificationsSupported);
-      
+
       if (notificationsSupported) {
         try {
           // Request notification permissions first
           console.log('📱 Requesting notification permissions...');
           const hasPermission = await requestPermissions();
           console.log('🔐 Permission granted:', hasPermission);
-          
+
           if (hasPermission) {
             // Handle both single and multi-day reminders
             const remindersToSchedule = isMultiDayResult ? result.reminders : [result];
             console.log('📋 Reminders to schedule:', remindersToSchedule.length);
-            
+
             for (const reminder of remindersToSchedule) {
               console.log('⏰ Scheduling notification for:', {
                 id: reminder.id,
                 title: reminder.title || reminder.originalMessage,
                 scheduledFor: new Date(reminder.scheduledFor)
               });
-              
+
               await scheduleNativeNotification({
                 id: reminder.id,
                 title: reminder.title || reminder.originalMessage,
@@ -436,7 +436,7 @@ export default function ReminderForm({
                 voiceCharacter: reminder.voiceCharacter
               });
             }
-            
+
             console.log(`✅ Scheduled ${remindersToSchedule.length} native notification(s)`);
           } else {
             console.warn('⚠️ No notification permission - showing toast');
@@ -1510,19 +1510,6 @@ export default function ReminderForm({
                 return null;
               })()
             )}
-
-            {/* Notification Settings Info */}
-            <div className="text-center text-sm text-muted-foreground p-3 bg-blue-50 rounded-lg">
-              <p>Notifications will use your preferences from Settings → Notifications</p>
-              <Button
-                type="button"
-                variant="link"
-                className="text-blue-600 hover:text-blue-800 p-0 h-auto text-sm"
-                onClick={() => window.location.href = '/settings/notifications'}
-              >
-                Change notification settings
-              </Button>
-            </div>
 
             {/* Submit Button */}
             <Button
