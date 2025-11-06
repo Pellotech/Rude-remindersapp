@@ -152,6 +152,47 @@ export default function RemindersList() {
     },
   });
 
+  const markNotAccomplishedMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/not-accomplished`, { method: "PATCH" }),
+    onSuccess: async (_, id) => {
+      // Cancel the native notification when reminder is marked as not accomplished
+      if (supportsNotifications()) {
+        try {
+          await cancelNativeNotification(id);
+          console.log(`✅ Cancelled native notification for reminder ${id}`);
+        } catch (error) {
+          console.error('Failed to cancel native notification:', error);
+        }
+      }
+      
+      toast({
+        title: "Added to disappointments",
+        description: "Tracking what didn't get done builds awareness too.",
+      });
+      
+      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
+    },
+    onError: (error: Error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized", 
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to mark reminder as not accomplished.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Filter reminders based on selected filter and search term
   const filteredReminders = (reminders as Reminder[]).filter((reminder: Reminder) => {
     const matchesSearch = reminder.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -462,9 +503,9 @@ export default function RemindersList() {
                                       variant="ghost"
                                       size="sm"
                                       className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
-                                      onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                                      disabled={deleteReminderMutation.isPending}
-                                      title="Mark as not accomplished (remove)"
+                                      onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
+                                      disabled={markNotAccomplishedMutation.isPending}
+                                      title="Mark as not accomplished (track disappointment)"
                                       data-testid={`button-not-accomplish-${reminder.id}`}
                                     >
                                       ❌

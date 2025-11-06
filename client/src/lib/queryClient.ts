@@ -29,6 +29,11 @@ export async function apiRequest(url: string, options?: RequestInit) {
     throw new Error(errorData.message || `Request failed: ${response.statusText}`);
   }
 
+  // Handle 204 No Content responses (e.g., DELETE requests)
+  if (response.status === 204) {
+    return null;
+  }
+
   return response.json();
 }
 

@@ -32,6 +32,7 @@ export interface IStorage {
   getActiveReminders(userId: string): Promise<Reminder[]>;
   getUpcomingReminders(): Promise<Reminder[]>;
   completeReminder(id: string, userId: string): Promise<Reminder>;
+  markReminderNotAccomplished(id: string, userId: string): Promise<Reminder>;
 
   // Rude phrases operations
   getRudePhrasesForLevel(level: number): Promise<RudePhrase[]>;
@@ -220,6 +221,19 @@ export class DatabaseStorage implements IStorage {
       .set({ 
         completed: true, 
         completedAt: new Date(),
+        updatedAt: new Date()
+      })
+      .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
+      .returning();
+    return reminder;
+  }
+
+  async markReminderNotAccomplished(id: string, userId: string): Promise<Reminder> {
+    const [reminder] = await db
+      .update(reminders)
+      .set({ 
+        notAccomplished: true, 
+        notAccomplishedAt: new Date(),
         updatedAt: new Date()
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
@@ -572,6 +586,23 @@ class MemoryStorage implements IStorage {
     return updated;
   }
 
+  async markReminderNotAccomplished(id: string, userId: string): Promise<Reminder> {
+    const existing = await this.getReminder(id, userId);
+    if (!existing) throw new Error('Reminder not found');
+
+    const updated = { 
+      ...existing, 
+      notAccomplished: true, 
+      notAccomplishedAt: new Date(),
+      updatedAt: new Date() 
+    };
+    const index = this.reminders.findIndex(r => r.id === id);
+    if (index !== -1) {
+      this.reminders[index] = updated;
+    }
+    return updated;
+  }
+
   // Rude phrases operations
   async getRudePhrasesForLevel(level: number): Promise<RudePhrase[]> {
     if (!this.rudePhrasesSeeded) {
@@ -719,6 +750,9 @@ export const storage = {
   },
   async completeReminder(id: string, userId: string) {
     return (await getStorage()).completeReminder(id, userId);
+  },
+  async markReminderNotAccomplished(id: string, userId: string) {
+    return (await getStorage()).markReminderNotAccomplished(id, userId);
   },
   async getRudePhrasesForLevel(level: number) {
     return (await getStorage()).getRudePhrasesForLevel(level);

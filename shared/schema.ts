@@ -73,6 +73,8 @@ export const reminders = pgTable("reminders", {
   scheduledFor: timestamp("scheduled_for").notNull(),
   completed: boolean("completed").default(false),
   completedAt: timestamp("completed_at"),
+  notAccomplished: boolean("not_accomplished").default(false),
+  notAccomplishedAt: timestamp("not_accomplished_at"),
   browserNotification: boolean("browser_notification").default(true),
   voiceNotification: boolean("voice_notification").default(false),
   emailNotification: boolean("email_notification").default(false),

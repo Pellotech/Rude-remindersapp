@@ -557,6 +557,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/reminders/:id/not-accomplished', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const reminder = await storage.markReminderNotAccomplished(req.params.id, userId);
+      reminderService.unscheduleReminder(req.params.id);
+      res.json(reminder);
+    } catch (error) {
+      console.error("Error marking reminder as not accomplished:", error);
+      res.status(500).json({ message: "Failed to mark reminder as not accomplished" });
+    }
+  });
+
   // Statistics routes
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
