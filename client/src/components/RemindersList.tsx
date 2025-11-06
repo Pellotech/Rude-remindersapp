@@ -110,8 +110,9 @@ export default function RemindersList() {
   const deleteReminderMutation = useMutation({
     mutationFn: async (id: string) => {
       await apiRequest(`/api/reminders/${id}`, { method: "DELETE" });
+      return id;
     },
-    onSuccess: async (_, id) => {
+    onSuccess: async (id) => {
       // Cancel the native notification when reminder is deleted
       if (supportsNotifications()) {
         try {
@@ -126,8 +127,10 @@ export default function RemindersList() {
         title: "Deleted!",
         description: "Reminder has been deleted.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      
+      // Force immediate refetch instead of just invalidating
+      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
@@ -329,6 +332,14 @@ export default function RemindersList() {
                         </div>
 
                         <div className="flex items-center gap-1 flex-shrink-0">
+                          <ShareButton
+                            title={`My Reminder: ${reminder.title}`}
+                            message={reminder.rudeMessage || reminder.originalMessage}
+                            hashtags={["RudeReminders", "Productivity", "Goals"]}
+                            className="h-8 w-8 p-0"
+                            iconOnly={true}
+                          />
+                          
                           {!reminder.completed && (
                             <Button
                               variant="ghost"
@@ -427,22 +438,36 @@ export default function RemindersList() {
                                   </div>
 
                                   <div className="flex items-center gap-1 flex-shrink-0">
+                                    <ShareButton
+                                      title={`My Reminder: ${reminder.title}`}
+                                      message={reminder.rudeMessage || reminder.originalMessage}
+                                      hashtags={["RudeReminders", "Productivity", "Goals", "Accountability"]}
+                                      className="h-8 w-8 p-0"
+                                      iconOnly={true}
+                                    />
+                                    
                                     <Button
                                       variant="ghost"
                                       size="sm"
                                       className="text-green-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
-                                      onClick={() => {
-                                        completeReminderMutation.mutate(reminder.id);
-                                        toast({
-                                          title: "Added to accomplishments! 🎉",
-                                          description: "Building that mountain of accomplishments!",
-                                        });
-                                      }}
+                                      onClick={() => completeReminderMutation.mutate(reminder.id)}
                                       disabled={completeReminderMutation.isPending}
                                       title="Mark as accomplished"
                                       data-testid={`button-accomplish-${reminder.id}`}
                                     >
                                       <Check className="h-4 w-4" />
+                                    </Button>
+
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-red-500 hover:text-red-600 hover:bg-red-50 h-8 w-8 p-0"
+                                      onClick={() => deleteReminderMutation.mutate(reminder.id)}
+                                      disabled={deleteReminderMutation.isPending}
+                                      title="Mark as not accomplished (remove)"
+                                      data-testid={`button-not-accomplish-${reminder.id}`}
+                                    >
+                                      ❌
                                     </Button>
                                   </div>
                                 </div>
