@@ -38,6 +38,7 @@ import { ShareButton } from "./ShareButton";
 import { useMobileNotifications } from "./MobileNotifications";
 import { supportsNotifications } from "@/utils/platformDetection";
 import { SwipeableReminderCard } from "./SwipeableReminderCard";
+import { playCompletedSound, playNotAccomplishedSound } from "@/lib/soundEffects";
 
 const rudenessLevelColors = {
   1: "bg-green-100 text-green-800",
@@ -70,6 +71,9 @@ export default function RemindersList() {
   const completeReminderMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" }),
     onSuccess: async (_, id) => {
+      // Play completion sound
+      playCompletedSound();
+      
       // Cancel the native notification when reminder is completed
       if (supportsNotifications()) {
         try {
@@ -155,6 +159,9 @@ export default function RemindersList() {
   const markNotAccomplishedMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/not-accomplished`, { method: "PATCH" }),
     onSuccess: async (_, id) => {
+      // Play not accomplished sound
+      playNotAccomplishedSound();
+      
       // Cancel the native notification when reminder is marked as not accomplished
       if (supportsNotifications()) {
         try {

@@ -91,12 +91,12 @@ export function SwipeableReminderCard({ children, onDelete, disabled = false }: 
       <div
         ref={cardRef}
         className={cn(
-          "relative bg-white dark:bg-gray-800 transition-transform cursor-grab touch-none select-none",
-          isSwiping && "cursor-grabbing",
-          !isSwiping && "duration-300 ease-out"
+          "relative bg-white dark:bg-gray-800 cursor-grab touch-none select-none",
+          isSwiping && "cursor-grabbing"
         )}
         style={{
           transform: `translateX(-${swipeOffset}px)`,
+          transition: isSwiping ? 'none' : 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
           zIndex: 1
         }}
         onPointerDown={handlePointerDown}
