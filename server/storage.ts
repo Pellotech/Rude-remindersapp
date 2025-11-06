@@ -504,6 +504,8 @@ class MemoryStorage implements IStorage {
 
       completed: false,
       completedAt: null,
+      notAccomplished: false,
+      notAccomplishedAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

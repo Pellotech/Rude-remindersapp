@@ -177,6 +177,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             daySpecificMessages: null,
             completed: false,
             completedAt: null,
+            notAccomplished: false,
+            notAccomplishedAt: null,
             responses: [] as string[],
             createdAt: new Date(),
             updatedAt: new Date()
@@ -300,6 +302,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           daySpecificMessages: null,
           completed: false,
           completedAt: null,
+          notAccomplished: false,
+          notAccomplishedAt: null,
           responses: [] as string[],
           createdAt: new Date(),
           updatedAt: new Date()
