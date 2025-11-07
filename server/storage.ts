@@ -2,6 +2,7 @@ import {
   users,
   reminders,
   rudePhrasesData,
+  premiumWhitelist,
   type User,
   type UpsertUser,
   type Reminder,
@@ -9,6 +10,8 @@ import {
   type UpdateReminder,
   type RudePhrase,
   type InsertRudePhrase,
+  type PremiumWhitelist,
+  type InsertPremiumWhitelist,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte } from "drizzle-orm";
@@ -44,6 +47,12 @@ export interface IStorage {
     completedToday: number;
     avgRudeness: number;
   }>;
+
+  // Premium whitelist operations
+  getWhitelistEmails(): Promise<string[]>;
+  addEmailToWhitelist(email: string, addedBy: string): Promise<boolean>;
+  removeEmailFromWhitelist(email: string): Promise<boolean>;
+  isEmailWhitelisted(email: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -341,6 +350,39 @@ export class DatabaseStorage implements IStorage {
       avgRudeness: Math.round(avgRudeness * 10) / 10,
     };
   }
+
+  // Premium whitelist operations
+  async getWhitelistEmails(): Promise<string[]> {
+    const whitelistEntries = await db.select().from(premiumWhitelist);
+    return whitelistEntries.map(entry => entry.email);
+  }
+
+  async addEmailToWhitelist(email: string, addedBy: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    try {
+      await db.insert(premiumWhitelist).values({
+        email: normalizedEmail,
+        addedBy,
+      });
+      return true;
+    } catch (error) {
+      // Email already exists (unique constraint violation)
+      return false;
+    }
+  }
+
+  async removeEmailFromWhitelist(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const result = await db.delete(premiumWhitelist).where(eq(premiumWhitelist.email, normalizedEmail)).returning();
+    return result.length > 0;
+  }
+
+  async isEmailWhitelisted(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const [entry] = await db.select().from(premiumWhitelist).where(eq(premiumWhitelist.email, normalizedEmail));
+    return !!entry;
+  }
 }
 
 // In-memory storage implementation for development
@@ -349,6 +391,7 @@ class MemoryStorage implements IStorage {
   private reminders: Reminder[] = [];
   private rudePhrasesSeeded = false;
   private rudePhrasesStore: RudePhrase[] = [];
+  private whitelistEmails: Set<string> = new Set(['letmeknow6@icloud.com']);
 
   constructor() {
     // Add a default dev user for testing
@@ -687,6 +730,30 @@ class MemoryStorage implements IStorage {
       avgRudeness: Math.round(avgRudeness * 10) / 10,
     };
   }
+
+  // Premium whitelist operations
+  async getWhitelistEmails(): Promise<string[]> {
+    return Array.from(this.whitelistEmails);
+  }
+
+  async addEmailToWhitelist(email: string, addedBy: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    if (this.whitelistEmails.has(normalizedEmail)) {
+      return false;
+    }
+    this.whitelistEmails.add(normalizedEmail);
+    return true;
+  }
+
+  async removeEmailFromWhitelist(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    return this.whitelistEmails.delete(normalizedEmail);
+  }
+
+  async isEmailWhitelisted(email: string): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+    return this.whitelistEmails.has(normalizedEmail);
+  }
 }
 
 // Production-ready storage with fallback to memory when database unavailable
@@ -764,5 +831,17 @@ export const storage = {
   },
   async getUserStats(userId: string) {
     return (await getStorage()).getUserStats(userId);
+  },
+  async getWhitelistEmails() {
+    return (await getStorage()).getWhitelistEmails();
+  },
+  async addEmailToWhitelist(email: string, addedBy: string) {
+    return (await getStorage()).addEmailToWhitelist(email, addedBy);
+  },
+  async removeEmailFromWhitelist(email: string) {
+    return (await getStorage()).removeEmailFromWhitelist(email);
+  },
+  async isEmailWhitelisted(email: string) {
+    return (await getStorage()).isEmailWhitelisted(email);
   }
 };

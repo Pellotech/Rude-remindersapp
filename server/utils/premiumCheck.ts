@@ -87,21 +87,17 @@ export async function incrementMonthlyReminderCount(userId: string): Promise<voi
  * @param userId - User ID to check
  * @returns Promise<boolean> - True if user has premium access
  */
-// Premium email whitelist - these emails get automatic premium access
-const PREMIUM_EMAIL_WHITELIST: string[] = [
-  // Add emails here that should automatically have premium access
-  // Example: 'admin@company.com', 'beta@tester.com'
-  'letmeknow6@icloud.com',  // Your admin email
-];
-
 export async function isUserPremium(userId: string): Promise<boolean> {
   try {
     const user = await storage.getUser(userId);
     if (!user) return false;
     
     // Check if user's email is in the premium whitelist
-    if (user.email && PREMIUM_EMAIL_WHITELIST.includes(user.email.toLowerCase())) {
-      return true;
+    if (user.email) {
+      const isWhitelisted = await storage.isEmailWhitelisted(user.email);
+      if (isWhitelisted) {
+        return true;
+      }
     }
     
     // Check if user has active premium subscription
@@ -136,7 +132,7 @@ export async function getUserPremiumStatus(userId: string) {
     // Determine the source of premium access
     let source = 'free';
     if (isPremium) {
-      if (user.email && PREMIUM_EMAIL_WHITELIST.includes(user.email.toLowerCase())) {
+      if (user.email && await storage.isEmailWhitelisted(user.email)) {
         source = 'whitelist';
       } else if (user.subscriptionStatus === 'active' || user.subscriptionPlan === 'premium') {
         source = 'subscription';
@@ -151,27 +147,16 @@ export async function getUserPremiumStatus(userId: string) {
 }
 
 // Helper function to add an email to the whitelist
-export function addEmailToWhitelist(email: string): boolean {
-  const normalizedEmail = email.toLowerCase().trim();
-  if (!PREMIUM_EMAIL_WHITELIST.includes(normalizedEmail)) {
-    PREMIUM_EMAIL_WHITELIST.push(normalizedEmail);
-    return true;
-  }
-  return false;
+export async function addEmailToWhitelist(email: string, addedBy: string): Promise<boolean> {
+  return await storage.addEmailToWhitelist(email, addedBy);
 }
 
 // Helper function to remove an email from the whitelist
-export function removeEmailFromWhitelist(email: string): boolean {
-  const normalizedEmail = email.toLowerCase().trim();
-  const index = PREMIUM_EMAIL_WHITELIST.indexOf(normalizedEmail);
-  if (index > -1) {
-    PREMIUM_EMAIL_WHITELIST.splice(index, 1);
-    return true;
-  }
-  return false;
+export async function removeEmailFromWhitelist(email: string): Promise<boolean> {
+  return await storage.removeEmailFromWhitelist(email);
 }
 
 // Helper function to get all whitelisted emails (for admin purposes)
-export function getWhitelistedEmails(): string[] {
-  return [...PREMIUM_EMAIL_WHITELIST];
+export async function getWhitelistedEmails(): Promise<string[]> {
+  return await storage.getWhitelistEmails();
 }

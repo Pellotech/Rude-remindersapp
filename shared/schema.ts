@@ -100,6 +100,13 @@ export const rudePhrasesData = pgTable("rude_phrases_data", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const premiumWhitelist = pgTable("premium_whitelist", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: varchar("email").unique().notNull(),
+  addedBy: varchar("added_by").notNull(), // Admin user ID who added this email
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -131,6 +138,11 @@ export const insertRudePhraseSchema = createInsertSchema(rudePhrasesData).omit({
   createdAt: true,
 });
 
+export const insertPremiumWhitelistSchema = createInsertSchema(premiumWhitelist).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Update schemas
 export const updateReminderSchema = baseInsertReminderSchema.partial();
 export const updateUserSchema = insertUserSchema.partial();
@@ -143,3 +155,5 @@ export type UpdateReminder = z.infer<typeof updateReminderSchema>;
 export type Reminder = typeof reminders.$inferSelect;
 export type RudePhrase = typeof rudePhrasesData.$inferSelect;
 export type InsertRudePhrase = z.infer<typeof insertRudePhraseSchema>;
+export type PremiumWhitelist = typeof premiumWhitelist.$inferSelect;
+export type InsertPremiumWhitelist = z.infer<typeof insertPremiumWhitelistSchema>;

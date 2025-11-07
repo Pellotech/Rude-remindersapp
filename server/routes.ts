@@ -1161,7 +1161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes for managing premium email whitelist
   app.get('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
     try {
-      const emails = getWhitelistedEmails();
+      const emails = await getWhitelistedEmails();
       res.json({ 
         emails,
         count: emails.length 
@@ -1175,12 +1175,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
     try {
       const { email } = req.body;
+      const userId = req.user.claims.sub;
 
       if (!email || typeof email !== 'string') {
         return res.status(400).json({ message: "Valid email is required" });
       }
 
-      const added = addEmailToWhitelist(email);
+      const added = await addEmailToWhitelist(email, userId);
 
       if (added) {
         console.log(`Added email to premium whitelist: ${email}`);
@@ -1210,7 +1211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Valid email is required" });
       }
 
-      const removed = removeEmailFromWhitelist(email);
+      const removed = await removeEmailFromWhitelist(email);
 
       if (removed) {
         console.log(`Removed email from premium whitelist: ${email}`);
