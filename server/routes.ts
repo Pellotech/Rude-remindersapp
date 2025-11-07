@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users } from "@shared/schema";
+import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, registerSchema, loginSchema } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
@@ -12,6 +12,7 @@ import { premiumQuotesService } from "./services/premiumQuotesService";
 import { isUserPremium, addEmailToWhitelist, removeEmailFromWhitelist, getWhitelistedEmails } from "./utils/premiumCheck";
 import crypto from 'crypto'; // Import crypto module for UUID generation
 import { DeepSeekService } from './services/deepseekService';
+import bcrypt from 'bcryptjs';
 
 import express from 'express';
 import multer from 'multer';
@@ -33,11 +34,133 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize storage (will auto-detect database availability)
   await storage.seedRudePhrases();
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  // Public auth routes (no authentication required)
+  app.post('/api/auth/register', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const validatedData = registerSchema.parse(req.body);
+      
+      const existingUser = await db.query.users.findFirst({
+        where: eq(users.email, validatedData.email),
+      });
+      
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+      
+      const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+      
+      const userId = crypto.randomUUID();
+      const newUser = await storage.upsertUser({
+        id: userId,
+        email: validatedData.email,
+        passwordHash: hashedPassword,
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+      });
+      
+      (req as any).session.userId = userId;
+      
+      (req as any).session.save((err: any) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Failed to create session" });
+        }
+        
+        res.json({ 
+          id: newUser.id, 
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+        });
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      if (error instanceof Error && error.name === 'ZodError') {
+        return res.status(400).json({ message: "Invalid input data" });
+      }
+      res.status(500).json({ message: "Registration failed" });
+    }
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const validatedData = loginSchema.parse(req.body);
+      
+      const user = await db.query.users.findFirst({
+        where: eq(users.email, validatedData.email),
+      });
+      
+      if (!user || !user.passwordHash) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      const passwordMatch = await bcrypt.compare(validatedData.password, user.passwordHash);
+      
+      if (!passwordMatch) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      (req as any).session.userId = user.id;
+      
+      (req as any).session.save((err: any) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Failed to create session" });
+        }
+        
+        res.json({ 
+          id: user.id, 
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        });
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error instanceof Error && error.name === 'ZodError') {
+        return res.status(400).json({ message: "Invalid input data" });
+      }
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  app.post('/api/auth/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  app.get('/api/auth/check', (req, res) => {
+    const userId = (req as any).session?.userId;
+    if (userId) {
+      res.json({ authenticated: true, userId });
+    } else {
+      res.json({ authenticated: false });
+    }
+  });
+
+  // Protected auth routes (supports both Replit Auth and session-based auth)
+  app.get('/api/auth/user', async (req: any, res) => {
+    try {
+      let userId = req.session?.userId;
+      
+      if (!userId && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+      }
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
       const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);

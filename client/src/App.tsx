@@ -16,6 +16,7 @@ import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
 import Subscribe from "@/pages/subscribe";
 import AdminPage from "@/pages/admin";
+import LoginPage from "@/pages/login";
 import NotFound from "@/pages/not-found";
 import { DevTools } from "@/components/DevTools";
 import { useEffect, useState } from "react";
@@ -52,13 +53,6 @@ function HomeRouter() {
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    // If not authenticated and not loading, redirect to login
-    if (!isLoading && !isAuthenticated) {
-      window.location.href = '/api/login';
-    }
-  }, [isAuthenticated, isLoading]);
-
   // Show loading state while checking authentication
   if (isLoading) {
     return (
@@ -89,7 +83,12 @@ function Router() {
           <Route path="/secret-admin-panel-b5ac04f4" component={AdminPage} />
           <Route path="/" component={HomeRouter} />
         </>
-      ) : null}
+      ) : (
+        <>
+          <Route path="/login" component={LoginPage} />
+          <Route path="/" component={LoginPage} />
+        </>
+      )}
       <Route component={NotFound} />
     </Switch>
   );
@@ -142,7 +141,7 @@ function AdminDevTools({ isVisible, onToggle }: { isVisible: boolean; onToggle: 
   const { user } = useAuth();
 
   // Only show dev tools to your specific email and developer email
-  const isAdmin = user?.email === 'letmeknow6@icloud.com' || user?.email === 'developer@example.com';
+  const isAdmin = (user as any)?.email === 'letmeknow6@icloud.com' || (user as any)?.email === 'developer@example.com';
 
   if (!isAdmin) {
     return null;

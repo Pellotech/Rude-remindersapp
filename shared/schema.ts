@@ -25,10 +25,9 @@ export const sessions = pgTable(
 );
 
 // User storage table.
-// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email").unique(),
+  email: varchar("email").unique().notNull(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
@@ -143,6 +142,19 @@ export const insertPremiumWhitelistSchema = createInsertSchema(premiumWhitelist)
   createdAt: true,
 });
 
+// Authentication schemas
+export const registerSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  firstName: z.string().min(1, "First name is required").optional(),
+  lastName: z.string().min(1, "Last name is required").optional(),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
 // Update schemas
 export const updateReminderSchema = baseInsertReminderSchema.partial();
 export const updateUserSchema = insertUserSchema.partial();
@@ -157,3 +169,5 @@ export type RudePhrase = typeof rudePhrasesData.$inferSelect;
 export type InsertRudePhrase = z.infer<typeof insertRudePhraseSchema>;
 export type PremiumWhitelist = typeof premiumWhitelist.$inferSelect;
 export type InsertPremiumWhitelist = z.infer<typeof insertPremiumWhitelistSchema>;
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;

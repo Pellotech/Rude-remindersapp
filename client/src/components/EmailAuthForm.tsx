@@ -82,10 +82,10 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       return;
     }
 
-    if (registerForm.password.length < 6) {
+    if (registerForm.password.length < 8) {
       toast({
         title: "Error",
-        description: "Password must be at least 6 characters",
+        description: "Password must be at least 8 characters",
         variant: "destructive"
       });
       setIsLoading(false);
@@ -109,10 +109,9 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       if (response.ok) {
         toast({
           title: "Success!",
-          description: "Account created successfully. You can now log in."
+          description: "Account created successfully. Welcome!"
         });
-        setActiveTab("login");
-        setLoginForm({ email: registerForm.email, password: "" });
+        onSuccess();
       } else {
         toast({
           title: "Registration Failed",
@@ -251,12 +250,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                   <Input
                     id="register-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a password"
+                    placeholder="Create a password (min 8 characters)"
                     value={registerForm.password}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
                     required
-                    minLength={6}
+                    minLength={8}
                   />
                   <Button
                     type="button"

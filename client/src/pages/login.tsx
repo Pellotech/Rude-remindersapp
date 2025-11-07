@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { EmailAuthForm } from "@/components/EmailAuthForm";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,15 @@ import { LogIn, Zap } from "lucide-react";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      setLocation("/");
     }
-  }, [user, navigate]);
+  }, [user, setLocation]);
 
   const handleReplitAuth = () => {
     setIsLoading(true);
