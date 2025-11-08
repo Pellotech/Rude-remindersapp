@@ -3,7 +3,25 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
-## Recent Changes (November 6, 2025)
+## Recent Changes (November 8, 2025)
+- **Email/Password Authentication Complete**: Fully implemented standalone authentication for App Store/Play Store users
+  - Database schema updated with passwordHash field for secure password storage
+  - Backend API routes created: /api/auth/register, /api/auth/login, /api/auth/logout
+  - Passwords hashed with bcrypt (10 rounds) before storage, minimum 8 characters required
+  - Frontend EmailAuthForm component with beautiful tabbed login/register UI
+  - Session persistence working correctly with explicit session.save() calls
+  - useAuth hook returns null on 401 (prevents infinite loading spinner)
+  - upsertUser handles email conflicts gracefully (no duplicate key violations)
+  - Navigation updated to show login page for unauthenticated users
+- **Enhanced Admin Whitelist**: Upgraded to create full test user accounts
+  - Admins can now add email + password (not just email)
+  - Creates actual user accounts with hashed passwords in database
+  - Test users can log in immediately with provided credentials
+  - Automatically grants premium access (subscriptionPlan: 'premium', subscriptionStatus: 'active')
+  - Perfect for beta testers, App Store reviewers, and team members
+  - All passwords are securely hashed with bcrypt before storage
+
+## Previous Changes (November 6, 2025)
 - **iOS UI/UX Improvements**: Enhanced mobile experience with four key improvements
   - iOS Status Bar: Fixed safe-area padding for both free and premium versions to prevent header overlap
   - Header Spacing: Added visual breathing room below status bar using calc(env(safe-area-inset-top, 0px) + 0.5rem)

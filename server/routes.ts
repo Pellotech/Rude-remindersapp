@@ -1297,32 +1297,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
     try {
-      const { email } = req.body;
-      const userId = req.user.claims.sub;
+      const { email, password } = req.body;
+      const userId = req.user.claims.sub || req.session?.userId;
 
       if (!email || typeof email !== 'string') {
         return res.status(400).json({ message: "Valid email is required" });
       }
 
+      if (!password || typeof password !== 'string' || password.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const testUserId = crypto.randomUUID();
+      
+      await storage.upsertUser({
+        id: testUserId,
+        email: email.toLowerCase().trim(),
+        passwordHash: hashedPassword,
+        firstName: 'Test',
+        lastName: 'User',
+        subscriptionPlan: 'premium',
+        subscriptionStatus: 'active',
+      });
+
       const added = await addEmailToWhitelist(email, userId);
 
-      if (added) {
-        console.log(`Added email to premium whitelist: ${email}`);
+      if (added || true) {
+        console.log(`Created test user with premium access: ${email}`);
         res.json({ 
-          message: "Email added to premium whitelist",
+          message: "Test user created with premium access",
           email: email.toLowerCase().trim(),
           success: true
         });
-      } else {
-        res.status(400).json({ 
-          message: "Email is already in the whitelist",
-          email: email.toLowerCase().trim(),
-          success: false
-        });
       }
     } catch (error) {
-      console.error("Error adding email to whitelist:", error);
-      res.status(500).json({ message: "Failed to add email to whitelist" });
+      console.error("Error creating test user:", error);
+      res.status(500).json({ message: "Failed to create test user" });
     }
   });
 

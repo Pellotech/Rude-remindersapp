@@ -17,6 +17,7 @@ export function AdminWhitelist() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   // Fetch current whitelist
   const { data: whitelist, isLoading } = useQuery<WhitelistResponse>({
@@ -26,18 +27,19 @@ export function AdminWhitelist() {
 
   // Add email mutation
   const addEmailMutation = useMutation({
-    mutationFn: async (email: string) => {
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
       return apiRequest('/api/admin/whitelist', {
         method: 'POST',
-        body: { email }
+        body: { email, password }
       });
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/whitelist'] });
       setNewEmail('');
+      setNewPassword('');
       toast({
-        title: "Email Added",
-        description: `${data.email} has been added to the premium whitelist.`,
+        title: "Test User Created",
+        description: `${data.email} has been added with premium access and can now log in.`,
       });
     },
     onError: (error: any) => {
@@ -93,7 +95,16 @@ export function AdminWhitelist() {
       return;
     }
 
-    addEmailMutation.mutate(newEmail.trim());
+    if (!newPassword || newPassword.length < 8) {
+      toast({
+        title: "Invalid Password",
+        description: "Password must be at least 8 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addEmailMutation.mutate({ email: newEmail.trim(), password: newPassword });
   };
 
   const handleRemoveEmail = (email: string) => {
@@ -108,38 +119,53 @@ export function AdminWhitelist() {
           Premium Email Whitelist
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Emails in this list automatically get premium access without needing a subscription.
+          Create test user accounts with email + password. They get premium access and can log in immediately.
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Add New Email */}
-        <div className="space-y-2">
-          <Label htmlFor="new-email">Add Email to Whitelist</Label>
-          <div className="flex gap-2">
-            <Input
-              id="new-email"
-              type="email"
-              placeholder="user@example.com"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
-              data-testid="input-new-email"
-            />
+        {/* Add New Test User */}
+        <div className="space-y-4">
+          <Label>Create Test User with Premium Access</Label>
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="new-email" className="text-sm">Email</Label>
+              <Input
+                id="new-email"
+                type="email"
+                placeholder="appstoreuser@rudereminders.com"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                data-testid="input-whitelist-email"
+              />
+            </div>
+            <div>
+              <Label htmlFor="new-password" className="text-sm">Password (min 8 characters)</Label>
+              <Input
+                id="new-password"
+                type="password"
+                placeholder="Enter password for this test user"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
+                data-testid="input-whitelist-password"
+              />
+            </div>
             <Button 
               onClick={handleAddEmail}
               disabled={addEmailMutation.isPending}
-              data-testid="button-add-email"
+              className="w-full"
+              data-testid="button-add-whitelist"
             >
               <Plus className="h-4 w-4 mr-2" />
-              {addEmailMutation.isPending ? 'Adding...' : 'Add'}
+              {addEmailMutation.isPending ? 'Creating User...' : 'Create Test User'}
             </Button>
           </div>
         </div>
 
-        {/* Current Whitelist */}
+        {/* Current Test Users */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label>Current Whitelist ({whitelist?.count || 0})</Label>
+            <Label>Current Test Users ({whitelist?.count || 0})</Label>
             {isLoading && <span className="text-sm text-muted-foreground">Loading...</span>}
           </div>
           
@@ -170,8 +196,8 @@ export function AdminWhitelist() {
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Crown className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p>No emails in the whitelist yet.</p>
-              <p className="text-sm">Add emails above to give users automatic premium access.</p>
+              <p>No test users created yet.</p>
+              <p className="text-sm">Create test users above - they can log in with email/password and get premium access.</p>
             </div>
           )}
         </div>
@@ -182,10 +208,10 @@ export function AdminWhitelist() {
             How it works
           </h4>
           <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
-            <li>• Emails added here automatically get all premium features</li>
-            <li>• No subscription or payment required for whitelisted emails</li>
-            <li>• Changes take effect immediately when users log in</li>
-            <li>• Great for team members, beta testers, or VIP users</li>
+            <li>• Creates a user account with email + password you provide</li>
+            <li>• User can log in immediately using those credentials</li>
+            <li>• Automatically gets all premium features without subscription</li>
+            <li>• Perfect for beta testers, App Store reviewers, or team members</li>
           </ul>
         </div>
       </CardContent>
