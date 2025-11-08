@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { BackNavigation } from "@/components/BackNavigation";
-import { UserCircle, Users } from "lucide-react";
+import { UserCircle, Users, Eye, EyeOff } from "lucide-react";
 
 const ethnicityOptions = [
   { value: "american", label: "American" },
@@ -63,6 +63,7 @@ export default function PersonalInfo() {
   });
 
   const [localSettings, setLocalSettings] = useState<any>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -145,6 +146,41 @@ export default function PersonalInfo() {
               onChange={(e) => updateSetting("email", e.target.value)}
               placeholder="Enter your email"
             />
+          </div>
+          
+          <div className="pt-4 border-t">
+            <h3 className="text-sm font-medium mb-4">Change Password</h3>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="newPassword">New Password</Label>
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showPassword ? "text" : "password"}
+                    value={currentSettings.newPassword || ""}
+                    onChange={(e) => updateSetting("newPassword", e.target.value)}
+                    placeholder="Enter new password (optional)"
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Leave blank to keep current password
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
