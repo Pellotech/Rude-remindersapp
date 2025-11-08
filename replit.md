@@ -20,6 +20,15 @@ The Rude Daily Reminder App is a full-stack application designed to deliver dail
   - Automatically grants premium access (subscriptionPlan: 'premium', subscriptionStatus: 'active')
   - Perfect for beta testers, App Store reviewers, and team members
   - All passwords are securely hashed with bcrypt before storage
+- **RevenueCat Web Paywall Integration**: Added full web subscription support via RevenueCat Web SDK
+  - Integrated `@revenuecat/purchases-js` for web-based subscriptions
+  - Subscribe page (`/subscribe`) now displays RevenueCat paywall with Stripe checkout
+  - Supports both monthly ($5.99) and annual ($44.99) subscription plans
+  - All billing page buttons ("Upgrade to Premium", "Review Subscriptions") redirect to `/subscribe`
+  - Automatic subscription status updates via RevenueCat webhooks
+  - Fallback to mobile app download prompt if RevenueCat not configured
+  - Cross-platform subscriptions work seamlessly across web, iOS, and Android
+  - Setup guide created: REVENUECAT_WEB_SETUP.md
 
 ## Previous Changes (November 6, 2025)
 - **iOS UI/UX Improvements**: Enhanced mobile experience with four key improvements

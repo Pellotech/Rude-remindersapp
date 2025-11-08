@@ -22,7 +22,7 @@ export default function Billing() {
   });
 
   const cancelSubscriptionMutation = useMutation({
-    mutationFn: () => apiRequest("/api/cancel-subscription", "POST"),
+    mutationFn: () => apiRequest("/api/cancel-subscription", { method: "POST" }),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/customer-info"] });
