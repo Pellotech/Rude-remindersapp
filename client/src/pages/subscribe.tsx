@@ -217,22 +217,36 @@ export default function Subscribe() {
       // Get shared Purchases instance
       const purchases = Purchases.getSharedInstance();
       
+      console.log('Fetching offerings...');
+      
       // Get offerings
       const offerings = await purchases.getOfferings();
       
+      console.log('Offerings received:', offerings);
+      console.log('Current offering:', offerings.current);
+      console.log('All offerings:', offerings.all);
+      
       if (!offerings.current) {
-        throw new Error('No offerings available');
+        console.error('No current offering found. Available offerings:', Object.keys(offerings.all || {}));
+        throw new Error('No current offering available. Please set a current offering in RevenueCat dashboard.');
       }
 
+      console.log('Available packages in current offering:', offerings.current.availablePackages);
+      console.log('Annual package:', offerings.current.annual);
+      console.log('Monthly package:', offerings.current.monthly);
+
       // Get the package based on selected plan
-      // Use convenience properties: offerings.current.annual or offerings.current.monthly
       const selectedPackage = selectedPlan === 'yearly' 
-        ? offerings.current.annual || offerings.current.availablePackages[0]
-        : offerings.current.monthly || offerings.current.availablePackages[0];
+        ? offerings.current.annual || offerings.current.availablePackages.find(p => p.identifier.includes('yearly'))
+        : offerings.current.monthly || offerings.current.availablePackages.find(p => p.identifier.includes('monthly'));
       
       if (!selectedPackage) {
-        throw new Error('No packages available');
+        console.error('No package found for plan:', selectedPlan);
+        console.error('Available packages:', offerings.current.availablePackages.map(p => p.identifier));
+        throw new Error(`No ${selectedPlan} package available. Please check your RevenueCat product configuration.`);
       }
+
+      console.log('Selected package:', selectedPackage.identifier, selectedPackage.product);
 
       const purchaseResult = await purchases.purchase({
         rcPackage: selectedPackage,
@@ -248,12 +262,17 @@ export default function Subscribe() {
         description: "Your subscription is now active!",
       });
     } catch (error: any) {
-      console.error('Paywall error:', error);
+      console.error('Paywall error details:', {
+        message: error.message,
+        code: error.code,
+        underlyingError: error.underlyingErrorMessage,
+        stack: error.stack
+      });
       
-      if (error.message !== 'User cancelled') {
+      if (error.message !== 'User cancelled' && !error.userCancelled) {
         toast({
-          title: "Error",
-          description: error.message || "Failed to process subscription",
+          title: "Subscription Error",
+          description: error.message || "Failed to process subscription. Please try again or contact support.",
           variant: "destructive",
         });
       }
@@ -447,6 +466,27 @@ export default function Subscribe() {
                 <p className="text-center text-sm text-muted-foreground">
                   ✓ 30-day money-back guarantee • ✓ Cancel anytime • ✓ Secure checkout
                 </p>
+
+                <details className="mt-4 p-3 bg-gray-50 rounded-lg text-xs">
+                  <summary className="cursor-pointer font-medium text-gray-700">
+                    Troubleshooting Info (for debugging)
+                  </summary>
+                  <div className="mt-2 space-y-1 text-gray-600">
+                    <p>✓ RevenueCat Web SDK: Configured</p>
+                    <p>✓ API Key: Present</p>
+                    <p className="text-orange-600 mt-2">
+                      If you see "No offerings available" error:
+                    </p>
+                    <ol className="list-decimal list-inside ml-2 space-y-1">
+                      <li>Go to RevenueCat Dashboard → Offerings</li>
+                      <li>Ensure you have created an offering</li>
+                      <li>Check "Set as Current Offering" checkbox</li>
+                      <li>Add your products to the offering</li>
+                      <li>Wait 2-3 minutes for cache to update</li>
+                      <li>Check browser console (F12) for detailed logs</li>
+                    </ol>
+                  </div>
+                </details>
               </div>
             </CardContent>
           </Card>
