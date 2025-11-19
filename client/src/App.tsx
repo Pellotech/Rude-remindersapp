@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -26,6 +26,15 @@ import { LocalNotifications } from "@capacitor/local-notifications";
 
 function HomeRouter() {
   const { user, isLoading } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    // If not authenticated and not on the login page, redirect to login
+    if (!user && !isLoading && location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
+  }, [user, isLoading, location.pathname]);
+
 
   // Only show loading on initial mount, not for guest users
   if (isLoading) {
@@ -43,8 +52,8 @@ function HomeRouter() {
   const isDeveloperPremiumMode = localStorage.getItem('dev-premium-mode') === 'true';
 
   // Check if user has premium subscription OR developer mode is enabled
-  const isPremium = isDeveloperPremiumMode || 
-                   (user as any)?.subscriptionStatus === 'active' || 
+  const isPremium = isDeveloperPremiumMode ||
+                   (user as any)?.subscriptionStatus === 'active' ||
                    (user as any)?.subscriptionPlan === 'premium';
 
   // Guest users and non-premium users get the free experience
@@ -52,7 +61,17 @@ function HomeRouter() {
 }
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    // If not authenticated and not on the login page, redirect to login
+    // This handles the case where a user logs out and is redirected to '/'
+    if (!isAuthenticated && location.pathname !== '/login' && !isLoading && !user) {
+      window.location.href = '/login';
+    }
+  }, [isAuthenticated, location.pathname, isLoading, user]);
+
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -72,7 +91,7 @@ function Router() {
       <Route path="/" component={HomeRouter} />
       <Route path="/login" component={LoginPage} />
       <Route path="/subscribe" component={Subscribe} />
-      
+
       {/* Account-required routes - redirect to login if not authenticated */}
       {isAuthenticated ? (
         <>
@@ -142,8 +161,8 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
-        <AdminDevTools 
-          isVisible={showDevTools} 
+        <AdminDevTools
+          isVisible={showDevTools}
           onToggle={() => setShowDevTools(!showDevTools)}
         />
       </TooltipProvider>
@@ -164,8 +183,8 @@ function AdminDevTools({ isVisible, onToggle }: { isVisible: boolean; onToggle: 
   }
 
   return (
-    <DevTools 
-      isVisible={isVisible} 
+    <DevTools
+      isVisible={isVisible}
       onToggle={onToggle}
     />
   );

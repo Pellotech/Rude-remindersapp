@@ -42,7 +42,7 @@ export default function Navigation() {
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl sm:text-3xl font-bold relative">
-                      <span className="relative inline-block" 
+                      <span className="relative inline-block"
                             style={{
                               color: '#ef4444',
                               background: 'linear-gradient(to bottom, #f87171, #dc2626)',
