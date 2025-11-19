@@ -36,6 +36,14 @@ export default function LoginPage() {
     refetch();
   };
 
+  const handleContinueAsGuest = () => {
+    toast({
+      title: "Welcome, Guest!",
+      description: "Your reminders will be stored locally on this device."
+    });
+    setLocation("/");
+  };
+
   if (user) {
     return null; // Will redirect in useEffect
   }
@@ -48,6 +56,35 @@ export default function LoginPage() {
           <p className="text-gray-600">
             Get brutally honest reminders that actually work
           </p>
+        </div>
+
+        {/* Continue as Guest - Primary CTA */}
+        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-300">
+          <CardContent className="pt-6">
+            <Button 
+              onClick={handleContinueAsGuest}
+              className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-6"
+              size="lg"
+            >
+              <Zap className="mr-2 h-5 w-5" />
+              Continue as Guest
+            </Button>
+            <p className="text-xs text-green-700 text-center mt-3">
+              Try all free features without creating an account
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Separator */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <Separator className="w-full" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or sign in to sync & unlock premium
+            </span>
+          </div>
         </div>
 
         {/* Email/Password Authentication */}

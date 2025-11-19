@@ -27,7 +27,7 @@ import { LocalNotifications } from "@capacitor/local-notifications";
 function HomeRouter() {
   const { user, isLoading } = useAuth();
 
-  // Show loading while checking user status
+  // Only show loading on initial mount, not for guest users
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -47,6 +47,7 @@ function HomeRouter() {
                    (user as any)?.subscriptionStatus === 'active' || 
                    (user as any)?.subscriptionPlan === 'premium';
 
+  // Guest users and non-premium users get the free experience
   return isPremium ? <HomePremium /> : <HomeFree />;
 }
 
