@@ -26,6 +26,7 @@ export function useAuth() {
     user,
     isLoading,
     isAuthenticated: !!user,
+    isGuest: !user, // User is in guest mode if not logged in
     refetch,
   };
 }

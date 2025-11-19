@@ -67,6 +67,12 @@ function Router() {
 
   return (
     <Switch>
+      {/* Guest mode: Allow access to home without login */}
+      <Route path="/" component={HomeRouter} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/subscribe" component={Subscribe} />
+      
+      {/* Account-required routes - redirect to login if not authenticated */}
       {isAuthenticated ? (
         <>
           <Route path="/settings/billing" component={Billing} />
@@ -78,15 +84,24 @@ function Router() {
           <Route path="/home-free" component={HomeFree} />
           <Route path="/home-premium" component={HomePremium} />
           <Route path="/dev-preview" component={DevPreview} />
-          <Route path="/subscribe" component={Subscribe} />
           <Route path="/admin" component={AdminPage} />
           <Route path="/secret-admin-panel-b5ac04f4" component={AdminPage} />
-          <Route path="/" component={HomeRouter} />
         </>
       ) : (
         <>
-          <Route path="/login" component={LoginPage} />
-          <Route path="/" component={LoginPage} />
+          {/* Redirect to login for protected routes */}
+          <Route path="/settings/:rest*">
+            {() => {
+              window.location.href = '/login';
+              return null;
+            }}
+          </Route>
+          <Route path="/admin">
+            {() => {
+              window.location.href = '/login';
+              return null;
+            }}
+          </Route>
         </>
       )}
       <Route component={NotFound} />
