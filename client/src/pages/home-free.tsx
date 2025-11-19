@@ -259,26 +259,22 @@ export default function HomeFree() {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Guest Mode Banner - Show only for non-logged in users */}
+        {/* Guest Mode Banner - Apple App Store Compliant */}
         {isGuest && (
-          <Card className="mb-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300">
+          <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="pt-6">
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <HelpCircle className="h-5 w-5 text-yellow-700" />
-                    <h3 className="font-semibold text-yellow-900">Using Guest Mode</h3>
-                  </div>
-                  <p className="text-sm text-yellow-800 mb-3">
-                    You're using Rude Reminders without an account. Your reminders are stored locally on this device only.
+                  <p className="text-sm text-blue-900 font-semibold">
+                    Create an account to sync your reminders.
                   </p>
-                  <p className="text-sm text-yellow-700 font-medium">
-                    Sign in to sync across devices, unlock premium features, and never lose your reminders!
+                  <p className="text-xs text-blue-700 mt-1.5">
+                    This app works without an account. Optional account creation is only for syncing across devices.
                   </p>
                 </div>
                 <Button 
                   onClick={() => window.location.href = '/login'}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white flex-shrink-0"
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 text-sm"
                   data-testid="button-guest-signin"
                 >
                   Sign In
