@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { useAuth } from "@/hooks/useAuth";
+import { guestStorage } from "@/services/guestStorage";
 import {
   Card,
   CardContent,
@@ -59,17 +61,25 @@ const rudenessLevelLabels = {
 export default function RemindersList() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isGuest } = useAuth();
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [previewReminder, setPreviewReminder] = useState<Reminder | null>(null);
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
   const { data: reminders = [], isLoading } = useQuery({
-    queryKey: ["/api/reminders"],
+    queryKey: isGuest ? ["guest-reminders"] : ["/api/reminders"],
+    queryFn: isGuest ? async () => guestStorage.getReminders() : undefined,
+    refetchInterval: isGuest ? 1000 : undefined,
   });
 
   const completeReminderMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" }),
+    mutationFn: async (id: string) => {
+      if (isGuest) {
+        return Promise.resolve(guestStorage.completeReminder(id));
+      }
+      return apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" });
+    },
     onSuccess: async (_, id) => {
       // Play completion sound
       playCompletedSound();
@@ -88,8 +98,14 @@ export default function RemindersList() {
         title: "Reminder completed!",
         description: "Great job! Keep up the good work.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      // Invalidate the correct query based on guest mode
+      if (isGuest) {
+        queryClient.invalidateQueries({ queryKey: ["guest-reminders"] });
+        queryClient.invalidateQueries({ queryKey: ["guest-stats"] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      }
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
@@ -113,6 +129,10 @@ export default function RemindersList() {
 
   const deleteReminderMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (isGuest) {
+        guestStorage.deleteReminder(id);
+        return id;
+      }
       await apiRequest(`/api/reminders/${id}`, { method: "DELETE" });
       return id;
     },
@@ -133,8 +153,13 @@ export default function RemindersList() {
       });
       
       // Force immediate refetch instead of just invalidating
-      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
+      if (isGuest) {
+        await queryClient.refetchQueries({ queryKey: ["guest-reminders"] });
+        await queryClient.refetchQueries({ queryKey: ["guest-stats"] });
+      } else {
+        await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
+      }
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
@@ -157,7 +182,13 @@ export default function RemindersList() {
   });
 
   const markNotAccomplishedMutation = useMutation({
-    mutationFn: (id: string) => apiRequest(`/api/reminders/${id}/not-accomplished`, { method: "PATCH" }),
+    mutationFn: async (id: string) => {
+      if (isGuest) {
+        // For guests, just mark as not accomplished in localStorage
+        return Promise.resolve(guestStorage.updateReminder(id, { notAccomplished: true } as any));
+      }
+      return apiRequest(`/api/reminders/${id}/not-accomplished`, { method: "PATCH" });
+    },
     onSuccess: async (_, id) => {
       // Play not accomplished sound
       playNotAccomplishedSound();
@@ -177,8 +208,14 @@ export default function RemindersList() {
         description: "Tracking what didn't get done builds awareness too.",
       });
       
-      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
+      // Force immediate refetch instead of just invalidating
+      if (isGuest) {
+        await queryClient.refetchQueries({ queryKey: ["guest-reminders"] });
+        await queryClient.refetchQueries({ queryKey: ["guest-stats"] });
+      } else {
+        await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
+      }
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {

@@ -33,6 +33,7 @@ import { NotificationTest } from "@/components/NotificationTest";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
+import { guestStorage } from "@/services/guestStorage";
 
 // Free plan limits
 const FREE_LIMITS = {
@@ -54,12 +55,20 @@ export default function HomeFree() {
   });
 
 
+  // For guest users, use localStorage; for authenticated users, use API
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
-    queryKey: ["/api/reminders"],
+    queryKey: isGuest ? ["guest-reminders"] : ["/api/reminders"],
+    queryFn: isGuest 
+      ? async () => guestStorage.getReminders()
+      : undefined, // Use default fetcher for authenticated users
+    refetchInterval: isGuest ? 1000 : undefined, // Poll guest storage for updates
   });
 
   const { data: stats } = useQuery<{ total: number; completed: number; pending: number; overdue: number; monthlyReminderUsage?: Record<string, number> }>({
-    queryKey: ["/api/stats"],
+    queryKey: isGuest ? ["guest-stats"] : ["/api/stats"],
+    queryFn: isGuest
+      ? async () => guestStorage.getStats()
+      : undefined, // Use default fetcher for authenticated users
   });
 
   const { data: voices = [] } = useQuery<{ id: string; name: string; }[]>({
