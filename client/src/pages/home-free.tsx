@@ -42,7 +42,7 @@ const FREE_LIMITS = {
 };
 
 export default function HomeFree() {
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
   const { toast } = useToast();
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
   const [currentReminder, setCurrentReminder] = useState<Reminder | null>(null);
@@ -250,12 +250,41 @@ export default function HomeFree() {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Guest Mode Banner - Show only for non-logged in users */}
+        {isGuest && (
+          <Card className="mb-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300">
+            <CardContent className="pt-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <HelpCircle className="h-5 w-5 text-yellow-700" />
+                    <h3 className="font-semibold text-yellow-900">Using Guest Mode</h3>
+                  </div>
+                  <p className="text-sm text-yellow-800 mb-3">
+                    You're using Rude Reminders without an account. Your reminders are stored locally on this device only.
+                  </p>
+                  <p className="text-sm text-yellow-700 font-medium">
+                    Sign in to sync across devices, unlock premium features, and never lose your reminders!
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => window.location.href = '/login'}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white flex-shrink-0"
+                  data-testid="button-guest-signin"
+                >
+                  Sign In
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Welcome Header - Mobile Optimized */}
         <div className="mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
-                <span className="truncate">Hey Developer</span>
+                <span className="truncate">{isGuest ? "Welcome Guest" : `Hey ${(user as any)?.name || 'Developer'}`}</span>
                 <Badge className="bg-gradient-to-r from-blue-600 to-green-600 text-white text-xs flex-shrink-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free
@@ -264,7 +293,7 @@ export default function HomeFree() {
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-              <span className="text-xs sm:text-sm font-medium text-blue-600 whitespace-nowrap">Free Features Active</span>
+              <span className="text-xs sm:text-sm font-medium text-blue-600 whitespace-nowrap">{isGuest ? "Guest" : "Free"} Features Active</span>
             </div>
           </div>
         </div>
@@ -380,7 +409,6 @@ export default function HomeFree() {
               isFreePlan={true} 
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
-              hasTemporaryPremiumVoices={hasTemporaryPremiumVoices}
             />
             {/* Free Plan Features Info */}
             <div className="text-center text-sm text-muted-foreground p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">

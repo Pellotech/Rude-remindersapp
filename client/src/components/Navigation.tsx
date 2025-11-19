@@ -10,7 +10,7 @@ import { Link, useLocation, useRoute } from "wouter";
 import type { User } from "@shared/schema";
 
 export default function Navigation() {
-  const { user } = useAuth() as { user: User | undefined };
+  const { user, isGuest } = useAuth() as { user: User | undefined; isGuest: boolean };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [location, navigate] = useLocation();
 
@@ -77,35 +77,49 @@ export default function Navigation() {
                 </Link>
               )}
 
-              <Link href="/settings">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`text-gray-500 hover:text-gray-700 p-2 ${location === "/settings" ? "bg-gray-100 text-gray-900" : ""}`}
-                >
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </Link>
+              {!isGuest && (
+                <Link href="/settings">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`text-gray-500 hover:text-gray-700 p-2 ${location === "/settings" ? "bg-gray-100 text-gray-900" : ""}`}
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </Link>
+              )}
 
               <div className="flex items-center space-x-1 sm:space-x-2 ml-1 sm:ml-2">
-                {user?.profileImageUrl && (
-                  <img
-                    src={user.profileImageUrl}
-                    alt="Profile"
-                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
-                  />
+                {isGuest ? (
+                  <Button
+                    onClick={() => window.location.href = '/login'}
+                    className="bg-rude-red hover:bg-red-700 text-white text-xs sm:text-sm px-3 py-1 flex-shrink-0"
+                    data-testid="button-nav-signin"
+                  >
+                    Sign In
+                  </Button>
+                ) : (
+                  <>
+                    {user?.profileImageUrl && (
+                      <img
+                        src={user.profileImageUrl}
+                        alt="Profile"
+                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
+                      />
+                    )}
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-20 sm:max-w-none hidden sm:inline">
+                      {user?.firstName || user?.email || "User"}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => window.location.href = '/api/logout'}
+                      className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm px-2 py-1 flex-shrink-0"
+                    >
+                      Logout
+                    </Button>
+                  </>
                 )}
-                <span className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-20 sm:max-w-none hidden sm:inline">
-                  {user?.firstName || user?.email || "User"}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => window.location.href = '/api/logout'}
-                  className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm px-2 py-1 flex-shrink-0"
-                >
-                  Logout
-                </Button>
               </div>
             </div>
           </div>
