@@ -48,24 +48,34 @@ function toReminder(guestReminder: GuestReminder): Reminder {
   };
 }
 
+// Internal helper to get raw GuestReminder array from localStorage
+function getRawReminders(): GuestReminder[] {
+  try {
+    const data = localStorage.getItem(GUEST_REMINDERS_KEY);
+    if (!data) return [];
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading guest reminders:", error);
+    return [];
+  }
+}
+
+// Internal helper to save GuestReminder array to localStorage
+function saveRawReminders(reminders: GuestReminder[]): void {
+  localStorage.setItem(GUEST_REMINDERS_KEY, JSON.stringify(reminders));
+}
+
 export const guestStorage = {
-  // Get all guest reminders
+  // Get all guest reminders (converted to Reminder format)
   getReminders(): Reminder[] {
-    try {
-      const data = localStorage.getItem(GUEST_REMINDERS_KEY);
-      if (!data) return [];
-      const guestReminders: GuestReminder[] = JSON.parse(data);
-      return guestReminders.map(toReminder);
-    } catch (error) {
-      console.error("Error reading guest reminders:", error);
-      return [];
-    }
+    const guestReminders = getRawReminders();
+    return guestReminders.map(toReminder);
   },
 
   // Add a new reminder
   addReminder(reminder: Omit<GuestReminder, "id" | "completed">): Reminder {
     try {
-      const reminders = this.getReminders();
+      const reminders = getRawReminders();
       const newReminder: GuestReminder = {
         id: nanoid(),
         ...reminder,
@@ -73,9 +83,10 @@ export const guestStorage = {
         completedAt: null,
       };
       
-      reminders.push(toReminder(newReminder));
-      localStorage.setItem(GUEST_REMINDERS_KEY, JSON.stringify(reminders));
+      reminders.push(newReminder);
+      saveRawReminders(reminders);
       
+      console.log("✅ Guest reminder saved to localStorage:", newReminder.id);
       return toReminder(newReminder);
     } catch (error) {
       console.error("Error adding guest reminder:", error);
@@ -86,24 +97,23 @@ export const guestStorage = {
   // Update a reminder
   updateReminder(id: string, updates: Partial<GuestReminder>): Reminder | null {
     try {
-      const reminders = this.getReminders();
+      const reminders = getRawReminders();
       const index = reminders.findIndex(r => r.id === id);
       
-      if (index === -1) return null;
+      if (index === -1) {
+        console.error("Guest reminder not found:", id);
+        return null;
+      }
       
-      // Apply updates while preserving the Reminder structure
-      const current = reminders[index];
-      const updated: Reminder = {
-        ...current,
+      // Apply updates to the GuestReminder object
+      reminders[index] = {
+        ...reminders[index],
         ...updates,
-        scheduledFor: updates.scheduledFor ? new Date(updates.scheduledFor) : current.scheduledFor,
-        completedAt: updates.completedAt ? new Date(updates.completedAt) : current.completedAt,
-        updatedAt: new Date(),
       };
-      reminders[index] = updated;
       
-      localStorage.setItem(GUEST_REMINDERS_KEY, JSON.stringify(reminders));
-      return updated;
+      saveRawReminders(reminders);
+      console.log("✅ Guest reminder updated in localStorage:", id, updates);
+      return toReminder(reminders[index]);
     } catch (error) {
       console.error("Error updating guest reminder:", error);
       return null;
@@ -113,12 +123,16 @@ export const guestStorage = {
   // Delete a reminder
   deleteReminder(id: string): boolean {
     try {
-      const reminders = this.getReminders();
+      const reminders = getRawReminders();
       const filtered = reminders.filter(r => r.id !== id);
       
-      if (filtered.length === reminders.length) return false;
+      if (filtered.length === reminders.length) {
+        console.error("Guest reminder not found for deletion:", id);
+        return false;
+      }
       
-      localStorage.setItem(GUEST_REMINDERS_KEY, JSON.stringify(filtered));
+      saveRawReminders(filtered);
+      console.log("✅ Guest reminder deleted from localStorage:", id);
       return true;
     } catch (error) {
       console.error("Error deleting guest reminder:", error);
@@ -128,6 +142,7 @@ export const guestStorage = {
 
   // Complete a reminder
   completeReminder(id: string): Reminder | null {
+    console.log("🎯 Completing guest reminder:", id);
     return this.updateReminder(id, {
       completed: true,
       completedAt: new Date().toISOString(),

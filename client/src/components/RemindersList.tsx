@@ -75,9 +75,14 @@ export default function RemindersList() {
 
   const completeReminderMutation = useMutation({
     mutationFn: async (id: string) => {
+      console.log("🔵 completeReminderMutation called for:", id, "isGuest:", isGuest);
       if (isGuest) {
-        return Promise.resolve(guestStorage.completeReminder(id));
+        console.log("🟢 Guest mode detected - using guestStorage");
+        const result = await guestStorage.completeReminder(id);
+        console.log("🟢 guestStorage.completeReminder result:", result);
+        return result;
       }
+      console.log("🟠 Authenticated mode - using API");
       return apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" });
     },
     onSuccess: async (_, id) => {
@@ -430,7 +435,10 @@ export default function RemindersList() {
                               variant="ghost"
                               size="sm"
                               className="text-gray-400 hover:text-green-600 h-8 w-8 p-0"
-                              onClick={() => completeReminderMutation.mutate(reminder.id)}
+                              onClick={() => {
+                                console.log("🔴 BUTTON CLICKED for reminder:", reminder.id, "isGuest:", isGuest);
+                                completeReminderMutation.mutate(reminder.id);
+                              }}
                               disabled={completeReminderMutation.isPending}
                               data-testid={`button-complete-${reminder.id}`}
                             >
@@ -535,7 +543,10 @@ export default function RemindersList() {
                                       variant="ghost"
                                       size="sm"
                                       className="text-green-500 hover:text-green-600 hover:bg-green-50 h-8 w-8 p-0"
-                                      onClick={() => completeReminderMutation.mutate(reminder.id)}
+                                      onClick={() => {
+                                        console.log("🔴 BUTTON CLICKED (accomplish) for reminder:", reminder.id, "isGuest:", isGuest);
+                                        completeReminderMutation.mutate(reminder.id);
+                                      }}
                                       disabled={completeReminderMutation.isPending}
                                       title="Mark as accomplished"
                                       data-testid={`button-accomplish-${reminder.id}`}
