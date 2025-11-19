@@ -18,6 +18,7 @@ export default function LoginPage() {
   const isNativeMobile = Capacitor.isNativePlatform();
 
   useEffect(() => {
+    // Only redirect authenticated users, not guests
     if (user) {
       setLocation("/");
     }
