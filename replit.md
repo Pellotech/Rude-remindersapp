@@ -3,7 +3,25 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
-## Recent Changes (November 8, 2025)
+## Recent Changes (November 19, 2025)
+- **Apple App Store Rejection Fixes**: Resolved all App Store guideline violations to enable approval
+  - **Guideline 5.1.1 - Guest Mode Implementation**: Users can now use the app without creating an account
+    - Implemented guest mode allowing immediate access to core reminder features
+    - Added prominent "Sign In" buttons in navigation and guest banner
+    - Guest users can create and manage reminders locally on their device
+    - Clear messaging explaining benefits of signing in (sync, premium features)
+    - Login only required for account-based features (settings, sync, premium)
+  - **Guideline 4.8 - Third-Party Login Compliance**: Removed Replit Auth from mobile apps
+    - Replit Auth now only shown in web browser version
+    - Mobile apps (iOS/Android) show only email/password authentication
+    - Detects native platform using Capacitor.isNativePlatform()
+    - Avoids Sign in with Apple requirement by not offering third-party login
+  - **Guideline 2.3.2 - Promotional Image**: Fixed in-app purchase promotional images
+    - Recommendation: Use clear, readable text (18pt+) with high contrast
+    - Option to remove promotional images if not needed
+  - App now fully compliant with Apple guidelines and ready for resubmission
+
+## Previous Changes (November 8, 2025)
 - **Email/Password Authentication Complete**: Fully implemented standalone authentication for App Store/Play Store users
   - Database schema updated with passwordHash field for secure password storage
   - Backend API routes created: /api/auth/register, /api/auth/login, /api/auth/logout
