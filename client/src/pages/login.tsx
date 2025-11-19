@@ -8,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, Zap } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const isNativeMobile = Capacitor.isNativePlatform();
 
   useEffect(() => {
     if (user) {
@@ -51,42 +53,47 @@ export default function LoginPage() {
         {/* Email/Password Authentication */}
         <EmailAuthForm onSuccess={handleEmailAuthSuccess} />
 
-        {/* Separator */}
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator className="w-full" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
+        {/* Only show Replit Auth on web (not on mobile apps to comply with App Store guidelines) */}
+        {!isNativeMobile && (
+          <>
+            {/* Separator */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
 
-        {/* Replit Auth Option */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center text-lg">Replit Users</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button 
-              onClick={handleReplitAuth}
-              disabled={isLoading}
-              className="w-full"
-              variant="outline"
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              {isLoading ? "Redirecting..." : "Login with Replit"}
-            </Button>
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              Quick access for Replit users
-            </p>
-          </CardContent>
-        </Card>
+            {/* Replit Auth Option */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center text-lg">Replit Users</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  onClick={handleReplitAuth}
+                  disabled={isLoading}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  {isLoading ? "Redirecting..." : "Login with Replit"}
+                </Button>
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  Quick access for Replit users
+                </p>
+              </CardContent>
+            </Card>
+          </>
+        )}
 
         <div className="text-center text-xs text-muted-foreground">
           <p>
-            Perfect for iOS and Android app stores - no social accounts required!
+            {isNativeMobile ? "Create an account or sign in to sync across devices" : "Perfect for iOS and Android app stores - no social accounts required!"}
           </p>
         </div>
       </div>
