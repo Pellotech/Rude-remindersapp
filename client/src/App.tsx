@@ -26,15 +26,6 @@ import { LocalNotifications } from "@capacitor/local-notifications";
 
 function HomeRouter() {
   const { user, isLoading } = useAuth();
-  const [location] = useLocation();
-
-  useEffect(() => {
-    // If not authenticated and not on the login page, redirect to login
-    if (!user && !isLoading && location !== '/login') {
-      window.location.href = '/login';
-    }
-  }, [user, isLoading, location]);
-
 
   // Only show loading on initial mount, not for guest users
   if (isLoading) {
@@ -63,15 +54,6 @@ function HomeRouter() {
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const [location] = useLocation();
-
-  useEffect(() => {
-    // If not authenticated and not on the login page, redirect to login
-    // This handles the case where a user logs out and is redirected to '/'
-    if (!isAuthenticated && location !== '/login' && !isLoading && !user) {
-      window.location.href = '/login';
-    }
-  }, [isAuthenticated, location, isLoading, user]);
-
 
   // Show loading state while checking authentication
   if (isLoading) {

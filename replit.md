@@ -3,7 +3,32 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application designed to deliver daily reminders with a humorous, "rude" twist. It transforms standard reminders into brutally honest, motivational notifications, allowing users to adjust the rudeness level. The project, initially a web application, has been successfully converted into native iOS and Android mobile apps using Capacitor. Key features include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
-## Recent Changes (November 19, 2025)
+## Recent Changes (November 19, 2025 - Evening)
+- **Apple Compliance Messaging Update**: Enhanced guest mode UX to match Apple's exact requirements from rejection feedback
+  - **Login Page Enhancements**: Clearer "no account required" messaging
+    - Header now prominently displays: "No account required to use this app"
+    - Primary CTA changed from "Continue as Guest" to "Start Using App" (more positive framing)
+    - Subtitle: "All core features work without an account"
+    - Separator text: "Optional: Create account to sync across devices"
+    - Bottom disclaimer: "This app does not require an account to function. Optional account creation is only for syncing across devices."
+  - **Guest Mode Banner Redesign**: Simplified and informational (not pushy)
+    - Changed from yellow "Using Guest Mode" warning to blue informational banner
+    - Main message: "Create an account to sync your reminders."
+    - Secondary text: "This app works without an account. Optional account creation is only for syncing across devices."
+    - Removed help icon and "limitations" framing
+  - **Navigation Flow Fixes**: Removed redirect loops blocking guest access
+    - Fixed App.tsx Router: Removed useEffect that redirected unauthenticated users back to /login
+    - Fixed HomeRouter: Removed second redirect blocking guest home page access
+    - Guests can now freely navigate from /login → / (home) without being redirected back
+    - "Start Using App" button now successfully navigates to home page
+  - **Key Compliance Points Addressed**:
+    - ✅ Guideline 5.1.1: No forced login - users can use app immediately without account
+    - ✅ Messaging emphasizes "optional" and "only for syncing" per Apple's exact language requirements
+    - ✅ Positive framing ("Start Using App") instead of negative ("Guest Mode")
+    - ✅ Clear, simple messaging without overwhelming users
+    - ✅ Full offline functionality with localStorage-based guest storage
+
+## Previous Changes (November 19, 2025 - Morning)
 - **Apple App Store Rejection Fixes**: Resolved all App Store guideline violations to enable approval
   - **Guideline 5.1.1 - Guest Mode Implementation**: Users can now use the app without creating an account
     - Implemented guest mode allowing immediate access to core reminder features
