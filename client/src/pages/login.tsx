@@ -57,6 +57,9 @@ export default function LoginPage() {
           <p className="text-gray-600">
             Get brutally honest reminders that actually work
           </p>
+          <p className="text-sm text-blue-600 font-medium mt-2">
+            No account required to use this app
+          </p>
         </div>
 
         {/* Continue as Guest - Primary CTA */}
@@ -66,12 +69,13 @@ export default function LoginPage() {
               onClick={handleContinueAsGuest}
               className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-6"
               size="lg"
+              data-testid="button-continue-guest"
             >
               <Zap className="mr-2 h-5 w-5" />
-              Continue as Guest
+              Start Using App
             </Button>
-            <p className="text-xs text-green-700 text-center mt-3">
-              Try all free features without creating an account
+            <p className="text-xs text-green-700 text-center mt-3 font-medium">
+              All core features work without an account
             </p>
           </CardContent>
         </Card>
@@ -83,7 +87,7 @@ export default function LoginPage() {
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">
-              Or sign in to sync & unlock premium
+              Optional: Create account to sync across devices
             </span>
           </div>
         </div>
@@ -131,7 +135,9 @@ export default function LoginPage() {
 
         <div className="text-center text-xs text-muted-foreground">
           <p>
-            {isNativeMobile ? "Create an account or sign in to sync across devices" : "Perfect for iOS and Android app stores - no social accounts required!"}
+            {isNativeMobile 
+              ? "This app does not require an account to function. Optional account creation is only for syncing across devices." 
+              : "No account required. Account creation is optional and only for syncing across devices."}
           </p>
         </div>
       </div>
