@@ -20,6 +20,14 @@ export function SwipeableReminderCard({ children, onDelete, disabled = false }: 
   const handlePointerDown = (e: ReactPointerEvent) => {
     if (disabled) return;
     
+    // Don't interfere with clicks on interactive elements (buttons, links, inputs)
+    const target = e.target as HTMLElement;
+    const isInteractive = target.closest('button, a, input, textarea, select');
+    if (isInteractive) {
+      console.log("🟡 Ignoring swipe on interactive element:", target.tagName);
+      return;
+    }
+    
     // Capture the pointer to continue receiving events even when element moves
     e.currentTarget.setPointerCapture(e.pointerId);
     
