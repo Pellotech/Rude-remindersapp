@@ -399,7 +399,7 @@ export default function Subscribe() {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Navigation Header */}
         <div className="flex items-center justify-between mb-4">
           <Button 
@@ -428,132 +428,58 @@ export default function Subscribe() {
             Premium Subscription
           </h1>
           <p className="text-muted-foreground mt-2 text-lg">
-            Choose your plan to unlock premium features
+            Unlock all premium features
           </p>
         </div>
 
-        {/* RevenueCat Paywall Container */}
+        {/* Simple Subscribe Button */}
         {rcConfigured ? (
           <Card className="shadow-lg border-2 border-purple-200">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
-              <CardTitle className="flex items-center gap-2 text-2xl">
-                <Crown className="h-6 w-6 text-purple-600" />
-                Select Your Premium Plan
-              </CardTitle>
-              <CardDescription>
-                Subscribe now to unlock all premium features with RevenueCat secure checkout
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              {/* RevenueCat Paywall will be injected here */}
-              <div 
-                ref={paywallContainerRef} 
-                className="min-h-[400px] rounded-lg"
-                data-testid="revenuecat-paywall-container"
-              />
-              
-              <div className="mt-6 space-y-4">
+            <CardContent className="pt-8 pb-8">
+              <div className="space-y-6">
                 <Button 
                   onClick={showPaywall}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg py-6"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl py-8"
                   size="lg"
                   data-testid="button-show-paywall"
                 >
-                  <Crown className="h-5 w-5 mr-2" />
-                  View Subscription Plans
+                  <Crown className="h-6 w-6 mr-2" />
+                  Subscribe Now
                 </Button>
                 
                 <p className="text-center text-sm text-muted-foreground">
-                  ✓ 30-day money-back guarantee • ✓ Cancel anytime • ✓ Secure checkout
+                  ✓ 30-day money-back guarantee • ✓ Cancel anytime
                 </p>
 
-                <details className="mt-4 p-3 bg-gray-50 rounded-lg text-xs">
-                  <summary className="cursor-pointer font-medium text-gray-700">
-                    Troubleshooting Info (for debugging)
-                  </summary>
-                  <div className="mt-2 space-y-1 text-gray-600">
-                    <p>✓ RevenueCat Web SDK: Configured</p>
-                    <p>✓ API Key: Present</p>
-                    <p className="text-orange-600 mt-2">
-                      If you see "No offerings available" error:
-                    </p>
-                    <ol className="list-decimal list-inside ml-2 space-y-1">
-                      <li>Go to RevenueCat Dashboard → Offerings</li>
-                      <li>Ensure you have created an offering</li>
-                      <li>Check "Set as Current Offering" checkbox</li>
-                      <li>Add your products to the offering</li>
-                      <li>Wait 2-3 minutes for cache to update</li>
-                      <li>Check browser console (F12) for detailed logs</li>
-                    </ol>
-                  </div>
-                </details>
+                {/* RevenueCat Paywall Container (hidden, shown when button clicked) */}
+                <div 
+                  ref={paywallContainerRef} 
+                  className="min-h-[400px] rounded-lg"
+                  data-testid="revenuecat-paywall-container"
+                />
               </div>
             </CardContent>
           </Card>
         ) : rcError ? (
-          <Card className="border-orange-200 bg-orange-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-orange-800">
-                <AlertCircle className="h-5 w-5" />
-                Configuration Needed
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-orange-700">
-                RevenueCat is not configured. To enable web subscriptions:
-              </p>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-orange-700">
-                <li>Get your RevenueCat Web API Key from the RevenueCat dashboard</li>
-                <li>Add it as environment variable: <code className="bg-white px-2 py-1 rounded">VITE_REVENUECAT_WEB_API_KEY</code></li>
-                <li>Create offerings and paywalls in the RevenueCat dashboard</li>
-                <li>Restart the application</li>
-              </ol>
-              
-              <div className="pt-4">
-                <p className="text-sm font-medium mb-2">Alternative: Mobile App Download</p>
-                <MobileSubscribePrompt selectedPlan={selectedPlan} />
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="flex justify-center items-center min-h-[300px]">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-          </div>
-        )}
-
-        {/* Premium Features */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <PremiumFeatures />
-          
-          <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-purple-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Smartphone className="h-5 w-5 text-blue-600" />
-                Mobile App Available
-              </CardTitle>
-              <CardDescription>
-                Also subscribe through our mobile app
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Prefer to subscribe through the App Store or Google Play? Download our mobile app:
-                </p>
-                <div className="grid grid-cols-2 gap-2">
+          <Card className="shadow-lg border-2 border-purple-200">
+            <CardContent className="pt-8 pb-8">
+              <div className="space-y-4 text-center">
+                <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
+                <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
+                <p className="text-muted-foreground">Download the app to start your premium subscription</p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                   <Button 
-                    variant="outline"
                     onClick={() => toast({ title: "App Store", description: "Download our iOS app to subscribe" })}
-                    className="w-full"
+                    className="w-full bg-black text-white hover:bg-gray-800"
                     data-testid="button-ios-download"
                   >
                     <ArrowRight className="mr-2 h-4 w-4" />
                     App Store
                   </Button>
                   <Button 
-                    variant="outline"
                     onClick={() => toast({ title: "Google Play", description: "Download our Android app to subscribe" })}
-                    className="w-full"
+                    className="w-full bg-green-600 text-white hover:bg-green-700"
                     data-testid="button-android-download"
                   >
                     <ArrowRight className="mr-2 h-4 w-4" />
@@ -563,13 +489,13 @@ export default function Subscribe() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        ) : (
+          <div className="flex justify-center items-center min-h-[300px]">
+            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          </div>
+        )}
 
-        <div className="text-center text-sm text-muted-foreground bg-gray-50 p-4 rounded-lg">
-          <p className="font-medium mb-1">Money-Back Guarantee</p>
-          <p>You can cancel your subscription at any time from your settings.</p>
-          <p>Your subscription will remain active until the end of your billing period.</p>
-        </div>
+        <PremiumFeatures />
       </div>
     </div>
   );
