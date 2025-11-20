@@ -131,6 +131,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     <Input
                       type="email"
                       placeholder="your@email.com"
+                      autoComplete="off"
                       {...field}
                     />
                   </FormControl>

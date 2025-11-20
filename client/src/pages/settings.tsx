@@ -280,6 +280,7 @@ export default function Settings() {
                   onChange={(e) => updateSetting("email", e.target.value)}
                   placeholder="Enter your email address"
                   type="email"
+                  autoComplete="off"
                 />
               </div>
 

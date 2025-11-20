@@ -145,6 +145,7 @@ export default function PersonalInfo() {
               value={currentSettings.email || ""}
               onChange={(e) => updateSetting("email", e.target.value)}
               placeholder="Enter your email"
+              autoComplete="off"
             />
           </div>
           
@@ -161,6 +162,7 @@ export default function PersonalInfo() {
                     onChange={(e) => updateSetting("newPassword", e.target.value)}
                     placeholder="Enter new password (optional)"
                     className="pr-10"
+                    autoComplete="off"
                   />
                   <Button
                     type="button"

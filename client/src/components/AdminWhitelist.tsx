@@ -136,6 +136,7 @@ export function AdminWhitelist() {
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 data-testid="input-whitelist-email"
+                autoComplete="off"
               />
             </div>
             <div>
@@ -148,6 +149,7 @@ export function AdminWhitelist() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
                 data-testid="input-whitelist-password"
+                autoComplete="off"
               />
             </div>
             <Button 
