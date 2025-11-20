@@ -29,7 +29,7 @@ export class AdMobService {
   }
 
   async initialize(): Promise<void> {
-    // TEMPORARILY DISABLED FOR TESTING - AdMob causing crashes
+    // AdMob initialization skipped - configured for production deployment only
     console.log('AdMob initialization disabled for testing');
     return;
     

@@ -1,0 +1,163 @@
+These are VERY common and easy to fix once we know what Apple wants.
+
+✅ REJECTION #1 — Guideline 2.2 — “Beta Version / Limited Feature Set”
+Meaning:
+
+Apple thinks your uploaded build looks unfinished, incomplete, or still in “testing mode.”
+
+This usually happens when:
+
+Buttons lead nowhere
+
+Features say “Coming Soon”
+
+Paywall has “No offerings available”
+
+Login flow broken
+
+Images can’t upload
+
+Purchases not configured
+
+Missing or placeholder UI
+
+Debug text shown
+
+Website links open broken pages
+
+Good news: all of this is fixable, and it goes away once the app is complete and stable.
+
+👉 DEVELOPER PROMPT — Fix for Guideline 2.2 (Beta Testing)
+
+Copy/paste this to your Replit developer:
+
+Fix Guideline 2.2 — App Must Not Look Like a Beta
+
+We need to remove ALL elements that make the app appear like a test build.
+Make these changes:
+
+Eliminate any “Coming Soon,” “Placeholder,” “Under Construction,” or debug messages.
+
+Make sure ALL major buttons and screens are functional:
+
+Reminder creation
+
+Photo/video attachments
+
+Paywall
+
+Subscription purchase
+
+Settings
+
+Profile
+
+Privacy, Terms
+
+Notification permissions
+
+Fix the “No offerings available” issue so the paywall actually loads subscription packages from RevenueCat.
+
+Ensure login/signup is fully working inside the app (NO external browser).
+
+Remove any sandbox/test UI such as:
+
+Test credit card messages
+
+RevenueCat debug UI
+
+Console logs displayed on-screen
+
+Hardcoded test data
+
+Make the app behave like a final, polished release.
+No broken links, no non-functional buttons, no half-built features.
+
+Verify iPad layout is complete and not broken (important!).
+
+When finished, the app must feel fully functional, complete, and production-ready — NOT like a testing build.
+
+✅ REJECTION #2 — Guideline 2.1 — App Completeness
+Bug Found by Reviewer:
+
+“The app displayed errors when we attempted to attach photos to a reminder.”
+
+This is a real bug and Apple always rejects any crash or malfunction.
+
+The reviewer was using:
+
+Device: iPad Air 11" (M3)
+
+OS: iPadOS 26.1
+
+So the bug is caused by one of these:
+
+Image picker incompatible with iPad layout
+
+Missing camera permissions
+
+File picker incorrectly configured for iPad
+
+Capacitor plugin misconfigured
+
+Crash when handling UIImage or file blob
+
+No fallback for missing permissions
+
+UI element placed off-screen on iPad
+
+Not using popoverPresentationController (required for iPad)
+
+Good news: fix is simple once you test it properly.
+
+👉 DEVELOPER PROMPT — Fix for Guideline 2.1 (Attach Photo Crash)
+
+Copy/paste this directly to your Replit developer:
+
+Fix Guideline 2.1 — Reminder Photo Attachment Bug (iPad Crash)
+
+We need to fix the issue causing the app to fail when attaching photos on iPad Air (iPadOS 26.1).
+Make these changes:
+
+Test photo attachment on an iPad simulator:
+
+iPad Air (M3 equivalent)
+
+iPadOS 17.x or 18.x
+
+In both portrait and landscape
+
+Fix image picker for iPad compatibility:
+Capacitor or React Native image pickers require:
+
+popoverPresentationController
+
+Correct modalPresentationStyle on iPad
+
+Proper file handling for both camera and gallery
+
+Ensure camera + photo gallery permissions exist in Info.plist:
+
+NSCameraUsageDescription
+NSPhotoLibraryUsageDescription
+NSPhotoLibraryAddUsageDescription
+
+
+Ensure no unhandled null/undefined cases:
+
+When user cancels
+
+When file size too large
+
+When image permission denied
+
+Fix any UI misalignment issues causing layout to freeze on iPad.
+
+Add safe fallback for missing permissions:
+Show a modal: “Please enable photo permissions in Settings.”
+
+Log errors locally and ensure NO crashes occur.
+
+Rebuild and test BOTH new reminder creation AND editing reminders.
+
+The photo attachment feature absolutely must work on ALL iPad models to pass review.

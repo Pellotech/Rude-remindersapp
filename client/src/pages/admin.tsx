@@ -49,25 +49,6 @@ export default function AdminPage() {
 
           <div className="grid gap-6">
             <AdminWhitelist />
-
-            {/* Future admin features can go here */}
-            <Card className="border-dashed border-2 border-gray-300 dark:border-gray-600">
-              <CardContent className="flex flex-col items-center justify-center py-12 space-y-4">
-                <div className="flex items-center gap-4 text-gray-400 dark:text-gray-500">
-                  <Settings className="h-8 w-8" />
-                  <Users className="h-8 w-8" />
-                  <Crown className="h-8 w-8" />
-                </div>
-                <div className="text-center">
-                  <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400">
-                    More Admin Features Coming Soon
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-500">
-                    User management, analytics, and more admin tools will be added here
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

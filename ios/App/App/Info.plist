@@ -2,65 +2,67 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
-	<key>CFBundleDisplayName</key>
-	<string>Rude Reminders</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIconName</key>
-	<string>AppIcon</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
-	<key>EnvironmentVariables</key>
-	<dict>
-		<key>ADMOB_APP_ID</key>
-		<string>ca-app-pub-2730939178232394~3691189109</string>
-		<key>REVENUECAT_API_KEY</key>
-		<string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
-	</dict>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-2730939178232394~3691189109</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Rude Reminders needs access to your camera to take photos for your reminders.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Rude Reminders needs access to your photo library to attach images to your reminders.</string>
-	<key>REVENUECAT_API_KEY</key>
-	<string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>en</string>
+        <key>CFBundleDisplayName</key>
+        <string>Rude Reminders</string>
+        <key>CFBundleExecutable</key>
+        <string>$(EXECUTABLE_NAME)</string>
+        <key>CFBundleIconName</key>
+        <string>AppIcon</string>
+        <key>CFBundleIdentifier</key>
+        <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        <key>CFBundleName</key>
+        <string>$(PRODUCT_NAME)</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleShortVersionString</key>
+        <string>$(MARKETING_VERSION)</string>
+        <key>CFBundleVersion</key>
+        <string>1.0</string>
+        <key>EnvironmentVariables</key>
+        <dict>
+                <key>ADMOB_APP_ID</key>
+                <string>ca-app-pub-2730939178232394~3691189109</string>
+                <key>REVENUECAT_API_KEY</key>
+                <string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
+        </dict>
+        <key>GADApplicationIdentifier</key>
+        <string>ca-app-pub-2730939178232394~3691189109</string>
+        <key>LSRequiresIPhoneOS</key>
+        <true/>
+        <key>NSCameraUsageDescription</key>
+        <string>Rude Reminders needs access to your camera to take photos for your reminders.</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>Rude Reminders needs access to your photo library to attach images to your reminders.</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>Rude Reminders needs permission to save photos to your library.</string>
+        <key>REVENUECAT_API_KEY</key>
+        <string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
+        <key>UILaunchStoryboardName</key>
+        <string>LaunchScreen</string>
+        <key>UIMainStoryboardFile</key>
+        <string>Main</string>
+        <key>UIRequiredDeviceCapabilities</key>
+        <array>
+                <string>armv7</string>
+        </array>
+        <key>UISupportedInterfaceOrientations</key>
+        <array>
+                <string>UIInterfaceOrientationPortrait</string>
+                <string>UIInterfaceOrientationLandscapeLeft</string>
+                <string>UIInterfaceOrientationLandscapeRight</string>
+        </array>
+        <key>UISupportedInterfaceOrientations~ipad</key>
+        <array>
+                <string>UIInterfaceOrientationPortrait</string>
+                <string>UIInterfaceOrientationPortraitUpsideDown</string>
+                <string>UIInterfaceOrientationLandscapeLeft</string>
+                <string>UIInterfaceOrientationLandscapeRight</string>
+        </array>
+        <key>UIViewControllerBasedStatusBarAppearance</key>
+        <true/>
 </dict>
 </plist>
