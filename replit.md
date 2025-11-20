@@ -49,6 +49,20 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
 ## Recent Changes (November 20, 2025)
+- **Apple App Store Rejection Fixes**: Addressed Guideline 2.1 (App Completeness) and 2.2 (Beta Version)
+  - **iPad Photo Picker Crash Fix**: Implemented device detection to disable photo editing on iPad (prevents crashes)
+    - Added NSPhotoLibraryAddUsageDescription to Info.plist
+    - Conservative approach: defaults to safe config, detects iPad using Device API
+    - Enhanced error handling with permission-specific messages and visual alerts
+    - No race conditions - safe from first render
+    - Files: MobileCamera.tsx, Info.plist
+  - **Beta-Looking Elements Removed**: Eliminated all placeholder/testing elements
+    - Removed "More Admin Features Coming Soon" card from admin page
+    - Updated AdMob comments to remove alarming "causing crashes" language
+    - Files: admin.tsx, admobService.ts
+  - **RevenueCat Documentation**: Created comprehensive guide for fixing "No current offering" issue
+    - Issue is dashboard configuration, not code - user must set current offering in RevenueCat
+    - Files: APPLE_REVIEW_FIX_REVENUECAT.md, APPLE_REVIEW_FIXES_SUMMARY.md
 - **iCloud Password Popup Fix**: Resolved persistent autofill popup blocking UI
   - **Root Cause**: Email/password fields in settings pages were missing `autoComplete="off"` attribute
   - **Files Fixed**: settings.tsx, PersonalInfo.tsx, AdminWhitelist.tsx, SettingsModal.tsx
