@@ -1,0 +1,183 @@
+✅ DEVELOPER PROMPT #2 — FIX METADATA & ANDROID REFERENCES (Guideline 2.3.10)
+
+COPY & PASTE THIS TO YOUR REPLIT DEVELOPER
+
+Guideline 2.3.10 — Accurate Metadata (Fix Required)
+
+The App Store reviewer rejected the app because our iOS version still contains Android / Google Play references, either in:
+
+UI text
+
+Buttons
+
+Error messages
+
+Paywall messaging
+
+Screenshots
+
+App description
+
+App onboarding
+
+Any "Get it on Google Play" style copy
+
+Internal debug copy printed on screen
+
+✔ Required Fixes:
+
+Search the entire codebase for these keywords and remove them:
+
+“Android”
+
+“Google Play”
+
+“Play Store”
+
+“APK”
+
+“Google Billing”
+
+“Web billing”
+
+“Web paywall available”
+
+“Android version”
+
+“Non-iOS platform”
+
+Update the UI to ensure iOS users only see iOS messaging, for example:
+
+Remove text offering Android instructions
+
+Remove Google Pay references
+
+Replace with “App Store purchase” or “iOS subscription”
+
+Review the paywall text:
+
+Make sure it doesn’t reference Android or Google billing.
+
+It should only describe Apple In-App Purchases.
+
+Review the App Store metadata:
+
+App description
+
+Screenshots
+
+Promo text
+
+Subtitle
+
+Remove any line about Android availability or Play Store.
+
+Final Step to Confirm Fix
+
+Add a checklist item for the developer:
+
+✔ No Android references in UI
+✔ No Android references in metadata
+✔ No Google Play references in paywalls
+✔ No debug logs mentioning Play Store
+✔ Only Apple-based terminology everywhere
+
+This will guarantee the metadata rejection is resolved.
+
+✅ DEVELOPER PROMPT #3 — FIX LOGIN VIA WEB BROWSER (Guideline 4.0 — Design)
+
+COPY AND PASTE THIS TO YOUR DEVELOPER
+
+Guideline 4.0 — Do NOT redirect users to the web browser for login
+
+Apple rejected the app because your current login screen:
+
+Opens Safari (external browser)
+
+Uses a web-based login flow
+
+Forces users outside the app for authentication
+
+👉 Apple requires that login must happen inside the app only, using:
+native UI OR SFSafariViewController / ASWebAuthenticationSession
+
+Required Fixes:
+✔ 1. Replace external Safari login with an in-app webview
+
+Use one of the approved methods:
+
+Option A — ASWebAuthenticationSession (recommended)
+
+For OAuth (Google, etc.), use:
+
+import { startAsync } from 'expo-auth-session';
+
+startAsync({
+  authUrl: oauthLoginUrl,
+});
+
+Option B — SFSafariViewController (iOS only)
+import * as WebBrowser from 'expo-web-browser';
+
+WebBrowser.openAuthSessionAsync(loginUrl, redirectUrl);
+
+Option C — Full Native Login Screen (best UX)
+
+If you use your own backend:
+
+Create a simple React Native login screen
+
+POST email/password to your backend
+
+Do NOT open the browser
+
+✔ 2. Add Sign In With Apple
+
+Apple requires this if ANY third-party login is used.
+
+Implement using:
+
+expo-apple-authentication
+or
+@react-native-apple/authentication
+
+
+Add button:
+
+"Sign In With Apple"
+
+Make sure it works inside the app — NOT via web browser.
+
+✔ 3. Make Login Optional (per prior rejection 5.1.1)
+
+Combine both rules:
+
+✔ Login optional
+✔ Login inside the app, NOT Safari
+✔ No blocking screens
+✔ No external redirect
+
+✔ 4. Extra UI Fix Apple Looks For
+
+When login is optional, show:
+
+“Continue without logging in”
+
+This reduces chances of a second rejection.
+
+FINAL STEP — Add This Note for the Reviewer
+
+In App Store Connect → App Review Notes (very important):
+
+“The app no longer redirects users to Safari for login. Authentication now uses ASWebAuthenticationSession and occurs entirely within the app. ‘Sign in with Apple’ has also been added to fully comply with Guideline 4.0 and 5.1.1.”
+
+⭐ YOU NOW HAVE 3 COMPLETE PROMPTS
+
+You can now fix:
+
+1️⃣ Login Requirement (5.1.1)
+2️⃣ Login Service Equivalency (4.8)
+3️⃣ Metadata (2.3.10)
+4️⃣ No Safari Login (4.0)
+
+All four rejections are now addressed, and your next submission has a very high chance of passing.

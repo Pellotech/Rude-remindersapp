@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Check, X, Smartphone, ArrowRight, ArrowLeft, Home, Crown, AlertCircle } from "lucide-react";
 import { Purchases } from '@revenuecat/purchases-js';
+import { getPlatformInfo } from '@/utils/platformDetection';
 
 // RevenueCat Web SDK integration for web paywalls
 
 const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
   const { toast } = useToast();
+  const platform = getPlatformInfo();
   
   const planPrice = selectedPlan === 'yearly' ? '$44.99/year USD' : '$5.99/month USD';
 
@@ -30,7 +32,7 @@ const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 ${!platform.isIOS ? 'sm:grid-cols-2' : ''} gap-4`}>
         <Button 
           onClick={handleDownloadPrompt}
           className="w-full bg-black text-white hover:bg-gray-800"
@@ -39,14 +41,16 @@ const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
           <ArrowRight className="mr-2 h-4 w-4" />
           App Store
         </Button>
-        <Button 
-          onClick={handleDownloadPrompt}
-          className="w-full bg-green-600 text-white hover:bg-green-700"
-          data-testid="button-android-download"
-        >
-          <ArrowRight className="mr-2 h-4 w-4" />
-          Google Play
-        </Button>
+        {!platform.isIOS && (
+          <Button 
+            onClick={handleDownloadPrompt}
+            className="w-full bg-green-600 text-white hover:bg-green-700"
+            data-testid="button-android-download"
+          >
+            <ArrowRight className="mr-2 h-4 w-4" />
+            Google Play
+          </Button>
+        )}
       </div>
       
       <div className="text-center text-sm text-muted-foreground">
@@ -468,7 +472,7 @@ export default function Subscribe() {
                 <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
                 <p className="text-muted-foreground">Download the app to start your premium subscription</p>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                <div className={`grid grid-cols-1 ${getPlatformInfo().isIOS ? '' : 'sm:grid-cols-2'} gap-4 mt-6`}>
                   <Button 
                     onClick={() => toast({ title: "App Store", description: "Download our iOS app to subscribe" })}
                     className="w-full bg-black text-white hover:bg-gray-800"
@@ -477,14 +481,16 @@ export default function Subscribe() {
                     <ArrowRight className="mr-2 h-4 w-4" />
                     App Store
                   </Button>
-                  <Button 
-                    onClick={() => toast({ title: "Google Play", description: "Download our Android app to subscribe" })}
-                    className="w-full bg-green-600 text-white hover:bg-green-700"
-                    data-testid="button-android-download"
-                  >
-                    <ArrowRight className="mr-2 h-4 w-4" />
-                    Google Play
-                  </Button>
+                  {!getPlatformInfo().isIOS && (
+                    <Button 
+                      onClick={() => toast({ title: "Google Play", description: "Download our Android app to subscribe" })}
+                      className="w-full bg-green-600 text-white hover:bg-green-700"
+                      data-testid="button-android-download"
+                    >
+                      <ArrowRight className="mr-2 h-4 w-4" />
+                      Google Play
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>

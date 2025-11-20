@@ -8,10 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { BackNavigation } from "@/components/BackNavigation";
 import { CreditCard, Crown, Calendar, Check, X, Star, Zap, MessageSquare, Users, BarChart3, Smartphone } from "lucide-react";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 export default function Billing() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const platform = getPlatformInfo();
   
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
@@ -214,10 +216,12 @@ export default function Billing() {
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
                     <span><strong>iOS:</strong> Settings → Your Name → Subscriptions</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span><strong>Android:</strong> Google Play Store → Account → Subscriptions</span>
-                  </div>
+                  {!platform.isIOS && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full" />
+                      <span><strong>Android:</strong> Google Play Store → Account → Subscriptions</span>
+                    </div>
+                  )}
                 </div>
               </div>
               

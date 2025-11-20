@@ -1187,9 +1187,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // For RevenueCat, users cancel through app store settings
-      // We just return instructions
+      // We just return instructions (iOS-focused for App Store compliance)
       res.json({
-        message: 'To cancel your subscription, please use your device settings:\\n\\niOS: Settings > Your Name > Subscriptions\\nAndroid: Google Play Store > Account > Payments & Subscriptions > Subscriptions',
+        message: 'To cancel your subscription, please use your device settings:\\n\\niOS: Settings > Your Name > Subscriptions',
         platform: 'mobile_store'
       });
     } catch (error: any) {
