@@ -47,3 +47,22 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Voice Synthesis**: Unreal Speech API.
 - **Mobile Development**: Capacitor.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
+
+## Recent Changes (November 20, 2025)
+- **iCloud Password Popup Fix**: Resolved persistent autofill popup blocking UI
+  - **Root Cause**: Email/password fields in settings pages were missing `autoComplete="off"` attribute
+  - **Files Fixed**: settings.tsx, PersonalInfo.tsx, AdminWhitelist.tsx, SettingsModal.tsx
+  - **Result**: iCloud password popup no longer appears when interacting with any input field
+  - **Coverage**: All email and password fields across entire app now have autofill disabled
+- **Subscription Page UX Improvements**: Fixed confusing mobile app experience
+  - **Mobile App Users**: Users already on native iOS/Android apps now see helpful subscription instructions instead of "Download the app" prompt
+  - **Platform Detection**: Implemented smart conditional rendering using `platform.isNative` to differentiate between web and native mobile users
+  - **Step-by-Step Instructions**: Native mobile users see clear, platform-specific instructions for subscribing via App Store/Google Play
+  - **Safe-Area Padding**: Added `pt-safe` class to all navigation headers (Back/Home buttons) to prevent overlap with iOS status bar
+  - **Web Users Unchanged**: Web users still see appropriate "Download app" prompt directing them to mobile apps
+- **Apple Guideline 2.3.10 Compliance**: Completed platform-specific UI implementation
+  - **Conditional Android References**: iOS users now see only iOS-specific content across all pages (subscribe, billing, settings, help, intro tour)
+  - **Platform Detection Integration**: Used `getPlatformInfo()` throughout app to conditionally render Android/Google Play references
+  - **Files Updated**: subscribe.tsx, Billing.tsx, settings.tsx, HelpMenu.tsx, IntroTour.tsx with platform detection
+  - **Server Routes**: Backend routes return iOS-specific messages when detected
+  - **All Apple Guidelines Met**: 5.1.1 (guest mode), 4.8 (no third-party login on mobile), 4.0 (no Safari redirect), 2.3.10 (accurate metadata)
