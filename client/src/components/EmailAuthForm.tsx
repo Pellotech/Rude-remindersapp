@@ -155,6 +155,7 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     value={loginForm.email}
                     onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -171,6 +172,7 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     value={loginForm.password}
                     onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
+                    autoComplete="off"
                     required
                   />
                   <Button
@@ -238,6 +240,7 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     value={registerForm.email}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -254,6 +257,7 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     value={registerForm.password}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
+                    autoComplete="new-password"
                     required
                     minLength={8}
                   />
@@ -284,6 +288,7 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     value={registerForm.confirmPassword}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     className="pl-10"
+                    autoComplete="new-password"
                     required
                   />
                 </div>
