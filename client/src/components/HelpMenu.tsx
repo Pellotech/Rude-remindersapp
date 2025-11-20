@@ -22,10 +22,12 @@ import {
   Shield,
   Zap
 } from "lucide-react";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 export function HelpMenu() {
   const [open, setOpen] = useState(false);
-  const { showIntro, closeIntro, showIntroManually } = useIntroTour();
+  const { showIntro, closeIntro, showIntroManually} = useIntroTour();
+  const platform = getPlatformInfo();
   const [openSections, setOpenSections] = useState({
     gettingStarted: false,
     reminders: false,
@@ -262,9 +264,9 @@ export function HelpMenu() {
               <CollapsibleContent>
                 <CardContent className="space-y-4">
                   <div>
-                    <h4 className="font-medium mb-2">Native iOS & Android Apps</h4>
+                    <h4 className="font-medium mb-2">Native{platform.isIOS ? ' iOS' : ' iOS & Android'} Apps</h4>
                     <p className="text-sm text-muted-foreground">
-                      Download our native mobile apps for the best experience on your phone or tablet.
+                      Download our native mobile app{platform.isIOS ? '' : 's'} for the best experience on your phone or tablet.
                     </p>
                   </div>
 
@@ -281,7 +283,7 @@ export function HelpMenu() {
                   <div>
                     <h4 className="font-medium mb-2">Cross-Platform Sync</h4>
                     <p className="text-sm text-muted-foreground">
-                      Your reminders automatically sync between web, iOS, and Android versions. 
+                      Your reminders automatically sync between web{platform.isIOS ? ' and iOS' : ', iOS, and Android'} versions. 
                       Start on your computer, get reminded on your phone!
                     </p>
                   </div>

@@ -18,6 +18,7 @@ import { BackNavigation } from "@/components/BackNavigation";
 import { AdMobManager } from "@/components/AdMobManager";
 import { AdSettings } from "@/components/AdSettings";
 import { usePremium } from "@/hooks/usePremium";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 interface UserSettings {
   id: string;
@@ -1006,7 +1007,12 @@ export default function Settings() {
                 <div className="text-xs text-muted-foreground space-y-1">
                   <p>Version: 2.1.0</p>
                   <p>Build: Mobile-Ready with Cultural Personalization</p>
-                  <p>Platform: Web/iOS/Android</p>
+                  <p>Platform: {(() => {
+                    const platform = getPlatformInfo();
+                    if (platform.isIOS) return 'iOS';
+                    if (platform.isAndroid) return 'Android';
+                    return 'Web';
+                  })()}</p>
                 </div>
               </div>
             </CardContent>

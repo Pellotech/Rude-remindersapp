@@ -24,6 +24,7 @@ import {
   CheckCircle,
   BarChart3
 } from "lucide-react";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 interface IntroTourProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ interface IntroTourProps {
 
 export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const platform = getPlatformInfo();
 
   const features = [
     {
@@ -79,7 +81,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
     {
       icon: <Smartphone className="h-6 w-6 text-orange-600" />,
       title: "Native Mobile Apps",
-      description: "iOS and Android apps with push notifications, camera integration, and offline functionality. Your reminders follow you everywhere!",
+      description: `${platform.isIOS ? 'iOS' : 'iOS and Android'} apps with push notifications, camera integration, and offline functionality. Your reminders follow you everywhere!`,
       badge: "Mobile Ready",
       badgeColor: "bg-orange-100 text-orange-800"
     },
