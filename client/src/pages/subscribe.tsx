@@ -309,7 +309,7 @@ export default function Subscribe() {
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Navigation Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 pt-safe">
             <Button 
               variant="outline" 
               onClick={() => window.history.back()}
@@ -359,7 +359,7 @@ export default function Subscribe() {
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Navigation Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 pt-safe">
             <Button 
               variant="outline" 
               onClick={() => window.history.back()}
@@ -401,11 +401,13 @@ export default function Subscribe() {
     );
   }
 
+  const platform = getPlatformInfo();
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Navigation Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 pt-safe">
           <Button 
             variant="outline" 
             onClick={() => window.history.back()}
@@ -465,36 +467,93 @@ export default function Subscribe() {
             </CardContent>
           </Card>
         ) : rcError ? (
-          <Card className="shadow-lg border-2 border-purple-200">
-            <CardContent className="pt-8 pb-8">
-              <div className="space-y-4 text-center">
-                <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
-                <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
-                <p className="text-muted-foreground">Download the app to start your premium subscription</p>
-                
-                <div className={`grid grid-cols-1 ${getPlatformInfo().isIOS ? '' : 'sm:grid-cols-2'} gap-4 mt-6`}>
-                  <Button 
-                    onClick={() => toast({ title: "App Store", description: "Download our iOS app to subscribe" })}
-                    className="w-full bg-black text-white hover:bg-gray-800"
-                    data-testid="button-ios-download"
-                  >
-                    <ArrowRight className="mr-2 h-4 w-4" />
-                    App Store
-                  </Button>
-                  {!getPlatformInfo().isIOS && (
+          platform.isNative ? (
+            <Card className="shadow-lg border-2 border-purple-200">
+              <CardContent className="pt-8 pb-8">
+                <div className="space-y-6 text-center">
+                  <Crown className="h-16 w-16 mx-auto text-purple-600" />
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Subscribe to Premium</h3>
+                    <p className="text-muted-foreground">
+                      Use your device's app store to manage subscriptions
+                    </p>
+                  </div>
+                  
+                  <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
+                    <p className="text-sm font-medium mb-2">How to Subscribe:</p>
+                    <div className="text-sm text-left space-y-2">
+                      {platform.isIOS ? (
+                        <>
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">1</div>
+                            <span>Open the App Store on your device</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">2</div>
+                            <span>Search for "Rude Reminders"</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">3</div>
+                            <span>Tap on the app and select your subscription plan</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">1</div>
+                            <span>Open Google Play Store on your device</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">2</div>
+                            <span>Search for "Rude Reminders"</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">3</div>
+                            <span>Tap on the app and select your subscription plan</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground">
+                    💡 Subscriptions are managed through your {platform.isIOS ? 'Apple ID' : 'Google account'}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="shadow-lg border-2 border-purple-200">
+              <CardContent className="pt-8 pb-8">
+                <div className="space-y-4 text-center">
+                  <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
+                  <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
+                  <p className="text-muted-foreground">Download the app to start your premium subscription</p>
+                  
+                  <div className={`grid grid-cols-1 ${platform.isIOS ? '' : 'sm:grid-cols-2'} gap-4 mt-6`}>
                     <Button 
-                      onClick={() => toast({ title: "Google Play", description: "Download our Android app to subscribe" })}
-                      className="w-full bg-green-600 text-white hover:bg-green-700"
-                      data-testid="button-android-download"
+                      onClick={() => toast({ title: "App Store", description: "Download our iOS app to subscribe" })}
+                      className="w-full bg-black text-white hover:bg-gray-800"
+                      data-testid="button-ios-download"
                     >
                       <ArrowRight className="mr-2 h-4 w-4" />
-                      Google Play
+                      App Store
                     </Button>
-                  )}
+                    {!platform.isIOS && (
+                      <Button 
+                        onClick={() => toast({ title: "Google Play", description: "Download our Android app to subscribe" })}
+                        className="w-full bg-green-600 text-white hover:bg-green-700"
+                        data-testid="button-android-download"
+                      >
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                        Google Play
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )
         ) : (
           <div className="flex justify-center items-center min-h-[300px]">
             <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
