@@ -63,11 +63,19 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
   - **RevenueCat Documentation**: Created comprehensive guide for fixing "No current offering" issue
     - Issue is dashboard configuration, not code - user must set current offering in RevenueCat
     - Files: APPLE_REVIEW_FIX_REVENUECAT.md, APPLE_REVIEW_FIXES_SUMMARY.md
-- **iCloud Password Popup Fix**: Resolved persistent autofill popup blocking UI
+- **Safari/iCloud Password Popup Fix**: Completely eliminated autofill popup on login/register page
+  - **Previous Issue**: Simple `autoComplete="off"` was insufficient for Safari/iCloud
+  - **Comprehensive Fix Applied**:
+    1. Hidden fake form to trick Safari autofill
+    2. Multiple anti-autofill attributes on all inputs: `autoComplete="off"`, `autoCorrect="off"`, `spellCheck={false}`, `data-lpignore="true"`, `data-form-type="other"`, `formNoValidate`
+    3. Form-level attributes: unique form names, `autoComplete="off"`, `autoCapitalize="none"`
+    4. CSS to hide Apple's password autofill button: `input::-webkit-credentials-auto-fill-button`
+    5. Register password fields use `autoComplete="new-password"` to prevent stored password suggestions
+  - **Files Fixed**: EmailAuthForm.tsx, index.css
+  - **Result**: Complete removal of ALL iCloud/Safari autofill popups, password suggestions, and account bubbles on login page
+- **Settings Pages Autofill Fix**: Earlier fix for settings pages
   - **Root Cause**: Email/password fields in settings pages were missing `autoComplete="off"` attribute
   - **Files Fixed**: settings.tsx, PersonalInfo.tsx, AdminWhitelist.tsx, SettingsModal.tsx
-  - **Result**: iCloud password popup no longer appears when interacting with any input field
-  - **Coverage**: All email and password fields across entire app now have autofill disabled
 - **Subscription Page UX Improvements**: Fixed confusing mobile app experience
   - **Mobile App Users**: Users already on native iOS/Android apps now see helpful subscription instructions instead of "Download the app" prompt
   - **Platform Detection**: Implemented smart conditional rendering using `platform.isNative` to differentiate between web and native mobile users
