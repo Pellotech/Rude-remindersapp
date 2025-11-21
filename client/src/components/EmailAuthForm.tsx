@@ -136,6 +136,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         <CardTitle className="text-center">Welcome to Rude Reminders</CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Hidden fake form to trick Safari autofill */}
+        <form style={{ display: 'none' }} aria-hidden="true">
+          <input type="text" name="fakeusernameremembered" tabIndex={-1} />
+          <input type="password" name="fakepasswordremembered" tabIndex={-1} />
+        </form>
+
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
@@ -143,7 +149,16 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
           </TabsList>
 
           <TabsContent value="login">
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form 
+              onSubmit={handleLogin} 
+              className="space-y-4"
+              name="form-do-not-autofill-login"
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              data-lpignore="true"
+              data-form-type="other"
+            >
               <div className="space-y-2">
                 <Label htmlFor="login-email">Email</Label>
                 <div className="relative">
@@ -156,6 +171,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
                     autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    data-lpignore="true"
+                    data-form-type="other"
+                    formNoValidate
+                    data-testid="input-login-email"
                     required
                   />
                 </div>
@@ -173,6 +194,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
                     autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    data-lpignore="true"
+                    data-form-type="other"
+                    formNoValidate
+                    data-testid="input-login-password"
                     required
                   />
                   <Button
@@ -198,7 +225,16 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
           </TabsContent>
 
           <TabsContent value="register">
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form 
+              onSubmit={handleRegister} 
+              className="space-y-4"
+              name="form-do-not-autofill-register"
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              data-lpignore="true"
+              data-form-type="other"
+            >
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="register-firstName">First Name</Label>
@@ -241,6 +277,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
                     autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    data-lpignore="true"
+                    data-form-type="other"
+                    formNoValidate
+                    data-testid="input-register-email"
                     required
                   />
                 </div>
@@ -258,6 +300,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
                     autoComplete="new-password"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    data-lpignore="true"
+                    data-form-type="other"
+                    formNoValidate
+                    data-testid="input-register-password"
                     required
                     minLength={8}
                   />
@@ -289,6 +337,12 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     className="pl-10"
                     autoComplete="new-password"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    data-lpignore="true"
+                    data-form-type="other"
+                    formNoValidate
+                    data-testid="input-register-confirm-password"
                     required
                   />
                 </div>

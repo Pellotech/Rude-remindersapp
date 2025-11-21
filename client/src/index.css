@@ -124,6 +124,22 @@
   border-radius: 4px;
 }
 
+/* Disable Apple's iCloud password autofill button and popup */
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Additional Safari autofill prevention */
+input::-webkit-contacts-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  opacity: 0;
+}
+
 /* Custom animations */
 @keyframes slideUp {
   from {
