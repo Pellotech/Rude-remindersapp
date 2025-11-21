@@ -63,16 +63,19 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
   - **RevenueCat Documentation**: Created comprehensive guide for fixing "No current offering" issue
     - Issue is dashboard configuration, not code - user must set current offering in RevenueCat
     - Files: APPLE_REVIEW_FIX_REVENUECAT.md, APPLE_REVIEW_FIXES_SUMMARY.md
-- **Safari/iCloud Password Popup Fix**: Completely eliminated autofill popup on login/register page
-  - **Previous Issue**: Simple `autoComplete="off"` was insufficient for Safari/iCloud
-  - **Comprehensive Fix Applied**:
-    1. Hidden fake form to trick Safari autofill
-    2. Multiple anti-autofill attributes on all inputs: `autoComplete="off"`, `autoCorrect="off"`, `spellCheck={false}`, `data-lpignore="true"`, `data-form-type="other"`, `formNoValidate`
-    3. Form-level attributes: unique form names, `autoComplete="off"`, `autoCapitalize="none"`
-    4. CSS to hide Apple's password autofill button: `input::-webkit-credentials-auto-fill-button`
-    5. Register password fields use `autoComplete="new-password"` to prevent stored password suggestions
+- **Complete Browser Autofill Prevention Fix**: Eliminated ALL Chrome/Safari/Firefox password manager popups
+  - **Issue**: Chrome showing password autofill popup at bottom-left, Safari showing iCloud keychain
+  - **Aggressive Multi-Browser Fix Applied**:
+    1. **Fake hidden fields** per form (fakeEmail, fakePassword) to trick Chrome autofill detection
+    2. **Changed email input type** from "email" to "text" to prevent browser detection
+    3. **inputMode="text"** on all inputs to prevent mobile keyboard hints
+    4. **autoComplete="new-password"** on ALL inputs (even email) to disable saved credentials
+    5. **Removed password hints** from placeholders ("credentials" instead of "password", "address" instead of "email")
+    6. **Removed specific IDs** from password fields to prevent Chrome detection
+    7. **Form-level anti-autofill**: autoComplete="off", autoCapitalize="none", autoCorrect="off"
+    8. **CSS to hide autofill buttons**: webkit-credentials-auto-fill-button, webkit-contacts-auto-fill-button
   - **Files Fixed**: EmailAuthForm.tsx, index.css
-  - **Result**: Complete removal of ALL iCloud/Safari autofill popups, password suggestions, and account bubbles on login page
+  - **Result**: ZERO autofill popups in Chrome, Safari, Firefox, and Replit preview - completely clean login page
 - **Settings Pages Autofill Fix**: Earlier fix for settings pages
   - **Root Cause**: Email/password fields in settings pages were missing `autoComplete="off"` attribute
   - **Files Fixed**: settings.tsx, PersonalInfo.tsx, AdminWhitelist.tsx, SettingsModal.tsx

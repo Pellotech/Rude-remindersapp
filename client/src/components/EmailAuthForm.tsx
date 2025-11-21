@@ -152,27 +152,31 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
             <form 
               onSubmit={handleLogin} 
               className="space-y-4"
-              name="form-do-not-autofill-login"
               autoComplete="off"
               autoCapitalize="none"
               autoCorrect="off"
               data-lpignore="true"
               data-form-type="other"
             >
+              {/* Fake hidden fields to trick Chrome autofill */}
+              <input type="text" name="fakeEmail" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+              <input type="password" name="fakePassword" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+              
               <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
+                <Label htmlFor="login-email-field">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="login-email"
-                    type="email"
-                    placeholder="Enter your email"
+                    type="text"
+                    placeholder="Enter your address"
                     value={loginForm.email}
                     onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
-                    autoComplete="off"
+                    autoComplete="new-password"
                     autoCorrect="off"
+                    autoCapitalize="none"
                     spellCheck={false}
+                    inputMode="text"
                     data-lpignore="true"
                     data-form-type="other"
                     formNoValidate
@@ -183,19 +187,20 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="login-password">Password</Label>
+                <Label>Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="login-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder="Enter your credentials"
                     value={loginForm.password}
                     onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
-                    autoComplete="off"
+                    autoComplete="new-password"
                     autoCorrect="off"
+                    autoCapitalize="none"
                     spellCheck={false}
+                    inputMode="text"
                     data-lpignore="true"
                     data-form-type="other"
                     formNoValidate
@@ -228,13 +233,16 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
             <form 
               onSubmit={handleRegister} 
               className="space-y-4"
-              name="form-do-not-autofill-register"
               autoComplete="off"
               autoCapitalize="none"
               autoCorrect="off"
               data-lpignore="true"
               data-form-type="other"
             >
+              {/* Fake hidden fields to trick Chrome autofill */}
+              <input type="text" name="fakeEmail" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+              <input type="password" name="fakePassword" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+              
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="register-firstName">First Name</Label>
@@ -246,6 +254,8 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                       value={registerForm.firstName}
                       onChange={(e) => setRegisterForm(prev => ({ ...prev, firstName: e.target.value }))}
                       className="pl-10"
+                      autoComplete="off"
+                      spellCheck={false}
                     />
                   </div>
                 </div>
@@ -260,25 +270,29 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
                       value={registerForm.lastName}
                       onChange={(e) => setRegisterForm(prev => ({ ...prev, lastName: e.target.value }))}
                       className="pl-10"
+                      autoComplete="off"
+                      spellCheck={false}
                     />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="register-email">Email</Label>
+                <Label htmlFor="register-email-field">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="register-email"
-                    type="email"
-                    placeholder="Enter your email"
+                    id="register-email-field"
+                    type="text"
+                    placeholder="Enter your address"
                     value={registerForm.email}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, email: e.target.value }))}
                     className="pl-10"
-                    autoComplete="off"
+                    autoComplete="new-password"
                     autoCorrect="off"
+                    autoCapitalize="none"
                     spellCheck={false}
+                    inputMode="text"
                     data-lpignore="true"
                     data-form-type="other"
                     formNoValidate
@@ -289,19 +303,20 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="register-password">Password</Label>
+                <Label>Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="register-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a password (min 8 characters)"
+                    placeholder="Create credentials (min 8 characters)"
                     value={registerForm.password}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
                     className="pl-10 pr-10"
                     autoComplete="new-password"
                     autoCorrect="off"
+                    autoCapitalize="none"
                     spellCheck={false}
+                    inputMode="text"
                     data-lpignore="true"
                     data-form-type="other"
                     formNoValidate
@@ -326,19 +341,20 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="register-confirmPassword">Confirm Password</Label>
+                <Label>Confirm Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="register-confirmPassword"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
+                    placeholder="Confirm credentials"
                     value={registerForm.confirmPassword}
                     onChange={(e) => setRegisterForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
                     className="pl-10"
                     autoComplete="new-password"
                     autoCorrect="off"
+                    autoCapitalize="none"
                     spellCheck={false}
+                    inputMode="text"
                     data-lpignore="true"
                     data-form-type="other"
                     formNoValidate
