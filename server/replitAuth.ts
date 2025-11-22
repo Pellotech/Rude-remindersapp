@@ -260,7 +260,7 @@ export async function setupAuth(app: Express) {
       const userId = `apple_${appleUserId}`;
 
       // Check if user already exists
-      let existingUser = await storage.getUserById(userId);
+      let existingUser = await storage.getUser(userId);
 
       if (existingUser) {
         // User exists, log them in
@@ -279,7 +279,7 @@ export async function setupAuth(app: Express) {
           profileImageUrl: null,
         });
 
-        existingUser = await storage.getUserById(userId);
+        existingUser = await storage.getUser(userId);
       }
 
       // Create session

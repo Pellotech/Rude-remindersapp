@@ -9,13 +9,17 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, Zap } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
+import { appleSignInService } from "@/services/appleSignInService";
+import { SiApple } from "react-icons/si";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isAppleSignInLoading, setIsAppleSignInLoading] = useState(false);
   const isNativeMobile = Capacitor.isNativePlatform();
+  const isAppleSignInAvailable = appleSignInService.isAvailable();
 
   useEffect(() => {
     // Only redirect authenticated users, not guests
@@ -43,6 +47,29 @@ export default function LoginPage() {
       description: "Your reminders will be stored locally on this device."
     });
     setLocation("/");
+  };
+
+  const handleAppleSignIn = async () => {
+    setIsAppleSignInLoading(true);
+    try {
+      await appleSignInService.signInAndAuthenticate();
+      toast({
+        title: "Welcome!",
+        description: "Signed in successfully with Apple."
+      });
+      refetch();
+    } catch (error: any) {
+      // Don't show error for user cancellation
+      if (!error.message?.includes('cancel')) {
+        toast({
+          title: "Sign in failed",
+          description: error.message || "Could not sign in with Apple. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsAppleSignInLoading(false);
+    }
   };
 
   if (user) {
@@ -91,6 +118,27 @@ export default function LoginPage() {
             </span>
           </div>
         </div>
+
+        {/* Apple Sign-In (iOS only) - Required by App Store Guideline 4.8 */}
+        {isAppleSignInAvailable && (
+          <Card>
+            <CardContent className="pt-6">
+              <Button 
+                onClick={handleAppleSignIn}
+                disabled={isAppleSignInLoading}
+                className="w-full bg-black hover:bg-gray-800 text-white text-lg py-6"
+                size="lg"
+                data-testid="button-apple-signin"
+              >
+                <SiApple className="mr-2 h-5 w-5" />
+                {isAppleSignInLoading ? "Signing in..." : "Sign in with Apple"}
+              </Button>
+              <p className="text-xs text-gray-600 text-center mt-3">
+                Quick and secure sign-in using your Apple ID
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Email/Password Authentication */}
         <EmailAuthForm onSuccess={handleEmailAuthSuccess} />
