@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
+import { Camera, CameraResultType, CameraSource, Photo } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Button } from "@/components/ui/button";
@@ -17,29 +17,22 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   const { toast } = useToast();
   const [isCapturing, setIsCapturing] = useState(false);
   const [permissionError, setPermissionError] = useState<string | null>(null);
-  // Default to true (conservative/safe) - only disable editing after confirming NOT an iPad
-  const [disableEditing, setDisableEditing] = useState(true);
+  const [isIPad, setIsIPad] = useState(false);
 
   useEffect(() => {
-    // Detect device and enable editing only if NOT iPad
+    // Detect if device is iPad for iPad-specific configurations
     const detectDevice = async () => {
       const platform = Capacitor.getPlatform();
       
-      // Only enable editing for non-iOS platforms
-      if (platform !== 'ios') {
-        setDisableEditing(false);
-        return;
-      }
-      
-      // For iOS, check if it's an iPad
-      try {
-        const info = await Device.getInfo();
-        const isIPad = info.model?.toLowerCase().includes('ipad') || false;
-        // Enable editing only on iPhone (not iPad)
-        setDisableEditing(isIPad);
-      } catch (error) {
-        console.error('Error detecting device:', error);
-        // If detection fails, stay conservative (keep editing disabled)
+      if (platform === 'ios') {
+        try {
+          const info = await Device.getInfo();
+          const iPadDetected = info.model?.toLowerCase().includes('ipad') || false;
+          setIsIPad(iPadDetected);
+          console.log('Device detected:', { model: info.model, isIPad: iPadDetected });
+        } catch (error) {
+          console.error('Error detecting device:', error);
+        }
       }
     };
     
@@ -60,30 +53,53 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setIsCapturing(true);
       setPermissionError(null);
       
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: !disableEditing, // Disabled on iPad to prevent crashes
+      // iPad-optimized configuration for iOS 18+ / iPadOS 26+
+      const cameraOptions: any = {
+        quality: 85, // Slightly lower quality for better performance on iPad
+        allowEditing: false, // CRITICAL: Disable editing on all iOS to prevent iPad crashes
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
         saveToGallery: false,
         correctOrientation: true,
-        width: 1920,
-        height: 1920
-      });
+      };
+
+      // Add presentationStyle for iPad popover support (iOS 15+)
+      if (isIPad) {
+        cameraOptions.presentationStyle = 'popover';
+        console.log('Using iPad-optimized camera settings with popover presentation');
+      }
+
+      const image: Photo = await Camera.getPhoto(cameraOptions);
 
       if (image.webPath) {
-        console.log('Camera captured image with webPath:', image.webPath);
+        console.log('Camera captured image:', { 
+          webPath: image.webPath, 
+          format: image.format,
+          isIPad 
+        });
         onPhotoCaptured(image.webPath);
         toast({
           title: "Photo captured",
           description: "Photo added to your reminder",
         });
+      } else if (image.path) {
+        // Fallback to path if webPath not available
+        console.log('Using image.path fallback:', image.path);
+        onPhotoCaptured(image.path);
+        toast({
+          title: "Photo captured",
+          description: "Photo added to your reminder",
+        });
       } else {
-        console.error('Camera image captured but no webPath available:', image);
+        console.error('Camera image captured but no path available:', image);
         throw new Error('No image path returned from camera');
       }
     } catch (error: any) {
-      console.error('Error taking photo:', error);
+      console.error('Camera error details:', { 
+        message: error?.message, 
+        code: error?.code,
+        isIPad 
+      });
       
       // Handle specific permission errors
       if (error?.message?.includes('permission') || error?.message?.includes('denied')) {
@@ -97,9 +113,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         // User cancelled - no error needed
         console.log('User cancelled camera');
       } else {
+        // Show specific error message for debugging
+        const errorMsg = error?.message || 'Unknown error occurred';
         toast({
           title: "Camera error",
-          description: "Failed to take photo. Please try again.",
+          description: isIPad 
+            ? `iPad camera error: ${errorMsg.substring(0, 50)}` 
+            : "Failed to take photo. Please try again.",
           variant: "destructive",
         });
       }
@@ -122,29 +142,52 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setIsCapturing(true);
       setPermissionError(null);
       
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: !disableEditing, // Disabled on iPad to prevent crashes
+      // iPad-optimized configuration for iOS 18+ / iPadOS 26+
+      const galleryOptions: any = {
+        quality: 85, // Balanced quality for performance
+        allowEditing: false, // CRITICAL: Disable editing to prevent iPad crashes
         resultType: CameraResultType.Uri,
         source: CameraSource.Photos,
         correctOrientation: true,
-        width: 1920,
-        height: 1920
-      });
+      };
+
+      // Add presentationStyle for iPad popover support (iOS 15+)
+      if (isIPad) {
+        galleryOptions.presentationStyle = 'popover';
+        console.log('Using iPad-optimized gallery settings with popover presentation');
+      }
+
+      const image: Photo = await Camera.getPhoto(galleryOptions);
 
       if (image.webPath) {
-        console.log('Gallery selected image with webPath:', image.webPath);
+        console.log('Gallery selected image:', { 
+          webPath: image.webPath, 
+          format: image.format,
+          isIPad 
+        });
         onPhotoCaptured(image.webPath);
         toast({
           title: "Photo selected",
           description: "Photo added to your reminder",
         });
+      } else if (image.path) {
+        // Fallback to path if webPath not available
+        console.log('Using image.path fallback:', image.path);
+        onPhotoCaptured(image.path);
+        toast({
+          title: "Photo selected",
+          description: "Photo added to your reminder",
+        });
       } else {
-        console.error('Gallery image selected but no webPath available:', image);
+        console.error('Gallery image selected but no path available:', image);
         throw new Error('No image path returned from gallery');
       }
     } catch (error: any) {
-      console.error('Error picking photo:', error);
+      console.error('Gallery error details:', { 
+        message: error?.message, 
+        code: error?.code,
+        isIPad 
+      });
       
       // Handle specific permission errors
       if (error?.message?.includes('permission') || error?.message?.includes('denied')) {
@@ -158,9 +201,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         // User cancelled - no error needed
         console.log('User cancelled photo selection');
       } else {
+        // Show specific error message for debugging
+        const errorMsg = error?.message || 'Unknown error occurred';
         toast({
           title: "Gallery error",
-          description: "Failed to select photo. Please try again.",
+          description: isIPad 
+            ? `iPad gallery error: ${errorMsg.substring(0, 50)}` 
+            : "Failed to select photo. Please try again.",
           variant: "destructive",
         });
       }
