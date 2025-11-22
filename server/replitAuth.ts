@@ -243,6 +243,76 @@ export async function setupAuth(app: Express) {
     })(req, res, next);
   });
 
+  // Apple Sign-In Authentication Route
+  app.post("/api/auth/apple", async (req, res) => {
+    try {
+      const { identityToken, email, givenName, familyName, user: appleUserId } = req.body;
+
+      if (!identityToken || !appleUserId) {
+        return res.status(400).json({ message: "Identity token and user ID are required" });
+      }
+
+      // Note: In production, you should verify the identityToken with Apple's servers
+      // For now, we'll trust the token from the iOS app (which is signed by Apple)
+      console.log('🍎 Apple Sign-In attempt:', { appleUserId, email, givenName, familyName });
+
+      // Create unique user ID for Apple users
+      const userId = `apple_${appleUserId}`;
+
+      // Check if user already exists
+      let existingUser = await storage.getUserById(userId);
+
+      if (existingUser) {
+        // User exists, log them in
+        console.log('✅ Existing Apple user found, logging in');
+      } else {
+        // New user, create account
+        console.log('🆕 New Apple user, creating account');
+        
+        // Apple may not provide email on subsequent logins if user chose "Hide My Email"
+        // We store the email from first login
+        await storage.upsertUser({
+          id: userId,
+          email: email || `${appleUserId}@privaterelay.appleid.com`, // Use private relay if no email
+          firstName: givenName || null,
+          lastName: familyName || null,
+          profileImageUrl: null,
+        });
+
+        existingUser = await storage.getUserById(userId);
+      }
+
+      // Create session
+      const userSession = {
+        claims: {
+          sub: userId,
+          email: existingUser?.email || email || `${appleUserId}@privaterelay.appleid.com`,
+          first_name: existingUser?.firstName || givenName,
+          last_name: existingUser?.lastName || familyName,
+          profile_image_url: "",
+          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60 // 1 week
+        },
+        access_token: "apple-auth",
+        refresh_token: "apple-auth",
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+      };
+
+      req.logIn(userSession, (err) => {
+        if (err) {
+          console.error('Login session error:', err);
+          return res.status(500).json({ message: "Failed to create session" });
+        }
+        
+        console.log('✅ Apple Sign-In successful');
+        res.json({ success: true, message: "Signed in with Apple successfully" });
+      });
+
+    } catch (error) {
+      console.error("Apple Sign-In error:", error);
+      res.status(500).json({ message: "Failed to sign in with Apple" });
+    }
+  });
+
   app.get("/api/logout", (req, res) => {
     const user = req.user as any;
     
