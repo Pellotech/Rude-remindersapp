@@ -49,11 +49,17 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
 ## Recent Changes (November 22, 2025)
-- **Guest Mode Subscription Page Redesign**: Completely redesigned subscription screen
+- **Guest Mode Subscription Page Redesign & Apple Sign-In Popup Fix**: Completely redesigned subscription screen
   - **Removed**: 
     - ALL iOS App Store management instructions, renewal dates, billing notes
     - ALL Premium Benefits sections (removed from guest and premium views)
     - Confusing platform-specific download prompts
+    - Unnecessary Apple Sign-In popup before paywall
+  - **Fixed Apple Sign-In Popup Blocking Paywall**: 
+    - Removed `Purchases.logIn()` call during RevenueCat initialization
+    - RevenueCat now uses anonymous user IDs by default (Apple Guideline 5.1.1 compliant)
+    - Purchases tracked by Apple/Google account, no app login required
+    - Direct access to paywall without authentication popup
   - **Fixed Mobile Loading Issue**: 
     - Native mobile apps now skip Web SDK configuration
     - Button shows immediately on iOS/Android (no more infinite spinner)
@@ -68,8 +74,8 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Mobile: Shows button immediately, uses native purchase flow
     - Web: Configures Web SDK, uses web purchase flow
     - Premium users see success message with option to view subscription details
-  - **Files Changed**: subscribe.tsx
-  - **Result**: Clean funnel to RevenueCat paywall, works on both mobile and web, no confusion for testers
+  - **Files Changed**: subscribe.tsx, revenueCatService.ts
+  - **Result**: Clean funnel to RevenueCat paywall, NO login popup, works on both mobile and web, no confusion for testers
 
 ## Recent Changes (November 20, 2025)
 - **Apple App Store Rejection Fixes**: Addressed Guideline 2.1 (App Completeness) and 2.2 (Beta Version)

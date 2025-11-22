@@ -31,50 +31,17 @@ export class RevenueCatService {
       await Purchases.configure({ apiKey });
       console.log('RevenueCat configured for platform:', platform);
       
-      // Now log in with your app user ID (from your auth system)
-      const userId = await this.getCurrentUserId();
-      if (userId) {
-        await Purchases.logIn({ appUserID: userId });
-        console.log('RevenueCat user logged in:', userId);
-      }
+      // RevenueCat will use an anonymous user ID by default
+      // This allows guest purchases without requiring login (Apple Guideline 5.1.1)
+      // User purchases will still be tracked by Apple/Google account
 
       this.isInitialized = true;
-      console.log('RevenueCat initialized successfully');
+      console.log('RevenueCat initialized successfully (anonymous mode)');
     } catch (error) {
       console.error('Failed to initialize RevenueCat:', error);
     }
   }
 
-  async getCurrentUserId(): Promise<string | null> {
-    try {
-      // Get user ID from your auth system
-      const response = await fetch('/api/auth/user');
-      if (response.ok) {
-        const user = await response.json();
-        return user.id;
-      }
-    } catch (error) {
-      console.error('Failed to get current user:', error);
-    }
-    return null;
-  }
-
-  async purchaseProduct(productId: string): Promise<boolean> {
-    if (!Capacitor.isNativePlatform()) {
-      // Redirect to mobile app download page for web users
-      window.location.href = '/subscribe';
-      return false;
-    }
-
-    try {
-      const { Purchases } = await import('@revenuecat/purchases-capacitor');
-      const { customerInfo } = await Purchases.purchaseProduct({ product: productId });
-      return Object.keys(customerInfo.entitlements.active).length > 0;
-    } catch (error) {
-      console.error('Purchase failed:', error);
-      return false;
-    }
-  }
 
   async restorePurchases(): Promise<boolean> {
     if (!Capacitor.isNativePlatform()) {
