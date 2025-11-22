@@ -1,0 +1,47 @@
+✅ PROMPT TO FIX NAVIGATION BUTTONS OVERLAPPING STATUS BAR
+
+Copy & paste this entire block into Replit:
+
+PROMPT FOR REPLIT AI:
+
+Fix a global UI issue that is happening across ALL screens in the Rude Reminders app: the navigation buttons (Back, Home, Settings, etc.) are positioned too high and overlap with the iOS status bar (time, signal, WiFi, battery). They need to respect the device safe-area at the top.
+
+Here is what I need you to do:
+
+1. Apply a global fix so that ALL top navigation components use proper safe-area spacing on ALL devices (iPhone 12, 13, 14, 15, Pro Max, and Dynamic Island models).
+
+2. Add a shared wrapper (or modify the existing Layout/Header components) to include:
+   - paddingTop: env(safe-area-inset-top)
+   - OR using a hook like useSafeAreaInsets() if we already use it
+   - OR apply a global CSS class that automatically adds safe-area top padding.
+
+3. Ensure all navigation bars, headers, and top-aligned buttons have:
+   - A minimum top padding of 12–16px on non-notch devices.
+   - Automatic adjustment using the safe-area inset on notch/Dynamic Island devices.
+
+4. Audit the following screens and update them:
+   - Login/Register page
+   - Settings page
+   - Personal Information page
+   - Subscription page
+   - Subscription Management screen
+   - Paywall screen
+   - Any screen that uses "Back" or "Home" buttons
+   - Main Page / Dashboard
+
+5. Make sure NO header element or icon EVER overlaps the system UI again. Everything should sit fully below the status bar.
+
+6. Do not hard-code pixel values. Use responsive safe-area logic everywhere.
+
+7. Once updated, test visually using iPhone 14 Pro/15 Pro Max safe-area modes inside the preview.
+
+Goal: Clean modern Apple-compliant headers that always sit BELOW the status bar with proper spacing.
+
+✅ After Replit Applies the Fix
+
+Every screen will:
+
+✓ Respect the top safe area
+✓ Avoid overlapping Apple system icons
+✓ Look modern and visually correct
+✓ Pass App Store review (they reject apps that overlap UI elements)
