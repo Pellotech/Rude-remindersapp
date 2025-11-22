@@ -53,7 +53,45 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Mobile Development**: Capacitor.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
+## Authentication System
+### Sign in with Apple Integration (iOS Native)
+- **Implementation**: Native iOS Sign in with Apple using `@capacitor-community/apple-sign-in` plugin
+- **App Store Compliance**: Meets Guideline 4.8 requirement - when offering third-party authentication, Sign in with Apple must be provided with equal prominence
+- **User Experience**:
+  - Button appears ONLY on native iOS platform (auto-detects via Capacitor)
+  - Equal prominence to email/password authentication on login page
+  - Black Apple-branded button with Apple logo (matches Apple HIG guidelines)
+  - Supports "Hide My Email" feature - users can use private relay email addresses
+- **Technical Implementation**:
+  - Frontend: `client/src/services/appleSignInService.ts` handles iOS authentication flow
+  - Backend: `/api/auth/apple` route verifies tokens and creates/logs in users
+  - User ID format: `apple_{appleUserId}` for unique identification
+  - Private relay email fallback: `{appleUserId}@privaterelay.appleid.com` if no email provided
+  - Session management: 1-week session expiry for Apple-authenticated users
+- **Data Privacy**:
+  - Apple only returns name + email on FIRST login (cached in database)
+  - Users can choose to hide their real email (Apple provides private relay)
+  - No additional data collection possible beyond what Apple provides
+- **Xcode Configuration Required** (Developer must complete):
+  1. Open `ios/App/App.xcworkspace` in Xcode
+  2. Select project target → Signing & Capabilities
+  3. Click "+ Capability" → Add "Sign in with Apple"
+  4. Ensure bundle ID matches: `com.rudereminders.app`
+  5. Register app ID in Apple Developer Portal with Sign in with Apple enabled
+- **Files**:
+  - `client/src/services/appleSignInService.ts` - iOS authentication service
+  - `client/src/pages/login.tsx` - Login page with Apple Sign-In button
+  - `server/replitAuth.ts` - Backend route `/api/auth/apple`
+
 ## Recent Changes (November 22, 2025)
+- **Sign in with Apple Integration**: Added native iOS Sign in with Apple authentication
+  - Meets App Store Guideline 4.8 requirement for equal prominence third-party auth
+  - Only visible on native iOS platform (auto-detected)
+  - Backend route `/api/auth/apple` handles token verification and user creation
+  - Supports Apple's "Hide My Email" privacy feature
+  - Black branded button with Apple logo, equal prominence to email/password auth
+  - Session management with 1-week expiry
+  - Xcode configuration required (Sign in with Apple capability + bundle ID setup)
 - **Removed Dev Tools Tab**: Removed the bottom-right dev tools tab from the application
   - Removed DevTools component import and usage
   - Removed AdminDevTools wrapper component
