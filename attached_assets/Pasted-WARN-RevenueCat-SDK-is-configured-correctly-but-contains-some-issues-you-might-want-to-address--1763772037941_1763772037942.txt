@@ -1,0 +1,48 @@
+WARN: ⚠️ RevenueCat SDK is configured correctly, but contains some issues you might want to address
+
+Warnings:
+  • Your products are configured in RevenueCat but aren't approved in App Store Connect yet. This prevents users from making purchases in production. Please ensure all products are approved and available for sale in App Store Connect.
+  • The offerings 'default', 'web default' have configuration issues that may prevent users from seeing product options or making purchases.
+
+Product Issues:
+  ⚠️ com.goosebumpsmw.rudereminders.monthly ( Rude Monthly Pro): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+  ⚠️ com.goosebumpsmw.rudereminders.yearly (Rude Yearly Pro): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+
+Offering Issues:
+  ⚠️ default
+    ⚠️ $rc_monthly (com.goosebumpsmw.rudereminders.monthly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+    ⚠️ $rc_annual (com.goosebumpsmw.rudereminders.yearly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+  ⚠️ web default
+    ⚠️ $rc_annual (com.goosebumpsmw.rudereminders.yearly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+    ⚠️ $rc_monthly (com.goosebumpsmw.rudereminders.monthly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+⚡️  [debug] - [vite] connecting...
+⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+⚡️  To Native ->  LocalNotifications requestPermissions 37703245
+⚡️  WebView loaded
+⚡️  To Native ->  Purchases configure -1
+INFO: ℹ️ Purchases instance already set. Did you mean to configure two Purchases objects?
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+⚡️  TO JS 
+DEBUG: 👤 Identifying App User ID
+{"display":"granted"}
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ Delegate set
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [log] - ✅ Notification permissions granted!
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/38669684/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/38669684/offerings'
+Error enumerating all current transactions: Error Domain=ASDErrorDomain Code=509 "No active account" UserInfo={NSLocalizedDescription=No active account}
+Error enumerating unfinished transactions: Error Domain=ASDErrorDomain Code=509 "No active account" UserInfo={NSLocalizedDescription=No active account}
+Error enumerating all transactions: Error Domain=ASDErrorDomain Code=509 "No active account" UserInfo={NSLocalizedDescription=No active account}
