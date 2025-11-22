@@ -3,62 +3,10 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Check, X, Smartphone, ArrowRight, ArrowLeft, Home, Crown, AlertCircle } from "lucide-react";
+import { Loader2, Check, X, ArrowLeft, Home, Crown, Sparkles } from "lucide-react";
 import { Purchases } from '@revenuecat/purchases-js';
-import { getPlatformInfo } from '@/utils/platformDetection';
 
 // RevenueCat Web SDK integration for web paywalls
-
-const MobileSubscribePrompt = ({ selectedPlan }: { selectedPlan: string }) => {
-  const { toast } = useToast();
-  const platform = getPlatformInfo();
-  
-  const planPrice = selectedPlan === 'yearly' ? '$44.99/year USD' : '$5.99/month USD';
-
-  const handleDownloadPrompt = () => {
-    toast({
-      title: "Download Required",
-      description: "Please download our mobile app to subscribe.",
-    });
-  };
-
-  return (
-    <div className="space-y-6" data-testid="mobile-subscribe-prompt">
-      <div className="text-center space-y-4">
-        <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
-        <div>
-          <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
-          <p className="text-muted-foreground">Download the app to start your premium subscription</p>
-        </div>
-      </div>
-      
-      <div className={`grid grid-cols-1 ${!platform.isIOS ? 'sm:grid-cols-2' : ''} gap-4`}>
-        <Button 
-          onClick={handleDownloadPrompt}
-          className="w-full bg-black text-white hover:bg-gray-800"
-          data-testid="button-ios-download"
-        >
-          <ArrowRight className="mr-2 h-4 w-4" />
-          App Store
-        </Button>
-        {!platform.isIOS && (
-          <Button 
-            onClick={handleDownloadPrompt}
-            className="w-full bg-green-600 text-white hover:bg-green-700"
-            data-testid="button-android-download"
-          >
-            <ArrowRight className="mr-2 h-4 w-4" />
-            Google Play
-          </Button>
-        )}
-      </div>
-      
-      <div className="text-center text-sm text-muted-foreground">
-        <p>Selected: {planPrice}</p>
-      </div>
-    </div>
-  );
-};
 
 const PremiumFeatures = () => {
   const features = [
@@ -104,57 +52,12 @@ const PremiumFeatures = () => {
   );
 };
 
-const PlanSelector = ({ selectedPlan, onPlanChange }: { selectedPlan: string, onPlanChange: (plan: string) => void }) => {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-      <Card 
-        className={`cursor-pointer transition-all ${selectedPlan === 'monthly' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:shadow-md'}`}
-        onClick={() => onPlanChange('monthly')}
-        data-testid="plan-monthly"
-      >
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Monthly</span>
-            {selectedPlan === 'monthly' && <Check className="h-5 w-5 text-blue-500" />}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">$5.99<span className="text-lg text-muted-foreground">/month USD</span></div>
-          <p className="text-sm text-muted-foreground mt-1">Renews monthly</p>
-        </CardContent>
-      </Card>
-
-      <Card 
-        className={`cursor-pointer transition-all relative ${selectedPlan === 'yearly' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:shadow-md'}`}
-        onClick={() => onPlanChange('yearly')}
-        data-testid="plan-yearly"
-      >
-        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-          Best Value
-        </div>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Annual</span>
-            {selectedPlan === 'yearly' && <Check className="h-5 w-5 text-green-500" />}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold">$44.99<span className="text-lg text-muted-foreground">/year USD</span></div>
-          <p className="text-sm text-muted-foreground mt-1">Save 37% annually</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
 
 export default function Subscribe() {
   const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState('yearly'); // Default to yearly for better value
   const [rcConfigured, setRcConfigured] = useState(false);
-  const [rcError, setRcError] = useState("");
-  const paywallContainerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const fetchCustomerInfo = () => {
@@ -183,14 +86,13 @@ export default function Subscribe() {
     
     if (!apiKey) {
       console.warn('RevenueCat Web API key not configured');
-      setRcError('RevenueCat not configured');
       return;
     }
 
     try {
       // Get user info for RevenueCat
       const user = await apiRequest("/api/auth/user", { method: 'GET' });
-      const userId = user.id || `user-${Date.now()}`;
+      const userId = user.id || `guest-${Date.now()}`;
       
       // Configure RevenueCat (returns Purchases instance)
       Purchases.configure({
@@ -199,19 +101,18 @@ export default function Subscribe() {
       });
       
       setRcConfigured(true);
-      console.log('RevenueCat configured successfully');
+      console.log('RevenueCat configured successfully for user:', userId);
     } catch (error) {
       console.error('Failed to configure RevenueCat:', error);
-      setRcError('Failed to initialize payment system');
     }
   };
 
   // Display RevenueCat paywall
   const showPaywall = async () => {
-    if (!rcConfigured || !paywallContainerRef.current) {
+    if (!rcConfigured) {
       toast({
-        title: "Configuration Required",
-        description: "Payment system is not configured. Please contact support.",
+        title: "Payment System Loading",
+        description: "Please wait a moment while we configure the payment system.",
         variant: "destructive",
       });
       return;
@@ -228,29 +129,23 @@ export default function Subscribe() {
       
       console.log('Offerings received:', offerings);
       console.log('Current offering:', offerings.current);
-      console.log('All offerings:', offerings.all);
       
       if (!offerings.current) {
         console.error('No current offering found. Available offerings:', Object.keys(offerings.all || {}));
-        throw new Error('No current offering available. Please set a current offering in RevenueCat dashboard.');
+        throw new Error('No subscription plans available. Please try again later or contact support.');
       }
 
       console.log('Available packages in current offering:', offerings.current.availablePackages);
-      console.log('Annual package:', offerings.current.annual);
-      console.log('Monthly package:', offerings.current.monthly);
 
-      // Get the package based on selected plan
-      const selectedPackage = selectedPlan === 'yearly' 
-        ? offerings.current.annual || offerings.current.availablePackages.find(p => p.identifier.includes('yearly'))
-        : offerings.current.monthly || offerings.current.availablePackages.find(p => p.identifier.includes('monthly'));
+      // Get the annual package (best value)
+      const selectedPackage = offerings.current.annual || offerings.current.availablePackages[0];
       
       if (!selectedPackage) {
-        console.error('No package found for plan:', selectedPlan);
-        console.error('Available packages:', offerings.current.availablePackages.map(p => p.identifier));
-        throw new Error(`No ${selectedPlan} package available. Please check your RevenueCat product configuration.`);
+        console.error('No packages found in current offering');
+        throw new Error('No subscription plans available. Please contact support.');
       }
 
-      console.log('Selected package:', selectedPackage.identifier, selectedPackage.product);
+      console.log('Selected package:', selectedPackage.identifier);
 
       const purchaseResult = await purchases.purchase({
         rcPackage: selectedPackage,
@@ -288,10 +183,6 @@ export default function Subscribe() {
     fetchCustomerInfo();
     initializeRevenueCat();
   }, []);
-
-  const handlePlanChange = (plan: string) => {
-    setSelectedPlan(plan);
-  };
 
   if (loading) {
     return (
@@ -353,55 +244,8 @@ export default function Subscribe() {
     );
   }
 
-  // Show current subscription status if user is already premium
-  if (customerInfo?.subscriptionStatus === 'active') {
-    return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-2xl mx-auto space-y-6">
-          {/* Navigation Header */}
-          <div className="flex items-center justify-between mb-4 pt-safe">
-            <Button 
-              variant="outline" 
-              onClick={() => window.history.back()}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => window.location.href = '/'}
-              className="flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Home
-            </Button>
-          </div>
-
-          <div className="text-center">
-            <Check className="h-16 w-16 mx-auto text-green-500 mb-4" />
-            <h1 className="text-3xl font-bold">You're Already Premium!</h1>
-            <p className="text-muted-foreground mt-2">
-              You have an active {customerInfo.subscriptionPlan} subscription
-            </p>
-          </div>
-          
-          <PremiumFeatures />
-          
-          <div className="text-center">
-            <Button 
-              onClick={() => window.location.href = '/settings'}
-              data-testid="button-manage-subscription"
-            >
-              Manage Subscription
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const platform = getPlatformInfo();
+  // Check if user has premium entitlement
+  const isPremium = customerInfo?.subscriptionStatus === 'active';
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -428,138 +272,81 @@ export default function Subscribe() {
           </Button>
         </div>
 
-        <div className="text-center">
-          <Crown className="h-16 w-16 mx-auto text-purple-600 mb-4" />
+        {/* Hero Section */}
+        <div className="text-center space-y-4">
+          <div className="relative inline-block">
+            <Crown className="h-20 w-20 mx-auto text-purple-600" />
+            <Sparkles className="h-6 w-6 absolute -top-2 -right-2 text-yellow-500" />
+          </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Premium Subscription
           </h1>
-          <p className="text-muted-foreground mt-2 text-lg">
-            Unlock all premium features
+          <p className="text-muted-foreground text-lg max-w-md mx-auto">
+            Unlock all premium features and get the full Rude Reminders experience
           </p>
         </div>
 
-        {/* Simple Subscribe Button */}
-        {rcConfigured ? (
-          <Card className="shadow-lg border-2 border-purple-200">
-            <CardContent className="pt-8 pb-8">
-              <div className="space-y-6">
-                <Button 
-                  onClick={showPaywall}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl py-8"
-                  size="lg"
-                  data-testid="button-show-paywall"
-                >
-                  <Crown className="h-6 w-6 mr-2" />
-                  Subscribe Now
-                </Button>
+        {/* Main CTA Card */}
+        {isPremium ? (
+          <Card className="shadow-2xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+            <CardContent className="pt-10 pb-10">
+              <div className="text-center space-y-6">
+                <Check className="h-16 w-16 mx-auto text-green-500" />
+                <div>
+                  <h2 className="text-2xl font-bold text-green-700 mb-2">You're a Premium Member! 🎉</h2>
+                  <p className="text-muted-foreground">
+                    Enjoy unlimited access to all premium features
+                  </p>
+                </div>
                 
-                <p className="text-center text-sm text-muted-foreground">
-                  ✓ 30-day money-back guarantee • ✓ Cancel anytime
-                </p>
-
-                {/* RevenueCat Paywall Container (hidden, shown when button clicked) */}
-                <div 
-                  ref={paywallContainerRef} 
-                  className="min-h-[400px] rounded-lg"
-                  data-testid="revenuecat-paywall-container"
-                />
+                <Button 
+                  onClick={() => window.location.href = '/settings'}
+                  variant="outline"
+                  className="w-full max-w-sm"
+                  data-testid="button-view-subscription"
+                >
+                  View Subscription Details
+                </Button>
               </div>
             </CardContent>
           </Card>
-        ) : rcError ? (
-          platform.isNative ? (
-            <Card className="shadow-lg border-2 border-purple-200">
-              <CardContent className="pt-8 pb-8">
-                <div className="space-y-6 text-center">
-                  <Crown className="h-16 w-16 mx-auto text-purple-600" />
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">Subscribe to Premium</h3>
-                    <p className="text-muted-foreground">
-                      Use your device's app store to manage subscriptions
-                    </p>
-                  </div>
-                  
-                  <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-                    <p className="text-sm font-medium mb-2">How to Subscribe:</p>
-                    <div className="text-sm text-left space-y-2">
-                      {platform.isIOS ? (
-                        <>
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">1</div>
-                            <span>Open the App Store on your device</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">2</div>
-                            <span>Search for "Rude Reminders"</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">3</div>
-                            <span>Tap on the app and select your subscription plan</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">1</div>
-                            <span>Open Google Play Store on your device</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">2</div>
-                            <span>Search for "Rude Reminders"</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mt-0.5">3</div>
-                            <span>Tap on the app and select your subscription plan</span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs text-muted-foreground">
-                    💡 Subscriptions are managed through your {platform.isIOS ? 'Apple ID' : 'Google account'}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="shadow-lg border-2 border-purple-200">
-              <CardContent className="pt-8 pb-8">
-                <div className="space-y-4 text-center">
-                  <Smartphone className="h-16 w-16 mx-auto text-blue-500" />
-                  <h3 className="text-xl font-semibold">Subscribe via Mobile App</h3>
-                  <p className="text-muted-foreground">Download the app to start your premium subscription</p>
-                  
-                  <div className={`grid grid-cols-1 ${platform.isIOS ? '' : 'sm:grid-cols-2'} gap-4 mt-6`}>
-                    <Button 
-                      onClick={() => toast({ title: "App Store", description: "Download our iOS app to subscribe" })}
-                      className="w-full bg-black text-white hover:bg-gray-800"
-                      data-testid="button-ios-download"
-                    >
-                      <ArrowRight className="mr-2 h-4 w-4" />
-                      App Store
-                    </Button>
-                    {!platform.isIOS && (
-                      <Button 
-                        onClick={() => toast({ title: "Google Play", description: "Download our Android app to subscribe" })}
-                        className="w-full bg-green-600 text-white hover:bg-green-700"
-                        data-testid="button-android-download"
-                      >
-                        <ArrowRight className="mr-2 h-4 w-4" />
-                        Google Play
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
         ) : (
-          <div className="flex justify-center items-center min-h-[300px]">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-          </div>
+          <Card className="shadow-2xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+            <CardContent className="pt-10 pb-10">
+              <div className="space-y-8">
+                {rcConfigured ? (
+                  <>
+                    <Button 
+                      onClick={showPaywall}
+                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-2xl py-8 shadow-lg"
+                      size="lg"
+                      data-testid="button-subscribe-now"
+                    >
+                      <Crown className="h-7 w-7 mr-3" />
+                      Subscribe Now
+                    </Button>
+                    
+                    <div className="text-center space-y-2">
+                      <p className="text-sm text-muted-foreground font-medium">
+                        ✓ 30-day money-back guarantee
+                      </p>
+                      <p className="text-sm text-muted-foreground font-medium">
+                        ✓ Cancel anytime, no questions asked
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center space-y-4">
+                    <Loader2 className="h-12 w-12 animate-spin mx-auto text-purple-600" />
+                    <p className="text-muted-foreground">Loading payment options...</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
+        {/* Premium Features */}
         <PremiumFeatures />
       </div>
     </div>

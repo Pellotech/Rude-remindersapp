@@ -48,6 +48,21 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Mobile Development**: Capacitor.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
+## Recent Changes (November 22, 2025)
+- **Guest Mode Subscription Page Redesign**: Completely redesigned subscription screen
+  - **Removed**: ALL iOS App Store management instructions, renewal dates, billing notes, subscription management details
+  - **Clean, Minimal Design**: 
+    - Hero section with Crown icon and gradient title
+    - Single large "Subscribe Now" button that opens RevenueCat paywall
+    - If user is premium: "You're a Premium Member!" message with "View Subscription Details" button
+    - Premium features list shown below
+  - **Simplified Logic**: 
+    - Guest mode always shows Subscribe Now button if RevenueCat is configured
+    - Premium users see success message instead of confusing iOS instructions
+    - No more platform-specific download prompts or App Store instructions
+  - **Files Changed**: subscribe.tsx
+  - **Result**: Clean funnel to RevenueCat paywall, no confusion for testers or guest users
+
 ## Recent Changes (November 20, 2025)
 - **Apple App Store Rejection Fixes**: Addressed Guideline 2.1 (App Completeness) and 2.2 (Beta Version)
   - **iPad Photo Picker Crash Fix**: Implemented device detection to disable photo editing on iPad (prevents crashes)

@@ -1,0 +1,32 @@
+Please completely redesign the guest-mode subscription screen. The current screen is incorrect and should NOT show iOS App Store management instructions, renewal dates, or device-managed details. This screen is ONLY supposed to do two things in guest mode:
+
+1. Let the user open the RevenueCat paywall to subscribe.
+2. Let the user view their current plan if already subscribed.
+
+Requirements for the redesign:
+
+• Remove ALL App Store instructions (Settings → Your Name → Subscriptions, etc.)
+• Remove ALL renewal dates, billing notes, and subscription management details.
+• Remove any “How to Cancel Subscription” banners or iOS-specific UI.
+
+• The screen should show ONLY:
+    - A clean title: “Premium Subscription”
+    - A short description: “Unlock all premium features.”
+    - A primary button: “Subscribe Now” → opens the RevenueCat paywall
+    - A secondary button: “View Subscription” → opens the existing subscription details screen (only if user is logged in or has a premium entitlement)
+    - In guest mode, “View Subscription” should still show a simple message like “You are not subscribed yet.”
+
+• Make the design modern, minimal, and consistent with the existing app style.
+• Buttons should be large, centered, and use the same styling as the main CTA buttons.
+• Remove all blocks, cards, or sections that reference iOS subscription management, renewal dates, or billing history—those belong ONLY on the logged-in account settings page.
+
+• Also fix this logic:
+    - In guest mode → always show the “Subscribe Now” button.
+    - If user already purchased premium (entitlement active) → show “You’re a Premium Member” and optionally “View Subscription”.
+    - No other text or Apple-managed details should appear.
+
+• Make sure the RevenueCat paywall opens correctly in guest mode.
+
+This screen should act purely as a clean funnel to the paywall and should NOT show any store-managed info that confuses the user or blocks testers from accessing the paywall.
+
+Implement the redesign and ensure the layout works on iOS Safari, Chrome, and desktop. 
