@@ -76,8 +76,6 @@ function Router() {
           <Route path="/settings/appearance" component={Appearance} />
           <Route path="/settings/history" component={ReminderHistory} />
           <Route path="/settings" component={Settings} />
-          <Route path="/home-free" component={HomeFree} />
-          <Route path="/home-premium" component={HomePremium} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/admin" component={AdminPage} />
           <Route path="/secret-admin-panel-b5ac04f4" component={AdminPage} />
