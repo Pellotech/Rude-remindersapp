@@ -248,16 +248,39 @@ export async function setupAuth(app: Express) {
     try {
       const { identityToken, email, givenName, familyName, user: appleUserId } = req.body;
 
-      if (!identityToken || !appleUserId) {
-        return res.status(400).json({ message: "Identity token and user ID are required" });
+      if (!identityToken) {
+        return res.status(400).json({ message: "Identity token is required" });
       }
 
-      // Note: In production, you should verify the identityToken with Apple's servers
-      // For now, we'll trust the token from the iOS app (which is signed by Apple)
-      console.log('🍎 Apple Sign-In attempt:', { appleUserId, email, givenName, familyName });
+      // SECURITY: Verify the identity token with Apple's public keys
+      const { verifyAppleToken, validateAppleTokenAudience } = await import('./appleAuth.js');
+      
+      let verifiedPayload;
+      try {
+        verifiedPayload = await verifyAppleToken(identityToken);
+      } catch (verificationError: any) {
+        console.error('❌ Apple token verification failed:', verificationError);
+        return res.status(401).json({ message: "Invalid Apple ID token" });
+      }
+
+      // Validate audience matches our bundle ID (for native iOS)
+      const expectedBundleId = 'com.rudereminders.app';
+      if (!validateAppleTokenAudience(verifiedPayload, expectedBundleId)) {
+        console.error('❌ Token audience mismatch. Expected:', expectedBundleId, 'Got:', verifiedPayload.aud);
+        return res.status(401).json({ message: "Token audience mismatch" });
+      }
+
+      // Use the verified subject (Apple user ID) from the token
+      const appleUserIdVerified = verifiedPayload.sub;
+      console.log('🍎 Apple Sign-In attempt (verified):', { 
+        appleUserId: appleUserIdVerified, 
+        email: verifiedPayload.email || email,
+        givenName, 
+        familyName 
+      });
 
       // Create unique user ID for Apple users
-      const userId = `apple_${appleUserId}`;
+      const userId = `apple_${appleUserIdVerified}`;
 
       // Check if user already exists
       let existingUser = await storage.getUser(userId);
@@ -269,11 +292,18 @@ export async function setupAuth(app: Express) {
         // New user, create account
         console.log('🆕 New Apple user, creating account');
         
-        // Apple may not provide email on subsequent logins if user chose "Hide My Email"
-        // We store the email from first login
+        // PRIVACY: Apple may not provide email on subsequent logins if user chose "Hide My Email"
+        // We only store the email if Apple provides it (from token or user info)
+        // Do NOT fabricate email addresses
+        const userEmail = verifiedPayload.email || email || null;
+        
+        if (!userEmail) {
+          console.warn('⚠️ No email provided by Apple (user may have chosen Hide My Email)');
+        }
+
         await storage.upsertUser({
           id: userId,
-          email: email || `${appleUserId}@privaterelay.appleid.com`, // Use private relay if no email
+          email: userEmail || `apple_user_${appleUserIdVerified}@noemail.local`, // Temporary fallback for DB constraint
           firstName: givenName || null,
           lastName: familyName || null,
           profileImageUrl: null,
@@ -286,7 +316,7 @@ export async function setupAuth(app: Express) {
       const userSession = {
         claims: {
           sub: userId,
-          email: existingUser?.email || email || `${appleUserId}@privaterelay.appleid.com`,
+          email: existingUser?.email || verifiedPayload.email || email || `apple_user_${appleUserIdVerified}@noemail.local`,
           first_name: existingUser?.firstName || givenName,
           last_name: existingUser?.lastName || familyName,
           profile_image_url: "",
@@ -307,9 +337,9 @@ export async function setupAuth(app: Express) {
         res.json({ success: true, message: "Signed in with Apple successfully" });
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Apple Sign-In error:", error);
-      res.status(500).json({ message: "Failed to sign in with Apple" });
+      res.status(500).json({ message: error.message || "Failed to sign in with Apple" });
     }
   });
 
