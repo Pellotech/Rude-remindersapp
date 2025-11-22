@@ -49,33 +49,42 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
 ## Recent Changes (November 22, 2025)
-- **Guest Mode Subscription Page Redesign & Apple Sign-In Popup Fix**: Completely redesigned subscription screen
-  - **Removed**: 
-    - ALL iOS App Store management instructions, renewal dates, billing notes
-    - ALL Premium Benefits sections (removed from guest and premium views)
-    - Confusing platform-specific download prompts
-    - Unnecessary Apple Sign-In popup before paywall
-  - **Fixed Apple Sign-In Popup Blocking Paywall**: 
+- **Complete Subscription UI Overhaul**: Completely redesigned subscription system with modern, minimal design
+  - **New PremiumScreen Component**: Created standalone `PremiumScreen.tsx` with clean, centered layout
+    - Large crown icon with sparkle animation
+    - "Unlock Premium" headline with gradient text
+    - Two buttons only: "Subscribe Now" and "View All Plans"
+    - "No account required to subscribe" message
+    - NO App Store instructions, NO platform-specific text, NO billing explanations
+  - **Safe Offerings Loader**: Implemented `loadOfferingsSafe()` with automatic retry logic
+    - First attempt to fetch offerings
+    - If failed, syncs purchases and retries
+    - Graceful error handling with user-friendly messages
+    - Shows sandbox account reminder if StoreKit errors occur
+  - **Fixed Apple Sign-In Popup**: Removed unnecessary login requirement
     - Removed `Purchases.logIn()` call during RevenueCat initialization
     - RevenueCat now uses anonymous user IDs by default (Apple Guideline 5.1.1 compliant)
-    - Purchases tracked by Apple/Google account, no app login required
+    - Purchases tracked by Apple/Google account automatically
     - Direct access to paywall without authentication popup
-  - **Fixed Mobile Loading Issue**: 
-    - Native mobile apps now skip Web SDK configuration
-    - Button shows immediately on iOS/Android (no more infinite spinner)
-    - Uses native RevenueCat SDK for mobile, Web SDK for web
-    - Platform detection determines which SDK to use
-  - **Clean, Minimal Design**: 
-    - Hero section with Crown icon and gradient title
-    - Single large "Subscribe Now" button that opens native paywall on mobile
-    - If user is premium: "You're a Premium Member!" message with "View Subscription Details" button
-    - No more features list clutter
-  - **Simplified Logic**: 
-    - Mobile: Shows button immediately, uses native purchase flow
-    - Web: Configures Web SDK, uses web purchase flow
-    - Premium users see success message with option to view subscription details
-  - **Files Changed**: subscribe.tsx, revenueCatService.ts
-  - **Result**: Clean funnel to RevenueCat paywall, NO login popup, works on both mobile and web, no confusion for testers
+  - **Simplified Subscribe Page**: Reduced to minimal wrapper
+    - Only fetches customer info and initializes SDK
+    - Delegates all UI to PremiumScreen component
+    - Clean separation of concerns
+  - **Premium User Experience**: 
+    - Shows "Premium Active!" card with crown icon
+    - Single "View Subscription Details" button
+    - Green success color scheme
+  - **Guest User Experience**:
+    - Modern gradient background (purple/pink/blue)
+    - Large "Subscribe Now" button (opens RevenueCat paywall)
+    - "View All Plans" button (shows all available packages)
+    - Sandbox account reminder if offerings fail to load
+  - **Files Changed**: 
+    - Created: `client/src/components/PremiumScreen.tsx` (new modern UI)
+    - Updated: `client/src/pages/subscribe.tsx` (simplified to minimal wrapper)
+    - Updated: `client/src/services/revenueCatService.ts` (removed login requirement)
+    - Updated: `replit.md` (this file)
+  - **Result**: Apple-compliant, guest-friendly, modern subscription flow with no forced login and graceful error handling
 
 ## Recent Changes (November 20, 2025)
 - **Apple App Store Rejection Fixes**: Addressed Guideline 2.1 (App Completeness) and 2.2 (Beta Version)
