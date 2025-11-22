@@ -25,7 +25,7 @@ import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
 
 function HomeRouter() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
 
   // Only show loading on initial mount, not for guest users
   if (isLoading) {
@@ -39,16 +39,9 @@ function HomeRouter() {
     );
   }
 
-  // Check developer mode for testing subscription tiers
-  const isDeveloperPremiumMode = localStorage.getItem('dev-premium-mode') === 'true';
-
-  // Check if user has premium subscription OR developer mode is enabled
-  const isPremium = isDeveloperPremiumMode ||
-                   (user as any)?.subscriptionStatus === 'active' ||
-                   (user as any)?.subscriptionPlan === 'premium';
-
-  // Guest users and non-premium users get the free experience
-  return isPremium ? <HomePremium /> : <HomeFree />;
+  // Authenticated users (including developer accounts) always see premium interface
+  // Guest users (not authenticated) see the free experience
+  return isAuthenticated ? <HomePremium /> : <HomeFree />;
 }
 
 function Router() {
