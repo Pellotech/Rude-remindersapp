@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Crown, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
+import { BackNavigation } from "@/components/BackNavigation";
 
 interface PremiumScreenProps {
   isPremium: boolean;
@@ -170,51 +171,64 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
 
   if (isPremium) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-green-50 to-emerald-50">
-        <Card className="w-full max-w-md shadow-2xl border-2 border-green-200">
-          <CardContent className="pt-12 pb-12">
-            <div className="text-center space-y-6">
-              <div className="relative inline-block">
-                <Crown className="h-20 w-20 mx-auto text-green-600" />
-                <Sparkles className="h-6 w-6 absolute -top-2 -right-2 text-yellow-500" />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+        <BackNavigation 
+          customBackPath="/settings" 
+          customBackLabel="Settings" 
+          showMainPageButton={true}
+        />
+        <div className="flex items-center justify-center p-4 pt-8">
+          <Card className="w-full max-w-md shadow-2xl border-2 border-green-200">
+            <CardContent className="pt-12 pb-12">
+              <div className="text-center space-y-6">
+                <div className="relative inline-block">
+                  <Crown className="h-20 w-20 mx-auto text-green-600" />
+                  <Sparkles className="h-6 w-6 absolute -top-2 -right-2 text-yellow-500" />
+                </div>
+                
+                <div>
+                  <h1 className="text-3xl font-bold text-green-700 mb-3">
+                    Premium Active!
+                  </h1>
+                  <p className="text-muted-foreground text-lg">
+                    You have access to all premium features
+                  </p>
+                </div>
+                
+                {onViewSubscription && (
+                  <Button 
+                    onClick={onViewSubscription}
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    data-testid="button-view-subscription"
+                  >
+                    View Subscription Details
+                  </Button>
+                )}
               </div>
-              
-              <div>
-                <h1 className="text-3xl font-bold text-green-700 mb-3">
-                  Premium Active!
-                </h1>
-                <p className="text-muted-foreground text-lg">
-                  You have access to all premium features
-                </p>
-              </div>
-              
-              {onViewSubscription && (
-                <Button 
-                  onClick={onViewSubscription}
-                  variant="outline"
-                  size="lg"
-                  className="w-full"
-                  data-testid="button-view-subscription"
-                >
-                  View Subscription Details
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-      <Card className="w-full max-w-md shadow-2xl border-2 border-purple-200">
-        <CardContent className="pt-12 pb-12">
-          <div className="text-center space-y-8">
-            <div className="relative inline-block">
-              <Crown className="h-24 w-24 mx-auto text-purple-600" />
-              <Sparkles className="h-8 w-8 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+      <BackNavigation 
+        customBackPath="/settings" 
+        customBackLabel="Settings" 
+        showMainPageButton={true}
+      />
+      <div className="flex items-center justify-center p-4 pt-8">
+        <Card className="w-full max-w-md shadow-2xl border-2 border-purple-200">
+          <CardContent className="pt-12 pb-12">
+            <div className="text-center space-y-8">
+              <div className="relative inline-block">
+                <Crown className="h-24 w-24 mx-auto text-purple-600" />
+                <Sparkles className="h-8 w-8 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />
+              </div>
             
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
@@ -272,6 +286,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

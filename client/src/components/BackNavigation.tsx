@@ -6,33 +6,47 @@ interface BackNavigationProps {
   showMainPageButton?: boolean;
   customBackPath?: string;
   customBackLabel?: string;
+  className?: string;
 }
 
 export function BackNavigation({ 
   showMainPageButton = true, 
   customBackPath = "/",
-  customBackLabel = "Back"
+  customBackLabel = "Back",
+  className = ""
 }: BackNavigationProps) {
   return (
-    <div className="flex items-center gap-4 mb-6">
-      <Link href={customBackPath}>
-        <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {customBackLabel}
-        </Button>
-      </Link>
-      
-      {showMainPageButton && customBackPath !== "/" && (
-        <>
-          <div className="h-4 border-l border-gray-300 dark:border-gray-600"></div>
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-              <Home className="h-4 w-4 mr-2" />
-              Main Page
-            </Button>
-          </Link>
-        </>
-      )}
-    </div>
+    <header className={`pt-safe bg-white dark:bg-gray-900 ${className}`}>
+      <div className="flex items-center gap-4 px-4 py-3 mb-3">
+        <Link href={customBackPath}>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {customBackLabel}
+          </Button>
+        </Link>
+        
+        {showMainPageButton && customBackPath !== "/" && (
+          <>
+            <div className="h-4 border-l border-gray-300 dark:border-gray-600"></div>
+            <Link href="/">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                data-testid="button-main-page"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Main Page
+              </Button>
+            </Link>
+          </>
+        )}
+      </div>
+    </header>
   );
 }
