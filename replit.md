@@ -61,6 +61,12 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - If failed, syncs purchases and retries
     - Graceful error handling with user-friendly messages
     - Shows sandbox account reminder if StoreKit errors occur
+  - **Safe Purchase Handler**: Enhanced error handling for all purchase scenarios
+    - Handles user cancellation gracefully (no error shown)
+    - Specific handling for StoreKit error code 509 (sandbox account required)
+    - Never blocks paywall on errors - always allows retry
+    - No forced login - system manages authentication prompts
+    - Clear, actionable error messages for users
   - **Fixed Apple Sign-In Popup**: Removed unnecessary login requirement
     - Removed `Purchases.logIn()` call during RevenueCat initialization
     - RevenueCat now uses anonymous user IDs by default (Apple Guideline 5.1.1 compliant)

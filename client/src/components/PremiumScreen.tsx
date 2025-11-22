@@ -50,15 +50,12 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
 
     try {
       if (platform.isNative) {
+        // Load offerings without blocking the paywall
         const offeringsResult = await loadOfferingsSafe();
         
         if (!offeringsResult || !offeringsResult.current) {
+          // Show warning but don't block - user can retry
           setOfferingsError(true);
-          toast({
-            title: "Unable to Load Plans",
-            description: "Please sign into a Sandbox App Store account to test purchases, or try again later.",
-            variant: "destructive",
-          });
           setLoading(false);
           return;
         }
@@ -74,27 +71,59 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
         const selectedPackage = annualPackage || packages[0];
         
         if (!selectedPackage) {
-          throw new Error('No subscription packages available.');
+          setOfferingsError(true);
+          setLoading(false);
+          return;
         }
 
+        // Safe purchase handler - don't block on errors
         const { Purchases } = await import('@revenuecat/purchases-capacitor');
-        const { customerInfo } = await Purchases.purchasePackage({
-          aPackage: selectedPackage
-        });
-
-        const isPremiumNow = Object.keys(customerInfo.entitlements.active).length > 0;
         
-        if (isPremiumNow) {
-          toast({
-            title: "Success!",
-            description: "Your subscription is now active!",
+        try {
+          const { customerInfo } = await Purchases.purchasePackage({
+            aPackage: selectedPackage
           });
+
+          const isPremiumNow = Object.keys(customerInfo.entitlements.active).length > 0;
           
-          if (onViewSubscription) {
-            setTimeout(() => onViewSubscription(), 1500);
+          if (isPremiumNow) {
+            toast({
+              title: "Success!",
+              description: "Subscription activated!",
+            });
+            
+            if (onViewSubscription) {
+              setTimeout(() => onViewSubscription(), 1500);
+            }
           }
+        } catch (purchaseError: any) {
+          // Handle user cancellation gracefully
+          if (purchaseError.userCancelled) {
+            console.log('User cancelled purchase');
+            return;
+          }
+          
+          // Handle StoreKit sandbox error (code 509)
+          if (purchaseError.code === 509 || purchaseError.code === '509') {
+            setOfferingsError(true);
+            toast({
+              title: "Sandbox Account Required",
+              description: "Please sign into a Sandbox App Store account for testing.",
+              variant: "destructive",
+            });
+            return;
+          }
+          
+          // Generic error - let user retry
+          console.error('Purchase failed:', purchaseError);
+          toast({
+            title: "Purchase Failed",
+            description: "Please try again.",
+            variant: "destructive",
+          });
         }
       } else {
+        // Web purchase flow
         const { Purchases } = await import('@revenuecat/purchases-js');
         const purchases = Purchases.getSharedInstance();
         
@@ -114,20 +143,22 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
         
         toast({
           title: "Success!",
-          description: "Your subscription is now active!",
+          description: "Subscription activated!",
         });
       }
     } catch (error: any) {
+      // Top-level error handling for non-purchase errors
       if (error.userCancelled || error.message === 'User cancelled') {
-        console.log('User cancelled purchase');
-      } else {
-        console.error('Purchase error:', error);
-        toast({
-          title: "Subscription Error",
-          description: error.message || "Failed to process subscription. Please try again.",
-          variant: "destructive",
-        });
+        console.log('User cancelled');
+        return;
       }
+      
+      console.error('Subscription error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
