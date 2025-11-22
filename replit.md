@@ -49,6 +49,22 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
 ## Recent Changes (November 22, 2025)
+- **Global Navigation Button Safe-Area Fix**: Fixed navigation buttons overlapping iOS status bar across ALL pages
+  - **Updated BackNavigation Component**: Added `pt-safe` CSS class to header wrapper
+    - Automatically respects device safe-area-inset-top on all iOS devices (notch, Dynamic Island)
+    - Added `data-testid` attributes for testing (button-back, button-main-page)
+    - Added optional `className` prop for customization
+    - Wrapped navigation in semantic `<header>` element with background color
+  - **Added Navigation to Subscribe Page**: Both premium and guest views now have navigation
+    - Premium view: Back to Settings + Main Page buttons
+    - Guest view: Back to Settings + Main Page buttons
+    - Clean layout with proper spacing and safe-area padding
+  - **Pages Fixed**: Settings, Appearance, Billing, Personal Info, Admin, Subscribe (all pages with top navigation)
+  - **Files Changed**: 
+    - Updated: `client/src/components/BackNavigation.tsx` (added pt-safe, data-testids, header wrapper)
+    - Updated: `client/src/components/PremiumScreen.tsx` (added BackNavigation to both views)
+    - Updated: `replit.md` (this file)
+  - **Result**: Clean, Apple-compliant headers that NEVER overlap status bar on any iOS device
 - **Complete Subscription UI Overhaul**: Completely redesigned subscription system with modern, minimal design
   - **New PremiumScreen Component**: Created standalone `PremiumScreen.tsx` with clean, centered layout
     - Large crown icon with sparkle animation
