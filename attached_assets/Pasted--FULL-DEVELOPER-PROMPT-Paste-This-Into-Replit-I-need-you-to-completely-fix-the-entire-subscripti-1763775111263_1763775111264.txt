@@ -1,0 +1,89 @@
+🚀 FULL DEVELOPER PROMPT — Paste This Into Replit
+I need you to completely fix the entire subscription flow and redesign the subscription UI. 
+Follow the exact steps below:
+
+────────────────────────────────────────────
+### 1. REMOVE ALL OLD SUBSCRIPTION SCREENS
+Remove all old subscription / billing UI from:
+- /pages/subscribe.tsx
+- /pages/manage-subscription.tsx
+- /components/SubscriptionManagement.tsx
+- Anything showing instructions like “Go to App Store > Settings > Subscriptions”
+- Remove all explanations, long text, and technical instructions
+
+The new subscription system should be:
+● simple
+● clean
+● modern
+● 100% focused on “Subscribe” & “View Plans”
+● Should not require an account to subscribe
+
+────────────────────────────────────────────
+### 2. CREATE A MODERN PREMIUM SUBSCRIPTION PAGE
+
+Create a NEW UI component called:
+`/components/PremiumScreen.tsx`
+
+Design Requirements:
+● Modern, clean, minimal
+● Centered layout
+● Large premium icon at the top
+● Headline: “Unlock Premium”
+● Subtitle: “Get all advanced reminder features”
+● Two buttons only:
+    1. “Subscribe Now” (go to RevenueCat paywall)
+    2. “View All Plans” (open RC native offering sheet or RC paywall lightbox)
+● Add a small text row under the buttons:
+    “No account required to subscribe”
+
+Do NOT show:
+✖ App Store instructions  
+✖ Device settings text  
+✖ Billing history warnings  
+✖ Cancel instructions  
+✖ Anything referencing Apple settings  
+✖ Any reference to Android / Google Play  
+
+(Apple rejects this!)
+
+────────────────────────────────────────────
+### 3. FIX GUEST MODE SUBSCRIPTIONS
+
+Guest users should:
+● Always be able to access the premium page
+● Always see offerings / paywall
+● NEVER see Apple ID login unless StoreKit requests it
+
+If StoreKit errors (`ASDErrorDomain Code=509`):
+● DO NOT block the UI
+● Show a small banner:
+   “Please sign into a Sandbox App Store account to test purchases.”
+
+────────────────────────────────────────────
+### 4. FIX REVENUECAT OFFERINGS
+
+Implement a unified function to load offerings with fallback:
+
+```ts
+export async function loadOfferingsSafe() {
+  try {
+    const offerings = await Purchases.getOfferings();
+    if (offerings.current) return offerings;
+  } catch (e) {
+    console.warn("Offerings failed:", e);
+  }
+
+  await Purchases.syncPurchases();
+
+  try {
+    const offerings = await Purchases.getOfferings();
+    return offerings;
+  } catch (e) {
+    return null;
+  }
+}
+
+
+The subscription screen should:
+● Load offerings on mount
+● If offerings fail → show error message but still let user retry
