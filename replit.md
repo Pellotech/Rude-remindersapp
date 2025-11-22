@@ -60,11 +60,15 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Guest view: Back to Settings + Main Page buttons
     - Clean layout with proper spacing and safe-area padding
   - **Pages Fixed**: Settings, Appearance, Billing, Personal Info, Admin, Subscribe (all pages with top navigation)
+  - **Navigation Fix**: Changed from Link components to programmatic navigation
+    - Fixed 404 error when clicking Settings or Home buttons
+    - Now uses wouter's `useLocation` hook with `setLocation()` for proper routing
+    - Handles authentication boundaries correctly
   - **Files Changed**: 
-    - Updated: `client/src/components/BackNavigation.tsx` (added pt-safe, data-testids, header wrapper)
+    - Updated: `client/src/components/BackNavigation.tsx` (added pt-safe, data-testids, programmatic navigation)
     - Updated: `client/src/components/PremiumScreen.tsx` (added BackNavigation to both views)
     - Updated: `replit.md` (this file)
-  - **Result**: Clean, Apple-compliant headers that NEVER overlap status bar on any iOS device
+  - **Result**: Clean, Apple-compliant headers that NEVER overlap status bar, with working navigation across all pages
 - **Complete Subscription UI Overhaul**: Completely redesigned subscription system with modern, minimal design
   - **New PremiumScreen Component**: Created standalone `PremiumScreen.tsx` with clean, centered layout
     - Large crown icon with sparkle animation
