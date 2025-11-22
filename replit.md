@@ -3,6 +3,11 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application that delivers daily reminders with a humorous, "rude" twist, allowing users to adjust the rudeness level. It transforms standard reminders into brutally honest, motivational notifications. The project, initially a web application, has been converted into native iOS and Android mobile apps using Capacitor. Key capabilities include photo/video attachments, historical motivational quotes, voice character selection, cross-platform synchronization, and rich native mobile notifications. The business vision is to provide a unique, engaging reminder experience that blends humor with motivation, offering a distinct alternative in the productivity app market.
 
+### User Experience Model
+- **Guest Users (Not Authenticated)**: Access the free experience via `home-free.tsx` with limited features (12 reminders/month, 3 voice characters, 1 attachment). This represents the free tier of the app.
+- **Authenticated Users (All Accounts)**: Always see the premium interface via `home-premium.tsx` regardless of subscription status. This includes developer accounts and any logged-in users.
+- **No Developer Premium Mode**: The `dev-premium-mode` localStorage flag has been removed. All authenticated users see the premium interface by default.
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.
