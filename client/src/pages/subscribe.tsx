@@ -1,64 +1,20 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Check, X, ArrowLeft, Home, Crown, Sparkles } from "lucide-react";
 import { Purchases } from '@revenuecat/purchases-js';
-
-// RevenueCat Web SDK integration for web paywalls
-
-const PremiumFeatures = () => {
-  const features = [
-    {
-      icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "Unlimited Reminders",
-      description: "Create as many reminders as you need"
-    },
-    {
-      icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "Premium Content",
-      description: "Access to exclusive reminder features"
-    },
-    {
-      icon: <Check className="h-5 w-5 text-green-500" />,
-      title: "Ad-Free Experience",
-      description: "Enjoy the app without advertisements"
-    }
-  ];
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Premium Benefits</CardTitle>
-        <CardDescription>
-          Upgrade to unlock premium features
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {features.map((feature, index) => (
-            <div key={index} className="flex items-start space-x-3">
-              {feature.icon}
-              <div>
-                <h4 className="font-medium text-sm">{feature.title}</h4>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+import { getPlatformInfo } from '@/utils/platformDetection';
 
 
 export default function Subscribe() {
   const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [rcConfigured, setRcConfigured] = useState(false);
+  const [ready, setReady] = useState(false);
   const { toast } = useToast();
+  const platform = getPlatformInfo();
 
   const fetchCustomerInfo = () => {
     setLoading(true);
@@ -80,12 +36,21 @@ export default function Subscribe() {
       });
   };
 
-  // Initialize RevenueCat Web SDK
+  // Initialize RevenueCat (Web SDK for web, native SDK already configured for mobile)
   const initializeRevenueCat = async () => {
+    // On mobile, native SDK is already configured - just set ready to true
+    if (platform.isNative) {
+      console.log('Native platform detected - using native RevenueCat SDK');
+      setReady(true);
+      return;
+    }
+
+    // On web, configure the Web SDK
     const apiKey = import.meta.env.VITE_REVENUECAT_WEB_API_KEY;
     
     if (!apiKey) {
       console.warn('RevenueCat Web API key not configured');
+      setReady(false);
       return;
     }
 
@@ -94,87 +59,133 @@ export default function Subscribe() {
       const user = await apiRequest("/api/auth/user", { method: 'GET' });
       const userId = user.id || `guest-${Date.now()}`;
       
-      // Configure RevenueCat (returns Purchases instance)
+      // Configure RevenueCat Web SDK
       Purchases.configure({
         apiKey: apiKey,
         appUserId: userId,
       });
       
-      setRcConfigured(true);
-      console.log('RevenueCat configured successfully for user:', userId);
+      setReady(true);
+      console.log('RevenueCat Web SDK configured for user:', userId);
     } catch (error) {
-      console.error('Failed to configure RevenueCat:', error);
+      console.error('Failed to configure RevenueCat Web SDK:', error);
+      setReady(false);
     }
   };
 
-  // Display RevenueCat paywall
+  // Display RevenueCat paywall (native or web)
   const showPaywall = async () => {
-    if (!rcConfigured) {
+    if (!ready) {
       toast({
         title: "Payment System Loading",
-        description: "Please wait a moment while we configure the payment system.",
+        description: "Please wait a moment...",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      // Get shared Purchases instance
-      const purchases = Purchases.getSharedInstance();
-      
-      console.log('Fetching offerings...');
-      
-      // Get offerings
-      const offerings = await purchases.getOfferings();
-      
-      console.log('Offerings received:', offerings);
-      console.log('Current offering:', offerings.current);
-      
-      if (!offerings.current) {
-        console.error('No current offering found. Available offerings:', Object.keys(offerings.all || {}));
-        throw new Error('No subscription plans available. Please try again later or contact support.');
-      }
+      // Native mobile purchase flow
+      if (platform.isNative) {
+        const { Purchases } = await import('@revenuecat/purchases-capacitor');
+        
+        console.log('[Native] Fetching offerings...');
+        const offeringsResult: any = await Purchases.getOfferings();
+        
+        if (!offeringsResult.current) {
+          throw new Error('No subscription plans available. Please try again later.');
+        }
 
-      console.log('Available packages in current offering:', offerings.current.availablePackages);
+        console.log('[Native] Current offering:', offeringsResult.current);
+        
+        // Get the annual package or first available
+        const packages = offeringsResult.current.availablePackages;
+        const annualPackage = packages.find((p: any) => 
+          p.identifier === '$rc_annual' || 
+          p.packageType === 'ANNUAL' ||
+          p.identifier.includes('annual') ||
+          p.identifier.includes('yearly')
+        );
+        
+        const selectedPackage = annualPackage || packages[0];
+        
+        if (!selectedPackage) {
+          throw new Error('No subscription packages available.');
+        }
 
-      // Get the annual package (best value)
-      const selectedPackage = offerings.current.annual || offerings.current.availablePackages[0];
-      
-      if (!selectedPackage) {
-        console.error('No packages found in current offering');
-        throw new Error('No subscription plans available. Please contact support.');
-      }
+        console.log('[Native] Purchasing package:', selectedPackage.identifier);
+        
+        // Show native paywall
+        const { customerInfo: purchaseResult } = await Purchases.purchasePackage({
+          aPackage: selectedPackage
+        });
 
-      console.log('Selected package:', selectedPackage.identifier);
+        console.log('[Native] Purchase completed:', purchaseResult);
+        
+        // Check if premium is active
+        const isPremium = Object.keys(purchaseResult.entitlements.active).length > 0;
+        
+        if (isPremium) {
+          // Refresh customer info
+          fetchCustomerInfo();
+          
+          toast({
+            title: "Success!",
+            description: "Your subscription is now active!",
+          });
+        }
+      } else {
+        // Web purchase flow
+        const purchases = Purchases.getSharedInstance();
+        
+        console.log('[Web] Fetching offerings...');
+        const offerings = await purchases.getOfferings();
+        
+        if (!offerings.current) {
+          throw new Error('No subscription plans available. Please try again later.');
+        }
 
-      const purchaseResult = await purchases.purchase({
-        rcPackage: selectedPackage,
-      });
+        // Get the annual package (best value)
+        const selectedPackage = offerings.current.annual || offerings.current.availablePackages[0];
+        
+        if (!selectedPackage) {
+          throw new Error('No subscription packages available.');
+        }
 
-      console.log('Purchase completed:', purchaseResult);
-      
-      // Refresh customer info after purchase
-      fetchCustomerInfo();
-      
-      toast({
-        title: "Success!",
-        description: "Your subscription is now active!",
-      });
-    } catch (error: any) {
-      console.error('Paywall error details:', {
-        message: error.message,
-        code: error.code,
-        underlyingError: error.underlyingErrorMessage,
-        stack: error.stack
-      });
-      
-      if (error.message !== 'User cancelled' && !error.userCancelled) {
+        console.log('[Web] Purchasing package:', selectedPackage.identifier);
+
+        const purchaseResult = await purchases.purchase({
+          rcPackage: selectedPackage,
+        });
+
+        console.log('[Web] Purchase completed:', purchaseResult);
+        
+        // Refresh customer info
+        fetchCustomerInfo();
+        
         toast({
-          title: "Subscription Error",
-          description: error.message || "Failed to process subscription. Please try again or contact support.",
-          variant: "destructive",
+          title: "Success!",
+          description: "Your subscription is now active!",
         });
       }
+    } catch (error: any) {
+      console.error('Paywall error:', {
+        message: error.message,
+        code: error.code,
+        userCancelled: error.userCancelled
+      });
+      
+      // Don't show error for user cancellation
+      if (error.userCancelled || error.message === 'User cancelled') {
+        console.log('User cancelled purchase');
+        return;
+      }
+      
+      toast({
+        title: "Subscription Error",
+        description: error.message || "Failed to process subscription. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -314,7 +325,7 @@ export default function Subscribe() {
           <Card className="shadow-2xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
             <CardContent className="pt-10 pb-10">
               <div className="space-y-8">
-                {rcConfigured ? (
+                {ready ? (
                   <>
                     <Button 
                       onClick={showPaywall}
@@ -345,9 +356,6 @@ export default function Subscribe() {
             </CardContent>
           </Card>
         )}
-
-        {/* Premium Features */}
-        <PremiumFeatures />
       </div>
     </div>
   );
