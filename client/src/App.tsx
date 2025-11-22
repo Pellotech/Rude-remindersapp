@@ -18,8 +18,7 @@ import Subscribe from "@/pages/subscribe";
 import AdminPage from "@/pages/admin";
 import LoginPage from "@/pages/login";
 import NotFound from "@/pages/not-found";
-import { DevTools } from "@/components/DevTools";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
@@ -103,8 +102,6 @@ function Router() {
 }
 
 function App() {
-  const [showDevTools, setShowDevTools] = useState(false);
-
   useEffect(() => {
     // Initialize RevenueCat when app starts
     revenueCatService.initialize().catch(console.error);
@@ -134,32 +131,8 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
-        <AdminDevTools
-          isVisible={showDevTools}
-          onToggle={() => setShowDevTools(!showDevTools)}
-        />
       </TooltipProvider>
     </QueryClientProvider>
-  );
-}
-
-
-// Wrapper component that only shows dev tools to admin
-function AdminDevTools({ isVisible, onToggle }: { isVisible: boolean; onToggle: () => void }) {
-  const { user } = useAuth();
-
-  // Only show dev tools to your specific email and developer email
-  const isAdmin = (user as any)?.email === 'letmeknow6@icloud.com' || (user as any)?.email === 'developer@example.com';
-
-  if (!isAdmin) {
-    return null;
-  }
-
-  return (
-    <DevTools
-      isVisible={isVisible}
-      onToggle={onToggle}
-    />
   );
 }
 

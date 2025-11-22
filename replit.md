@@ -54,6 +54,11 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard).
 
 ## Recent Changes (November 22, 2025)
+- **Removed Dev Tools Tab**: Removed the bottom-right dev tools tab from the application
+  - Removed DevTools component import and usage
+  - Removed AdminDevTools wrapper component
+  - Removed showDevTools state management
+  - Cleaner interface without developer debugging UI
 - **Global Navigation Button Safe-Area Fix**: Fixed navigation buttons overlapping iOS status bar across ALL pages
   - **Updated BackNavigation Component**: Added `pt-safe` CSS class to header wrapper
     - Automatically respects device safe-area-inset-top on all iOS devices (notch, Dynamic Island)
