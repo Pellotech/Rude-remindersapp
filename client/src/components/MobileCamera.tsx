@@ -29,7 +29,6 @@ interface MobileCameraProps {
 export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }: MobileCameraProps) {
   const { toast } = useToast();
   const [isCapturing, setIsCapturing] = useState(false);
-  const [permissionError, setPermissionError] = useState<string | null>(null);
   const [isIPad, setIsIPad] = useState(false);
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [permissionType, setPermissionType] = useState<'camera' | 'photos'>('camera');
@@ -253,7 +252,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
     try {
       setIsCapturing(true);
-      setPermissionError(null);
       
       // Request camera permissions BEFORE opening camera
       const hasPermission = await requestCameraPermissions();
@@ -313,7 +311,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
     try {
       setIsCapturing(true);
-      setPermissionError(null);
       
       // Request photos permissions BEFORE opening gallery
       const hasPermission = await requestPhotosPermissions();
@@ -381,15 +378,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
   return (
     <div className="space-y-3">
-      {permissionError && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            {permissionError}
-          </AlertDescription>
-        </Alert>
-      )}
-      
       <div className="grid grid-cols-2 gap-3">
         <Button
           type="button"
