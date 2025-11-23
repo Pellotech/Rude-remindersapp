@@ -105,20 +105,18 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         const encodedPath = encodeURI(normalizedPath);
         const response = await fetch(encodedPath);
         blob = await response.blob();
-        detectedMimeType = photo.mimeType || blob.type || getMimeTypeFromExtension(photo.webPath);
+        detectedMimeType = blob.type || getMimeTypeFromExtension(photo.webPath);
       } else if (photo.path) {
         const base64Data = await Filesystem.readFile({
           path: photo.path,
         });
         
         const format = photo.format || 'jpeg';
-        detectedMimeType = photo.mimeType || (
-          format === 'jpeg' ? 'image/jpeg' 
+        detectedMimeType = format === 'jpeg' ? 'image/jpeg' 
           : format === 'png' ? 'image/png'
           : format === 'heic' ? 'image/heic'
           : format === 'webp' ? 'image/webp'
-          : 'image/jpeg'
-        );
+          : 'image/jpeg';
         
         const base64Response = await fetch(`data:${detectedMimeType};base64,${base64Data.data}`);
         blob = await base64Response.blob();
