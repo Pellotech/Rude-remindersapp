@@ -338,12 +338,9 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
 
-      // CRITICAL FIX: Gallery photos are temporary files that get deleted
-      // We must save them to a permanent location before uploading
-      const savedPhoto = await saveTemporaryPhoto(photo);
-      
-      // Upload the permanently saved photo
-      const filePath = await uploadFileFromPhoto(savedPhoto);
+      // Upload immediately while temp file still exists
+      // uploadFileFromPhoto fetches via webPath which works for temp files
+      const filePath = await uploadFileFromPhoto(photo);
       
       onPhotoCaptured(filePath);
       toast({
@@ -364,48 +361,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       });
     } finally {
       setIsCapturing(false);
-    }
-  };
-
-  // Save temporary gallery photo to permanent storage
-  const saveTemporaryPhoto = async (photo: Photo): Promise<Photo> => {
-    try {
-      // Fetch the temporary file using webPath (works for gallery photos)
-      const normalizedPath = Capacitor.convertFileSrc(photo.webPath!);
-      const response = await fetch(normalizedPath);
-      const blob = await response.blob();
-      
-      // Convert blob to base64
-      const base64Data = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = (reader.result as string).split(',')[1];
-          resolve(base64);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-
-      // Generate a unique filename
-      const fileName = `gallery_${Date.now()}.${photo.format || 'jpg'}`;
-
-      // Save to Documents directory (permanent storage)
-      const savedFile = await Filesystem.writeFile({
-        path: fileName,
-        data: base64Data,
-        directory: Directory.Documents,
-      });
-
-      // Return a Photo object with the permanent file path
-      return {
-        ...photo,
-        path: savedFile.uri,
-        webPath: savedFile.uri,
-        saved: true,
-      };
-    } catch (error) {
-      console.error('Error saving temporary photo:', error);
-      throw error;
     }
   };
 
