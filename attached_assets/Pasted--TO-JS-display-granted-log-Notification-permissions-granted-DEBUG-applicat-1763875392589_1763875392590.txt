@@ -1,0 +1,20 @@
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+DEBUG: ℹ️ applicationWillEnterForeground
+⚡️  To Native ->  Device getInfo 42468461
+⚡️  TO JS {"osVersion":"18.6.2","iOSVersion":180602,"webViewVersion":"18.6.2","operatingSystem":"ios","platform":"ios","isVirtual":false,"manufacturer":"Apple","name":"iPhone","memUsed":134250496,"model":"iPhone17,1"}
+⚡️  To Native ->  Camera checkPermissions 42468462
+⚡️  TO JS {"photos":"prompt","camera":"prompt"}
+⚡️  To Native ->  Camera requestPermissions 42468463
+⚡️  TO JS {"photos":"prompt","camera":"granted"}
+⚡️  To Native ->  Camera getPhoto 42468464
+⚡️  CAPCameraPlugin - You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73
+ERROR MESSAGE:  {"message":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https:\/\/developer.apple.com\/library\/content\/documentation\/General\/Reference\/InfoPlistKeyReference\/Articles\/CocoaKeys.html#\/\/apple_ref\/doc\/uid\/TP40009251-SW73","errorMessage":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https:\/\/developer.apple.com\/library\/content\/documentation
+⚡️  [error] - {"message":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73","errorMessage":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73"}
+⚡️  To Native ->  Camera checkPermissions 42468465
+⚡️  TO JS {"photos":"prompt","camera":"granted"}
+⚡️  To Native ->  Camera requestPermissions 42468466
+⚡️  TO JS {"photos":"denied","camera":"granted"}
+⚡️  To Native ->  Camera checkPermissions 42468467
+⚡️  TO JS {"photos":"denied","camera":"granted"}
+Message from debugger: Terminated due to signal 9
