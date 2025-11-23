@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Camera, CameraResultType, CameraSource, Photo } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
+import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CameraIcon, Image, Video, AlertCircle } from "lucide-react";
@@ -39,6 +40,39 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
     detectDevice();
   }, []);
 
+  // Helper function to upload file to backend
+  const uploadFile = async (photo: Photo): Promise<string> => {
+    try {
+      // Read the file as base64
+      const base64Data = await Filesystem.readFile({
+        path: photo.path!,
+      });
+
+      // Convert base64 to blob
+      const base64Response = await fetch(`data:image/jpeg;base64,${base64Data.data}`);
+      const blob = await base64Response.blob();
+
+      // Create FormData and upload
+      const formData = new FormData();
+      formData.append('file', blob, `photo-${Date.now()}.jpg`);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const { filePath } = await response.json();
+      return filePath;
+    } catch (error) {
+      console.error('File upload error:', error);
+      throw error;
+    }
+  };
+
   const takePhoto = async () => {
     if (currentCount >= maxFiles) {
       toast({
@@ -54,11 +88,10 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setPermissionError(null);
       
       // iPad-optimized configuration for iOS 18+ / iPadOS 26+
-      // Using DataUrl gives us a base64 data URL that works for both display and upload
       const cameraOptions: any = {
         quality: 85, // Balanced quality for performance
         allowEditing: false, // CRITICAL: Disable editing on all iOS to prevent iPad crashes
-        resultType: CameraResultType.DataUrl, // DataUrl gives us base64 that works everywhere
+        resultType: CameraResultType.Uri, // Use Uri to get file path for upload
         source: CameraSource.Camera,
         saveToGallery: false,
         correctOrientation: true,
@@ -70,23 +103,26 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         console.log('Using iPad-optimized camera settings with popover presentation');
       }
 
-      const image: Photo = await Camera.getPhoto(cameraOptions);
+      const photo: Photo = await Camera.getPhoto(cameraOptions);
 
-      if (image.dataUrl) {
-        console.log('Camera captured image:', { 
-          format: image.format,
-          dataUrlLength: image.dataUrl.length,
-          isIPad 
-        });
-        onPhotoCaptured(image.dataUrl);
-        toast({
-          title: "Photo captured",
-          description: "Photo added to your reminder",
-        });
-      } else {
-        console.error('Camera image captured but no dataUrl available:', image);
-        throw new Error('No image data returned from camera');
+      if (!photo.path) {
+        throw new Error('No image path returned from camera');
       }
+
+      console.log('Camera captured image:', { 
+        path: photo.path,
+        format: photo.format,
+        isIPad 
+      });
+
+      // Upload the file to backend
+      const filePath = await uploadFile(photo);
+      
+      onPhotoCaptured(filePath);
+      toast({
+        title: "Photo captured",
+        description: "Photo added to your reminder",
+      });
     } catch (error: any) {
       console.error('Camera error details:', { 
         message: error?.message, 
@@ -136,11 +172,10 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setPermissionError(null);
       
       // iPad-optimized configuration for iOS 18+ / iPadOS 26+
-      // Using DataUrl gives us a base64 data URL that works for both display and upload
       const galleryOptions: any = {
         quality: 85, // Balanced quality for performance
         allowEditing: false, // CRITICAL: Disable editing to prevent iPad crashes
-        resultType: CameraResultType.DataUrl, // DataUrl gives us base64 that works everywhere
+        resultType: CameraResultType.Uri, // Use Uri to get file path for upload
         source: CameraSource.Photos,
         correctOrientation: true,
       };
@@ -151,23 +186,26 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         console.log('Using iPad-optimized gallery settings with popover presentation');
       }
 
-      const image: Photo = await Camera.getPhoto(galleryOptions);
+      const photo: Photo = await Camera.getPhoto(galleryOptions);
 
-      if (image.dataUrl) {
-        console.log('Gallery selected image:', { 
-          format: image.format,
-          dataUrlLength: image.dataUrl.length,
-          isIPad 
-        });
-        onPhotoCaptured(image.dataUrl);
-        toast({
-          title: "Photo selected",
-          description: "Photo added to your reminder",
-        });
-      } else {
-        console.error('Gallery image selected but no dataUrl available:', image);
-        throw new Error('No image data returned from gallery');
+      if (!photo.path) {
+        throw new Error('No image path returned from gallery');
       }
+
+      console.log('Gallery selected image:', { 
+        path: photo.path,
+        format: photo.format,
+        isIPad 
+      });
+
+      // Upload the file to backend
+      const filePath = await uploadFile(photo);
+      
+      onPhotoCaptured(filePath);
+      toast({
+        title: "Photo selected",
+        description: "Photo added to your reminder",
+      });
     } catch (error: any) {
       console.error('Gallery error details:', { 
         message: error?.message, 
