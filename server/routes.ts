@@ -415,7 +415,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Generate AI response automatically during form submission
           try {
             const generatedReminder = await reminderService.generateReminderResponse(reminder);
-            reminder = { ...reminder, ...generatedReminder };
+            reminder.rudeMessage = generatedReminder.rudeMessage;
+            reminder.responses = generatedReminder.responses || [];
           } catch (error) {
             console.error("Error generating AI response:", error);
             // Fallback to basic message if AI generation fails
@@ -540,7 +541,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Generate AI response automatically during form submission
         try {
           const generatedReminder = await reminderService.generateReminderResponse(reminder);
-          reminder = { ...reminder, ...generatedReminder };
+          reminder.rudeMessage = generatedReminder.rudeMessage;
+          reminder.responses = generatedReminder.responses || [];
         } catch (error) {
           console.error("Error generating AI response:", error);
           // Fallback to basic message if AI generation fails

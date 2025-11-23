@@ -232,7 +232,6 @@ export default function ReminderForm({
   const [isMultiDay, setIsMultiDay] = useState(false);
   const [multiDayHour, setMultiDayHour] = useState(9); // Default 9 AM
   const [multiDayMinute, setMultiDayMinute] = useState(0); // Default :00
-  const [testReminderLoading, setTestReminderLoading] = useState(false);
 
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -1471,24 +1470,19 @@ export default function ReminderForm({
                       <p className="text-sm text-blue-700 mb-3">
                         Set a reminder for later today:
                       </p>
-                      <div className={`grid gap-2 ${supportsNotifications() ? 'grid-cols-4' : 'grid-cols-3'}`}>
+                      <div className="grid grid-cols-4 gap-2">
                         {[
-                          ...(supportsNotifications() ? [{ seconds: 10, label: "10 seconds", isTest: true }] : []),
-                          { minutes: 5, label: "5 minutes", isTest: false },
-                          { minutes: 15, label: "15 minutes", isTest: false },
-                          { minutes: 30, label: "30 minutes", isTest: false }
-                        ].map(({ seconds, minutes, label, isTest }) => (
+                          { seconds: 10, label: "10 seconds" },
+                          { minutes: 5, label: "5 minutes" },
+                          { minutes: 15, label: "15 minutes" },
+                          { minutes: 30, label: "30 minutes" }
+                        ].map(({ seconds, minutes, label }) => (
                           <Button
-                            key={isTest ? 'test-10s' : `${minutes}m`}
+                            key={seconds ? '10s' : `${minutes}m`}
                             type="button"
                             variant="outline"
                             size="sm"
-                            className={`flex flex-col items-center p-2 h-12 ${
-                              isTest 
-                                ? 'bg-purple-50 hover:bg-purple-100 border-purple-300 hover:border-purple-400' 
-                                : 'bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300'
-                            }`}
-                            disabled={isTest && testReminderLoading}
+                            className="flex flex-col items-center p-2 h-12 bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-300"
                             onClick={async () => {
                               const currentMessage = form.watch("originalMessage");
                               if (!currentMessage || currentMessage.trim() === "") {
@@ -1500,72 +1494,12 @@ export default function ReminderForm({
                                 return;
                               }
 
-                              // Handle test notification (10 seconds) differently
-                              if (isTest && supportsNotifications()) {
-                                try {
-                                  setTestReminderLoading(true);
-
-                                  // Get current form values
-                                  const currentContext = form.watch("context") || "";
-                                  const currentRudeness = form.watch("rudenessLevel");
-                                  
-                                  // Generate AI reminder preview
-                                  const previewResponse = await apiRequest('/api/preview-reminder', {
-                                    method: 'POST',
-                                    body: JSON.stringify({
-                                      originalMessage: currentMessage,
-                                      context: currentContext,
-                                      rudenessLevel: currentRudeness,
-                                      voiceCharacter: selectedVoice,
-                                    }),
-                                    headers: {
-                                      'Content-Type': 'application/json',
-                                    },
-                                  });
-
-                                  const { rudeMessage } = await previewResponse.json();
-                                  
-                                  // Generate quote if category is selected
-                                  let testQuote: string | undefined;
-                                  if (selectedCategory) {
-                                    testQuote = (await generateQuoteForSubmission(selectedCategory)) ?? undefined;
-                                  }
-
-                                  // Schedule notification for 10 seconds from now
-                                  const testTime = new Date(Date.now() + 10000);
-
-                                  // Schedule mobile notification with AI-generated message
-                                  await scheduleNativeNotification({
-                                    id: `test-${Date.now()}`,
-                                    title: "🧪 Quick Test Reminder",
-                                    body: rudeMessage,
-                                    scheduledFor: testTime,
-                                    attachments: selectedAttachments,
-                                    motivationalQuote: testQuote,
-                                    voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
-                                    voiceCharacter: selectedVoice,
-                                  });
-
-                                  toast({
-                                    title: "🧪 Test Scheduled!",
-                                    description: "Close the app and wait 10 seconds to see your notification",
-                                  });
-                                } catch (error) {
-                                  console.error('Error creating test reminder:', error);
-                                  toast({
-                                    title: "Test Failed",
-                                    description: "Could not generate test reminder",
-                                    variant: "destructive",
-                                  });
-                                } finally {
-                                  setTestReminderLoading(false);
-                                }
-                                return;
-                              }
-
-                              // Handle regular quick reminders (5m, 15m, 30m)
                               const newTime = new Date();
-                              newTime.setMinutes(newTime.getMinutes() + (minutes || 0));
+                              if (seconds) {
+                                newTime.setSeconds(newTime.getSeconds() + seconds);
+                              } else if (minutes) {
+                                newTime.setMinutes(newTime.getMinutes() + minutes);
+                              }
                               const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");
                               form.setValue("scheduledFor", formattedDateTime);
 
@@ -1594,24 +1528,10 @@ export default function ReminderForm({
                               });
                             }}
                           >
-                            {isTest ? (
-                              testReminderLoading ? (
-                                <>
-                                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-purple-600" />
-                                  <span className="text-xs text-purple-600 mt-1">Loading...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="text-sm font-semibold text-purple-600">+10s</span>
-                                  <span className="text-xs text-purple-600">Test</span>
-                                </>
-                              )
-                            ) : (
-                              <>
-                                <span className="text-sm font-semibold text-blue-600">+{minutes}m</span>
-                                <span className="text-xs text-gray-600">{label}</span>
-                              </>
-                            )}
+                            <span className="text-sm font-semibold text-blue-600">
+                              {seconds ? '+10s' : `+${minutes}m`}
+                            </span>
+                            <span className="text-xs text-gray-600">{label}</span>
                           </Button>
                         ))}
                       </div>
