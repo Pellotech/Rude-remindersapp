@@ -43,18 +43,38 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   // Helper function to upload file to backend
   const uploadFile = async (photo: Photo): Promise<string> => {
     try {
-      // Read the file as base64
-      const base64Data = await Filesystem.readFile({
-        path: photo.path!,
-      });
+      let blob: Blob;
+      
+      // Determine mime type from photo format
+      const format = photo.format || 'jpeg';
+      const mimeType = format === 'jpeg' ? 'image/jpeg' 
+        : format === 'png' ? 'image/png'
+        : format === 'heic' ? 'image/heic'
+        : format === 'webp' ? 'image/webp'
+        : 'image/jpeg'; // fallback
+      
+      // Gallery photos often only have webPath, camera photos have path
+      if (photo.webPath) {
+        // For webPath (gallery selections), fetch directly as blob
+        const response = await fetch(photo.webPath);
+        blob = await response.blob();
+      } else if (photo.path) {
+        // For path (camera captures), read via Filesystem API
+        const base64Data = await Filesystem.readFile({
+          path: photo.path,
+        });
+        
+        // Convert base64 to blob with proper mime type
+        const base64Response = await fetch(`data:${mimeType};base64,${base64Data.data}`);
+        blob = await base64Response.blob();
+      } else {
+        throw new Error('Photo has neither path nor webPath');
+      }
 
-      // Convert base64 to blob
-      const base64Response = await fetch(`data:image/jpeg;base64,${base64Data.data}`);
-      const blob = await base64Response.blob();
-
-      // Create FormData and upload
+      // Create FormData with proper filename and extension
       const formData = new FormData();
-      formData.append('file', blob, `photo-${Date.now()}.jpg`);
+      const extension = format || 'jpg';
+      formData.append('file', blob, `photo-${Date.now()}.${extension}`);
 
       const response = await fetch('/api/upload', {
         method: 'POST',
