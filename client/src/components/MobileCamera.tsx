@@ -188,47 +188,34 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   const uploadFileFromPhoto = async (photo: Photo): Promise<string> => {
     try {
       console.log('uploadFileFromPhoto starting with photo:', { 
-        hasWebPath: !!photo.webPath, 
-        hasPath: !!photo.path,
+        hasBase64: !!photo.base64String,
         format: photo.format 
       });
       
-      let blob: Blob;
-      let detectedMimeType = '';
-
-      // Use Filesystem API to read the file (more reliable in server mode)
-      if (photo.path) {
-        console.log('Reading file via Filesystem API');
-        // Extract just the filename from the full path
-        const pathParts = photo.path.replace('file://', '').split('/');
-        const filename = pathParts[pathParts.length - 1];
-        console.log('Reading file:', filename);
-        
-        const base64Data = await Filesystem.readFile({
-          path: filename,
-        });
-        
-        console.log('File read successfully');
-        
-        const format = photo.format || 'jpeg';
-        detectedMimeType = format === 'jpeg' ? 'image/jpeg' 
-          : format === 'png' ? 'image/png'
-          : format === 'heic' ? 'image/heic'
-          : format === 'webp' ? 'image/webp'
-          : 'image/jpeg';
-        
-        console.log('Converting base64 to blob, mimeType:', detectedMimeType);
-        const base64Response = await fetch(`data:${detectedMimeType};base64,${base64Data.data}`);
-        blob = await base64Response.blob();
-        console.log('Blob created, size:', blob.size, 'type:', blob.type);
-      } else {
-        throw new Error('Photo has no valid path');
+      if (!photo.base64String) {
+        throw new Error('No base64 data in photo');
       }
 
-      const mimeType = detectedMimeType || blob.type || 'image/jpeg';
-      const extension = mimeType === 'image/jpeg' || mimeType === 'image/jpg' ? 'jpg'
+      // Determine MIME type from format
+      const format = photo.format || 'jpeg';
+      const mimeType = format === 'jpeg' ? 'image/jpeg' 
+        : format === 'png' ? 'image/png'
+        : format === 'heic' ? 'image/heic'
+        : format === 'webp' ? 'image/webp'
+        : 'image/jpeg';
+      
+      console.log('Converting base64 to blob, mimeType:', mimeType);
+      
+      // Convert base64 to blob
+      const base64Response = await fetch(`data:${mimeType};base64,${photo.base64String}`);
+      const blob = await base64Response.blob();
+      
+      console.log('Blob created, size:', blob.size, 'type:', blob.type);
+
+      // Determine file extension from MIME type
+      const extension = mimeType === 'image/jpeg' ? 'jpg'
         : mimeType === 'image/png' ? 'png'
-        : mimeType === 'image/heic' || mimeType === 'image/heif' ? 'heic'
+        : mimeType === 'image/heic' ? 'heic'
         : mimeType === 'image/webp' ? 'webp'
         : 'jpg';
 
@@ -284,7 +271,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const cameraOptions: any = {
         quality: 90,
         allowEditing: false,
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.Base64, // Get base64 directly
         source: CameraSource.Camera,
         saveToGallery: false,
         correctOrientation: true,
@@ -348,7 +335,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const galleryOptions: any = {
         quality: 90,
         allowEditing: false,
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.Base64, // Get base64 directly
         source: CameraSource.Photos, // Use gallery/photos
       };
 
