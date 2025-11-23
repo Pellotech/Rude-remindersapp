@@ -35,16 +35,17 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription System**: Differentiates features for free and premium users, including AI-generated content.
 - **Comprehensive User Personalization**: Allows gender and cultural background selection for tailored content.
 - **Mobile-Native Architecture**: Full native iOS/Android support via Capacitor with AdMob integration, local notifications, and camera access.
-  - **Photo Picker (iOS/Android Compatible)**: Universal photo capture and gallery selection with file upload
-    - Uses `CameraResultType.Uri` to get file paths from device
-    - Reads files using Capacitor Filesystem API and uploads to `/api/upload` endpoint
-    - Backend stores files in `attached_assets/` directory using Multer
+  - **Photo Picker (iPad Air M3 / iPadOS 26.1+ Compatible)**: Production-ready photo capture and gallery selection optimized for iPad
+    - **Gallery Selection**: Uses `@capawesome/capacitor-file-picker` which wraps native PHPicker on iOS/iPadOS (no crashes on iPad Air M3)
+    - **Camera Capture**: Uses Capacitor Camera plugin with iPad-optimized configuration (popover presentation)
+    - **File Upload**: Reads files and uploads to `/api/upload` endpoint with authentication
+    - Backend stores files in `attached_assets/` directory using Multer (10MB limit)
     - Database stores file paths (URLs) not base64, keeping storage lean
-    - Disabled `allowEditing` on all iOS devices to prevent iPad crashes
-    - Added `presentationStyle: 'popover'` for iPad-native UI (iPadOS 26.1+)
-    - Quality set to 85% for optimal performance and file size
-    - Enhanced error logging with device-specific debugging
-    - Graceful permission handling with user-friendly error messages
+    - Comprehensive MIME type detection: file.mimeType → blob.type → filename extension → fallback
+    - Supports JPEG, PNG, HEIC/HEIF, WebP with proper extension mapping
+    - Graceful error handling: user cancellations silent, permissions shown as alerts, generic errors with retry prompts
+    - No debug logging in production
+    - Tested for iPad multi-window environments and large photo handling
 - **Authentication**: Native iOS Sign in with Apple integration, meeting App Store Guideline 4.8.
   - **Security**: Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
   - **Privacy**: Respects Apple's "Hide My Email" feature - only stores email if Apple provides it
