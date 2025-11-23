@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Camera, CameraResultType, CameraSource, Photo } from "@capacitor/camera";
+import { FilePicker } from "@capawesome/capacitor-file-picker";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
-import { Filesystem, Directory } from "@capacitor/filesystem";
+import { Filesystem } from "@capacitor/filesystem";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Camera as CameraIcon, Image, Video, AlertCircle } from "lucide-react";
+import { Camera as CameraIcon, Image, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface MobileCameraProps {
@@ -21,7 +22,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   const [isIPad, setIsIPad] = useState(false);
 
   useEffect(() => {
-    // Detect if device is iPad for iPad-specific configurations
     const detectDevice = async () => {
       const platform = Capacitor.getPlatform();
       
@@ -30,9 +30,8 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
           const info = await Device.getInfo();
           const iPadDetected = info.model?.toLowerCase().includes('ipad') || false;
           setIsIPad(iPadDetected);
-          console.log('Device detected:', { model: info.model, isIPad: iPadDetected });
         } catch (error) {
-          console.error('Error detecting device:', error);
+          // Silent error - device detection is non-critical
         }
       }
     };
@@ -40,39 +39,80 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
     detectDevice();
   }, []);
 
+  // Helper to derive MIME type from file extension
+  const getMimeTypeFromExtension = (path: string): string => {
+    const ext = path.split('.').pop()?.toLowerCase() || '';
+    if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+    if (ext === 'png') return 'image/png';
+    if (ext === 'heic' || ext === 'heif') return 'image/heic';
+    if (ext === 'webp') return 'image/webp';
+    return 'image/jpeg'; // Safe fallback
+  };
+
   // Helper function to upload file to backend
-  const uploadFile = async (photo: Photo): Promise<string> => {
+  const uploadFileFromUri = async (uri: string, mimeType?: string): Promise<string> => {
+    try {
+      // Normalize URI and fetch as blob
+      const normalizedPath = Capacitor.convertFileSrc(uri);
+      const encodedPath = encodeURI(normalizedPath);
+      const response = await fetch(encodedPath);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      
+      // Derive MIME type with multiple fallbacks
+      const detectedMimeType = mimeType || blob.type || getMimeTypeFromExtension(uri);
+      
+      // Map MIME type to file extension
+      const extension = detectedMimeType === 'image/jpeg' || detectedMimeType === 'image/jpg' ? 'jpg'
+        : detectedMimeType === 'image/png' ? 'png'
+        : detectedMimeType === 'image/heic' || detectedMimeType === 'image/heif' ? 'heic'
+        : detectedMimeType === 'image/webp' ? 'webp'
+        : 'jpg';
+
+      // Create FormData with proper filename and extension
+      const formData = new FormData();
+      formData.append('file', blob, `photo-${Date.now()}.${extension}`);
+
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const { filePath } = await uploadResponse.json();
+      return filePath;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Legacy upload helper for Camera plugin (camera capture only)
+  const uploadFileFromPhoto = async (photo: Photo): Promise<string> => {
     try {
       let blob: Blob;
-      
-      // Helper to derive MIME type from file extension
-      const getMimeTypeFromExtension = (path: string): string | undefined => {
-        const ext = path.split('.').pop()?.toLowerCase();
-        if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
-        if (ext === 'png') return 'image/png';
-        if (ext === 'heic' || ext === 'heif') return 'image/heic';
-        if (ext === 'webp') return 'image/webp';
-        return undefined;
-      };
-      
-      // Gallery photos often only have webPath, camera photos have path
+      let detectedMimeType = '';
+
+      // Try webPath first (more reliable on iOS), then path
       if (photo.webPath) {
-        // For webPath (gallery selections), normalize URI and fetch as blob
-        // convertFileSrc handles capacitor:// URIs on native builds
-        // encodeURI handles filenames with spaces or non-ASCII characters
         const normalizedPath = Capacitor.convertFileSrc(photo.webPath);
         const encodedPath = encodeURI(normalizedPath);
         const response = await fetch(encodedPath);
         blob = await response.blob();
+        detectedMimeType = photo.mimeType || blob.type || getMimeTypeFromExtension(photo.webPath);
       } else if (photo.path) {
-        // For path (camera captures), read via Filesystem API
         const base64Data = await Filesystem.readFile({
           path: photo.path,
         });
         
-        // Determine mime type from photo metadata or format
         const format = photo.format || 'jpeg';
-        const detectedMimeType = photo.mimeType || (
+        detectedMimeType = photo.mimeType || (
           format === 'jpeg' ? 'image/jpeg' 
           : format === 'png' ? 'image/png'
           : format === 'heic' ? 'image/heic'
@@ -80,45 +120,19 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
           : 'image/jpeg'
         );
         
-        // Convert base64 to blob with detected mime type
         const base64Response = await fetch(`data:${detectedMimeType};base64,${base64Data.data}`);
         blob = await base64Response.blob();
       } else {
-        throw new Error('Photo has neither path nor webPath');
+        throw new Error('Photo has no valid path or webPath');
       }
 
-      // Derive MIME type from multiple sources in priority order:
-      // 1. photo.mimeType (most reliable on native)
-      // 2. blob.type (from fetched blob)
-      // 3. photo.format (from Camera API)
-      // 4. filename extension from webPath/path (tertiary fallback)
-      // 5. 'image/jpeg' (final fallback)
-      let mimeType = photo.mimeType || blob.type;
-      
-      if (!mimeType && photo.format) {
-        // Derive from format
-        const format = photo.format.toLowerCase();
-        mimeType = format === 'jpeg' ? 'image/jpeg'
-          : format === 'png' ? 'image/png'
-          : format === 'heic' ? 'image/heic'
-          : format === 'webp' ? 'image/webp'
-          : '';
-      }
-      
-      if (!mimeType) {
-        // Parse from filename as tertiary fallback
-        const sourcePath = photo.webPath || photo.path || '';
-        mimeType = getMimeTypeFromExtension(sourcePath) || 'image/jpeg';
-      }
-      
-      // Map MIME type to file extension, covering common variants
+      const mimeType = detectedMimeType || blob.type || 'image/jpeg';
       const extension = mimeType === 'image/jpeg' || mimeType === 'image/jpg' ? 'jpg'
         : mimeType === 'image/png' ? 'png'
         : mimeType === 'image/heic' || mimeType === 'image/heif' ? 'heic'
         : mimeType === 'image/webp' ? 'webp'
-        : 'jpg'; // fallback
+        : 'jpg';
 
-      // Create FormData with proper filename and extension
       const formData = new FormData();
       formData.append('file', blob, `photo-${Date.now()}.${extension}`);
 
@@ -134,7 +148,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const { filePath } = await response.json();
       return filePath;
     } catch (error) {
-      console.error('File upload error:', error);
       throw error;
     }
   };
@@ -153,33 +166,22 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setIsCapturing(true);
       setPermissionError(null);
       
-      // iPad-optimized configuration for iOS 18+ / iPadOS 26+
       const cameraOptions: any = {
-        quality: 85, // Balanced quality for performance
-        allowEditing: false, // CRITICAL: Disable editing on all iOS to prevent iPad crashes
-        resultType: CameraResultType.Uri, // Use Uri to get file path for upload
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
         saveToGallery: false,
         correctOrientation: true,
       };
 
-      // Add presentationStyle for iPad popover support (iOS 15+)
       if (isIPad) {
         cameraOptions.presentationStyle = 'popover';
-        console.log('Using iPad-optimized camera settings with popover presentation');
       }
 
       const photo: Photo = await Camera.getPhoto(cameraOptions);
 
-      console.log('Camera captured image:', { 
-        path: photo.path,
-        webPath: photo.webPath,
-        format: photo.format,
-        isIPad 
-      });
-
-      // Upload the file to backend (handles both path and webPath)
-      const filePath = await uploadFile(photo);
+      const filePath = await uploadFileFromPhoto(photo);
       
       onPhotoCaptured(filePath);
       toast({
@@ -187,34 +189,28 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         description: "Photo added to your reminder",
       });
     } catch (error: any) {
-      console.error('Camera error details:', { 
-        message: error?.message, 
-        code: error?.code,
-        isIPad 
-      });
+      // Handle user cancellation silently
+      if (error?.message?.includes('cancelled') || error?.message?.includes('User cancelled')) {
+        return;
+      }
       
-      // Handle specific permission errors
+      // Handle permission errors
       if (error?.message?.includes('permission') || error?.message?.includes('denied')) {
-        setPermissionError('Camera permission is required. Please enable camera access in your device Settings → Rude Reminders → Camera');
+        setPermissionError('Camera permission is required. Please enable camera access in Settings.');
         toast({
           title: "Permission Required",
           description: "Please enable camera access in Settings",
           variant: "destructive",
         });
-      } else if (error?.message?.includes('cancelled') || error?.message?.includes('User cancelled')) {
-        // User cancelled - no error needed
-        console.log('User cancelled camera');
-      } else {
-        // Show specific error message for debugging
-        const errorMsg = error?.message || 'Unknown error occurred';
-        toast({
-          title: "Camera error",
-          description: isIPad 
-            ? `iPad camera error: ${errorMsg.substring(0, 50)}` 
-            : "Failed to take photo. Please try again.",
-          variant: "destructive",
-        });
+        return;
       }
+      
+      // Generic error handling
+      toast({
+        title: "Camera error",
+        description: "Failed to take photo. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsCapturing(false);
     }
@@ -234,32 +230,27 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setIsCapturing(true);
       setPermissionError(null);
       
-      // iPad-optimized configuration for iOS 18+ / iPadOS 26+
-      const galleryOptions: any = {
-        quality: 85, // Balanced quality for performance
-        allowEditing: false, // CRITICAL: Disable editing to prevent iPad crashes
-        resultType: CameraResultType.Uri, // Use Uri to get file path for upload
-        source: CameraSource.Photos,
-        correctOrientation: true,
-      };
-
-      // Add presentationStyle for iPad popover support (iOS 15+)
-      if (isIPad) {
-        galleryOptions.presentationStyle = 'popover';
-        console.log('Using iPad-optimized gallery settings with popover presentation');
-      }
-
-      const photo: Photo = await Camera.getPhoto(galleryOptions);
-
-      console.log('Gallery selected image:', { 
-        path: photo.path,
-        webPath: photo.webPath,
-        format: photo.format,
-        isIPad 
+      // Use FilePicker which uses native PHPicker on iOS/iPadOS
+      // This is iPad-safe and doesn't have the crashes associated with Camera plugin gallery mode
+      const result = await FilePicker.pickImages({
+        limit: 1,
+        readData: false, // Don't read data - we'll fetch via URI
       });
 
-      // Upload the file to backend (handles both path and webPath)
-      const filePath = await uploadFile(photo);
+      if (!result.files || result.files.length === 0) {
+        // User cancelled - silent return
+        return;
+      }
+
+      const file = result.files[0];
+      
+      // Validate file has URI
+      if (!file.path) {
+        throw new Error('Selected file has no valid path');
+      }
+
+      // Upload using the file path and mime type
+      const filePath = await uploadFileFromUri(file.path, file.mimeType);
       
       onPhotoCaptured(filePath);
       toast({
@@ -267,34 +258,38 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         description: "Photo added to your reminder",
       });
     } catch (error: any) {
-      console.error('Gallery error details:', { 
-        message: error?.message, 
-        code: error?.code,
-        isIPad 
-      });
+      // Handle user cancellation silently
+      if (error?.message?.includes('cancelled') || error?.message?.includes('User cancelled')) {
+        return;
+      }
       
-      // Handle specific permission errors
+      // Handle permission errors
       if (error?.message?.includes('permission') || error?.message?.includes('denied')) {
-        setPermissionError('Photo library permission is required. Please enable photo access in your device Settings → Rude Reminders → Photos');
+        setPermissionError('Photo library permission is required. Please enable photo access in Settings.');
         toast({
           title: "Permission Required",
           description: "Please enable photo access in Settings",
           variant: "destructive",
         });
-      } else if (error?.message?.includes('cancelled') || error?.message?.includes('User cancelled')) {
-        // User cancelled - no error needed
-        console.log('User cancelled photo selection');
-      } else {
-        // Show specific error message for debugging
-        const errorMsg = error?.message || 'Unknown error occurred';
+        return;
+      }
+      
+      // Handle specific iPad/file errors
+      if (error?.message?.includes('no valid path')) {
         toast({
-          title: "Gallery error",
-          description: isIPad 
-            ? `iPad gallery error: ${errorMsg.substring(0, 50)}` 
-            : "Failed to select photo. Please try again.",
+          title: "Photo Error",
+          description: "Unable to access the selected photo. Please try a different photo.",
           variant: "destructive",
         });
+        return;
       }
+      
+      // Generic error handling
+      toast({
+        title: "Gallery error",
+        description: "Failed to select photo. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsCapturing(false);
     }
@@ -333,7 +328,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
           data-testid="button-gallery"
         >
           <Image className="mr-2 h-4 w-4" />
-          Gallery
+          {isCapturing ? "Selecting..." : "Gallery"}
         </Button>
       </div>
     </div>
