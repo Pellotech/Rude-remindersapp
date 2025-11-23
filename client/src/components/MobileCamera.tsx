@@ -55,8 +55,10 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       
       // Gallery photos often only have webPath, camera photos have path
       if (photo.webPath) {
-        // For webPath (gallery selections), fetch directly as blob
-        const response = await fetch(photo.webPath);
+        // For webPath (gallery selections), normalize URI and fetch as blob
+        // convertFileSrc handles capacitor:// URIs on native builds
+        const normalizedPath = Capacitor.convertFileSrc(photo.webPath);
+        const response = await fetch(normalizedPath);
         blob = await response.blob();
       } else if (photo.path) {
         // For path (camera captures), read via Filesystem API
@@ -125,17 +127,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
       const photo: Photo = await Camera.getPhoto(cameraOptions);
 
-      if (!photo.path) {
-        throw new Error('No image path returned from camera');
-      }
-
       console.log('Camera captured image:', { 
         path: photo.path,
+        webPath: photo.webPath,
         format: photo.format,
         isIPad 
       });
 
-      // Upload the file to backend
+      // Upload the file to backend (handles both path and webPath)
       const filePath = await uploadFile(photo);
       
       onPhotoCaptured(filePath);
@@ -208,17 +207,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
       const photo: Photo = await Camera.getPhoto(galleryOptions);
 
-      if (!photo.path) {
-        throw new Error('No image path returned from gallery');
-      }
-
       console.log('Gallery selected image:', { 
         path: photo.path,
+        webPath: photo.webPath,
         format: photo.format,
         isIPad 
       });
 
-      // Upload the file to backend
+      // Upload the file to backend (handles both path and webPath)
       const filePath = await uploadFile(photo);
       
       onPhotoCaptured(filePath);
