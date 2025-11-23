@@ -17,9 +17,11 @@ class SmartResponseService {
   
   constructor() {
     try {
+      console.log('🚀 Initializing SmartResponseService with DeepSeek AI...');
       this.deepseekService = new DeepSeekService();
+      console.log('✅ DeepSeek AI service initialized successfully - premium users will get AI-generated responses');
     } catch (error) {
-      console.warn('DeepSeek service not available:', error);
+      console.error('❌ DeepSeek service initialization failed - all users will receive template-based responses:', error);
       this.deepseekService = null;
     }
   }
@@ -28,6 +30,12 @@ class SmartResponseService {
   async getPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
     // Check if user has premium access for AI generation
     const isPremium = await isUserPremium(reminder.userId);
+    
+    console.log(`\n🔍 AI Response Generation Request:`);
+    console.log(`   User ID: ${reminder.userId}`);
+    console.log(`   Premium Status: ${isPremium ? '✅ PREMIUM' : '❌ FREE'}`);
+    console.log(`   DeepSeek Service: ${this.deepseekService ? '✅ Available' : '❌ Not Available'}`);
+    console.log(`   Task: "${reminder.originalMessage}"`);
     
     // Only use DeepSeek AI for premium users
     if (isPremium && this.deepseekService) {
@@ -46,24 +54,27 @@ class SmartResponseService {
           timeOfDay
         };
         
-        console.log(`Attempting DeepSeek AI generation for: "${reminder.originalMessage}" with context:`, context);
+        console.log(`\n🤖 Calling DeepSeek API with context:`, JSON.stringify(context, null, 2));
         const deepseekResponses = await this.deepseekService.generatePersonalizedResponses(context, 4);
         
         if (deepseekResponses.length > 0) {
-          console.log(`✅ Successfully generated ${deepseekResponses.length} fresh DeepSeek AI responses:`, deepseekResponses);
+          console.log(`\n✅ SUCCESS: Generated ${deepseekResponses.length} fresh DeepSeek AI responses:`);
+          deepseekResponses.forEach((resp, idx) => console.log(`   ${idx + 1}. "${resp}"`));
           return deepseekResponses;
         } else {
-          console.warn('⚠️ DeepSeek returned empty responses array, falling back to templates');
+          console.warn('\n⚠️ DeepSeek returned empty responses array, falling back to templates');
         }
       } catch (error) {
-        console.error('❌ DeepSeek generation failed, falling back to templates:', error);
+        console.error('\n❌ DeepSeek generation FAILED, falling back to templates:', error);
       }
     } else if (!isPremium) {
-      console.log(`User ${reminder.userId} needs premium subscription for AI-generated responses. Using template responses.`);
+      console.log(`\n📋 User is FREE tier - using template responses`);
+    } else if (!this.deepseekService) {
+      console.error(`\n❌ DeepSeek service not available - using template responses`);
     }
     
     // Fallback to template responses for free users or if DeepSeek is unavailable
-    console.log('Using fallback template responses instead of AI');
+    console.log('\n📝 Using fallback template responses instead of AI');
     return this.getLegacyPersonalizedResponse(reminder, forceRefresh);
   }
   
