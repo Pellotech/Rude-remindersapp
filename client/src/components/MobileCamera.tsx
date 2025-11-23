@@ -4,7 +4,6 @@ import { FilePicker } from "@capawesome/capacitor-file-picker";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Filesystem } from "@capacitor/filesystem";
-import { App } from "@capacitor/app";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CameraIcon, Image, AlertCircle, Settings } from "lucide-react";
@@ -115,7 +114,16 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   // Open iOS Settings
   const openSettings = async () => {
     try {
-      await App.openUrl({ url: 'app-settings:' });
+      // On iOS, we can open the app-specific settings
+      if (Capacitor.getPlatform() === 'ios') {
+        window.open('app-settings:', '_system');
+      } else {
+        // Android - show instructions
+        toast({
+          title: "Enable Permissions",
+          description: "Go to Settings > Apps > Rude Reminders > Permissions",
+        });
+      }
     } catch (error) {
       // Fallback - show instructions
       toast({
