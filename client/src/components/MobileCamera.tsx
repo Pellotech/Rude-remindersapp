@@ -346,13 +346,27 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
       const photo = await Camera.getPhoto(galleryOptions);
 
-      if (!photo || !photo.webPath) {
+      if (!photo) {
         // User cancelled - silent return
         return;
       }
 
-      // Upload immediately while temp file still exists
-      // uploadFileFromPhoto fetches via webPath which works for temp files
+      console.log('Gallery photo selected:', {
+        hasBase64: !!photo.base64String,
+        format: photo.format
+      });
+
+      if (!photo.base64String) {
+        console.error('Gallery photo missing base64 data');
+        toast({
+          title: "Gallery error",
+          description: "Failed to read photo data",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Upload the gallery photo
       const filePath = await uploadFileFromPhoto(photo);
       
       onPhotoCaptured(filePath);
