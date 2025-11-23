@@ -35,13 +35,14 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Subscription System**: Differentiates features for free and premium users, including AI-generated content.
 - **Comprehensive User Personalization**: Allows gender and cultural background selection for tailored content.
 - **Mobile-Native Architecture**: Full native iOS/Android support via Capacitor with AdMob integration, local notifications, and camera access.
-  - **iPad Compatibility (iPadOS 26.1+)**: Optimized photo picker with popover presentation style
+  - **Photo Picker (iOS/Android Compatible)**: Universal photo capture and gallery selection
+    - Uses `CameraResultType.DataUrl` for base64 data URLs (works on all platforms)
     - Disabled `allowEditing` on all iOS devices to prevent iPad crashes
-    - Added `presentationStyle: 'popover'` for iPad-native UI
-    - Quality set to 85% for optimal performance on iPad
-    - Fallback to `image.path` if `webPath` unavailable
-    - Enhanced error logging for iPad-specific debugging
-    - Removed fixed width/height constraints for large image support
+    - Added `presentationStyle: 'popover'` for iPad-native UI (iPadOS 26.1+)
+    - Quality set to 85% for optimal performance and file size
+    - Base64 data URLs work directly in `<img>` tags and can be uploaded to backend
+    - Enhanced error logging with device-specific debugging
+    - Graceful permission handling with user-friendly error messages
 - **Authentication**: Native iOS Sign in with Apple integration, meeting App Store Guideline 4.8.
   - **Security**: Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
   - **Privacy**: Respects Apple's "Hide My Email" feature - only stores email if Apple provides it
