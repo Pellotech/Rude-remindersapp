@@ -44,7 +44,16 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   const uploadFile = async (photo: Photo): Promise<string> => {
     try {
       let blob: Blob;
-      let detectedMimeType: string | undefined;
+      
+      // Helper to derive MIME type from file extension
+      const getMimeTypeFromExtension = (path: string): string | undefined => {
+        const ext = path.split('.').pop()?.toLowerCase();
+        if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+        if (ext === 'png') return 'image/png';
+        if (ext === 'heic' || ext === 'heif') return 'image/heic';
+        if (ext === 'webp') return 'image/webp';
+        return undefined;
+      };
       
       // Gallery photos often only have webPath, camera photos have path
       if (photo.webPath) {
@@ -55,17 +64,15 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         const encodedPath = encodeURI(normalizedPath);
         const response = await fetch(encodedPath);
         blob = await response.blob();
-        // Use the blob's detected type for accuracy
-        detectedMimeType = blob.type;
       } else if (photo.path) {
         // For path (camera captures), read via Filesystem API
         const base64Data = await Filesystem.readFile({
           path: photo.path,
         });
         
-        // Try to get mime type from photo object or format
+        // Determine mime type from photo metadata or format
         const format = photo.format || 'jpeg';
-        detectedMimeType = photo.mimeType || (
+        const detectedMimeType = photo.mimeType || (
           format === 'jpeg' ? 'image/jpeg' 
           : format === 'png' ? 'image/png'
           : format === 'heic' ? 'image/heic'
@@ -80,11 +87,34 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         throw new Error('Photo has neither path nor webPath');
       }
 
-      // Derive file extension from detected MIME type or fallback
-      const mimeType = detectedMimeType || blob.type || 'image/jpeg';
-      const extension = mimeType === 'image/jpeg' ? 'jpg'
+      // Derive MIME type from multiple sources in priority order:
+      // 1. photo.mimeType (most reliable on native)
+      // 2. blob.type (from fetched blob)
+      // 3. photo.format (from Camera API)
+      // 4. filename extension from webPath/path (tertiary fallback)
+      // 5. 'image/jpeg' (final fallback)
+      let mimeType = photo.mimeType || blob.type;
+      
+      if (!mimeType && photo.format) {
+        // Derive from format
+        const format = photo.format.toLowerCase();
+        mimeType = format === 'jpeg' ? 'image/jpeg'
+          : format === 'png' ? 'image/png'
+          : format === 'heic' ? 'image/heic'
+          : format === 'webp' ? 'image/webp'
+          : '';
+      }
+      
+      if (!mimeType) {
+        // Parse from filename as tertiary fallback
+        const sourcePath = photo.webPath || photo.path || '';
+        mimeType = getMimeTypeFromExtension(sourcePath) || 'image/jpeg';
+      }
+      
+      // Map MIME type to file extension, covering common variants
+      const extension = mimeType === 'image/jpeg' || mimeType === 'image/jpg' ? 'jpg'
         : mimeType === 'image/png' ? 'png'
-        : mimeType === 'image/heic' ? 'heic'
+        : mimeType === 'image/heic' || mimeType === 'image/heif' ? 'heic'
         : mimeType === 'image/webp' ? 'webp'
         : 'jpg'; // fallback
 
