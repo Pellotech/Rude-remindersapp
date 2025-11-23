@@ -196,22 +196,19 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       let blob: Blob;
       let detectedMimeType = '';
 
-      // Try webPath first (more reliable on iOS), then path
-      if (photo.webPath) {
-        console.log('Using webPath approach');
-        const normalizedPath = Capacitor.convertFileSrc(photo.webPath);
-        console.log('Normalized path:', normalizedPath);
-        const encodedPath = encodeURI(normalizedPath);
-        console.log('Fetching from:', encodedPath);
-        const response = await fetch(encodedPath);
-        console.log('Fetch response status:', response.status, response.ok);
-        blob = await response.blob();
-        console.log('Blob created, size:', blob.size, 'type:', blob.type);
-        detectedMimeType = blob.type || getMimeTypeFromExtension(photo.webPath);
-      } else if (photo.path) {
+      // Use Filesystem API to read the file (more reliable in server mode)
+      if (photo.path) {
+        console.log('Reading file via Filesystem API');
+        // Extract just the filename from the full path
+        const pathParts = photo.path.replace('file://', '').split('/');
+        const filename = pathParts[pathParts.length - 1];
+        console.log('Reading file:', filename);
+        
         const base64Data = await Filesystem.readFile({
-          path: photo.path,
+          path: filename,
         });
+        
+        console.log('File read successfully');
         
         const format = photo.format || 'jpeg';
         detectedMimeType = format === 'jpeg' ? 'image/jpeg' 
@@ -220,10 +217,12 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
           : format === 'webp' ? 'image/webp'
           : 'image/jpeg';
         
+        console.log('Converting base64 to blob, mimeType:', detectedMimeType);
         const base64Response = await fetch(`data:${detectedMimeType};base64,${base64Data.data}`);
         blob = await base64Response.blob();
+        console.log('Blob created, size:', blob.size, 'type:', blob.type);
       } else {
-        throw new Error('Photo has no valid path or webPath');
+        throw new Error('Photo has no valid path');
       }
 
       const mimeType = detectedMimeType || blob.type || 'image/jpeg';
