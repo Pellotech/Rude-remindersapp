@@ -54,10 +54,11 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setPermissionError(null);
       
       // iPad-optimized configuration for iOS 18+ / iPadOS 26+
+      // Using DataUrl gives us a base64 data URL that works for both display and upload
       const cameraOptions: any = {
-        quality: 85, // Slightly lower quality for better performance on iPad
+        quality: 85, // Balanced quality for performance
         allowEditing: false, // CRITICAL: Disable editing on all iOS to prevent iPad crashes
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.DataUrl, // DataUrl gives us base64 that works everywhere
         source: CameraSource.Camera,
         saveToGallery: false,
         correctOrientation: true,
@@ -71,28 +72,20 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
       const image: Photo = await Camera.getPhoto(cameraOptions);
 
-      if (image.webPath) {
+      if (image.dataUrl) {
         console.log('Camera captured image:', { 
-          webPath: image.webPath, 
           format: image.format,
+          dataUrlLength: image.dataUrl.length,
           isIPad 
         });
-        onPhotoCaptured(image.webPath);
-        toast({
-          title: "Photo captured",
-          description: "Photo added to your reminder",
-        });
-      } else if (image.path) {
-        // Fallback to path if webPath not available
-        console.log('Using image.path fallback:', image.path);
-        onPhotoCaptured(image.path);
+        onPhotoCaptured(image.dataUrl);
         toast({
           title: "Photo captured",
           description: "Photo added to your reminder",
         });
       } else {
-        console.error('Camera image captured but no path available:', image);
-        throw new Error('No image path returned from camera');
+        console.error('Camera image captured but no dataUrl available:', image);
+        throw new Error('No image data returned from camera');
       }
     } catch (error: any) {
       console.error('Camera error details:', { 
@@ -143,10 +136,11 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setPermissionError(null);
       
       // iPad-optimized configuration for iOS 18+ / iPadOS 26+
+      // Using DataUrl gives us a base64 data URL that works for both display and upload
       const galleryOptions: any = {
         quality: 85, // Balanced quality for performance
         allowEditing: false, // CRITICAL: Disable editing to prevent iPad crashes
-        resultType: CameraResultType.Uri,
+        resultType: CameraResultType.DataUrl, // DataUrl gives us base64 that works everywhere
         source: CameraSource.Photos,
         correctOrientation: true,
       };
@@ -159,28 +153,20 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
       const image: Photo = await Camera.getPhoto(galleryOptions);
 
-      if (image.webPath) {
+      if (image.dataUrl) {
         console.log('Gallery selected image:', { 
-          webPath: image.webPath, 
           format: image.format,
+          dataUrlLength: image.dataUrl.length,
           isIPad 
         });
-        onPhotoCaptured(image.webPath);
-        toast({
-          title: "Photo selected",
-          description: "Photo added to your reminder",
-        });
-      } else if (image.path) {
-        // Fallback to path if webPath not available
-        console.log('Using image.path fallback:', image.path);
-        onPhotoCaptured(image.path);
+        onPhotoCaptured(image.dataUrl);
         toast({
           title: "Photo selected",
           description: "Photo added to your reminder",
         });
       } else {
-        console.error('Gallery image selected but no path available:', image);
-        throw new Error('No image path returned from gallery');
+        console.error('Gallery image selected but no dataUrl available:', image);
+        throw new Error('No image data returned from gallery');
       }
     } catch (error: any) {
       console.error('Gallery error details:', { 
