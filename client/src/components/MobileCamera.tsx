@@ -44,38 +44,52 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   const uploadFile = async (photo: Photo): Promise<string> => {
     try {
       let blob: Blob;
-      
-      // Determine mime type from photo format
-      const format = photo.format || 'jpeg';
-      const mimeType = format === 'jpeg' ? 'image/jpeg' 
-        : format === 'png' ? 'image/png'
-        : format === 'heic' ? 'image/heic'
-        : format === 'webp' ? 'image/webp'
-        : 'image/jpeg'; // fallback
+      let detectedMimeType: string | undefined;
       
       // Gallery photos often only have webPath, camera photos have path
       if (photo.webPath) {
         // For webPath (gallery selections), normalize URI and fetch as blob
         // convertFileSrc handles capacitor:// URIs on native builds
+        // encodeURI handles filenames with spaces or non-ASCII characters
         const normalizedPath = Capacitor.convertFileSrc(photo.webPath);
-        const response = await fetch(normalizedPath);
+        const encodedPath = encodeURI(normalizedPath);
+        const response = await fetch(encodedPath);
         blob = await response.blob();
+        // Use the blob's detected type for accuracy
+        detectedMimeType = blob.type;
       } else if (photo.path) {
         // For path (camera captures), read via Filesystem API
         const base64Data = await Filesystem.readFile({
           path: photo.path,
         });
         
-        // Convert base64 to blob with proper mime type
-        const base64Response = await fetch(`data:${mimeType};base64,${base64Data.data}`);
+        // Try to get mime type from photo object or format
+        const format = photo.format || 'jpeg';
+        detectedMimeType = photo.mimeType || (
+          format === 'jpeg' ? 'image/jpeg' 
+          : format === 'png' ? 'image/png'
+          : format === 'heic' ? 'image/heic'
+          : format === 'webp' ? 'image/webp'
+          : 'image/jpeg'
+        );
+        
+        // Convert base64 to blob with detected mime type
+        const base64Response = await fetch(`data:${detectedMimeType};base64,${base64Data.data}`);
         blob = await base64Response.blob();
       } else {
         throw new Error('Photo has neither path nor webPath');
       }
 
+      // Derive file extension from detected MIME type or fallback
+      const mimeType = detectedMimeType || blob.type || 'image/jpeg';
+      const extension = mimeType === 'image/jpeg' ? 'jpg'
+        : mimeType === 'image/png' ? 'png'
+        : mimeType === 'image/heic' ? 'heic'
+        : mimeType === 'image/webp' ? 'webp'
+        : 'jpg'; // fallback
+
       // Create FormData with proper filename and extension
       const formData = new FormData();
-      const extension = format || 'jpg';
       formData.append('file', blob, `photo-${Date.now()}.${extension}`);
 
       const response = await fetch('/api/upload', {
