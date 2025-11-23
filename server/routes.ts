@@ -1203,6 +1203,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate quick AI preview for testing (doesn't save to database)
+  app.post('/api/preview-reminder', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const {
+        originalMessage,
+        context,
+        rudenessLevel,
+        voiceCharacter
+      } = req.body;
+
+      // Create a temporary reminder object for AI generation
+      const tempReminder = {
+        id: crypto.randomUUID() as `${string}-${string}-${string}-${string}-${string}`,
+        userId,
+        title: originalMessage,
+        originalMessage,
+        context: context || null,
+        rudeMessage: "",
+        rudenessLevel: rudenessLevel || 3,
+        scheduledFor: new Date(),
+        browserNotification: true,
+        voiceNotification: false,
+        emailNotification: false,
+        voiceCharacter: voiceCharacter || "default",
+        attachments: [],
+        motivationalQuote: "",
+        selectedDays: [],
+        isMultiDay: false,
+        daySpecificMessages: null,
+        completed: false,
+        completedAt: null,
+        notAccomplished: false,
+        notAccomplishedAt: null,
+        responses: [] as string[],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      // Generate AI response
+      const generatedReminder = await reminderService.generateReminderResponse(tempReminder);
+
+      res.json({
+        success: true,
+        rudeMessage: generatedReminder.rudeMessage,
+        responses: generatedReminder.responses || []
+      });
+    } catch (error) {
+      console.error('Error generating preview:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: (error as Error).message,
+        rudeMessage: `Time to ${req.body.originalMessage}!`
+      });
+    }
+  });
+
   // RevenueCat subscription endpoints
 
   // RevenueCat customer info route

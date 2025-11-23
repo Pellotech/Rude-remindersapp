@@ -232,6 +232,7 @@ export default function ReminderForm({
   const [isMultiDay, setIsMultiDay] = useState(false);
   const [multiDayHour, setMultiDayHour] = useState(9); // Default 9 AM
   const [multiDayMinute, setMultiDayMinute] = useState(0); // Default :00
+  const [testReminderLoading, setTestReminderLoading] = useState(false);
 
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -1541,6 +1542,7 @@ export default function ReminderForm({
                 type="button"
                 variant="outline"
                 className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300 hover:border-purple-400 font-medium py-3 px-6"
+                disabled={testReminderLoading}
                 onClick={async () => {
                   const currentMessage = form.watch("originalMessage");
                   if (!currentMessage || currentMessage.trim() === "") {
@@ -1552,43 +1554,78 @@ export default function ReminderForm({
                     return;
                   }
 
-                  // Schedule notification for 10 seconds from now
-                  const testTime = new Date(Date.now() + 10000);
-                  
-                  // Get current form values
-                  const currentContext = form.watch("context") || "";
-                  const currentRudeness = form.watch("rudenessLevel");
-                  
-                  // Generate a quick AI response with current settings
-                  const testBody = `${currentMessage}${currentContext ? ` (${currentContext})` : ''}`;
-                  
-                  // Generate quote if category is selected
-                  let testQuote: string | undefined;
-                  if (selectedCategory) {
-                    testQuote = (await generateQuoteForSubmission(selectedCategory)) ?? undefined;
+                  try {
+                    setTestReminderLoading(true);
+
+                    // Get current form values
+                    const currentContext = form.watch("context") || "";
+                    const currentRudeness = form.watch("rudenessLevel");
+                    
+                    // Generate AI reminder preview
+                    const previewResponse = await apiRequest('/api/preview-reminder', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        originalMessage: currentMessage,
+                        context: currentContext,
+                        rudenessLevel: currentRudeness,
+                        voiceCharacter: selectedVoice,
+                      }),
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                    });
+
+                    const { rudeMessage } = await previewResponse.json();
+                    
+                    // Generate quote if category is selected
+                    let testQuote: string | undefined;
+                    if (selectedCategory) {
+                      testQuote = (await generateQuoteForSubmission(selectedCategory)) ?? undefined;
+                    }
+
+                    // Schedule notification for 10 seconds from now
+                    const testTime = new Date(Date.now() + 10000);
+
+                    // Schedule mobile notification with AI-generated message
+                    await scheduleNativeNotification({
+                      id: `test-${Date.now()}`,
+                      title: "🧪 Quick Test Reminder",
+                      body: rudeMessage, // Use AI-generated message
+                      scheduledFor: testTime,
+                      attachments: selectedAttachments,
+                      motivationalQuote: testQuote,
+                      voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
+                      voiceCharacter: selectedVoice,
+                    });
+
+                    toast({
+                      title: "🧪 Test Notification Scheduled!",
+                      description: "Close the app and wait 10 seconds to see your full AI-generated reminder",
+                    });
+                  } catch (error) {
+                    console.error('Error creating test reminder:', error);
+                    toast({
+                      title: "Test Failed",
+                      description: "Could not generate test reminder. Please try again.",
+                      variant: "destructive",
+                    });
+                  } finally {
+                    setTestReminderLoading(false);
                   }
-
-                  // Schedule mobile notification
-                  await scheduleNativeNotification({
-                    id: `test-${Date.now()}`,
-                    title: "🧪 Quick Test Reminder",
-                    body: testBody,
-                    scheduledFor: testTime,
-                    attachments: selectedAttachments,
-                    motivationalQuote: testQuote,
-                    voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
-                    voiceCharacter: selectedVoice,
-                  });
-
-                  toast({
-                    title: "🧪 Test Notification Scheduled!",
-                    description: "Close the app and wait 10 seconds to see your notification with current form data",
-                  });
                 }}
                 data-testid="button-quick-test"
               >
-                <TestTube className="mr-2 h-5 w-5" />
-                🧪 Quick Test (10 seconds)
+                {testReminderLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600 mr-2" />
+                    Generating AI Preview...
+                  </>
+                ) : (
+                  <>
+                    <TestTube className="mr-2 h-5 w-5" />
+                    🧪 Quick Test (10 seconds)
+                  </>
+                )}
               </Button>
             )}
 
