@@ -4,6 +4,7 @@ import { FilePicker } from "@capawesome/capacitor-file-picker";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Filesystem } from "@capacitor/filesystem";
+import { AppLauncher } from "@capacitor/app-launcher";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CameraIcon, Image, AlertCircle, Settings } from "lucide-react";
@@ -86,7 +87,9 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
     try {
       const permissions = await Camera.checkPermissions();
       
-      if (permissions.photos === 'granted') {
+      // Accept both 'granted' and 'limited' as valid permission states
+      // iOS users who select "Allow Limited Access" should be able to use the gallery
+      if (permissions.photos === 'granted' || permissions.photos === 'limited') {
         return true;
       }
       
@@ -99,7 +102,8 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       // Request permission
       const result = await Camera.requestPermissions({ permissions: ['photos'] });
       
-      if (result.photos === 'granted') {
+      // Accept both 'granted' and 'limited' after requesting
+      if (result.photos === 'granted' || result.photos === 'limited') {
         return true;
       } else {
         setPermissionType('photos');
@@ -114,16 +118,8 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   // Open iOS Settings
   const openSettings = async () => {
     try {
-      // On iOS, we can open the app-specific settings
-      if (Capacitor.getPlatform() === 'ios') {
-        window.open('app-settings:', '_system');
-      } else {
-        // Android - show instructions
-        toast({
-          title: "Enable Permissions",
-          description: "Go to Settings > Apps > Rude Reminders > Permissions",
-        });
-      }
+      // Use Capacitor App Launcher to open app-specific settings
+      await AppLauncher.openUrl({ url: 'app-settings:' });
     } catch (error) {
       // Fallback - show instructions
       toast({
