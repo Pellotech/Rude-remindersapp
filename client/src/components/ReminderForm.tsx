@@ -1535,6 +1535,63 @@ export default function ReminderForm({
               })()
             )}
 
+            {/* Quick Test Notification Button */}
+            {supportsNotifications() && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-300 hover:border-purple-400 font-medium py-3 px-6"
+                onClick={async () => {
+                  const currentMessage = form.watch("originalMessage");
+                  if (!currentMessage || currentMessage.trim() === "") {
+                    toast({
+                      title: "Message Required",
+                      description: "Please enter what you need to be reminded about first",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+
+                  // Schedule notification for 10 seconds from now
+                  const testTime = new Date(Date.now() + 10000);
+                  
+                  // Get current form values
+                  const currentContext = form.watch("context") || "";
+                  const currentRudeness = form.watch("rudenessLevel");
+                  
+                  // Generate a quick AI response with current settings
+                  const testBody = `${currentMessage}${currentContext ? ` (${currentContext})` : ''}`;
+                  
+                  // Generate quote if category is selected
+                  let testQuote: string | undefined;
+                  if (selectedCategory) {
+                    testQuote = (await generateQuoteForSubmission(selectedCategory)) ?? undefined;
+                  }
+
+                  // Schedule mobile notification
+                  await scheduleNativeNotification({
+                    id: `test-${Date.now()}`,
+                    title: "🧪 Quick Test Reminder",
+                    body: testBody,
+                    scheduledFor: testTime,
+                    attachments: selectedAttachments,
+                    motivationalQuote: testQuote,
+                    voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
+                    voiceCharacter: selectedVoice,
+                  });
+
+                  toast({
+                    title: "🧪 Test Notification Scheduled!",
+                    description: "Close the app and wait 10 seconds to see your notification with current form data",
+                  });
+                }}
+                data-testid="button-quick-test"
+              >
+                <TestTube className="mr-2 h-5 w-5" />
+                🧪 Quick Test (10 seconds)
+              </Button>
+            )}
+
             {/* Submit Button */}
             <Button
               type="submit"

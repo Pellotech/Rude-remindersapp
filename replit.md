@@ -46,6 +46,16 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Graceful error handling: user cancellations silent, permissions shown as alerts, generic errors with retry prompts
     - No debug logging in production
     - Tested for iPad multi-window environments and large photo handling
+  - **Notification Attachments**: Photos are properly handled in iOS notifications
+    - Server URLs are downloaded and converted to local file paths for iOS compatibility
+    - Images saved to device Cache directory using Capacitor Filesystem
+    - Base64 conversion ensures reliable file storage across device states
+    - Console logs show attachment preparation progress (`📎 Preparing attachments...`, `✅ Prepared N local attachment(s)`)
+  - **Quick Test Reminder**: In-form button that schedules a test notification in 10 seconds
+    - Uses current form data (message, context, attachments, quotes, voice settings)
+    - Appears only on mobile devices with notification support
+    - Allows rapid testing without creating permanent reminders
+    - Purple-themed button positioned above the main submit button
 - **Authentication**: Native iOS Sign in with Apple integration, meeting App Store Guideline 4.8.
   - **Security**: Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
   - **Privacy**: Respects Apple's "Hide My Email" feature - only stores email if Apple provides it
