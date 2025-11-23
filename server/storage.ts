@@ -813,6 +813,9 @@ export const storage = {
   async updateUser(id: string, updates: any) {
     return (await getStorage()).updateUser(id, updates);
   },
+  async getAllUsers() {
+    return (await getStorage()).getAllUsers();
+  },
   async createReminder(userId: string, reminder: InsertReminder) {
     return (await getStorage()).createReminder(userId, reminder);
   },

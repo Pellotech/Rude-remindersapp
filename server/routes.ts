@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
-import { isUserPremium, addEmailToWhitelist, removeEmailFromWhitelist, getWhitelistedEmails } from "./utils/premiumCheck";
+import { isUserPremium, addEmailToWhitelist, removeEmailFromWhitelist, getWhitelistedEmails, cleanupExpiredSubscriptions } from "./utils/premiumCheck";
 import crypto from 'crypto'; // Import crypto module for UUID generation
 import { DeepSeekService } from './services/deepseekService';
 import bcrypt from 'bcryptjs';
@@ -62,6 +62,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Initialize storage (will auto-detect database availability)
   await storage.seedRudePhrases();
+  
+  // Start subscription cleanup task (runs daily at 2 AM)
+  const startCleanupScheduler = () => {
+    const runCleanup = async () => {
+      console.log('🧹 Running subscription expiration cleanup...');
+      const result = await cleanupExpiredSubscriptions();
+      if (result.cleaned > 0 || result.errors > 0) {
+        console.log(`Cleanup results: ${result.cleaned} users downgraded, ${result.errors} errors`);
+      }
+    };
+    
+    // Run once on startup
+    runCleanup();
+    
+    // Then run daily at 2 AM
+    const scheduleDaily = () => {
+      const now = new Date();
+      const next2AM = new Date(now);
+      next2AM.setHours(2, 0, 0, 0);
+      
+      // If 2 AM has passed today, schedule for tomorrow
+      if (now.getHours() >= 2) {
+        next2AM.setDate(next2AM.getDate() + 1);
+      }
+      
+      const timeUntilNext = next2AM.getTime() - now.getTime();
+      
+      setTimeout(() => {
+        runCleanup();
+        // Schedule next run (24 hours later)
+        setInterval(runCleanup, 24 * 60 * 60 * 1000);
+      }, timeUntilNext);
+    };
+    
+    scheduleDaily();
+  };
+  
+  startCleanupScheduler();
 
   // Public auth routes (no authentication required)
   app.post('/api/auth/register', async (req, res) => {

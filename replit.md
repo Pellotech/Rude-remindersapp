@@ -33,6 +33,10 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Component Architecture**: Utilizes Shadcn/ui components built on Radix UI.
 - **Dynamic AI Responses**: Integration with DeepSeek AI for personalized, context-aware motivational messages with adjustable humor levels.
 - **Subscription System**: Differentiates features for free and premium users, including AI-generated content.
+  - **Automatic Expiration Handling**: Daily cleanup task (runs at 2 AM) automatically downgrades expired subscriptions to free tier
+  - **Premium Whitelist**: Developers and test accounts (testuserzzwai_@rudereminders.com, appstoreuser@rudereminders.com, ruderemindersinfo@gmail.com, letmeknow6@icloud.com) always receive premium features
+  - **RevenueCat Webhooks**: Real-time subscription updates via webhooks for instant premium status changes
+  - **Graceful Degradation**: Users retain login access and data when subscription expires; only premium features are restricted
 - **Comprehensive User Personalization**: Allows gender and cultural background selection for tailored content.
 - **Mobile-Native Architecture**: Full native iOS/Android support via Capacitor with AdMob integration, local notifications, and camera access.
   - **Photo Picker (iPad Air M3 / iPadOS 26.1+ Compatible)**: Production-ready photo capture and gallery selection optimized for iPad

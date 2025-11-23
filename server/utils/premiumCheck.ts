@@ -92,22 +92,36 @@ export async function isUserPremium(userId: string): Promise<boolean> {
     const user = await storage.getUser(userId);
     if (!user) return false;
     
-    // Check if user's email is in the premium whitelist
+    // Check if user's email is in the premium whitelist (always premium)
     if (user.email) {
       const isWhitelisted = await storage.isEmailWhitelisted(user.email);
       if (isWhitelisted) {
+        console.log(`✅ User ${userId} has premium via whitelist`);
         return true;
       }
     }
     
     // Check if user has active premium subscription
-    const hasActivePremium = user.subscriptionStatus === 'active' || user.subscriptionPlan === 'premium';
+    // BOTH conditions must be true: status is 'active' AND plan is 'premium'
+    const hasActivePremium = user.subscriptionStatus === 'active' && user.subscriptionPlan === 'premium';
     
-    // If subscription has an end date, check if it's still valid
-    if (hasActivePremium && user.subscriptionEndsAt) {
+    // If subscription has an end date, verify it hasn't expired
+    if (user.subscriptionEndsAt) {
       const subscriptionEndDate = new Date(user.subscriptionEndsAt);
       const now = new Date();
-      return subscriptionEndDate > now;
+      const isNotExpired = subscriptionEndDate > now;
+      
+      if (!isNotExpired) {
+        console.log(`⏰ User ${userId} subscription expired at ${subscriptionEndDate}`);
+        return false; // Subscription expired, user is now free tier
+      }
+    }
+    
+    // Final check: must have active subscription
+    if (hasActivePremium) {
+      console.log(`✅ User ${userId} has active premium subscription`);
+    } else {
+      console.log(`📋 User ${userId} is free tier (status: ${user.subscriptionStatus}, plan: ${user.subscriptionPlan})`);
     }
     
     return hasActivePremium;
@@ -159,4 +173,60 @@ export async function removeEmailFromWhitelist(email: string): Promise<boolean> 
 // Helper function to get all whitelisted emails (for admin purposes)
 export async function getWhitelistedEmails(): Promise<string[]> {
   return await storage.getWhitelistEmails();
+}
+
+/**
+ * Cleanup expired subscriptions
+ * This runs as a backup in case RevenueCat webhooks fail
+ * Should be called periodically (e.g., daily via cron job)
+ */
+export async function cleanupExpiredSubscriptions(): Promise<{cleaned: number, errors: number}> {
+  let cleaned = 0;
+  let errors = 0;
+  
+  try {
+    // Get all users with subscriptionEndsAt set
+    const allUsers = await storage.getAllUsers();
+    
+    const now = new Date();
+    
+    for (const user of allUsers) {
+      try {
+        // Skip whitelisted users (they have permanent premium)
+        if (user.email && await storage.isEmailWhitelisted(user.email)) {
+          continue;
+        }
+        
+        // Check if subscription has expired
+        if (user.subscriptionEndsAt) {
+          const expiryDate = new Date(user.subscriptionEndsAt);
+          
+          if (expiryDate <= now && user.subscriptionStatus === 'active') {
+            // Subscription expired but still marked as active - downgrade to free
+            console.log(`🧹 Cleaning up expired subscription for user ${user.id} (expired ${expiryDate})`);
+            
+            await storage.updateUser(user.id, {
+              subscriptionStatus: 'expired',
+              subscriptionPlan: 'free',
+              revenueCatEntitlements: {},
+            });
+            
+            cleaned++;
+          }
+        }
+      } catch (error) {
+        console.error(`Error cleaning up user ${user.id}:`, error);
+        errors++;
+      }
+    }
+    
+    if (cleaned > 0) {
+      console.log(`✅ Subscription cleanup complete: ${cleaned} users downgraded to free tier`);
+    }
+    
+    return { cleaned, errors };
+  } catch (error) {
+    console.error('Error in cleanupExpiredSubscriptions:', error);
+    return { cleaned, errors };
+  }
 }
