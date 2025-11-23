@@ -4,8 +4,8 @@ import { smartResponseService } from "./smartResponseService";
 import type { Reminder } from "@shared/schema";
 
 // Helper functions for reminder management
-const createReminder = async (reminder: Reminder): Promise<Reminder> => {
-  return await storage.createReminder(reminder);
+const createReminder = async (userId: string, reminder: Reminder): Promise<Reminder> => {
+  return await storage.createReminder(userId, reminder);
 };
 
 const scheduleNotification = async (reminder: Reminder): Promise<void> => {
@@ -165,7 +165,6 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
       ...reminder,
       rudeMessage,
       responses, // Store all AI-generated response options
-      status: 'active' as const,
       updatedAt: new Date()
     };
     
@@ -178,7 +177,6 @@ async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
       ...reminder,
       rudeMessage: `Time to ${reminder.originalMessage}!`,
       responses: [`Time to ${reminder.originalMessage}!`], // Always include responses array
-      status: 'active' as const,
       updatedAt: new Date()
     };
   }

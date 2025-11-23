@@ -30,7 +30,7 @@ export async function checkFreeUserMonthlyLimit(userId: string): Promise<{hasExc
     }
 
     const currentMonth = getCurrentMonthKey();
-    const monthlyUsage = user.monthlyReminderUsage || {} as Record<string, number>;
+    const monthlyUsage: Record<string, number> = (user.monthlyReminderUsage as Record<string, number>) || {};
     const currentMonthUsage = monthlyUsage[currentMonth] || 0;
     const limit = 12;
 
@@ -62,7 +62,7 @@ export async function incrementMonthlyReminderCount(userId: string): Promise<voi
     if (isPremium) return;
 
     const currentMonth = getCurrentMonthKey();
-    const monthlyUsage = user.monthlyReminderUsage || {} as Record<string, number>;
+    const monthlyUsage: Record<string, number> = (user.monthlyReminderUsage as Record<string, number>) || {};
     monthlyUsage[currentMonth] = (monthlyUsage[currentMonth] || 0) + 1;
 
     // Clean up old months (keep only last 3 months)

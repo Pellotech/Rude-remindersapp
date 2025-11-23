@@ -56,6 +56,8 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - All buttons use current form data (message, context, rudeness, attachments, quotes)
     - Generates full AI "rude" message using current form settings
     - Includes photos, motivational quotes, and voice character preferences
+    - Uses ISO format timestamps for precise second-level scheduling
+    - Backend allows reminders as short as 5 seconds for testing
 - **Authentication**: Native iOS Sign in with Apple integration, meeting App Store Guideline 4.8.
   - **Security**: Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
   - **Privacy**: Respects Apple's "Hide My Email" feature - only stores email if Apple provides it

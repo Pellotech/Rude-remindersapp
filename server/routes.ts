@@ -452,12 +452,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const scheduledDateTime = new Date(scheduledFor);
         const now = new Date();
         const timeDifference = scheduledDateTime.getTime() - now.getTime();
-        const minutesDifference = timeDifference / (1000 * 60);
+        const secondsDifference = timeDifference / 1000;
 
-        // Allow quick reminders (as short as 1 minute) but warn for very short times
-        if (minutesDifference < 1) {
+        // Allow quick reminders as short as 5 seconds for testing
+        if (secondsDifference < 5) {
           return res.status(400).json({ 
-            message: "Reminder must be scheduled at least 1 minute in the future" 
+            message: "Reminder must be scheduled at least 5 seconds in the future" 
           });
         }
 

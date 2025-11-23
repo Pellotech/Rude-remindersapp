@@ -1500,7 +1500,8 @@ export default function ReminderForm({
                               } else if (minutes) {
                                 newTime.setMinutes(newTime.getMinutes() + minutes);
                               }
-                              const formattedDateTime = format(newTime, "yyyy-MM-dd'T'HH:mm");
+                              // Use full ISO string for precise timing (includes seconds)
+                              const formattedDateTime = newTime.toISOString();
                               form.setValue("scheduledFor", formattedDateTime);
 
                               // Create quick reminder with current form data

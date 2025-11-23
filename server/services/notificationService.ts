@@ -52,7 +52,7 @@ class NotificationService {
 
   // Map character names to browser speech synthesis settings
   getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voice?: string } {
-    const voiceSettings: Record<string, { rate: number, pitch: pitch, voiceType: string }> = {
+    const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
       'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' }, // Scarlett - professional
       'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' }, // Dan - tough man
       'robot': { rate: 0.8, pitch: 0.6, voiceType: 'robotic' }, // Will - more robotic
@@ -110,7 +110,7 @@ class NotificationService {
       if (!reminder.voiceCharacter) return;
 
       const voiceSettings = this.getBrowserVoiceSettings(reminder.voiceCharacter);
-      const speechData = this.generateBrowserSpeech(reminder.currentResponse || reminder.rudeMessage, reminder.voiceCharacter);
+      const speechData = this.generateBrowserSpeech(reminder.rudeMessage, reminder.voiceCharacter);
 
       if (this.wss) {
         this.wss.clients.forEach((client) => {
