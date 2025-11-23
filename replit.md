@@ -51,11 +51,14 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Images saved to device Cache directory using Capacitor Filesystem
     - Base64 conversion ensures reliable file storage across device states
     - Console logs show attachment preparation progress (`📎 Preparing attachments...`, `✅ Prepared N local attachment(s)`)
-  - **Quick Test Reminder**: In-form button that schedules a test notification in 10 seconds
-    - Uses current form data (message, context, attachments, quotes, voice settings)
-    - Appears only on mobile devices with notification support
-    - Allows rapid testing without creating permanent reminders
-    - Purple-themed button positioned above the main submit button
+  - **Quick Reminder Settings with Test Mode**: Inline quick-action buttons for rapid reminder creation
+    - "+10s" test button (purple) generates AI-powered preview notification in 10 seconds
+      - Only visible on mobile devices with notification support
+      - Generates full AI "rude" message using current form settings
+      - Includes photos, motivational quotes, and voice character preferences
+      - Does not save to database - perfect for testing the full user experience
+    - "+5m", "+15m", "+30m" buttons create actual reminders saved to database
+    - All buttons use current form data (message, context, rudeness, attachments, quotes)
 - **Authentication**: Native iOS Sign in with Apple integration, meeting App Store Guideline 4.8.
   - **Security**: Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
   - **Privacy**: Respects Apple's "Hide My Email" feature - only stores email if Apple provides it
