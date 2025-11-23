@@ -242,13 +242,16 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
 
       const file = result.files[0];
       
-      // Validate file has URI
-      if (!file.path) {
-        throw new Error('Selected file has no valid path');
+      // Derive URI from available properties with fallback chain
+      // file.path is preferred, but webPath or uri work on iPad/iCloud photos
+      const fileUri = file.path || (file as any).webPath || (file as any).uri;
+      
+      if (!fileUri) {
+        throw new Error('Selected file has no valid path, webPath, or uri');
       }
 
-      // Upload using the file path and mime type
-      const filePath = await uploadFileFromUri(file.path, file.mimeType);
+      // Upload using the file URI and mime type
+      const filePath = await uploadFileFromUri(fileUri, file.mimeType);
       
       onPhotoCaptured(filePath);
       toast({
@@ -273,7 +276,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       }
       
       // Handle specific iPad/file errors
-      if (error?.message?.includes('no valid path')) {
+      if (error?.message?.includes('no valid path') || error?.message?.includes('no valid')) {
         toast({
           title: "Photo Error",
           description: "Unable to access the selected photo. Please try a different photo.",
