@@ -187,15 +187,26 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   // Legacy upload helper for Camera plugin (camera capture only)
   const uploadFileFromPhoto = async (photo: Photo): Promise<string> => {
     try {
+      console.log('uploadFileFromPhoto starting with photo:', { 
+        hasWebPath: !!photo.webPath, 
+        hasPath: !!photo.path,
+        format: photo.format 
+      });
+      
       let blob: Blob;
       let detectedMimeType = '';
 
       // Try webPath first (more reliable on iOS), then path
       if (photo.webPath) {
+        console.log('Using webPath approach');
         const normalizedPath = Capacitor.convertFileSrc(photo.webPath);
+        console.log('Normalized path:', normalizedPath);
         const encodedPath = encodeURI(normalizedPath);
+        console.log('Fetching from:', encodedPath);
         const response = await fetch(encodedPath);
+        console.log('Fetch response status:', response.status, response.ok);
         blob = await response.blob();
+        console.log('Blob created, size:', blob.size, 'type:', blob.type);
         detectedMimeType = blob.type || getMimeTypeFromExtension(photo.webPath);
       } else if (photo.path) {
         const base64Data = await Filesystem.readFile({
@@ -223,13 +234,18 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         : 'jpg';
 
       const formData = new FormData();
-      formData.append('file', blob, `photo-${Date.now()}.${extension}`);
+      const filename = `photo-${Date.now()}.${extension}`;
+      formData.append('file', blob, filename);
+      console.log('FormData created with filename:', filename);
 
+      console.log('Uploading to /api/upload...');
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
         credentials: 'include', // Include session cookie
       });
+
+      console.log('Upload response:', response.status, response.ok);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -238,6 +254,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       }
 
       const { filePath } = await response.json();
+      console.log('Upload successful, filePath:', filePath);
       return filePath;
     } catch (error) {
       console.error('uploadFileFromPhoto error:', error);
