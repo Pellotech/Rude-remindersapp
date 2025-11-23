@@ -1,0 +1,17 @@
+⚡️  [warn] - Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+⚡️  To Native ->  Device getInfo 29165356
+⚡️  TO JS {"platform":"ios","model":"iPhone17,1","osVersion":"18.6.2","manufacturer":"Apple","isVirtual":false,"webViewVersion":"18.6.2","iOSVersion":180602,"memUsed":136429568,"name":"iPhone","operatingSystem":"ios"}
+⚡️  To Native ->  Camera checkPermissions 29165357
+⚡️  TO JS {"photos":"prompt","camera":"prompt"}
+⚡️  To Native ->  Camera requestPermissions 29165358
+⚡️  TO JS {"camera":"granted","photos":"prompt"}
+⚡️  To Native ->  Camera getPhoto 29165359
+⚡️  CAPCameraPlugin - You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73
+ERROR MESSAGE:  {"message":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https:\/\/developer.apple.com\/library\/content\/documentation\/General\/Reference\/InfoPlistKeyReference\/Articles\/CocoaKeys.html#\/\/apple_ref\/doc\/uid\/TP40009251-SW73","errorMessage":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https:\/\/developer.apple.com\/library\/content\/documentation
+⚡️  [error] - {"message":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73","errorMessage":"You are missing NSPhotoLibraryAddUsageDescription in your Info.plist file. Camera will not function without it. Learn more: https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW73"}
+⚡️  To Native ->  Camera checkPermissions 29165360
+⚡️  TO JS {"camera":"granted","photos":"prompt"}
+⚡️  To Native ->  Camera requestPermissions 29165361
+⚡️  TO JS {"camera":"granted","photos":"granted"}
