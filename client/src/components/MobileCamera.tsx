@@ -365,10 +365,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
+      // Log the actual error for debugging
+      console.error('Gallery picker error:', error);
+      console.error('ERROR MESSAGE: ', error?.message || error);
+      
       // Only show error toast for actual picker/upload failures (not permissions)
       toast({
         title: "Gallery error",
-        description: "Failed to select photo. Please try again.",
+        description: error?.message || "Failed to select photo. Please try again.",
         variant: "destructive",
       });
     } finally {
