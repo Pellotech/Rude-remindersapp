@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Camera, CameraResultType, CameraSource, Photo } from "@capacitor/camera";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
-import { Filesystem } from "@capacitor/filesystem";
+import { Filesystem, Directory } from "@capacitor/filesystem";
 import { AppLauncher } from "@capacitor/app-launcher";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -338,8 +338,12 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
 
-      // Upload the photo
-      const filePath = await uploadFileFromPhoto(photo);
+      // CRITICAL FIX: Gallery photos are temporary files that get deleted
+      // We must save them to a permanent location before uploading
+      const savedPhoto = await saveTemporaryPhoto(photo);
+      
+      // Upload the permanently saved photo
+      const filePath = await uploadFileFromPhoto(savedPhoto);
       
       onPhotoCaptured(filePath);
       toast({
@@ -360,6 +364,38 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       });
     } finally {
       setIsCapturing(false);
+    }
+  };
+
+  // Save temporary gallery photo to permanent storage
+  const saveTemporaryPhoto = async (photo: Photo): Promise<Photo> => {
+    try {
+      // Read the temporary file
+      const filePath = photo.path!.replace('file://', '');
+      const fileData = await Filesystem.readFile({
+        path: filePath,
+      });
+
+      // Generate a unique filename
+      const fileName = `gallery_${Date.now()}.${photo.format || 'jpg'}`;
+
+      // Save to Documents directory (permanent storage)
+      const savedFile = await Filesystem.writeFile({
+        path: fileName,
+        data: fileData.data,
+        directory: Directory.Documents,
+      });
+
+      // Return a Photo object with the permanent file path
+      return {
+        ...photo,
+        path: savedFile.uri,
+        webPath: savedFile.uri,
+        saved: true,
+      };
+    } catch (error) {
+      console.error('Error saving temporary photo:', error);
+      throw error;
     }
   };
 
