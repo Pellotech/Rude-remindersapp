@@ -4,10 +4,21 @@ import { FilePicker } from "@capawesome/capacitor-file-picker";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Filesystem } from "@capacitor/filesystem";
+import { App } from "@capacitor/app";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Camera as CameraIcon, Image, AlertCircle } from "lucide-react";
+import { Camera as CameraIcon, Image, AlertCircle, Settings } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface MobileCameraProps {
   onPhotoCaptured: (photoUrl: string) => void;
@@ -20,6 +31,8 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   const [isCapturing, setIsCapturing] = useState(false);
   const [permissionError, setPermissionError] = useState<string | null>(null);
   const [isIPad, setIsIPad] = useState(false);
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [permissionType, setPermissionType] = useState<'camera' | 'photos'>('camera');
 
   useEffect(() => {
     const detectDevice = async () => {
@@ -38,6 +51,80 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
     
     detectDevice();
   }, []);
+
+  // Request camera permissions
+  const requestCameraPermissions = async (): Promise<boolean> => {
+    try {
+      const permissions = await Camera.checkPermissions();
+      
+      if (permissions.camera === 'granted') {
+        return true;
+      }
+      
+      if (permissions.camera === 'denied') {
+        setPermissionType('camera');
+        setShowPermissionDialog(true);
+        return false;
+      }
+      
+      // Request permission
+      const result = await Camera.requestPermissions({ permissions: ['camera'] });
+      
+      if (result.camera === 'granted') {
+        return true;
+      } else {
+        setPermissionType('camera');
+        setShowPermissionDialog(true);
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // Request photos permissions
+  const requestPhotosPermissions = async (): Promise<boolean> => {
+    try {
+      const permissions = await Camera.checkPermissions();
+      
+      if (permissions.photos === 'granted') {
+        return true;
+      }
+      
+      if (permissions.photos === 'denied') {
+        setPermissionType('photos');
+        setShowPermissionDialog(true);
+        return false;
+      }
+      
+      // Request permission
+      const result = await Camera.requestPermissions({ permissions: ['photos'] });
+      
+      if (result.photos === 'granted') {
+        return true;
+      } else {
+        setPermissionType('photos');
+        setShowPermissionDialog(true);
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+  // Open iOS Settings
+  const openSettings = async () => {
+    try {
+      await App.openUrl({ url: 'app-settings:' });
+    } catch (error) {
+      // Fallback - show instructions
+      toast({
+        title: "Open Settings Manually",
+        description: "Go to Settings > Rude Reminders > Enable Camera/Photos",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Helper to derive MIME type from file extension
   const getMimeTypeFromExtension = (path: string): string => {
@@ -164,6 +251,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       setIsCapturing(true);
       setPermissionError(null);
       
+      // Request camera permissions BEFORE opening camera
+      const hasPermission = await requestCameraPermissions();
+      if (!hasPermission) {
+        setIsCapturing(false);
+        return; // Permission dialog will be shown
+      }
+      
       const cameraOptions: any = {
         quality: 90,
         allowEditing: false,
@@ -192,18 +286,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
-      // Handle permission errors
-      if (error?.message?.includes('permission') || error?.message?.includes('denied')) {
-        setPermissionError('Camera permission is required. Please enable camera access in Settings.');
-        toast({
-          title: "Permission Required",
-          description: "Please enable camera access in Settings",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Generic error handling
+      // Only show error toast for actual camera/upload failures (not permissions)
       toast({
         title: "Camera error",
         description: "Failed to take photo. Please try again.",
@@ -227,6 +310,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
     try {
       setIsCapturing(true);
       setPermissionError(null);
+      
+      // Request photos permissions BEFORE opening gallery
+      const hasPermission = await requestPhotosPermissions();
+      if (!hasPermission) {
+        setIsCapturing(false);
+        return; // Permission dialog will be shown
+      }
       
       // Use FilePicker which uses native PHPicker on iOS/iPadOS
       // This is iPad-safe and doesn't have the crashes associated with Camera plugin gallery mode
@@ -264,17 +354,6 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
-      // Handle permission errors
-      if (error?.message?.includes('permission') || error?.message?.includes('denied')) {
-        setPermissionError('Photo library permission is required. Please enable photo access in Settings.');
-        toast({
-          title: "Permission Required",
-          description: "Please enable photo access in Settings",
-          variant: "destructive",
-        });
-        return;
-      }
-      
       // Handle specific iPad/file errors
       if (error?.message?.includes('no valid path') || error?.message?.includes('no valid')) {
         toast({
@@ -285,7 +364,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
-      // Generic error handling
+      // Only show error toast for actual picker/upload failures (not permissions)
       toast({
         title: "Gallery error",
         description: "Failed to select photo. Please try again.",
@@ -332,6 +411,28 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
           {isCapturing ? "Selecting..." : "Gallery"}
         </Button>
       </div>
+
+      <AlertDialog open={showPermissionDialog} onOpenChange={setShowPermissionDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {permissionType === 'camera' ? 'Camera Access Required' : 'Photos Access Required'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {permissionType === 'camera' 
+                ? 'Rude Reminders needs access to your camera to take photos for your reminders. Please enable camera access in Settings.'
+                : 'Rude Reminders needs access to your photo library to select images for your reminders. Please enable photo access in Settings.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={openSettings} className="gap-2">
+              <Settings className="h-4 w-4" />
+              Open Settings
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
