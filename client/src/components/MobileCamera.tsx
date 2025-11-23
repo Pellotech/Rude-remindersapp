@@ -168,10 +168,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
+        credentials: 'include', // Include session cookie
       });
 
       if (!uploadResponse.ok) {
-        throw new Error('Upload failed');
+        const errorText = await uploadResponse.text();
+        console.error('Upload failed:', uploadResponse.status, errorText);
+        throw new Error(`Upload failed: ${uploadResponse.status} - ${errorText}`);
       }
 
       const { filePath } = await uploadResponse.json();
@@ -225,15 +228,19 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
+        credentials: 'include', // Include session cookie
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorText = await response.text();
+        console.error('Upload failed:', response.status, errorText);
+        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
       }
 
       const { filePath } = await response.json();
       return filePath;
     } catch (error) {
+      console.error('uploadFileFromPhoto error:', error);
       throw error;
     }
   };
@@ -286,10 +293,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
-      // Only show error toast for actual camera/upload failures (not permissions)
+      console.error('Camera error:', error);
+      
+      // Show specific error message
+      const errorMsg = error?.message || 'Failed to take photo. Please try again.';
       toast({
         title: "Camera error",
-        description: "Failed to take photo. Please try again.",
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
@@ -353,10 +363,13 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
-      // Only show error toast for actual picker/upload failures (not permissions)
+      console.error('Gallery error:', error);
+      
+      // Show specific error message
+      const errorMsg = error?.message || 'Failed to select photo. Please try again.';
       toast({
         title: "Gallery error",
-        description: "Failed to select photo. Please try again.",
+        description: errorMsg,
         variant: "destructive",
       });
     } finally {
