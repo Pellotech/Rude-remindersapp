@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Camera, CameraResultType, CameraSource, Photo } from "@capacitor/camera";
-import { FilePicker } from "@capawesome/capacitor-file-picker";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
 import { Filesystem } from "@capacitor/filesystem";
@@ -8,7 +7,6 @@ import { AppLauncher } from "@capacitor/app-launcher";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CameraIcon, Image, AlertCircle, Settings } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -319,30 +317,29 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return; // Permission dialog will be shown
       }
       
-      // Use FilePicker which uses native PHPicker on iOS/iPadOS
-      // This is iPad-safe and doesn't have the crashes associated with Camera plugin gallery mode
-      const result = await FilePicker.pickImages({
-        limit: 1,
-        readData: false, // Don't read data - we'll fetch via URI
-      });
+      // Use Camera plugin's gallery mode
+      // Note: On iPad, this uses a popover presentation
+      const galleryOptions: any = {
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Photos, // Use gallery/photos
+      };
 
-      if (!result.files || result.files.length === 0) {
+      // iPad-specific: Use popover to prevent crashes
+      if (isIPad) {
+        galleryOptions.presentationStyle = 'popover';
+      }
+
+      const photo = await Camera.getPhoto(galleryOptions);
+
+      if (!photo || !photo.webPath) {
         // User cancelled - silent return
         return;
       }
 
-      const file = result.files[0];
-      
-      // Derive URI from available properties with fallback chain
-      // file.path is preferred, but webPath or uri work on iPad/iCloud photos
-      const fileUri = file.path || (file as any).webPath || (file as any).uri;
-      
-      if (!fileUri) {
-        throw new Error('Selected file has no valid path, webPath, or uri');
-      }
-
-      // Upload using the file URI and mime type
-      const filePath = await uploadFileFromUri(fileUri, file.mimeType);
+      // Upload the photo
+      const filePath = await uploadFileFromPhoto(photo);
       
       onPhotoCaptured(filePath);
       toast({
@@ -355,24 +352,10 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         return;
       }
       
-      // Handle specific iPad/file errors
-      if (error?.message?.includes('no valid path') || error?.message?.includes('no valid')) {
-        toast({
-          title: "Photo Error",
-          description: "Unable to access the selected photo. Please try a different photo.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Log the actual error for debugging
-      console.error('Gallery picker error:', error);
-      console.error('ERROR MESSAGE: ', error?.message || error);
-      
       // Only show error toast for actual picker/upload failures (not permissions)
       toast({
         title: "Gallery error",
-        description: error?.message || "Failed to select photo. Please try again.",
+        description: "Failed to select photo. Please try again.",
         variant: "destructive",
       });
     } finally {
