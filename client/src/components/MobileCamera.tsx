@@ -370,10 +370,20 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
   // Save temporary gallery photo to permanent storage
   const saveTemporaryPhoto = async (photo: Photo): Promise<Photo> => {
     try {
-      // Read the temporary file
-      const filePath = photo.path!.replace('file://', '');
-      const fileData = await Filesystem.readFile({
-        path: filePath,
+      // Fetch the temporary file using webPath (works for gallery photos)
+      const normalizedPath = Capacitor.convertFileSrc(photo.webPath!);
+      const response = await fetch(normalizedPath);
+      const blob = await response.blob();
+      
+      // Convert blob to base64
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = (reader.result as string).split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
       });
 
       // Generate a unique filename
@@ -382,7 +392,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       // Save to Documents directory (permanent storage)
       const savedFile = await Filesystem.writeFile({
         path: fileName,
-        data: fileData.data,
+        data: base64Data,
         directory: Directory.Documents,
       });
 
