@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { LogIn, Zap } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
 import { appleSignInService } from "@/services/appleSignInService";
 import { inAppOAuthService } from "@/services/inAppOAuthService";
 import { SiApple, SiGoogle, SiFacebook } from "react-icons/si";
@@ -301,11 +302,45 @@ export default function LoginPage() {
           </>
         )}
 
-        <div className="text-center text-xs text-muted-foreground">
+        <div className="text-center text-xs text-muted-foreground space-y-2">
           <p>
             {isNativeMobile 
               ? "This app does not require an account to function. Optional account creation is only for syncing across devices." 
               : "No account required. Account creation is optional and only for syncing across devices."}
+          </p>
+          <p className="flex items-center justify-center gap-2 flex-wrap">
+            <span>By continuing, you agree to our</span>
+            <button
+              type="button"
+              onClick={async () => {
+                const url = "https://rudereminders.com/terms";
+                if (Capacitor.isNativePlatform()) {
+                  await Browser.open({ url, presentationStyle: "popover" });
+                } else {
+                  window.open(url, "_blank");
+                }
+              }}
+              className="text-blue-600 hover:underline"
+              data-testid="link-terms-login"
+            >
+              Terms of Service
+            </button>
+            <span>and</span>
+            <button
+              type="button"
+              onClick={async () => {
+                const url = "https://rudereminders.com/privacy";
+                if (Capacitor.isNativePlatform()) {
+                  await Browser.open({ url, presentationStyle: "popover" });
+                } else {
+                  window.open(url, "_blank");
+                }
+              }}
+              className="text-blue-600 hover:underline"
+              data-testid="link-privacy-login"
+            >
+              Privacy Policy
+            </button>
           </p>
         </div>
       </div>
