@@ -343,6 +343,304 @@ export async function setupAuth(app: Express) {
     }
   });
 
+  // Google OAuth Routes
+  // NOTE: Requires GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables
+  app.get("/api/auth/google", async (req, res) => {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
+    
+    if (!clientId) {
+      console.warn('⚠️ Google OAuth not configured: GOOGLE_CLIENT_ID missing');
+      return res.status(503).json({ 
+        message: "Google Sign-In is not yet configured. Please set up Google OAuth credentials." 
+      });
+    }
+    
+    // Generate CSRF protection state parameter
+    const crypto = await import('crypto');
+    const state = crypto.randomBytes(32).toString('hex');
+    
+    // Store state in session for verification on callback
+    (req.session as any).oauthState = state;
+    (req.session as any).oauthProvider = 'google';
+    
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.set('client_id', clientId);
+    authUrl.searchParams.set('redirect_uri', redirectUri);
+    authUrl.searchParams.set('response_type', 'code');
+    authUrl.searchParams.set('scope', 'openid email profile');
+    authUrl.searchParams.set('access_type', 'offline');
+    authUrl.searchParams.set('prompt', 'consent');
+    authUrl.searchParams.set('state', state);
+    
+    res.redirect(authUrl.toString());
+  });
+
+  app.get("/api/auth/google/callback", async (req, res) => {
+    try {
+      const { code, error, state } = req.query;
+      
+      if (error) {
+        console.log('Google OAuth cancelled or denied:', error);
+        return res.redirect('/login?error=cancelled');
+      }
+      
+      // SECURITY: Verify CSRF state parameter
+      const storedState = (req.session as any).oauthState;
+      const storedProvider = (req.session as any).oauthProvider;
+      
+      if (!state || state !== storedState || storedProvider !== 'google') {
+        console.error('❌ Google OAuth state mismatch - possible CSRF attack');
+        return res.redirect('/login?error=state_mismatch');
+      }
+      
+      // Clear stored state after verification
+      delete (req.session as any).oauthState;
+      delete (req.session as any).oauthProvider;
+      
+      if (!code || typeof code !== 'string') {
+        return res.redirect('/login?error=no_code');
+      }
+      
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/google/callback`;
+      
+      if (!clientId || !clientSecret) {
+        return res.redirect('/login?error=not_configured');
+      }
+      
+      // Exchange code for tokens
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code'
+        })
+      });
+      
+      const tokens = await tokenResponse.json() as any;
+      
+      if (!tokens.id_token) {
+        console.error('Google OAuth failed: No ID token returned');
+        return res.redirect('/login?error=token_failed');
+      }
+      
+      // Verify and decode the ID token
+      const { OAuth2Client } = await import('google-auth-library');
+      const oauthClient = new OAuth2Client(clientId);
+      
+      const ticket = await oauthClient.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: clientId
+      });
+      
+      const payload = ticket.getPayload();
+      
+      if (!payload || !payload.sub) {
+        return res.redirect('/login?error=invalid_token');
+      }
+      
+      console.log('🔵 Google Sign-In verified:', {
+        sub: payload.sub,
+        email: payload.email,
+        name: payload.name
+      });
+      
+      // Create/update user
+      const userId = `google_${payload.sub}`;
+      let existingUser = await storage.getUser(userId);
+      
+      if (!existingUser) {
+        console.log('🆕 New Google user, creating account');
+        await storage.upsertUser({
+          id: userId,
+          email: payload.email || `google_user_${payload.sub}@noemail.local`,
+          firstName: payload.given_name || null,
+          lastName: payload.family_name || null,
+          profileImageUrl: payload.picture || null,
+        });
+        existingUser = await storage.getUser(userId);
+      }
+      
+      // Create session
+      const userSession = {
+        claims: {
+          sub: userId,
+          email: existingUser?.email || payload.email,
+          first_name: existingUser?.firstName || payload.given_name,
+          last_name: existingUser?.lastName || payload.family_name,
+          profile_image_url: payload.picture || "",
+          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+        },
+        access_token: "google-auth",
+        refresh_token: "google-auth",
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+      };
+      
+      req.logIn(userSession, (err) => {
+        if (err) {
+          console.error('Google login session error:', err);
+          return res.redirect('/login?error=session_failed');
+        }
+        console.log('✅ Google Sign-In successful');
+        res.redirect('/');
+      });
+      
+    } catch (error: any) {
+      console.error("Google Sign-In error:", error);
+      res.redirect('/login?error=failed');
+    }
+  });
+
+  // Facebook OAuth Routes
+  // NOTE: Requires FACEBOOK_APP_ID and FACEBOOK_APP_SECRET environment variables
+  app.get("/api/auth/facebook", async (req, res) => {
+    const appId = process.env.FACEBOOK_APP_ID;
+    const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/facebook/callback`;
+    
+    if (!appId) {
+      console.warn('⚠️ Facebook OAuth not configured: FACEBOOK_APP_ID missing');
+      return res.status(503).json({ 
+        message: "Facebook Sign-In is not yet configured. Please set up Facebook OAuth credentials." 
+      });
+    }
+    
+    // Generate CSRF protection state parameter
+    const crypto = await import('crypto');
+    const state = crypto.randomBytes(32).toString('hex');
+    
+    // Store state in session for verification on callback
+    (req.session as any).oauthState = state;
+    (req.session as any).oauthProvider = 'facebook';
+    
+    const authUrl = new URL('https://www.facebook.com/v18.0/dialog/oauth');
+    authUrl.searchParams.set('client_id', appId);
+    authUrl.searchParams.set('redirect_uri', redirectUri);
+    authUrl.searchParams.set('scope', 'email,public_profile');
+    authUrl.searchParams.set('response_type', 'code');
+    authUrl.searchParams.set('state', state);
+    
+    res.redirect(authUrl.toString());
+  });
+
+  app.get("/api/auth/facebook/callback", async (req, res) => {
+    try {
+      const { code, error, state } = req.query;
+      
+      if (error) {
+        console.log('Facebook OAuth cancelled or denied:', error);
+        return res.redirect('/login?error=cancelled');
+      }
+      
+      // SECURITY: Verify CSRF state parameter
+      const storedState = (req.session as any).oauthState;
+      const storedProvider = (req.session as any).oauthProvider;
+      
+      if (!state || state !== storedState || storedProvider !== 'facebook') {
+        console.error('❌ Facebook OAuth state mismatch - possible CSRF attack');
+        return res.redirect('/login?error=state_mismatch');
+      }
+      
+      // Clear stored state after verification
+      delete (req.session as any).oauthState;
+      delete (req.session as any).oauthProvider;
+      
+      if (!code || typeof code !== 'string') {
+        return res.redirect('/login?error=no_code');
+      }
+      
+      const appId = process.env.FACEBOOK_APP_ID;
+      const appSecret = process.env.FACEBOOK_APP_SECRET;
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/facebook/callback`;
+      
+      if (!appId || !appSecret) {
+        return res.redirect('/login?error=not_configured');
+      }
+      
+      // Exchange code for access token
+      const tokenUrl = new URL('https://graph.facebook.com/v18.0/oauth/access_token');
+      tokenUrl.searchParams.set('client_id', appId);
+      tokenUrl.searchParams.set('client_secret', appSecret);
+      tokenUrl.searchParams.set('redirect_uri', redirectUri);
+      tokenUrl.searchParams.set('code', code);
+      
+      const tokenResponse = await fetch(tokenUrl.toString());
+      const tokens = await tokenResponse.json() as any;
+      
+      if (!tokens.access_token) {
+        console.error('Facebook OAuth failed: No access token returned');
+        return res.redirect('/login?error=token_failed');
+      }
+      
+      // Get user info from Facebook
+      const userInfoUrl = new URL('https://graph.facebook.com/me');
+      userInfoUrl.searchParams.set('fields', 'id,email,first_name,last_name,picture.type(large)');
+      userInfoUrl.searchParams.set('access_token', tokens.access_token);
+      
+      const userResponse = await fetch(userInfoUrl.toString());
+      const userData = await userResponse.json() as any;
+      
+      if (!userData.id) {
+        return res.redirect('/login?error=user_fetch_failed');
+      }
+      
+      console.log('🔵 Facebook Sign-In verified:', {
+        id: userData.id,
+        email: userData.email,
+        name: `${userData.first_name} ${userData.last_name}`
+      });
+      
+      // Create/update user
+      const userId = `facebook_${userData.id}`;
+      let existingUser = await storage.getUser(userId);
+      
+      if (!existingUser) {
+        console.log('🆕 New Facebook user, creating account');
+        await storage.upsertUser({
+          id: userId,
+          email: userData.email || `fb_user_${userData.id}@noemail.local`,
+          firstName: userData.first_name || null,
+          lastName: userData.last_name || null,
+          profileImageUrl: userData.picture?.data?.url || null,
+        });
+        existingUser = await storage.getUser(userId);
+      }
+      
+      // Create session
+      const userSession = {
+        claims: {
+          sub: userId,
+          email: existingUser?.email || userData.email,
+          first_name: existingUser?.firstName || userData.first_name,
+          last_name: existingUser?.lastName || userData.last_name,
+          profile_image_url: userData.picture?.data?.url || "",
+          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+        },
+        access_token: "facebook-auth",
+        refresh_token: "facebook-auth",
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+      };
+      
+      req.logIn(userSession, (err) => {
+        if (err) {
+          console.error('Facebook login session error:', err);
+          return res.redirect('/login?error=session_failed');
+        }
+        console.log('✅ Facebook Sign-In successful');
+        res.redirect('/');
+      });
+      
+    } catch (error: any) {
+      console.error("Facebook Sign-In error:", error);
+      res.redirect('/login?error=failed');
+    }
+  });
+
   app.get("/api/logout", (req, res) => {
     const user = req.user as any;
     
