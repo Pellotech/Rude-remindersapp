@@ -70,16 +70,22 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Button only appears on native iOS (auto-detected via Capacitor)
     - Token audience matches app bundle ID (`com.rudereminders.app`)
     - Xcode Setup Required: Developer must add "Sign in with Apple" capability and register app ID in Apple Developer Portal
-  - **Google Sign-In** (OAuth 2.0): Web-based OAuth redirect flow with CSRF protection
+  - **Google Sign-In** (OAuth 2.0): App Store-compliant in-app browser OAuth flow
     - Requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` environment variables
     - Uses Google OAuth2 code flow with ID token verification via `google-auth-library`
+    - **iOS Native**: Uses Capacitor Browser plugin (SFSafariViewController) - user never leaves app UI (Guideline 4.0 compliant)
+    - **Web**: Uses standard redirect flow
+    - Custom URL scheme `rudereminders://` for native callback handling
     - State parameter validation prevents CSRF attacks
-    - Callback URL: `/api/auth/google/callback`
-  - **Facebook Sign-In** (OAuth 2.0): Web-based OAuth redirect flow with CSRF protection
+    - Native callback: `/api/auth/google/native/callback` → `rudereminders://auth-callback`
+  - **Facebook Sign-In** (OAuth 2.0): App Store-compliant in-app browser OAuth flow
     - Requires `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` environment variables
     - Uses Facebook Graph API v18.0 for user profile retrieval
+    - **iOS Native**: Uses Capacitor Browser plugin (SFSafariViewController) - user never leaves app UI (Guideline 4.0 compliant)
+    - **Web**: Uses standard redirect flow
+    - Custom URL scheme `rudereminders://` for native callback handling
     - State parameter validation prevents CSRF attacks
-    - Callback URL: `/api/auth/facebook/callback`
+    - Native callback: `/api/auth/facebook/native/callback` → `rudereminders://auth-callback`
   - **Session Management**: 1-week session expiry for all OAuth-authenticated users
   - **Security**: All OAuth flows use cryptographically random state parameters stored in session for CSRF protection
 - **UI/UX**: Eliminated browser autofill popups across all major browsers for a cleaner login experience. Ensured Apple Guideline 2.3.10 compliance with platform-specific UI rendering.
