@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LogIn, Zap } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { appleSignInService } from "@/services/appleSignInService";
-import { SiApple } from "react-icons/si";
+import { SiApple, SiGoogle, SiFacebook } from "react-icons/si";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
@@ -18,8 +18,11 @@ export default function LoginPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isAppleSignInLoading, setIsAppleSignInLoading] = useState(false);
+  const [isGoogleSignInLoading, setIsGoogleSignInLoading] = useState(false);
+  const [isFacebookSignInLoading, setIsFacebookSignInLoading] = useState(false);
   const isNativeMobile = Capacitor.isNativePlatform();
   const isAppleSignInAvailable = appleSignInService.isAvailable();
+  const isIOS = Capacitor.getPlatform() === 'ios';
 
   useEffect(() => {
     // Only redirect authenticated users, not guests
@@ -72,6 +75,37 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleSignInLoading(true);
+    try {
+      // Use OAuth flow via redirect for Google Sign-In
+      // On native, uses in-app browser; on web, uses redirect
+      window.location.href = "/api/auth/google";
+    } catch (error: any) {
+      toast({
+        title: "Sign in failed",
+        description: "Could not sign in with Google. Please try again.",
+        variant: "destructive"
+      });
+      setIsGoogleSignInLoading(false);
+    }
+  };
+
+  const handleFacebookSignIn = async () => {
+    setIsFacebookSignInLoading(true);
+    try {
+      // Use OAuth flow via redirect for Facebook Sign-In
+      window.location.href = "/api/auth/facebook";
+    } catch (error: any) {
+      toast({
+        title: "Sign in failed",
+        description: "Could not sign in with Facebook. Please try again.",
+        variant: "destructive"
+      });
+      setIsFacebookSignInLoading(false);
+    }
+  };
+
   if (user) {
     return null; // Will redirect in useEffect
   }
@@ -119,29 +153,68 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Apple Sign-In (iOS only) - Required by App Store Guideline 4.8 */}
-        {isAppleSignInAvailable && (
-          <Card>
-            <CardContent className="pt-6">
-              <Button 
-                onClick={handleAppleSignIn}
-                disabled={isAppleSignInLoading}
-                className="w-full bg-black hover:bg-gray-800 text-white text-lg py-6"
-                size="lg"
-                data-testid="button-apple-signin"
-              >
-                <SiApple className="mr-2 h-5 w-5" />
-                {isAppleSignInLoading ? "Signing in..." : "Sign in with Apple"}
-              </Button>
-              <p className="text-xs text-gray-600 text-center mt-3">
-                Quick and secure sign-in using your Apple ID
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Email/Password Authentication */}
+        {/* Email/Password Authentication - FIRST */}
         <EmailAuthForm onSuccess={handleEmailAuthSuccess} />
+
+        {/* Social Sign-In Options - BELOW Email/Password */}
+        {(isAppleSignInAvailable || isNativeMobile) && (
+          <>
+            {/* Separator */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <Card>
+              <CardContent className="pt-6 space-y-3">
+                {/* Apple Sign-In (iOS only) - Required by App Store Guideline 4.8 */}
+                {isAppleSignInAvailable && (
+                  <Button 
+                    onClick={handleAppleSignIn}
+                    disabled={isAppleSignInLoading}
+                    className="w-full bg-black hover:bg-gray-800 text-white py-6"
+                    size="lg"
+                    data-testid="button-apple-signin"
+                  >
+                    <SiApple className="mr-2 h-5 w-5" />
+                    {isAppleSignInLoading ? "Signing in..." : "Sign in with Apple"}
+                  </Button>
+                )}
+
+                {/* Google Sign-In */}
+                <Button 
+                  onClick={handleGoogleSignIn}
+                  disabled={isGoogleSignInLoading}
+                  className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 py-6"
+                  size="lg"
+                  variant="outline"
+                  data-testid="button-google-signin"
+                >
+                  <SiGoogle className="mr-2 h-5 w-5 text-[#4285F4]" />
+                  {isGoogleSignInLoading ? "Signing in..." : "Sign in with Google"}
+                </Button>
+
+                {/* Facebook Sign-In */}
+                <Button 
+                  onClick={handleFacebookSignIn}
+                  disabled={isFacebookSignInLoading}
+                  className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white py-6"
+                  size="lg"
+                  data-testid="button-facebook-signin"
+                >
+                  <SiFacebook className="mr-2 h-5 w-5" />
+                  {isFacebookSignInLoading ? "Signing in..." : "Sign in with Facebook"}
+                </Button>
+              </CardContent>
+            </Card>
+          </>
+        )}
 
         {/* Only show Replit Auth on web (not on mobile apps to comply with App Store guidelines) */}
         {!isNativeMobile && (
