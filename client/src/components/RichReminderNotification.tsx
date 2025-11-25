@@ -1,11 +1,34 @@
-import React from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Volume2, Clock, X, Play, CheckCircle } from "lucide-react";
+import { Volume2, Clock, X, Play, CheckCircle, ImageIcon } from "lucide-react";
 import { Reminder } from "@shared/schema";
+
+const isImagePath = (path: string): boolean => {
+  if (!path) return false;
+  if (path.startsWith('blob:') || path.startsWith('data:image')) return true;
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif', '.svg', '.bmp'];
+  const lowerPath = path.toLowerCase();
+  const pathWithoutQuery = lowerPath.split('?')[0];
+  return imageExtensions.some(ext => pathWithoutQuery.endsWith(ext));
+};
+
+const getImageSrc = (attachment: string): string => {
+  if (attachment.startsWith('blob:') || 
+      attachment.startsWith('data:') || 
+      attachment.startsWith('http') ||
+      attachment.startsWith('file://') ||
+      attachment.startsWith('capacitor://')) {
+    return attachment;
+  }
+  if (attachment.startsWith('/')) {
+    return attachment;
+  }
+  return `/${attachment}`;
+};
 
 interface RichReminderNotificationProps {
   isOpen: boolean;
@@ -31,6 +54,7 @@ export function RichReminderNotification({
   onPlayVoice,
   isPlayingVoice = false
 }: RichReminderNotificationProps) {
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
   const getRudenessColor = (level: number) => {
     const colors = {
       1: "bg-green-100 text-green-800",
@@ -198,44 +222,59 @@ export function RichReminderNotification({
             <div>
               <Label className="text-sm font-medium">Attachments</Label>
               <div className="mt-2 grid grid-cols-3 gap-2">
-                {reminder.attachments.map((attachment: string, index: number) => (
-                  <div key={index} className="relative group">
-                    <div className="w-full h-20 rounded-md border overflow-hidden">
-                      {attachment.startsWith('blob:') || attachment.startsWith('data:') || attachment.startsWith('http') ? (
-                        <img
-                          src={attachment}
-                          alt={`Attachment ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            const container = target.parentElement!;
-                            container.innerHTML = `
-                              <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                                <div class="text-center">
-                                  <div class="text-lg">📷</div>
-                                  <div class="text-xs">Image unavailable</div>
+                {reminder.attachments.map((attachment: string, index: number) => {
+                  const isImage = isImagePath(attachment);
+                  const imageSrc = getImageSrc(attachment);
+                  
+                  return (
+                    <div 
+                      key={index} 
+                      className="relative group cursor-pointer"
+                      onClick={() => isImage && setViewingImage(imageSrc)}
+                      data-testid={`attachment-${index}`}
+                    >
+                      <div className="w-full h-20 rounded-md border overflow-hidden hover:ring-2 hover:ring-primary transition-all">
+                        {isImage ? (
+                          <img
+                            src={imageSrc}
+                            alt={`Attachment ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              const container = target.parentElement!;
+                              container.innerHTML = `
+                                <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                                  <div class="text-center">
+                                    <div class="text-lg">📷</div>
+                                    <div class="text-xs">Image unavailable</div>
+                                  </div>
                                 </div>
-                              </div>
-                            `;
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                          <div className="text-center">
-                            <div className="text-lg">📁</div>
-                            <div className="text-xs">File</div>
+                              `;
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                            <div className="text-center">
+                              <div className="text-lg">📁</div>
+                              <div className="text-xs">File</div>
+                            </div>
                           </div>
+                        )}
+                      </div>
+                      <span className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
+                        {index + 1}
+                      </span>
+                      {isImage && (
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
+                          <ImageIcon className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       )}
                     </div>
-                    <span className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-                      {index + 1}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {reminder.attachments.length} attachment(s)
+                {reminder.attachments.length} attachment(s) - tap to view
               </p>
             </div>
           )}
@@ -243,17 +282,45 @@ export function RichReminderNotification({
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 pt-4 border-t">
             {onComplete && (
-              <Button onClick={onComplete} className="w-full" size="lg">
+              <Button onClick={onComplete} className="w-full" size="lg" data-testid="button-complete">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Mark as Complete
               </Button>
             )}
-            <Button onClick={onClose} variant="outline" className="w-full">
+            <Button onClick={onClose} variant="outline" className="w-full" data-testid="button-dismiss">
               Dismiss for Now
             </Button>
           </div>
         </div>
       </DialogContent>
+
+      {/* Image Viewer Modal */}
+      <Dialog open={!!viewingImage} onOpenChange={() => setViewingImage(null)}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 bg-black/95">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Image Viewer</DialogTitle>
+          </DialogHeader>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setViewingImage(null)}
+            className="absolute top-2 right-2 z-10 text-white hover:bg-white/20"
+            data-testid="button-close-image"
+          >
+            <X className="h-6 w-6" />
+          </Button>
+          {viewingImage && (
+            <div className="flex items-center justify-center w-full h-full min-h-[50vh]">
+              <img
+                src={viewingImage}
+                alt="Full size attachment"
+                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+                data-testid="image-fullsize"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
