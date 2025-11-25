@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,15 +11,18 @@ import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon, CreditCard, Crown, Check, X, ArrowLeft, Home } from "lucide-react";
+import { User, Volume2, Bell, Mail, Users, Globe, UserCircle, Heart, ChevronDown, ChevronRight, Shield, Smartphone, Clock, Palette, Download, Trash2, Settings as SettingsIcon, CreditCard, Crown, Check, X, ArrowLeft, Home, AlertTriangle, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { BackNavigation } from "@/components/BackNavigation";
 import { AdMobManager } from "@/components/AdMobManager";
 import { AdSettings } from "@/components/AdSettings";
 import { usePremium } from "@/hooks/usePremium";
 import { getPlatformInfo } from "@/utils/platformDetection";
+import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
 
 interface UserSettings {
   id: string;
@@ -79,6 +83,8 @@ export default function Settings() {
   const { toast } = useToast();
   const { isPremium } = usePremium();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
@@ -102,6 +108,33 @@ export default function Settings() {
       });
     },
   });
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => apiRequest("/api/account", "DELETE"),
+    onSuccess: () => {
+      queryClient.clear();
+      toast({
+        title: "Account deleted",
+        description: "Your account and all data have been permanently deleted.",
+      });
+      setLocation("/login");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete account. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const openLegalLink = async (url: string) => {
+    if (Capacitor.isNativePlatform()) {
+      await Browser.open({ url, presentationStyle: "popover" });
+    } else {
+      window.open(url, "_blank");
+    }
+  };
 
   const [localSettings, setLocalSettings] = useState<any>({});
   
@@ -947,7 +980,7 @@ export default function Settings() {
 
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-red-600 dark:text-red-400">Danger Zone</h3>
-                <div className="space-y-3 p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/20">
+                <div className="space-y-4 p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/20">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <Label className="text-sm font-medium">Clear All Data</Label>
@@ -955,10 +988,60 @@ export default function Settings() {
                         Permanently delete all your reminders and settings
                       </p>
                     </div>
-                    <Button variant="destructive" size="sm">
+                    <Button variant="destructive" size="sm" data-testid="button-clear-data">
                       <Trash2 className="h-4 w-4 mr-2" />
                       Clear Data
                     </Button>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">Delete Account</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Permanently delete your account and all associated data. This action cannot be undone.
+                      </p>
+                    </div>
+                    <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm" data-testid="button-delete-account">
+                          <AlertTriangle className="h-4 w-4 mr-2" />
+                          Delete Account
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+                            <AlertTriangle className="h-5 w-5" />
+                            Delete Account Permanently?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="space-y-2">
+                            <p>This will permanently delete:</p>
+                            <ul className="list-disc list-inside text-sm space-y-1">
+                              <li>Your account and profile</li>
+                              <li>All your reminders</li>
+                              <li>Your settings and preferences</li>
+                              <li>Any subscription data</li>
+                            </ul>
+                            <p className="font-semibold text-red-600 mt-3">
+                              This action cannot be undone.
+                            </p>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteAccountMutation.mutate()}
+                            className="bg-red-600 hover:bg-red-700"
+                            disabled={deleteAccountMutation.isPending}
+                            data-testid="button-confirm-delete"
+                          >
+                            {deleteAccountMutation.isPending ? "Deleting..." : "Yes, Delete My Account"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </div>
@@ -1036,6 +1119,36 @@ export default function Settings() {
               </p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Legal */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            Legal
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Button
+            variant="outline"
+            className="w-full justify-between"
+            onClick={() => openLegalLink("https://rudereminders.com/privacy")}
+            data-testid="link-privacy-policy"
+          >
+            <span>Privacy Policy</span>
+            <ExternalLink className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-between"
+            onClick={() => openLegalLink("https://rudereminders.com/terms")}
+            data-testid="link-terms-of-service"
+          >
+            <span>Terms of Service</span>
+            <ExternalLink className="h-4 w-4" />
+          </Button>
         </CardContent>
       </Card>
 
