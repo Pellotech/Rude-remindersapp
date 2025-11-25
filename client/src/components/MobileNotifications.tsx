@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { 
   LocalNotifications, 
   ScheduleOptions,
@@ -19,6 +19,19 @@ function uuidToNumericId(uuid: string): number {
     hash = hash & hash; // Convert to 32-bit integer
   }
   return Math.abs(hash);
+}
+
+// Custom event for notification received - used to trigger full-screen popup in app
+export const NOTIFICATION_RECEIVED_EVENT = 'reminderNotificationReceived';
+export interface NotificationReceivedDetail {
+  reminderId: string;
+  title: string;
+  body: string;
+}
+
+// Dispatch event when notification is received to show full-screen popup
+export function dispatchNotificationReceivedEvent(detail: NotificationReceivedDetail) {
+  window.dispatchEvent(new CustomEvent(NOTIFICATION_RECEIVED_EVENT, { detail }));
 }
 
 interface MobileNotificationService {
@@ -45,9 +58,19 @@ export function useMobileNotifications(): MobileNotificationService {
       (notification: ActionPerformed) => {
         console.log('Notification action performed:', notification);
         
-        // Handle notification tap - app just opened, play voice if enabled
+        // Handle notification tap - app just opened
         if (notification.actionId === 'tap') {
           const extra = notification.notification.extra;
+          
+          // Dispatch event to show full-screen popup
+          if (extra?.reminderId) {
+            console.log('📱 Dispatching notification event for full-screen popup');
+            dispatchNotificationReceivedEvent({
+              reminderId: extra.reminderId,
+              title: notification.notification.title || '',
+              body: notification.notification.body || ''
+            });
+          }
           
           // Play voice when user taps notification and app opens
           if (extra?.shouldPlayVoice && extra?.voiceCharacter && window.speechSynthesis) {
@@ -56,11 +79,6 @@ export function useMobileNotifications(): MobileNotificationService {
               playVoiceNotification(notification.notification.body, extra.voiceCharacter);
             }, 500);
           }
-          
-          toast({
-            title: "Reminder opened",
-            description: notification.notification.title,
-          });
         }
       }
     );
@@ -70,8 +88,19 @@ export function useMobileNotifications(): MobileNotificationService {
       (notification: LocalNotificationSchema) => {
         console.log('Notification received while app is open:', notification);
         
-        // Play voice if enabled (when app is open and notification fires)
         const extra = notification.extra;
+        
+        // Dispatch event to show full-screen popup immediately
+        if (extra?.reminderId) {
+          console.log('📱 Dispatching notification event for full-screen popup (app open)');
+          dispatchNotificationReceivedEvent({
+            reminderId: extra.reminderId,
+            title: notification.title || '',
+            body: notification.body || ''
+          });
+        }
+        
+        // Play voice if enabled (when app is open and notification fires)
         if (extra?.shouldPlayVoice && extra?.voiceCharacter && window.speechSynthesis) {
           playVoiceNotification(notification.body, extra.voiceCharacter);
         }
