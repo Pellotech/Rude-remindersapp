@@ -62,15 +62,26 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Includes photos, motivational quotes, and voice character preferences
     - Uses ISO format timestamps for precise second-level scheduling
     - Backend allows reminders as short as 5 seconds for testing
-- **Authentication**: Native iOS Sign in with Apple integration, meeting App Store Guideline 4.8.
-  - **Security**: Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
-  - **Privacy**: Respects Apple's "Hide My Email" feature - only stores email if Apple provides it
-  - **Platform Detection**: Button only appears on native iOS (auto-detected via Capacitor)
-  - **Equal Prominence**: Apple Sign-In button positioned with equal prominence to email/password authentication
-  - **Token Verification**: Backend validates identity tokens against Apple's public keys from `https://appleid.apple.com/auth/keys`
-  - **Audience Validation**: Ensures token audience matches app bundle ID (`com.rudereminders.app`)
-  - **Session Management**: 1-week session expiry for Apple-authenticated users
-  - **Xcode Setup Required**: Developer must add "Sign in with Apple" capability in Xcode and register app ID in Apple Developer Portal
+- **Authentication**: Multi-provider authentication supporting Apple, Google, and Facebook sign-in
+  - **Login Page Layout**: Social login buttons (Apple/Google/Facebook) positioned below email/password form per user preference
+  - **Apple Sign-In** (iOS Native): Native iOS integration meeting App Store Guideline 4.8
+    - Full JWT token verification using Apple's JWKS (public key validation, signature verification, claims validation)
+    - Respects Apple's "Hide My Email" feature - only stores email if Apple provides it
+    - Button only appears on native iOS (auto-detected via Capacitor)
+    - Token audience matches app bundle ID (`com.rudereminders.app`)
+    - Xcode Setup Required: Developer must add "Sign in with Apple" capability and register app ID in Apple Developer Portal
+  - **Google Sign-In** (OAuth 2.0): Web-based OAuth redirect flow with CSRF protection
+    - Requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` environment variables
+    - Uses Google OAuth2 code flow with ID token verification via `google-auth-library`
+    - State parameter validation prevents CSRF attacks
+    - Callback URL: `/api/auth/google/callback`
+  - **Facebook Sign-In** (OAuth 2.0): Web-based OAuth redirect flow with CSRF protection
+    - Requires `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` environment variables
+    - Uses Facebook Graph API v18.0 for user profile retrieval
+    - State parameter validation prevents CSRF attacks
+    - Callback URL: `/api/auth/facebook/callback`
+  - **Session Management**: 1-week session expiry for all OAuth-authenticated users
+  - **Security**: All OAuth flows use cryptographically random state parameters stored in session for CSRF protection
 - **UI/UX**: Eliminated browser autofill popups across all major browsers for a cleaner login experience. Ensured Apple Guideline 2.3.10 compliance with platform-specific UI rendering.
 
 ## External Dependencies
@@ -79,7 +90,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **UI Framework**: Radix UI, Tailwind CSS
 - **Form Handling**: React Hook Form, Zod
 - **Database**: Drizzle ORM, Neon Database (PostgreSQL)
-- **Authentication**: OpenID Client, Passport.js, `@capacitor-community/apple-sign-in`, `jsonwebtoken`, `jwks-rsa`
+- **Authentication**: OpenID Client, Passport.js, `@capacitor-community/apple-sign-in`, `jsonwebtoken`, `jwks-rsa`, `google-auth-library`
 - **Session Management**: Express Session, connect-pg-simple
 - **AI Integration**: DeepSeek API
 - **Voice Synthesis**: Unreal Speech API
