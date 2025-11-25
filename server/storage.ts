@@ -25,6 +25,7 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
   getAllUsers(): Promise<User[]>;
+  deleteUser(id: string): Promise<void>;
 
   // Reminder operations
   createReminder(userId: string, reminder: InsertReminder): Promise<Reminder>;
@@ -112,6 +113,11 @@ export class DatabaseStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     return await db.select().from(users);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(reminders).where(eq(reminders.userId, id));
+    await db.delete(users).where(eq(users.id, id));
   }
 
   // Reminder operations
@@ -502,6 +508,11 @@ class MemoryStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     return Array.from(this.users.values());
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    this.reminders = this.reminders.filter(r => r.userId !== id);
+    this.users.delete(id);
   }
 
   // Reminder operations

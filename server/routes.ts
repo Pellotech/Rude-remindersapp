@@ -200,6 +200,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.delete('/api/account', async (req: any, res) => {
+    try {
+      let userId = req.session?.userId;
+      
+      if (!userId && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+      }
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      await storage.deleteUser(userId);
+      
+      req.session.destroy((err: any) => {
+        if (err) {
+          console.error("Session destroy error after account deletion:", err);
+        }
+        res.json({ message: "Account deleted successfully" });
+      });
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      res.status(500).json({ message: "Failed to delete account" });
+    }
+  });
+
   app.get('/api/auth/check', (req, res) => {
     const userId = (req as any).session?.userId;
     if (userId) {
