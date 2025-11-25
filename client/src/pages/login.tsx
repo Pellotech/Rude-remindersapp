@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LogIn, Zap } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { appleSignInService } from "@/services/appleSignInService";
+import { inAppOAuthService } from "@/services/inAppOAuthService";
 import { SiApple, SiGoogle, SiFacebook } from "react-icons/si";
 
 export default function LoginPage() {
@@ -78,15 +79,38 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleSignInLoading(true);
     try {
-      // Use OAuth flow via redirect for Google Sign-In
-      // On native, uses in-app browser; on web, uses redirect
-      window.location.href = "/api/auth/google";
+      // On native iOS, use in-app browser (SFSafariViewController) to comply with App Store guidelines
+      // This prevents Safari redirect which causes rejection
+      if (inAppOAuthService.isNativeIOS()) {
+        const baseUrl = window.location.origin;
+        const result = await inAppOAuthService.signInWithGoogle(baseUrl);
+        
+        if (result.success) {
+          toast({
+            title: "Welcome!",
+            description: "Signed in successfully with Google."
+          });
+          refetch();
+        } else if (result.error && result.error !== 'cancelled') {
+          toast({
+            title: "Sign in failed",
+            description: result.error === 'not_configured' 
+              ? "Google Sign-In is not yet configured." 
+              : "Could not sign in with Google. Please try again.",
+            variant: "destructive"
+          });
+        }
+      } else {
+        // On web, use standard redirect flow
+        window.location.href = "/api/auth/google";
+      }
     } catch (error: any) {
       toast({
         title: "Sign in failed",
         description: "Could not sign in with Google. Please try again.",
         variant: "destructive"
       });
+    } finally {
       setIsGoogleSignInLoading(false);
     }
   };
@@ -94,14 +118,37 @@ export default function LoginPage() {
   const handleFacebookSignIn = async () => {
     setIsFacebookSignInLoading(true);
     try {
-      // Use OAuth flow via redirect for Facebook Sign-In
-      window.location.href = "/api/auth/facebook";
+      // On native iOS, use in-app browser (SFSafariViewController) to comply with App Store guidelines
+      if (inAppOAuthService.isNativeIOS()) {
+        const baseUrl = window.location.origin;
+        const result = await inAppOAuthService.signInWithFacebook(baseUrl);
+        
+        if (result.success) {
+          toast({
+            title: "Welcome!",
+            description: "Signed in successfully with Facebook."
+          });
+          refetch();
+        } else if (result.error && result.error !== 'cancelled') {
+          toast({
+            title: "Sign in failed",
+            description: result.error === 'not_configured' 
+              ? "Facebook Sign-In is not yet configured." 
+              : "Could not sign in with Facebook. Please try again.",
+            variant: "destructive"
+          });
+        }
+      } else {
+        // On web, use standard redirect flow
+        window.location.href = "/api/auth/facebook";
+      }
     } catch (error: any) {
       toast({
         title: "Sign in failed",
         description: "Could not sign in with Facebook. Please try again.",
         variant: "destructive"
       });
+    } finally {
       setIsFacebookSignInLoading(false);
     }
   };

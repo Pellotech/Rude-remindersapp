@@ -641,6 +641,274 @@ export async function setupAuth(app: Express) {
     }
   });
 
+  // Native iOS Google OAuth - Uses in-app browser with custom URL scheme callback
+  app.get("/api/auth/google/native", async (req, res) => {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const nativeCallback = req.query.callback as string;
+    const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/google/native/callback`;
+    
+    if (!clientId) {
+      if (nativeCallback) {
+        return res.redirect(`${nativeCallback}?success=false&error=not_configured`);
+      }
+      return res.status(503).json({ message: "Google Sign-In not configured" });
+    }
+    
+    const crypto = await import('crypto');
+    const state = crypto.randomBytes(32).toString('hex');
+    
+    (req.session as any).oauthState = state;
+    (req.session as any).oauthProvider = 'google-native';
+    (req.session as any).nativeCallback = nativeCallback;
+    
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.set('client_id', clientId);
+    authUrl.searchParams.set('redirect_uri', redirectUri);
+    authUrl.searchParams.set('response_type', 'code');
+    authUrl.searchParams.set('scope', 'openid email profile');
+    authUrl.searchParams.set('access_type', 'offline');
+    authUrl.searchParams.set('prompt', 'consent');
+    authUrl.searchParams.set('state', state);
+    
+    res.redirect(authUrl.toString());
+  });
+
+  app.get("/api/auth/google/native/callback", async (req, res) => {
+    const nativeCallback = (req.session as any).nativeCallback || 'rudereminders://auth-callback';
+    
+    try {
+      const { code, error, state } = req.query;
+      
+      if (error) {
+        return res.redirect(`${nativeCallback}?success=false&error=cancelled`);
+      }
+      
+      const storedState = (req.session as any).oauthState;
+      const storedProvider = (req.session as any).oauthProvider;
+      
+      if (!state || state !== storedState || storedProvider !== 'google-native') {
+        return res.redirect(`${nativeCallback}?success=false&error=state_mismatch`);
+      }
+      
+      delete (req.session as any).oauthState;
+      delete (req.session as any).oauthProvider;
+      delete (req.session as any).nativeCallback;
+      
+      if (!code || typeof code !== 'string') {
+        return res.redirect(`${nativeCallback}?success=false&error=no_code`);
+      }
+      
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/google/native/callback`;
+      
+      if (!clientId || !clientSecret) {
+        return res.redirect(`${nativeCallback}?success=false&error=not_configured`);
+      }
+      
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code'
+        })
+      });
+      
+      const tokens = await tokenResponse.json() as any;
+      
+      if (!tokens.id_token) {
+        return res.redirect(`${nativeCallback}?success=false&error=token_failed`);
+      }
+      
+      const { OAuth2Client } = await import('google-auth-library');
+      const oauthClient = new OAuth2Client(clientId);
+      
+      const ticket = await oauthClient.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: clientId
+      });
+      
+      const payload = ticket.getPayload();
+      
+      if (!payload || !payload.sub) {
+        return res.redirect(`${nativeCallback}?success=false&error=invalid_token`);
+      }
+      
+      const userId = `google_${payload.sub}`;
+      let existingUser = await storage.getUser(userId);
+      
+      if (!existingUser) {
+        await storage.upsertUser({
+          id: userId,
+          email: payload.email || `google_user_${payload.sub}@noemail.local`,
+          firstName: payload.given_name || null,
+          lastName: payload.family_name || null,
+          profileImageUrl: payload.picture || null,
+        });
+        existingUser = await storage.getUser(userId);
+      }
+      
+      const userSession = {
+        claims: {
+          sub: userId,
+          email: existingUser?.email || payload.email,
+          first_name: existingUser?.firstName || payload.given_name,
+          last_name: existingUser?.lastName || payload.family_name,
+          profile_image_url: payload.picture || "",
+          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+        },
+        access_token: "google-auth",
+        refresh_token: "google-auth",
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+      };
+      
+      req.logIn(userSession, (err) => {
+        if (err) {
+          return res.redirect(`${nativeCallback}?success=false&error=session_failed`);
+        }
+        console.log('✅ Google Native Sign-In successful');
+        res.redirect(`${nativeCallback}?success=true`);
+      });
+      
+    } catch (error: any) {
+      console.error("Google Native Sign-In error:", error);
+      res.redirect(`${nativeCallback}?success=false&error=failed`);
+    }
+  });
+
+  // Native iOS Facebook OAuth - Uses in-app browser with custom URL scheme callback
+  app.get("/api/auth/facebook/native", async (req, res) => {
+    const appId = process.env.FACEBOOK_APP_ID;
+    const nativeCallback = req.query.callback as string;
+    const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/facebook/native/callback`;
+    
+    if (!appId) {
+      if (nativeCallback) {
+        return res.redirect(`${nativeCallback}?success=false&error=not_configured`);
+      }
+      return res.status(503).json({ message: "Facebook Sign-In not configured" });
+    }
+    
+    const crypto = await import('crypto');
+    const state = crypto.randomBytes(32).toString('hex');
+    
+    (req.session as any).oauthState = state;
+    (req.session as any).oauthProvider = 'facebook-native';
+    (req.session as any).nativeCallback = nativeCallback;
+    
+    const authUrl = new URL('https://www.facebook.com/v18.0/dialog/oauth');
+    authUrl.searchParams.set('client_id', appId);
+    authUrl.searchParams.set('redirect_uri', redirectUri);
+    authUrl.searchParams.set('scope', 'email,public_profile');
+    authUrl.searchParams.set('response_type', 'code');
+    authUrl.searchParams.set('state', state);
+    
+    res.redirect(authUrl.toString());
+  });
+
+  app.get("/api/auth/facebook/native/callback", async (req, res) => {
+    const nativeCallback = (req.session as any).nativeCallback || 'rudereminders://auth-callback';
+    
+    try {
+      const { code, error, state } = req.query;
+      
+      if (error) {
+        return res.redirect(`${nativeCallback}?success=false&error=cancelled`);
+      }
+      
+      const storedState = (req.session as any).oauthState;
+      const storedProvider = (req.session as any).oauthProvider;
+      
+      if (!state || state !== storedState || storedProvider !== 'facebook-native') {
+        return res.redirect(`${nativeCallback}?success=false&error=state_mismatch`);
+      }
+      
+      delete (req.session as any).oauthState;
+      delete (req.session as any).oauthProvider;
+      delete (req.session as any).nativeCallback;
+      
+      if (!code || typeof code !== 'string') {
+        return res.redirect(`${nativeCallback}?success=false&error=no_code`);
+      }
+      
+      const appId = process.env.FACEBOOK_APP_ID;
+      const appSecret = process.env.FACEBOOK_APP_SECRET;
+      const redirectUri = `${req.protocol}://${req.get('host')}/api/auth/facebook/native/callback`;
+      
+      if (!appId || !appSecret) {
+        return res.redirect(`${nativeCallback}?success=false&error=not_configured`);
+      }
+      
+      const tokenUrl = new URL('https://graph.facebook.com/v18.0/oauth/access_token');
+      tokenUrl.searchParams.set('client_id', appId);
+      tokenUrl.searchParams.set('client_secret', appSecret);
+      tokenUrl.searchParams.set('redirect_uri', redirectUri);
+      tokenUrl.searchParams.set('code', code);
+      
+      const tokenResponse = await fetch(tokenUrl.toString());
+      const tokens = await tokenResponse.json() as any;
+      
+      if (!tokens.access_token) {
+        return res.redirect(`${nativeCallback}?success=false&error=token_failed`);
+      }
+      
+      const userInfoUrl = new URL('https://graph.facebook.com/me');
+      userInfoUrl.searchParams.set('fields', 'id,email,first_name,last_name,picture.type(large)');
+      userInfoUrl.searchParams.set('access_token', tokens.access_token);
+      
+      const userResponse = await fetch(userInfoUrl.toString());
+      const userData = await userResponse.json() as any;
+      
+      if (!userData.id) {
+        return res.redirect(`${nativeCallback}?success=false&error=user_fetch_failed`);
+      }
+      
+      const userId = `facebook_${userData.id}`;
+      let existingUser = await storage.getUser(userId);
+      
+      if (!existingUser) {
+        await storage.upsertUser({
+          id: userId,
+          email: userData.email || `fb_user_${userData.id}@noemail.local`,
+          firstName: userData.first_name || null,
+          lastName: userData.last_name || null,
+          profileImageUrl: userData.picture?.data?.url || null,
+        });
+        existingUser = await storage.getUser(userId);
+      }
+      
+      const userSession = {
+        claims: {
+          sub: userId,
+          email: existingUser?.email || userData.email,
+          first_name: existingUser?.firstName || userData.first_name,
+          last_name: existingUser?.lastName || userData.last_name,
+          profile_image_url: userData.picture?.data?.url || "",
+          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+        },
+        access_token: "facebook-auth",
+        refresh_token: "facebook-auth",
+        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60
+      };
+      
+      req.logIn(userSession, (err) => {
+        if (err) {
+          return res.redirect(`${nativeCallback}?success=false&error=session_failed`);
+        }
+        console.log('✅ Facebook Native Sign-In successful');
+        res.redirect(`${nativeCallback}?success=true`);
+      });
+      
+    } catch (error: any) {
+      console.error("Facebook Native Sign-In error:", error);
+      res.redirect(`${nativeCallback}?success=false&error=failed`);
+    }
+  });
+
   app.get("/api/logout", (req, res) => {
     const user = req.user as any;
     
