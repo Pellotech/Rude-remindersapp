@@ -167,10 +167,10 @@ export default function HomePremium() {
       }
     };
     
-    window.addEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as EventListener);
+    window.addEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as unknown as EventListener);
     
     return () => {
-      window.removeEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as EventListener);
+      window.removeEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as unknown as EventListener);
     };
   }, []);
 
