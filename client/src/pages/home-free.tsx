@@ -34,7 +34,6 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
 import { guestStorage } from "@/services/guestStorage";
-import { NOTIFICATION_RECEIVED_EVENT, NotificationReceivedDetail } from "@/components/MobileNotifications";
 
 // Free plan limits
 const FREE_LIMITS = {
@@ -160,52 +159,6 @@ export default function HomeFree() {
       };
     }
   }, [toast]);
-
-  // Listen for mobile notification events to show full-screen popup
-  useEffect(() => {
-    const handleNotificationReceived = async (event: CustomEvent<NotificationReceivedDetail>) => {
-      console.log('📱 Received notification event for full-screen popup:', event.detail);
-      
-      const { reminderId } = event.detail;
-      if (!reminderId) return;
-      
-      // For guest users, get reminder from local storage
-      if (isGuest) {
-        const guestReminders = guestStorage.getReminders();
-        const reminder = guestReminders.find(r => r.id === reminderId);
-        if (reminder) {
-          console.log('📱 Showing full-screen popup for guest reminder:', reminder.title);
-          setCurrentReminder(reminder);
-          setShowRichNotification(true);
-        }
-        return;
-      }
-      
-      // For authenticated users, fetch from API
-      try {
-        const response = await fetch(`/api/reminders/${reminderId}`, {
-          credentials: 'include'
-        });
-        
-        if (response.ok) {
-          const reminder = await response.json();
-          console.log('📱 Showing full-screen popup for reminder:', reminder.title);
-          setCurrentReminder(reminder);
-          setShowRichNotification(true);
-        } else {
-          console.error('Failed to fetch reminder for popup:', response.status);
-        }
-      } catch (error) {
-        console.error('Error fetching reminder for popup:', error);
-      }
-    };
-    
-    window.addEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as unknown as EventListener);
-    
-    return () => {
-      window.removeEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as unknown as EventListener);
-    };
-  }, [isGuest]);
 
   // Voice playback handler
   const handleVoicePlay = () => {

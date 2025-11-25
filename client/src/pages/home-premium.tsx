@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,6 @@ import { NotificationTest } from "@/components/NotificationTest";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder } from "@shared/schema";
-import { NOTIFICATION_RECEIVED_EVENT, NotificationReceivedDetail } from "@/components/MobileNotifications";
 
 export default function HomePremium() {
   const { user } = useAuth();
@@ -139,40 +138,6 @@ export default function HomePremium() {
       };
     }
   }, [toast]);
-
-  // Listen for mobile notification events to show full-screen popup
-  useEffect(() => {
-    const handleNotificationReceived = async (event: CustomEvent<NotificationReceivedDetail>) => {
-      console.log('📱 Received notification event for full-screen popup:', event.detail);
-      
-      const { reminderId } = event.detail;
-      if (!reminderId) return;
-      
-      try {
-        // Fetch the full reminder data from the API
-        const response = await fetch(`/api/reminders/${reminderId}`, {
-          credentials: 'include'
-        });
-        
-        if (response.ok) {
-          const reminder = await response.json();
-          console.log('📱 Showing full-screen popup for reminder:', reminder.title);
-          setCurrentReminder(reminder);
-          setShowRichNotification(true);
-        } else {
-          console.error('Failed to fetch reminder for popup:', response.status);
-        }
-      } catch (error) {
-        console.error('Error fetching reminder for popup:', error);
-      }
-    };
-    
-    window.addEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as unknown as EventListener);
-    
-    return () => {
-      window.removeEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived as unknown as EventListener);
-    };
-  }, []);
 
   // Voice playback handler for premium
   const handleVoicePlay = () => {
