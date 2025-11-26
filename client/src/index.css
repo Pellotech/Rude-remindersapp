@@ -2,14 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* iOS Safe Area Support */
+/* iOS Safe Area Support - comprehensive fallbacks */
+.pt-safe {
+  padding-top: 20px; /* Fallback for devices without notch */
+}
+
+.pb-safe {
+  padding-bottom: 20px; /* Fallback for devices without home indicator */
+}
+
 @supports (padding-top: env(safe-area-inset-top)) {
   .pt-safe {
-    padding-top: env(safe-area-inset-top);
+    padding-top: max(20px, env(safe-area-inset-top));
   }
   
   .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Sticky header safe area helper */
+.safe-area-header {
+  padding-top: 20px;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .safe-area-header {
+    padding-top: max(20px, env(safe-area-inset-top));
   }
 }
 

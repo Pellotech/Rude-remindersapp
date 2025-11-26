@@ -58,7 +58,7 @@ export default function Billing() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A]">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A]" style={{ paddingTop: 'env(safe-area-inset-top, 20px)' }}>
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/settings">
               <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">

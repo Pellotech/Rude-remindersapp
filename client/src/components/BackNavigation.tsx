@@ -26,7 +26,7 @@ export function BackNavigation({
   };
 
   return (
-    <header className={`pt-safe bg-white dark:bg-gray-900 ${className}`}>
+    <header className={`bg-white dark:bg-gray-900 ${className}`} style={{ paddingTop: 'env(safe-area-inset-top, 20px)' }}>
       <div className="flex items-center gap-4 px-4 py-3 mb-3">
         <Button 
           onClick={handleBackClick}
