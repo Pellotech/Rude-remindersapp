@@ -1134,7 +1134,7 @@ export default function Settings() {
           <Button
             variant="outline"
             className="w-full justify-between"
-            onClick={() => openLegalLink("https://rudereminders.com/privacy")}
+            onClick={() => openLegalLink("https://app.termly.io/policy-viewer/policy.html?policyUUID=378d9c6b-c46e-44ed-83a2-d8770229969c")}
             data-testid="link-privacy-policy"
           >
             <span>Privacy Policy</span>
