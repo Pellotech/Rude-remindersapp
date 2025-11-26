@@ -1,91 +1,68 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BackNavigation } from "@/components/BackNavigation";
 import { Link } from "wouter";
-import { 
-  UserCircle, 
-  Bell, 
-  Palette, 
-  CreditCard,
-  ChevronRight,
-  Calendar
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Bell, CreditCard } from "lucide-react";
+
+interface SettingsRowProps {
+  icon: React.ReactNode;
+  title: string;
+  href: string;
+}
+
+function SettingsRow({ icon, title, href }: SettingsRowProps) {
+  return (
+    <Link href={href}>
+      <div 
+        className="flex items-center justify-between px-4 py-3.5 bg-[#1C1C1E] hover:bg-[#2C2C2E] transition-colors cursor-pointer"
+        data-testid={`settings-row-${title.toLowerCase().replace(/\s+/g, '-')}`}
+      >
+        <div className="flex items-center gap-3">
+          <div className="text-[#8E8E93]">
+            {icon}
+          </div>
+          <span className="text-white text-[15px]">{title}</span>
+        </div>
+        <ChevronRight className="h-4 w-4 text-[#48484A]" />
+      </div>
+    </Link>
+  );
+}
 
 export default function SettingsLanding() {
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <BackNavigation customBackLabel="Back to Home" />
-
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
-        <p className="text-muted-foreground">Choose a category to customize your experience</p>
-      </div>
-
-      {/* Settings Categories */}
-      <div className="grid gap-4">
-        <Link href="/settings/personal">
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <UserCircle className="h-5 w-5 text-blue-600" />
-                  Personal Information
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Manage your profile, gender identity, and cultural preferences
-              </p>
-            </CardHeader>
-          </Card>
-        </Link>
-
-        <Link href="/settings/notifications">
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-green-600" />
-                  Notification Preferences
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Choose how you want to receive reminders and notifications
-              </p>
-            </CardHeader>
-          </Card>
-        </Link>
-
-        <Card className="opacity-50 cursor-not-allowed">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-muted-foreground" />
-                Appearance
+    <div className="min-h-screen bg-black">
+      <div className="max-w-lg mx-auto">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A]">
+          <div className="flex items-center px-4 py-3">
+            <Link href="/">
+              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+                <ChevronLeft className="h-5 w-5" />
+                <span className="text-[17px]">Back</span>
               </div>
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Customize theme, interface options, and alarm sounds (Not available right now)
-            </p>
-          </CardHeader>
-        </Card>
+            </Link>
+          </div>
+          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Settings</h1>
+        </div>
 
-        <Link href="/settings/billing">
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-orange-600" />
-                  Payment & Billing
-                </div>
-                <ChevronRight className="h-4 w-4" />
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Manage subscription, payment methods, and billing history
-              </p>
-            </CardHeader>
-          </Card>
-        </Link>
+        <div className="py-6 space-y-8">
+          <div className="overflow-hidden rounded-xl mx-4">
+            <SettingsRow 
+              icon={<User className="h-5 w-5" />}
+              title="Personal Information"
+              href="/settings/personal"
+            />
+            <div className="h-px bg-[#38383A] ml-12" />
+            <SettingsRow 
+              icon={<Bell className="h-5 w-5" />}
+              title="Notifications"
+              href="/settings/notifications"
+            />
+            <div className="h-px bg-[#38383A] ml-12" />
+            <SettingsRow 
+              icon={<CreditCard className="h-5 w-5" />}
+              title="Payment & Billing"
+              href="/settings/billing"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

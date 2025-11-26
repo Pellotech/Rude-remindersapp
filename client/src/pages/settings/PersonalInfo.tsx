@@ -1,38 +1,34 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { BackNavigation } from "@/components/BackNavigation";
-import { UserCircle, Users, Eye, EyeOff } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff, Home } from "lucide-react";
 
-const ethnicityOptions = [
-  { value: "american", label: "American" },
-  { value: "african-american", label: "African American" },
-  { value: "hispanic-latino", label: "Hispanic/Latino" },
-  { value: "asian-american", label: "Asian American" },
-  { value: "chinese", label: "Chinese" },
-  { value: "indian", label: "Indian" },
-  { value: "japanese", label: "Japanese" },
-  { value: "korean", label: "Korean" },
-  { value: "british", label: "British" },
-  { value: "german", label: "German" },
-  { value: "french", label: "French" },
-  { value: "italian", label: "Italian" },
-  { value: "spanish", label: "Spanish" },
-  { value: "mexican", label: "Mexican" },
-  { value: "brazilian", label: "Brazilian" },
-  { value: "canadian", label: "Canadian" },
-  { value: "australian", label: "Australian" },
-  { value: "russian", label: "Russian" },
-  { value: "middle-eastern", label: "Middle Eastern" },
-  { value: "african", label: "African" },
+const countryOptions = [
+  { value: "us", label: "United States" },
+  { value: "uk", label: "United Kingdom" },
+  { value: "ca", label: "Canada" },
+  { value: "au", label: "Australia" },
+  { value: "de", label: "Germany" },
+  { value: "fr", label: "France" },
+  { value: "es", label: "Spain" },
+  { value: "it", label: "Italy" },
+  { value: "jp", label: "Japan" },
+  { value: "kr", label: "South Korea" },
+  { value: "cn", label: "China" },
+  { value: "in", label: "India" },
+  { value: "br", label: "Brazil" },
+  { value: "mx", label: "Mexico" },
   { value: "other", label: "Other" },
+];
+
+const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "non-binary", label: "Non-binary" },
+  { value: "other", label: "Other" },
+  { value: "prefer-not-to-say", label: "Prefer not to say" },
 ];
 
 export default function PersonalInfo() {
@@ -49,14 +45,14 @@ export default function PersonalInfo() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Personal information updated",
-        description: "Your profile has been saved successfully.",
+        title: "Saved",
+        description: "Your information has been updated.",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to update personal information. Please try again.",
+        description: "Failed to save. Please try again.",
         variant: "destructive",
       });
     },
@@ -77,181 +73,164 @@ export default function PersonalInfo() {
   };
 
   const updateSetting = (key: string, value: any) => {
-    const newSettings = { ...localSettings, [key]: value };
-    setLocalSettings(newSettings);
+    setLocalSettings((prev: any) => ({ ...prev, [key]: value }));
   };
 
   const hasChanges = Object.keys(localSettings).length > 0;
   const currentSettings = { ...user, ...localSettings };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" showMainPageButton={true} />
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Personal Information</h1>
-          <p className="text-muted-foreground">Manage your profile and personal preferences</p>
+    <div className="min-h-screen bg-black">
+      <div className="max-w-lg mx-auto">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A]">
+          <div className="flex items-center justify-between px-4 py-3">
+            <Link href="/settings">
+              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+                <ChevronLeft className="h-5 w-5" />
+                <span className="text-[17px]">Settings</span>
+              </div>
+            </Link>
+            <Link href="/">
+              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
+                <Home className="h-5 w-5" />
+              </div>
+            </Link>
+          </div>
+          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Personal Information</h1>
         </div>
-        {hasChanges && (
-          <Button 
-            onClick={saveSettings} 
-            disabled={updateSettingsMutation.isPending}
-            className="bg-rude-red hover:bg-rude-red/90"
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        )}
-      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserCircle className="h-5 w-5" />
-            Basic Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
+        <div className="py-6 px-4 space-y-6">
+          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-[#38383A]">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">First Name</label>
+              <input
+                type="text"
                 value={currentSettings.firstName || ""}
                 onChange={(e) => updateSetting("firstName", e.target.value)}
-                placeholder="Enter your first name"
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                placeholder="Enter first name"
+                data-testid="input-first-name"
               />
             </div>
-            <div>
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
+            <div className="px-4 py-3 border-b border-[#38383A]">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Last Name</label>
+              <input
+                type="text"
                 value={currentSettings.lastName || ""}
                 onChange={(e) => updateSetting("lastName", e.target.value)}
-                placeholder="Enter your last name"
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                placeholder="Enter last name"
+                data-testid="input-last-name"
+              />
+            </div>
+            <div className="px-4 py-3">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Email</label>
+              <input
+                type="email"
+                value={currentSettings.email || ""}
+                onChange={(e) => updateSetting("email", e.target.value)}
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                placeholder="Enter email"
+                data-testid="input-email"
               />
             </div>
           </div>
-          
-          <div>
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              value={currentSettings.email || ""}
-              onChange={(e) => updateSetting("email", e.target.value)}
-              placeholder="Enter your email"
-              autoComplete="off"
-            />
-          </div>
-          
-          <div className="pt-4 border-t">
-            <h3 className="text-sm font-medium mb-4">Change Password</h3>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="newPassword">New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="newPassword"
-                    type={showPassword ? "text" : "password"}
-                    value={currentSettings.newPassword || ""}
-                    onChange={(e) => updateSetting("newPassword", e.target.value)}
-                    placeholder="Enter new password (optional)"
-                    className="pr-10"
-                    autoComplete="off"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Leave blank to keep current password
-                </p>
+
+          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <div className="px-4 py-3">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Change Password</label>
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={currentSettings.newPassword || ""}
+                  onChange={(e) => updateSetting("newPassword", e.target.value)}
+                  className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                  placeholder="New password (optional)"
+                  autoComplete="new-password"
+                  data-testid="input-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
+          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-[#38383A]">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Age</label>
+              <input
                 type="number"
                 min="13"
                 max="120"
                 value={currentSettings.age || ""}
                 onChange={(e) => updateSetting("age", e.target.value ? parseInt(e.target.value) : null)}
-                placeholder="Enter your age"
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                placeholder="Enter age"
+                data-testid="input-age"
               />
             </div>
-            <div>
-              <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
+            <div className="px-4 py-3">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Country</label>
+              <select
                 value={currentSettings.country || ""}
                 onChange={(e) => updateSetting("country", e.target.value)}
-                placeholder="Enter your country"
-              />
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none appearance-none cursor-pointer"
+                data-testid="select-country"
+              >
+                <option value="" className="bg-[#1C1C1E]">Select country</option>
+                {countryOptions.map((option) => (
+                  <option key={option.value} value={option.value} className="bg-[#1C1C1E]">
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Gender & Identity
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="gender">Gender Identity</Label>
-            <Select
-              value={currentSettings.gender || ""}
-              onValueChange={(value) => updateSetting("gender", value)}
+          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <div className="px-4 py-3">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Gender Identity</label>
+              <select
+                value={currentSettings.gender || ""}
+                onChange={(e) => updateSetting("gender", e.target.value)}
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none appearance-none cursor-pointer"
+                data-testid="select-gender"
+              >
+                <option value="" className="bg-[#1C1C1E]">Select gender</option>
+                {genderOptions.map((option) => (
+                  <option key={option.value} value={option.value} className="bg-[#1C1C1E]">
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {hasChanges && (
+            <button
+              onClick={saveSettings}
+              disabled={updateSettingsMutation.isPending}
+              className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
+              data-testid="button-save"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select your gender identity" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Gender-Specific Reminders</Label>
-              <p className="text-sm text-muted-foreground">
-                Receive reminders tailored to your gender identity
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.genderSpecificReminders || false}
-              onCheckedChange={(checked) => updateSetting("genderSpecificReminders", checked)}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      
+              {updateSettingsMutation.isPending ? "Saving..." : "Save"}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,208 @@
+🔥 PROMPT — Modern Dark-Theme Settings Redesign (Full Architecture)
+
+I want you to redesign my entire Settings experience using a modern, minimal, dark iOS-style UI. Please implement a clean 3-page settings system:
+
+🎛 1. New Settings Landing Page (first screen after clicking Settings)
+Design Goals
+
+Dark mode only
+
+Black (#000) or deep charcoal (#0B0B0D) background
+
+White text (#FFFFFF)
+
+Soft rounded cards
+
+Three simple sections only
+
+Each section should be a clean, tappable row (not large boxes)
+
+Sections
+
+Personal Information
+
+Description: “Manage your profile and personal preferences”
+
+Notifications
+
+Description: “Control how you receive reminders”
+
+Payment & Billing
+
+Description: “Manage your subscription and payment settings”
+
+(Optional) Appearance
+
+Do NOT show for now. Keep hidden.
+
+Components
+
+Back arrow navigation (top-left)
+
+Title: Settings
+
+Smooth transitions using React + Tailwind
+
+iOS-style separators and spacing
+
+Keep the page extremely lightweight and short
+
+No huge cards or padding blocks
+
+🧩 2. Personal Information Page (simple + minimal)
+Content
+
+First Name
+
+Last Name
+
+Email (non-editable if signed in via Apple/Google)
+
+Change Password (optional field)
+
+Age
+
+Country
+
+Gender Identity (dropdown)
+
+Design
+
+Clean form inputs
+
+No borders — subtle bottom underline like iOS
+
+White text, grey placeholders
+
+Dark grey cards around grouped fields
+
+Save button at bottom (rounded, white text)
+
+🔔 3. Notification Preferences Page
+Sections
+Push Notifications
+
+Browser Notifications toggle
+
+Voice Announcements toggle
+
+Email Notifications
+
+Email Reminders toggle
+
+Daily Email Summary toggle
+
+Design
+
+Compact layout
+
+Toggles styled like iOS switches
+
+White section headings, grey descriptions
+
+Light divider lines
+
+💳 4. Payment & Billing Page (with Cancel Subscription button)
+Sections
+Current Plan
+
+Show:
+
+Plan Name (Free, Premium, etc.)
+
+Status (Active, Canceled, Expired)
+
+Subscription Management
+
+Button: Review Subscription Plans
+
+Button: Manage via App Store Settings
+
+Premium Features
+
+Compact checklist
+
+Modern minimal icons (✓)
+
+Important Feature
+
+Add at the very bottom:
+
+📌 Discreet Cancel Subscription Button
+
+Small
+
+Red text but subtle
+
+Centered
+
+Only visible if user has Premium
+
+Should NOT look aggressive
+
+Something like:
+
+Cancel Subscription
+
+
+(small red text button, no border)
+
+🧱 Technical Requirements
+Architecture
+
+Create/modify React pages at:
+
+client/src/pages/SettingsLanding.tsx
+client/src/pages/settings/PersonalInfo.tsx
+client/src/pages/settings/Notifications.tsx
+client/src/pages/settings/Billing.tsx
+
+Styling
+
+Use:
+
+TailwindCSS
+
+Framer Motion (optional)
+
+No clutter
+
+Fluid spacing
+
+Dark theme tokens:
+
+Background: #000000 or #0B0B0D
+
+Card background: #111113
+
+Text: #FFFFFF
+
+Subtext: #8E8E93
+
+Navigation
+
+Ensure tapping any row on the landing page transitions to the correct child page.
+
+🎨 Visual Style Inspiration
+
+Use these as references:
+
+iOS 17 "Settings" (dark mode)
+
+DJI app settings (dark minimal design)
+
+Clean typography, no shadows, no bright colors
+
+📦 Output Format
+
+Please generate:
+
+All 4 updated pages
+
+Navigation wiring
+
+Tailwind classes
+
+Any new components (like SettingsRow, SectionCard, or PageHeader)
+
+Make sure everything is clean and production-ready

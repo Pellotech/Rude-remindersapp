@@ -1,14 +1,31 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { BackNavigation } from "@/components/BackNavigation";
-import { Bell, Volume2, Mail, Smartphone, Clock } from "lucide-react";
+import { ChevronLeft, Home } from "lucide-react";
+
+interface ToggleProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+function Toggle({ checked, onChange }: ToggleProps) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className={`relative w-[51px] h-[31px] rounded-full transition-colors ${
+        checked ? 'bg-[#34C759]' : 'bg-[#39393D]'
+      }`}
+    >
+      <div 
+        className={`absolute top-[2px] w-[27px] h-[27px] bg-white rounded-full shadow transition-transform ${
+          checked ? 'translate-x-[22px]' : 'translate-x-[2px]'
+        }`}
+      />
+    </button>
+  );
+}
 
 export default function Notifications() {
   const { toast } = useToast();
@@ -26,25 +43,20 @@ export default function Notifications() {
         body: JSON.stringify(settings),
         credentials: "include",
       });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-      
+      if (!response.ok) throw new Error("Failed to save");
       return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
-        title: "Settings saved!",
-        description: "Your preferences have been saved successfully.",
+        title: "Saved",
+        description: "Your preferences have been updated.",
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
-        description: "Failed to update settings. Please try again.",
+        description: "Failed to save. Please try again.",
         variant: "destructive",
       });
     },
@@ -64,240 +76,93 @@ export default function Notifications() {
   };
 
   const updateSetting = (key: string, value: any) => {
-    const newSettings = { ...localSettings, [key]: value };
-    setLocalSettings(newSettings);
+    setLocalSettings((prev: any) => ({ ...prev, [key]: value }));
   };
 
   const hasChanges = Object.keys(localSettings).length > 0;
   const currentSettings = { ...user, ...localSettings };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" showMainPageButton={true} />
+    <div className="min-h-screen bg-black">
+      <div className="max-w-lg mx-auto">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A]">
+          <div className="flex items-center justify-between px-4 py-3">
+            <Link href="/settings">
+              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+                <ChevronLeft className="h-5 w-5" />
+                <span className="text-[17px]">Settings</span>
+              </div>
+            </Link>
+            <Link href="/">
+              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
+                <Home className="h-5 w-5" />
+              </div>
+            </Link>
+          </div>
+          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Notifications</h1>
+        </div>
 
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Notification Preferences</h1>
-          <p className="text-muted-foreground">Choose how you want to receive reminders</p>
-          {hasChanges && (
-            <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-md">
-              <p className="text-sm text-orange-700 flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                You have unsaved changes. Remember to save your settings!
-              </p>
+        <div className="py-6 px-4 space-y-8">
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#38383A]">
+                <span className="text-white text-[17px]">Browser Notifications</span>
+                <Toggle
+                  checked={currentSettings.browserNotifications || false}
+                  onChange={(checked) => updateSetting("browserNotifications", checked)}
+                />
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-white text-[17px]">Voice Announcements</span>
+                <Toggle
+                  checked={currentSettings.voiceNotifications || false}
+                  onChange={(checked) => updateSetting("voiceNotifications", checked)}
+                />
+              </div>
             </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Email Notifications</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#38383A]">
+                <span className="text-white text-[17px]">Email Reminders</span>
+                <Toggle
+                  checked={currentSettings.emailNotifications || false}
+                  onChange={(checked) => updateSetting("emailNotifications", checked)}
+                />
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-white text-[17px]">Daily Email Summary</span>
+                <Toggle
+                  checked={currentSettings.emailSummary || false}
+                  onChange={(checked) => updateSetting("emailSummary", checked)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {hasChanges && (
+            <button
+              onClick={saveSettings}
+              disabled={updateSettingsMutation.isPending}
+              className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
+              data-testid="button-save"
+            >
+              {updateSettingsMutation.isPending ? "Saving..." : "Save"}
+            </button>
           )}
         </div>
-        <Button
-          onClick={saveSettings}
-          disabled={updateSettingsMutation.isPending || !hasChanges}
-          className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400 ml-4"
-        >
-          {updateSettingsMutation.isPending ? "Saving..." : "Save Settings"}
-        </Button>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Push Notifications
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Browser Notifications</Label>
-              <p className="text-sm text-muted-foreground">
-                Receive notifications directly in your browser
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.browserNotifications || false}
-              onCheckedChange={(checked) => updateSetting("browserNotifications", checked)}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Volume2 className="h-5 w-5" />
-            Voice Notifications
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Voice Announcements</Label>
-              <p className="text-sm text-muted-foreground">
-                Have reminders read aloud with voice characters
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.voiceNotifications || false}
-              onCheckedChange={(checked) => updateSetting("voiceNotifications", checked)}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Mail className="h-5 w-5" />
-            Email Notifications
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Email Reminders</Label>
-              <p className="text-sm text-muted-foreground">
-                Receive reminder notifications via email
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.emailNotifications || false}
-              onCheckedChange={(checked) => updateSetting("emailNotifications", checked)}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Daily Email Summary</Label>
-              <p className="text-sm text-muted-foreground">
-                Get a daily summary of your reminders and progress
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.emailSummary || false}
-              onCheckedChange={(checked) => updateSetting("emailSummary", checked)}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5" />
-            Reminder Settings
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="defaultRudenessLevel">Default Rudeness Level</Label>
-            <Select
-              value={currentSettings.defaultRudenessLevel?.toString() || "3"}
-              onValueChange={(value) => updateSetting("defaultRudenessLevel", parseInt(value))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">⭐ Gentle - Polite and encouraging</SelectItem>
-                <SelectItem value="2">⭐⭐ Motivational - Supportive with energy</SelectItem>
-                <SelectItem value="3">⭐⭐⭐ Direct - Straightforward reminders</SelectItem>
-                <SelectItem value="4">⭐⭐⭐⭐ Assertive - Firm and persistent</SelectItem>
-                <SelectItem value="5">⭐⭐⭐⭐⭐ Savage - No mercy, pure energy</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              This will be the default rudeness level for new reminders
-            </p>
-          </div>
-
-          <div>
-            <Label htmlFor="defaultVoiceCharacter">Default Voice Character</Label>
-            <Select
-              value={currentSettings.defaultVoiceCharacter || "default"}
-              onValueChange={(value) => updateSetting("defaultVoiceCharacter", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Default - Standard reminder voice</SelectItem>
-                <SelectItem value="drill-sergeant">Drill Sergeant - Military-style motivation</SelectItem>
-                <SelectItem value="robot">Robot - Robotic and direct</SelectItem>
-                <SelectItem value="british-butler">British Butler - Polite and proper</SelectItem>
-                <SelectItem value="mom">Mom - Caring but persistent</SelectItem>
-                <SelectItem value="confident-leader">Confident Leader - Authoritative motivation</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              This will be the default voice character for new reminders
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Gender-Specific AI Responses</Label>
-              <p className="text-sm text-muted-foreground">
-                {currentSettings.gender === 'male' 
-                  ? 'Use terms like "Big guy", "Chief", "Sir", "Mr" in AI responses' 
-                  : currentSettings.gender === 'female'
-                  ? 'Use friendly, encouraging terms in AI responses'
-                  : 'Use respectful, gender-neutral terms in AI responses'
-                }
-              </p>
-            </div>
-            <Switch
-              checked={currentSettings.genderSpecificReminders || false}
-              onCheckedChange={(checked) => updateSetting("genderSpecificReminders", checked)}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label className="text-muted-foreground">Cultural Motivational Quotes</Label>
-              <p className="text-sm text-muted-foreground">
-                Include culturally relevant quotes from historical figures (Not available right now)
-              </p>
-            </div>
-            <Switch
-              disabled={true}
-              checked={false}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Timing Settings
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="snoozeTime">Snooze Duration (minutes)</Label>
-            <Select
-              value={currentSettings.snoozeTime?.toString() || "5"}
-              onValueChange={(value) => updateSetting("snoozeTime", parseInt(value))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">1 minute</SelectItem>
-                <SelectItem value="5">5 minutes</SelectItem>
-                <SelectItem value="10">10 minutes</SelectItem>
-                <SelectItem value="15">15 minutes</SelectItem>
-                <SelectItem value="30">30 minutes</SelectItem>
-                <SelectItem value="60">1 hour</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
