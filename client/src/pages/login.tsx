@@ -313,7 +313,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={async () => {
-                const url = "https://rudereminders.com/terms";
+                const url = "https://app.termly.io/policy-viewer/policy.html?policyUUID=34f340a5-79a7-4f66-b4f9-81f1e9693176";
                 if (Capacitor.isNativePlatform()) {
                   await Browser.open({ url, presentationStyle: "popover" });
                 } else {
