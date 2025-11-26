@@ -41,7 +41,7 @@ export default function PersonalInfo() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: (settings: any) =>
-      apiRequest("/api/settings", "PUT", settings),
+      apiRequest("/api/settings", { method: "PUT", body: JSON.stringify(settings) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
