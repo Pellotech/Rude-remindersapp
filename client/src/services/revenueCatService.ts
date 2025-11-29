@@ -21,12 +21,16 @@ export class RevenueCatService {
       // Import RevenueCat plugin dynamically to avoid web build issues
       const { Purchases } = await import('@revenuecat/purchases-capacitor');
       
-      // Configure RevenueCat with API key from Info.plist/AndroidManifest.xml
+      // Configure RevenueCat with API key
       // This must be called before any other Purchases methods
       const platform = Capacitor.getPlatform();
+      
+      // Use environment variables to support switching between test and production
+      // For test store (development): Use test store API keys
+      // For production: Use platform-specific production API keys
       const apiKey = platform === 'ios' 
-        ? 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP'  // iOS API key
-        : 'goog_toKBkiOYlLLEWPbPmwtiOGzmTcN'; // Android API key
+        ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP')
+        : (import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY || 'goog_toKBkiOYlLLEWPbPmwtiOGzmTcN');
       
       await Purchases.configure({ apiKey });
       console.log('RevenueCat configured for platform:', platform);
