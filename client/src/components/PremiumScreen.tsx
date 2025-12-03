@@ -166,6 +166,8 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
   };
 
   const handleViewPlans = async () => {
+    // "View All Plans" button opens the same paywall as Subscribe
+    // Both actions lead to the same RevenueCat purchase flow
     await handleSubscribe();
   };
 
@@ -217,9 +219,9 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
       <BackNavigation 
-        customBackPath="/settings" 
-        customBackLabel="Settings" 
-        showMainPageButton={true}
+        customBackPath="/" 
+        customBackLabel="Back" 
+        showMainPageButton={false}
       />
       <div className="flex items-center justify-center p-4 pt-8">
         <Card className="w-full max-w-md shadow-2xl border-2 border-purple-200">
