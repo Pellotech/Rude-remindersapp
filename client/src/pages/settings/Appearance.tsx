@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { BackNavigation } from "@/components/BackNavigation";
-import { Palette, Volume2, Eye } from "lucide-react";
+import { Link } from "wouter";
+import { ChevronLeft, Home } from "lucide-react";
 
 const alarmSoundOptions = [
   { value: "gentle-chime", label: "🎵 Gentle Chime" },
@@ -34,7 +29,6 @@ export default function Appearance() {
       apiRequest("/api/settings", "PUT", settings),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      // Also invalidate any cached user data
       queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Appearance settings updated",
@@ -69,7 +63,6 @@ export default function Appearance() {
   };
 
   const playAlarmPreview = (soundType: string) => {
-    // Create a simple audio preview using Web Audio API
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -77,16 +70,15 @@ export default function Appearance() {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    // Different frequencies for different sounds
     const soundFreqs: { [key: string]: number } = {
-      "gentle-chime": 523.25,     // C5
-      "soft-bell": 659.25,       // E5
-      "water-drop": 783.99,      // G5
-      "wind-chimes": 440.00,     // A4
-      "bird-chirp": 880.00,      // A5
-      "soft-piano": 261.63,      // C4
-      "music-box": 1046.50,      // C6
-      "ocean-wave": 196.00,      // G3
+      "gentle-chime": 523.25,
+      "soft-bell": 659.25,
+      "water-drop": 783.99,
+      "wind-chimes": 440.00,
+      "bird-chirp": 880.00,
+      "soft-piano": 261.63,
+      "music-box": 1046.50,
+      "ocean-wave": 196.00,
     };
 
     oscillator.frequency.setValueAtTime(soundFreqs[soundType] || 440, audioContext.currentTime);
@@ -109,129 +101,101 @@ export default function Appearance() {
   const currentSettings = { ...user, ...localSettings };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <BackNavigation customBackPath="/settings" customBackLabel="Back to Settings" showMainPageButton={true} />
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Appearance</h1>
-          <p className="text-muted-foreground">Customize your app's look and feel</p>
+    <div className="min-h-screen bg-black">
+      <div className="max-w-lg mx-auto">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+          <div className="flex items-center justify-between px-4 py-3">
+            <Link href="/settings">
+              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+                <ChevronLeft className="h-5 w-5" />
+                <span className="text-[17px]">Settings</span>
+              </div>
+            </Link>
+            <Link href="/">
+              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
+                <Home className="h-5 w-5" />
+              </div>
+            </Link>
+          </div>
+          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Appearance</h1>
         </div>
-        {hasChanges && (
-          <Button 
-            onClick={saveSettings} 
-            disabled={updateSettingsMutation.isPending}
-            className="bg-rude-red hover:bg-rude-red/90"
-          >
-            {updateSettingsMutation.isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        )}
-      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5" />
-            Theme Selection
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <div className="py-6 px-4 space-y-8">
           <div>
-            <Label htmlFor="theme">Color Theme</Label>
-            <Select
-              value={currentSettings.theme || "system"}
-              onValueChange={(value) => updateSetting("theme", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">Light Mode</SelectItem>
-                <SelectItem value="dark">Dark Mode</SelectItem>
-                <SelectItem value="system">System Default</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Eye className="h-5 w-5" />
-            Interface Options
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Simplified Interface</Label>
-              <p className="text-sm text-muted-foreground">
-                Hide advanced features and show only essential options
-              </p>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Theme</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="px-4 py-3">
+                <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Color Theme</label>
+                <select
+                  value={currentSettings.theme || "system"}
+                  onChange={(e) => updateSetting("theme", e.target.value)}
+                  className="w-full bg-transparent text-white text-[17px] mt-1 outline-none"
+                  data-testid="select-theme"
+                >
+                  <option value="light" className="bg-black text-white">Light Mode</option>
+                  <option value="dark" className="bg-black text-white">Dark Mode</option>
+                  <option value="system" className="bg-black text-white">System Default</option>
+                </select>
+              </div>
             </div>
-            <Switch
-              checked={currentSettings.simplifiedInterface || false}
-              onCheckedChange={(checked) => {
-                updateSetting("simplifiedInterface", checked);
-                toast({
-                  title: checked ? "Simplified Mode Enabled" : "Full Mode Enabled",
-                  description: checked 
-                    ? "Advanced features will be hidden on the main page" 
-                    : "All features are now visible on the main page",
-                });
-              }}
-            />
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Volume2 className="h-5 w-5" />
-            Alarm Sound
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="alarmSound">Sound Selection</Label>
-            <Select
-              value={currentSettings.alarmSound || "gentle-chime"}
-              onValueChange={(value) => updateSetting("alarmSound", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {alarmSoundOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Alarm Sound</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-[#38383A]">
+                <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Sound Selection</label>
+                <select
+                  value={currentSettings.alarmSound || "gentle-chime"}
+                  onChange={(e) => updateSetting("alarmSound", e.target.value)}
+                  className="w-full bg-transparent text-white text-[17px] mt-1 outline-none"
+                  data-testid="select-alarm-sound"
+                >
+                  {alarmSoundOptions.map((option) => (
+                    <option key={option.value} value={option.value} className="bg-black text-white">
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="px-4 py-3">
+                <p className="text-white text-[17px] mb-3">Preview Sounds</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {alarmSoundOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => playAlarmPreview(option.value)}
+                      className="bg-[#38383A] text-white text-[13px] py-2 px-3 rounded-lg active:bg-[#48484A]"
+                      data-testid={`button-play-${option.value}`}
+                    >
+                      Play {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {alarmSoundOptions.map((option) => (
-              <Button
-                key={option.value}
-                variant="outline"
-                size="sm"
-                onClick={() => playAlarmPreview(option.value)}
-                className="text-xs"
-              >
-                Play {option.label}
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          {hasChanges && (
+            <button
+              onClick={saveSettings}
+              disabled={updateSettingsMutation.isPending}
+              className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
+              data-testid="button-save"
+            >
+              {updateSettingsMutation.isPending ? "Saving..." : "Save"}
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

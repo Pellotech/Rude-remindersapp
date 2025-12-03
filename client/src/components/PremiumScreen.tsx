@@ -217,77 +217,75 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+    <div className="min-h-screen bg-black">
       <BackNavigation 
         customBackPath="/" 
         customBackLabel="Back" 
         showMainPageButton={false}
       />
       <div className="flex items-center justify-center p-4 pt-8">
-        <Card className="w-full max-w-md shadow-2xl border-2 border-purple-200">
-          <CardContent className="pt-12 pb-12">
+        <div className="w-full max-w-md">
+          <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden p-8">
             <div className="text-center space-y-8">
               <div className="relative inline-block">
-                <Crown className="h-24 w-24 mx-auto text-purple-600" />
+                <Crown className="h-24 w-24 mx-auto text-purple-500" />
                 <Sparkles className="h-8 w-8 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />
               </div>
             
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
-                Unlock Premium
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                Get all advanced reminder features
-              </p>
-            </div>
-
-            {offeringsError && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
-                  Please sign into a Sandbox App Store account to test purchases.
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-3">
+                  Unlock Premium
+                </h1>
+                <p className="text-[#8E8E93] text-lg">
+                  Get all advanced reminder features
                 </p>
               </div>
-            )}
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={handleSubscribe}
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl py-7 shadow-lg"
-                size="lg"
-                data-testid="button-subscribe-now"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-6 w-6 mr-3 animate-spin" />
-                    Loading...
-                  </>
-                ) : (
-                  <>
-                    <Crown className="h-6 w-6 mr-3" />
-                    Subscribe Now
-                  </>
-                )}
-              </Button>
-              
-              <Button 
-                onClick={handleViewPlans}
-                disabled={loading}
-                variant="outline"
-                size="lg"
-                className="w-full py-6 text-lg"
-                data-testid="button-view-plans"
-              >
-                View All Plans
-              </Button>
-            </div>
 
-            <p className="text-sm text-muted-foreground">
-              No account required to subscribe
-            </p>
+              {offeringsError && (
+                <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4">
+                  <p className="text-sm text-yellow-200">
+                    Please sign into a Sandbox App Store account to test purchases.
+                  </p>
+                </div>
+              )}
+              
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleSubscribe}
+                  disabled={loading}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white text-lg py-7"
+                  size="lg"
+                  data-testid="button-subscribe-now"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-6 w-6 mr-3 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      <Crown className="h-6 w-6 mr-3" />
+                      Subscribe Now
+                    </>
+                  )}
+                </Button>
+                
+                <button 
+                  onClick={handleViewPlans}
+                  disabled={loading}
+                  className="w-full py-3.5 bg-[#38383A] text-white text-lg rounded-lg font-semibold active:opacity-70 disabled:opacity-50"
+                  data-testid="button-view-plans"
+                >
+                  View All Plans
+                </button>
+              </div>
+
+              <p className="text-sm text-[#8E8E93]">
+                No account required to subscribe
+              </p>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
       </div>
     </div>
   );
