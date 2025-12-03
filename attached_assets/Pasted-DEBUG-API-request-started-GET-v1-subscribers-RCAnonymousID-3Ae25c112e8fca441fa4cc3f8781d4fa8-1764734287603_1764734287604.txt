@@ -1,0 +1,21 @@
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings'
+Error enumerating unfinished transactions: Error Domain=ASDErrorDomain Code=509 "No active account" UserInfo={NSLocalizedDescription=No active account}
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings' (304)
+ERROR: 🍎‼️ Error fetching offerings - The operation couldn’t be completed. (RevenueCat.OfferingsManager.Error error 1.)
+There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.
+More information: https://rev.cat/why-are-offerings-empty
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ GetCustomerInfoOperation: Started
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings, 0 requests left in the queue
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b' (304)
+DEBUG: 😻 CustomerInfo updated from network.
+DEBUG: ℹ️ GetCustomerInfoOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b, 0 requests left in the queue
+⚡️  To Native ->  LocalNotifications removeAllListeners 46344681
+⚡️  TO JS undefined
+⚡️  [log] - Disconnected from WebSocket
+LaunchServices: store (null) or url (null) was nil: Error Domain=NSOSStatusErrorDomain Code=-54 "process may not map database" UserInfo={NSDebugDescription=process may not map database, _LSLine=72, _LSFunction=_LSServer_GetServerStoreForConnectionWithCompletionHandler}
+Attempt to map database failed: permission was denied. This attempt will not be retried.
+Failed to initialize client context with error Error Domain=NSOSStatusErrorDomain Code=-54 "process may not map database" UserInfo={NSDebugDescription=process may not map database, _LSLine=72, _LSFunction=_LSServer_GetServerStoreForConnectionWithCompletionHandler}
