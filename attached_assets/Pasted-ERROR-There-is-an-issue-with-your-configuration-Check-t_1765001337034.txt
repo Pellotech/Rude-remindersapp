@@ -1,0 +1,43 @@
+ERROR: 😿‼️ There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.
+More information: https://rev.cat/why-are-offerings-empty
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings, 0 requests left in the queue
+ERROR MESSAGE:  {"message":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https:\/\/rev.cat\/how-to-configure-offerings.\nMore information: https:\/\/rev.cat\/why-are-offerings-empty","errorMessage":"There is an issue with your configuration. Check the
+⚡️  [error] - {"message":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.\nMore information: https://rev.cat/why-are-offerings-empty","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.\nMore information: https://rev.cat/why-are-offerings-empty","code":"23"}
+⚡️  [warn] - Offerings failed, attempting sync: {"code":"23","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.\nMore information: https://rev.cat/why-are-offerings-empty"}
+⚡️  To Native ->  Purchases syncPurchases 29696401
+DEBUG: ℹ️ Found 0 unsynced attributes for App User ID: $RCAnonymousID:e25c112e8fca441fa4cc3f8781d4fa8b
+DEBUG: ℹ️ PostReceiptDataOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request POST /v1/receipts
+DEBUG: ℹ️ API request started: POST '/v1/receipts'
+ERROR: 😿‼️ There was an unknown backend error. Internal server error.
+DEBUG: ℹ️ API request failed: POST '/v1/receipts' (500): There was an unknown backend error. Internal server error.
+Request-ID: '828f2fb3-292b-49a1-b13c-900d2e3bc637'; Amzn-Trace-ID: 'Root=1-6933c804-3bfda72e6bf7d0f5420d8494'
+DEBUG: ℹ️ PostReceiptDataOperation: Finished
+INFO: ℹ️ Encountered a server error. Will attempt to compute an offline CustomerInfo from local purchases.
+DEBUG: ℹ️ Serial request done: POST /v1/receipts, 0 requests left in the queue
+DEBUG: ℹ️ PurchasedProductsFetcher: fetching products from StoreKit
+DEBUG: ℹ️ PurchasedProductsFetcher: fetched 0 products from StoreKit
+INFO: ℹ️ Computed offline CustomerInfo from 0 products with 0 active entitlements.
+DEBUG: ℹ️ Purchased products: []. Active entitlements: [].
+DEBUG: ℹ️ CustomerInfo was computed offline. Won't be stored in cache.
+DEBUG: ℹ️ Sending updated CustomerInfo to delegate.
+DEBUG: ℹ️ Detected active subscriptions changed. Clearing trial or intro eligibility cache.
+DEBUG: ℹ️ PurchasedProductsFetcher: invalidating cache
+⚡️  TO JS {"nonSubscriptionTransactions":[],"requestDate":"2025-12-06T06:07:00Z","requestDateMillis":1765001220083.667,"managementURL":"https:\/\/apps.apple.com\/account\/subscriptions","subscriptionsByProductIdentifier":{},"latestExpirationDateMillis":null,"allPurc
+⚡️  To Native ->  Purchases getOfferings 29696402
+DEBUG: ℹ️ No cached Offerings, fetching from network
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings' (304)
+ERROR: 🍎‼️ Error fetching offerings - The operation couldn’t be completed. (RevenueCat.OfferingsManager.Error error 1.)
+There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.
+More information: https://rev.cat/why-are-offerings-empty
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+ERROR: 😿‼️ There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.
+More information: https://rev.cat/why-are-offerings-empty
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings, 0 requests left in the queue
+ERROR MESSAGE:  {"message":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https:\/\/rev.cat\/how-to-configure-offerings.\nMore information: https:\/\/rev.cat\/why-are-offerings-empty","errorMessage":"There is an issue with your configuration. Check the
+⚡️  [error] - {"message":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.\nMore information: https://rev.cat/why-are-offerings-empty","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.\nMore information: https://rev.cat/why-are-offerings-empty","code":"23"}
+⚡️  [error] - Offerings failed after sync: {"code":"23","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There are no products registered in the RevenueCat dashboard for your offerings. If you don't want to use the offerings system, you can safely ignore this message. To configure offerings and their products, follow the instructions in https://rev.cat/how-to-configure-offerings.\nMore information: https://rev.cat/why-are-offerings-empty"}
