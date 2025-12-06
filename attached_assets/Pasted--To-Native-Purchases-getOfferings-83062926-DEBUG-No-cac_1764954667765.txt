@@ -1,0 +1,20 @@
+⚡️  To Native ->  Purchases getOfferings 83062926
+DEBUG: ℹ️ No cached Offerings, fetching from network
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings' (304)
+DEBUG: ℹ️ No existing products cached, starting store products request for: ["Rude_testpaywall_yearly", "Rude_reminders_test"]
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Ae25c112e8fca441fa4cc3f8781d4fa8b/offerings, 0 requests left in the queue
+DEBUG: 😻 Store products request received response
+DEBUG: ℹ️ Store products request finished
+ERROR: 🍎‼️ Error fetching offerings - The operation couldn’t be completed. (RevenueCat.OfferingsManager.Error error 1.)
+There's a problem with your configuration. None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect (or the StoreKit Configuration file if one is being used). 
+More information: https://rev.cat/why-are-offerings-empty
+ERROR: 😿‼️ There is an issue with your configuration. Check the underlying error for more details. There's a problem with your configuration. None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect (or the StoreKit Configuration file if one is being used). 
+More information: https://rev.cat/why-are-offerings-empty
+ERROR MESSAGE:  {"code":"23","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There's a problem with your configuration. None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect (or the StoreKit Configuration file if one is being used). \nMore information: https:\/\/rev.cat\/why-are-offerings-empty","message":"There is an issue with your configuration. Check the underlying error for more details. There's a problem with your co
+⚡️  [error] - {"code":"23","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There's a problem with your configuration. None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect (or the StoreKit Configuration file if one is being used). \nMore information: https://rev.cat/why-are-offerings-empty","message":"There is an issue with your configuration. Check the underlying error for more details. There's a problem with your configuration. None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect (or the StoreKit Configuration file if one is being used). \nMore information: https://rev.cat/why-are-offerings-empty"}
+⚡️  [error] - Offerings failed after sync: {"code":"23","errorMessage":"There is an issue with your configuration. Check the underlying error for more details. There's a problem with your configuration. None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect (or the StoreKit Configuration file if one is being used). \nMore information: https://rev.cat/why-are-offerings-empty"}
