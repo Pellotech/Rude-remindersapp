@@ -39,9 +39,12 @@ function HomeRouter() {
     );
   }
 
-  // Authenticated users (including developer accounts) always see premium interface
-  // Guest users (not authenticated) see the free experience
-  return isAuthenticated ? <HomePremium /> : <HomeFree />;
+  // Route based on premium status:
+  // - Premium users (authenticated + premium) → HomePremium
+  // - Free users (authenticated + not premium) → HomeFree
+  // - Guest users (not authenticated) → HomeFree
+  const isPremium = isAuthenticated && user?.subscriptionPlan === 'premium';
+  return isPremium ? <HomePremium /> : <HomeFree />;
 }
 
 function Router() {
