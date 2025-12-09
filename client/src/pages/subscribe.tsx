@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { Purchases } from '@revenuecat/purchases-js';
 import { getPlatformInfo } from '@/utils/platformDetection';
 import PremiumScreen from '@/components/PremiumScreen';
 
 export default function Subscribe() {
+  const { isAuthenticated } = useAuth();
   const [customerInfo, setCustomerInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const platform = getPlatformInfo();
@@ -73,6 +75,7 @@ export default function Subscribe() {
   return (
     <PremiumScreen 
       isPremium={isPremium}
+      isAuthenticated={isAuthenticated}
       onViewSubscription={() => window.location.href = '/settings'}
     />
   );

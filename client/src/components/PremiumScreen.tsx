@@ -9,6 +9,7 @@ import { BackNavigation } from "@/components/BackNavigation";
 interface PremiumScreenProps {
   isPremium: boolean;
   onViewSubscription?: () => void;
+  isAuthenticated?: boolean;
 }
 
 async function loadOfferingsSafe() {
@@ -39,11 +40,23 @@ async function loadOfferingsSafe() {
   }
 }
 
-export default function PremiumScreen({ isPremium, onViewSubscription }: PremiumScreenProps) {
+export default function PremiumScreen({ isPremium, onViewSubscription, isAuthenticated = false }: PremiumScreenProps) {
   const [loading, setLoading] = useState(false);
   const [offeringsError, setOfferingsError] = useState(false);
   const { toast } = useToast();
   const platform = getPlatformInfo();
+
+  // Handle guest users - force login before subscribing
+  const handleGuestSubscribe = () => {
+    toast({
+      title: "Sign in Required",
+      description: "Create an account to subscribe.",
+      variant: "default",
+    });
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 500);
+  };
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -251,7 +264,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
               
               <div className="space-y-3">
                 <Button 
-                  onClick={handleSubscribe}
+                  onClick={isAuthenticated ? handleSubscribe : handleGuestSubscribe}
                   disabled={loading}
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white text-lg py-7"
                   size="lg"
@@ -265,23 +278,23 @@ export default function PremiumScreen({ isPremium, onViewSubscription }: Premium
                   ) : (
                     <>
                       <Crown className="h-6 w-6 mr-3" />
-                      Subscribe Now
+                      {isAuthenticated ? 'Subscribe Now' : 'Sign in to Subscribe'}
                     </>
                   )}
                 </Button>
                 
                 <button 
-                  onClick={handleViewPlans}
+                  onClick={isAuthenticated ? handleViewPlans : handleGuestSubscribe}
                   disabled={loading}
                   className="w-full py-3.5 bg-[#38383A] text-white text-lg rounded-lg font-semibold active:opacity-70 disabled:opacity-50"
                   data-testid="button-view-plans"
                 >
-                  View All Plans
+                  {isAuthenticated ? 'View All Plans' : 'Sign in'}
                 </button>
               </div>
 
               <p className="text-sm text-[#8E8E93]">
-                No account required to subscribe
+                {isAuthenticated ? 'No account required to subscribe' : 'Create an account to unlock premium'}
               </p>
             </div>
           </div>
