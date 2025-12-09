@@ -1,0 +1,20 @@
+WARN: ⚠️ RevenueCat SDK is configured correctly, but contains some issues you might want to address
+
+Warnings:
+  • Your products are configured in RevenueCat but aren't approved in App Store Connect yet. This prevents users from making purchases in production. Please ensure all products are approved and available for sale in App Store Connect.
+  • The offerings 'default', 'web default', 'Rude_test_offer' have configuration issues that may prevent users from seeing product options or making purchases.
+
+Product Issues:
+  ⚠️ com.goosebumpsmw.rudereminders.monthly ( Rude Monthly Pro): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+  ⚠️ com.goosebumpsmw.rudereminders.yearly (Rude Yearly Pro): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+
+Offering Issues:
+  ⚠️ default
+    ⚠️ $rc_monthly (com.goosebumpsmw.rudereminders.monthly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+    ⚠️ $rc_annual (com.goosebumpsmw.rudereminders.yearly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+  ⚠️ web default
+    ⚠️ $rc_annual (com.goosebumpsmw.rudereminders.yearly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+    ⚠️ $rc_monthly (com.goosebumpsmw.rudereminders.monthly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+  ⚠️ Rude_test_offer
+    ⚠️ $rc_annual (com.goosebumpsmw.rudereminders.yearly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
+    ⚠️ $rc_monthly (com.goosebumpsmw.rudereminders.monthly): This product's status (DEVELOPER_ACTION_NEEDED) requires you to take action in App Store Connect before using it in production purchases.
