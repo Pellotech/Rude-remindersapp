@@ -1,82 +1,62 @@
 import { useEffect, useState } from 'react';
-import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { Purchases } from '@revenuecat/purchases-js';
+import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from '@/utils/platformDetection';
-import PremiumScreen from '@/components/PremiumScreen';
+import SubscriptionManager from '@/components/SubscriptionManager';
 
 export default function Subscribe() {
-  const { isAuthenticated } = useAuth();
-  const [customerInfo, setCustomerInfo] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, user, isLoading } = useAuth();
+  const [revenueCatReady, setRevenueCatReady] = useState(true);
   const platform = getPlatformInfo();
 
-  const fetchCustomerInfo = () => {
-    setLoading(true);
-    
-    apiRequest("/api/customer-info", { method: 'GET' })
-      .then((data) => {
-        setCustomerInfo(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Failed to fetch customer info:', error);
-        setCustomerInfo(null);
-        setLoading(false);
-      });
-  };
-
-  const initializeRevenueCat = async () => {
-    if (platform.isNative) {
-      return;
-    }
-
-    const apiKey = import.meta.env.VITE_REVENUECAT_WEB_API_KEY;
-    
-    if (!apiKey) {
-      console.warn('RevenueCat Web API key not configured');
-      return;
-    }
-
-    try {
-      const user = await apiRequest("/api/auth/user", { method: 'GET' });
-      const userId = user.id || `guest-${Date.now()}`;
-      
-      Purchases.configure({
-        apiKey: apiKey,
-        appUserId: userId,
-      });
-      
-      console.log('RevenueCat Web SDK configured');
-    } catch (error) {
-      console.error('Failed to configure RevenueCat Web SDK:', error);
-    }
-  };
-
   useEffect(() => {
-    fetchCustomerInfo();
+    const initializeRevenueCat = async () => {
+      if (platform.isNative) {
+        return;
+      }
+
+      const apiKey = import.meta.env.VITE_REVENUECAT_WEB_API_KEY;
+      
+      if (!apiKey) {
+        console.warn('RevenueCat Web API key not configured');
+        return;
+      }
+
+      try {
+        const currentUser = await apiRequest("/api/auth/user", { method: 'GET' });
+        const userId = currentUser?.id || `guest-${Date.now()}`;
+        
+        Purchases.configure({
+          apiKey: apiKey,
+          appUserId: userId,
+        });
+        
+        console.log('RevenueCat Web SDK configured');
+      } catch (error) {
+        console.error('Failed to configure RevenueCat Web SDK:', error);
+      }
+    };
+
     initializeRevenueCat();
   }, []);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading...</p>
+          <p className="text-white">Loading...</p>
         </div>
       </div>
     );
   }
 
-  const isPremium = customerInfo?.subscriptionStatus === 'active';
-
   return (
-    <PremiumScreen 
-      isPremium={isPremium}
+    <SubscriptionManager 
       isAuthenticated={isAuthenticated}
-      onViewSubscription={() => window.location.href = '/settings'}
+      user={user}
     />
   );
 }
