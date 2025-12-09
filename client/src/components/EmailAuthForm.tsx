@@ -124,15 +124,22 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
           });
 
           if (loginResponse.ok) {
-            onSuccess();
+            // Wait a moment for session to be fully established before calling onSuccess
+            setTimeout(() => {
+              onSuccess();
+            }, 100);
           } else {
             // Account created but auto-login failed, still call onSuccess
             // User can manually log in
-            onSuccess();
+            setTimeout(() => {
+              onSuccess();
+            }, 100);
           }
         } catch {
           // Network error during auto-login, still call onSuccess
-          onSuccess();
+          setTimeout(() => {
+            onSuccess();
+          }, 100);
         }
       } else {
         toast({

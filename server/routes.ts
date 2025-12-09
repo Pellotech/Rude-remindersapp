@@ -138,6 +138,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: newUser.email,
           firstName: newUser.firstName,
           lastName: newUser.lastName,
+          subscriptionStatus: newUser.subscriptionStatus || 'free',
+          subscriptionPlan: newUser.subscriptionPlan || 'free',
         });
       });
     } catch (error) {
@@ -180,6 +182,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          subscriptionStatus: user.subscriptionStatus || 'free',
+          subscriptionPlan: user.subscriptionPlan || 'free',
         });
       });
     } catch (error) {
