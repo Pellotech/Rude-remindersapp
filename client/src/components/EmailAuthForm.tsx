@@ -109,9 +109,31 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       if (response.ok) {
         toast({
           title: "Success!",
-          description: "Account created successfully. Welcome!"
+          description: "Account created successfully. Logging you in..."
         });
-        onSuccess();
+        
+        // Automatically log in after registration
+        try {
+          const loginResponse = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: registerForm.email,
+              password: registerForm.password
+            })
+          });
+
+          if (loginResponse.ok) {
+            onSuccess();
+          } else {
+            // Account created but auto-login failed, still call onSuccess
+            // User can manually log in
+            onSuccess();
+          }
+        } catch {
+          // Network error during auto-login, still call onSuccess
+          onSuccess();
+        }
       } else {
         toast({
           title: "Registration Failed",
