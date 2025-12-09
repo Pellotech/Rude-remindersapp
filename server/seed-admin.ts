@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 
 async function seedAdminUser() {
   const email = 'letmeknow6@icloud.com';
-  const password = 'letmeknowadmin';
+  const password = '1236';
   
   try {
     // Hash the password
