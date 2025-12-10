@@ -1,0 +1,179 @@
+✅ POLISHED DEVELOPER-READY PROMPT FOR REPLIT / UI BUILDERS
+
+Goal:
+Build a smooth, modern subscription management interface for the Rude Reminders app using the screenshots as style references.
+
+Context:
+Users can have two states:
+
+Free Registered User
+
+Premium User (Monthly or Yearly)
+
+We need a full subscription flow covering:
+
+Subscribe
+
+Change plan
+
+Cancel plan
+
+Revert to free after cancellation
+
+📌 1. FREE USER — Manage Subscription Page (Screen 1)
+
+When a user is logged in but not subscribed, show:
+
+UI Elements:
+
+Title: Unlock Premium
+
+Subtitle: Get all advanced reminder features
+
+Large button: Subscribe Now (purple, with crown icon)
+
+Small caption: Unlock all premium features
+
+Behavior:
+
+Tapping Subscribe Now → go to Available Plans Page.
+
+📌 2. AVAILABLE PLANS PAGE — Plan Selection (Screen 2)
+
+Show both plans:
+
+Rude Monthly Pro
+Price: $6.99/month
+
+Rude Yearly Pro
+Price: $59.99/year
+(Show a badge like “Save 37%” if easy to add)
+
+Requirements:
+
+Only one plan can be active at a time.
+
+Tapping a plan highlights it with a blue outline.
+
+A Continue or Next button appears once a plan is selected.
+
+Example button:
+
+Continue with Monthly
+or
+Continue with Yearly
+
+Behavior:
+
+After selecting → go to the iOS purchase confirmation sheet (in-app purchase call).
+
+📌 3. PURCHASE CONFIRMATION (Screen 3)
+
+This part is handled by StoreKit / RevenueCat once purchase(package) is called.
+
+The UI before calling purchase should simply show:
+
+Selected plan summary
+
+A button: Confirm Purchase
+
+When user taps “Confirm Purchase”:
+
+Call RevenueCat purchase API
+
+Let the native iOS sheet take over
+
+📌 4. PREMIUM USER — Active Subscription Screen (Screen 4)
+
+Only show this screen when the user has an active entitlement.
+
+UI Elements:
+
+Title: Your Premium Subscription
+Show the active plan:
+
+Example:
+
+Rude Yearly Pro
+$59.99 per year
+Renews December 9
+
+AND
+
+Manage Subscription › (right arrow)
+
+(This arrow opens the plan management page)
+
+Behavior:
+
+If subscription is active → show this screen.
+
+If user cancels but still has access → continue showing until expiration date.
+
+If subscription expires → revert to the Free pathway.
+
+📌 5. MANAGE SUBSCRIPTION OPTIONS
+
+When user taps Manage Subscription →
+
+Show a screen similar to Apple’s “See All Plans” page:
+
+Plans:
+
+Monthly
+
+Yearly
+
+The currently active plan must be disabled (cannot be reselected).
+
+Options shown:
+
+Change to Monthly
+
+Change to Yearly
+
+Cancel Subscription
+
+If user chooses Cancel:
+
+Follow RevenueCat cancel handling OR open iOS subscription management URL.
+
+📌 6. STATE LOGIC (WHAT THE APP SHOULD SHOW)
+If the user has NO entitlements:
+
+Show → Screen 1 (Unlock Premium)
+
+If the user selects a plan:
+
+Show → Screen 2 (Available Plans)
+
+If purchase succeeds:
+
+Show → Screen 4 (Premium Dashboard)
+
+If user cancels and subscription expires:
+
+Automatically return to → Screen 1
+
+If user has an active subscription but future cancel date:
+
+Still show → Screen 4
+But include text:
+
+Your subscription will end on [date]
+
+📌 7. REQUEST FOR IMPLEMENTATION
+
+Please implement all of the above UI and logic in my project:
+
+✔ Create the screens
+✔ Connect them with navigation
+✔ Plug into RevenueCat (getOfferings(), purchase(), restorePurchases())
+✔ Use entitlement premium to determine active state
+✔ Auto-switch UI when subscription state changes
+✔ Match UI style and layout to the screenshots provided
+
+You may simplify the flow if appropriate, as long as:
+
+Free → Subscribe → Select Plan → Confirm → Premium → Cancel → Free
+works smoothly.
