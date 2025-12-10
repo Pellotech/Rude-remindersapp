@@ -1,34 +1,35 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { ChevronLeft, Home, Check } from "lucide-react";
+import { ChevronLeft, Home } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Billing() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
   
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
 
-  const cancelSubscriptionMutation = useMutation({
-    mutationFn: () => apiRequest("/api/cancel-subscription", { method: "POST" }),
-    onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      toast({
-        title: "Cancellation",
-        description: data.message || "Please manage your subscription through your device settings.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to process request. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+  const handleCancelSubscription = () => {
+    setShowCancelDialog(false);
+    toast({
+      title: "How to Cancel",
+      description: "Go to Settings → Your Name → Subscriptions on your iOS device to manage or cancel your subscription.",
+    });
+  };
 
   if (isLoading) {
     return (
@@ -76,6 +77,7 @@ export default function Billing() {
         </div>
 
         <div className="py-6 px-4 space-y-8">
+          {/* Current Plan Section */}
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Current Plan</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
@@ -102,72 +104,58 @@ export default function Billing() {
             </div>
           </div>
 
+          {/* Subscription Management - Only Review Plans */}
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Subscription Management</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
               <Link href="/subscribe">
                 <div 
-                  className="px-4 py-3 border-b border-[#38383A] cursor-pointer hover:bg-[#2C2C2E] transition-colors"
+                  className="px-4 py-3 cursor-pointer hover:bg-[#2C2C2E] transition-colors"
                   data-testid="button-review-plans"
                 >
                   <span className="text-[#0A84FF] text-[17px]">Review Subscription Plans</span>
                 </div>
               </Link>
-              <button
-                onClick={() => {
-                  toast({
-                    title: "App Store Settings",
-                    description: "Go to Settings → Your Name → Subscriptions on your device.",
-                  });
-                }}
-                className="w-full px-4 py-3 text-left hover:bg-[#2C2C2E] transition-colors"
-                data-testid="button-app-store"
-              >
-                <span className="text-[#0A84FF] text-[17px]">Manage via App Store Settings</span>
-              </button>
             </div>
           </div>
 
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Premium Features</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden px-4 py-3 space-y-3">
-              <div className="flex items-center gap-3">
-                <Check className="h-4 w-4 text-[#34C759]" />
-                <span className="text-white text-[15px]">AI-Generated Responses</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Check className="h-4 w-4 text-[#34C759]" />
-                <span className="text-white text-[15px]">Cultural & Gender Content</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Check className="h-4 w-4 text-[#34C759]" />
-                <span className="text-white text-[15px]">Premium Quotes</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Check className="h-4 w-4 text-[#34C759]" />
-                <span className="text-white text-[15px]">Unlimited Reminders</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Check className="h-4 w-4 text-[#34C759]" />
-                <span className="text-white text-[15px]">Premium Voice Characters</span>
-              </div>
-            </div>
-          </div>
-
+          {/* Cancel Subscription - Only shows for subscribed users */}
           {isSubscribed && (
             <div className="pt-4">
               <button
-                onClick={() => cancelSubscriptionMutation.mutate()}
-                disabled={cancelSubscriptionMutation.isPending}
-                className="w-full text-center text-[#FF453A] text-[15px] py-2 disabled:opacity-50"
+                onClick={() => setShowCancelDialog(true)}
+                className="w-full text-center text-[#FF453A] text-[15px] py-2"
                 data-testid="button-cancel-subscription"
               >
-                {cancelSubscriptionMutation.isPending ? "Processing..." : "Cancel Subscription"}
+                Cancel Subscription
               </button>
             </div>
           )}
         </div>
       </div>
+
+      {/* Cancel Subscription Dialog */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent className="bg-[#1C1C1E] border-[#38383A]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Cancel Subscription</AlertDialogTitle>
+            <AlertDialogDescription className="text-[#8E8E93]">
+              To cancel your subscription, go to your iOS device Settings → Your Name → Subscriptions → Rude Reminders.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-[#2C2C2E] border-[#38383A] text-white hover:bg-[#3C3C3E]">
+              Close
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelSubscription}
+              className="bg-[#0A84FF] hover:bg-[#0A84FF]/90 text-white"
+            >
+              Got It
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
