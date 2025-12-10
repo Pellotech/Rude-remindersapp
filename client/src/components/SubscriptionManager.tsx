@@ -44,7 +44,6 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const [loading, setLoading] = useState(false);
   const [canceling, setCanceling] = useState(false);
   const [offeringsError, setOfferingsError] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const { toast } = useToast();
   const platform = getPlatformInfo();
 
@@ -78,25 +77,9 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
 
         const packages = offeringsResult.current.availablePackages;
         
-        // Find the package based on user's selection
-        let selectedPackage;
-        if (selectedPlan === 'yearly') {
-          selectedPackage = packages.find((p: any) => 
-            p.identifier === '$rc_annual' || 
-            p.packageType === 'ANNUAL' ||
-            p.identifier.includes('annual') ||
-            p.identifier.includes('yearly')
-          );
-        } else {
-          selectedPackage = packages.find((p: any) => 
-            p.identifier === '$rc_monthly' || 
-            p.packageType === 'MONTHLY' ||
-            p.identifier.includes('monthly')
-          );
-        }
-        
-        // Fallback to first package if not found
-        selectedPackage = selectedPackage || packages[0];
+        // Get the first available package - native iOS popup will show all options
+        // User can choose Monthly or Yearly from the native "Available Plans" popup
+        const selectedPackage = packages[0];
         
         if (!selectedPackage) {
           setOfferingsError(true);
@@ -119,11 +102,24 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
               description: "Subscription activated!",
             });
             
-            // Refresh user data
+            // Sync subscription with backend database
+            try {
+              await apiRequest("/api/sync-subscription", {
+                method: "POST",
+                body: JSON.stringify({
+                  subscriptionStatus: 'active',
+                  subscriptionPlan: 'premium'
+                })
+              });
+            } catch (syncError) {
+              console.log('Backend sync will happen via webhook');
+            }
+            
+            // Refresh user data and reload page to show paid member view
             queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
             setTimeout(() => {
-              window.location.href = '/subscribe';
-            }, 1500);
+              window.location.reload();
+            }, 1000);
           }
         } catch (purchaseError: any) {
           if (purchaseError.userCancelled) {
@@ -261,7 +257,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                 </div>
               </div>
             ) : (
-              // Available Plans View
+              // Available Plans View - Just Subscribe Now button, native iOS popup shows plan options
               <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden p-8">
                 <div className="text-center space-y-8">
                   <div className="relative inline-block">
@@ -276,42 +272,6 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                     <p className="text-[#8E8E93] text-lg">
                       Get all advanced reminder features
                     </p>
-                  </div>
-
-                  {/* Plan Selection */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setSelectedPlan('monthly')}
-                      className={`p-4 rounded-xl border-2 transition-all ${
-                        selectedPlan === 'monthly'
-                          ? 'border-blue-500 bg-blue-500/10'
-                          : 'border-[#2C2C2E] bg-[#2C2C2E]'
-                      }`}
-                    >
-                      <div className="text-left">
-                        <div className="text-sm text-[#8E8E93] mb-1">Monthly</div>
-                        <div className="text-2xl font-bold text-white">$5.99</div>
-                        <div className="text-xs text-[#8E8E93] mt-1">/month</div>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setSelectedPlan('yearly')}
-                      className={`p-4 rounded-xl border-2 transition-all relative ${
-                        selectedPlan === 'yearly'
-                          ? 'border-green-500 bg-green-500/10'
-                          : 'border-[#2C2C2E] bg-[#2C2C2E]'
-                      }`}
-                    >
-                      <div className="absolute -top-2 -right-2 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">
-                        Save 37%
-                      </div>
-                      <div className="text-left">
-                        <div className="text-sm text-[#8E8E93] mb-1">Annual</div>
-                        <div className="text-2xl font-bold text-white">$44.99</div>
-                        <div className="text-xs text-[#8E8E93] mt-1">/year</div>
-                      </div>
-                    </button>
                   </div>
 
                   {offeringsError && (
@@ -338,18 +298,14 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                       ) : (
                         <>
                           <Crown className="h-6 w-6 mr-3" />
-                          {isAuthenticated 
-                            ? `Subscribe ${selectedPlan === 'yearly' ? 'Annually' : 'Monthly'}` 
-                            : 'Sign in to Subscribe'}
+                          Subscribe Now
                         </>
                       )}
                     </Button>
                   </div>
 
                   <p className="text-sm text-[#8E8E93]">
-                    {isAuthenticated 
-                      ? `${selectedPlan === 'yearly' ? '$44.99/year' : '$5.99/month'} • Cancel anytime` 
-                      : 'Create an account to unlock premium'}
+                    Unlock all premium features
                   </p>
                 </div>
               </div>

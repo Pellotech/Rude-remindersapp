@@ -1364,6 +1364,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sync subscription status from mobile app after successful purchase
+  // This provides immediate feedback before RevenueCat webhook arrives
+  app.post('/api/sync-subscription', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { subscriptionStatus, subscriptionPlan } = req.body;
+      
+      if (subscriptionStatus === 'active' && subscriptionPlan === 'premium') {
+        await storage.updateUser(userId, {
+          subscriptionStatus: 'active',
+          subscriptionPlan: 'premium'
+        });
+        
+        res.json({ success: true, message: 'Subscription synced' });
+      } else {
+        res.json({ success: false, message: 'Invalid subscription data' });
+      }
+    } catch (error: any) {
+      console.error('Error syncing subscription:', error);
+      res.status(500).json({ error: { message: error.message } });
+    }
+  });
+
   // Note: RevenueCat subscriptions are cancelled through the mobile app stores
   // This route handles subscription status updates from webhooks
   app.post('/api/cancel-subscription', isAuthenticated, async (req: any, res) => {
