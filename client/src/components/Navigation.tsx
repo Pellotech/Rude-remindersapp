@@ -93,7 +93,7 @@ export default function Navigation() {
                 {isGuest ? (
                   <Button
                     onClick={() => window.location.href = '/login'}
-                    className="bg-rude-red hover:bg-red-700 text-white text-xs sm:text-sm px-3 py-1 flex-shrink-0"
+                    className="bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-2.5 flex-shrink-0 font-semibold shadow-lg border-2 border-red-700"
                     data-testid="button-nav-signin"
                   >
                     Sign In

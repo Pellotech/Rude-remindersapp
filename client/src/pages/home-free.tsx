@@ -274,7 +274,7 @@ export default function HomeFree() {
                 </div>
                 <Button 
                   onClick={() => window.location.href = '/login'}
-                  className="bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 text-sm"
+                  className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0 text-sm font-semibold shadow-lg border-2 border-red-700 px-6"
                   data-testid="button-guest-signin"
                 >
                   Sign In
