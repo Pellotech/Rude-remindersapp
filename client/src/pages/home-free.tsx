@@ -262,20 +262,9 @@ export default function HomeFree() {
         {isGuest && (
           <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1">
-                  <p className="text-sm text-blue-900">
-                    Register and subscribe for premium, just press Sign In
-                  </p>
-                </div>
-                <Button 
-                  onClick={() => window.location.href = '/login'}
-                  className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0 text-sm font-semibold shadow-lg border-2 border-red-700 px-6"
-                  data-testid="button-guest-signin"
-                >
-                  Sign In
-                </Button>
-              </div>
+              <p className="text-sm text-blue-900">
+                Register and subscribe for premium, just press Sign In above.
+              </p>
             </CardContent>
           </Card>
         )}
