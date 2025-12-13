@@ -542,15 +542,6 @@ export default function HomeFree() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="h-4 w-4 text-blue-600" />
-                    <span>{freeUsage.voiceCharacters}/{FREE_LIMITS.voiceCharacters} voice characters</span>
-                    {hasTemporaryPremiumVoices && (
-                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
-                        Premium active
-                      </span>
-                    )}
-                  </div>
                 </div>
                 {/* Progress bar for reminders */}
                 <div className="w-48">
