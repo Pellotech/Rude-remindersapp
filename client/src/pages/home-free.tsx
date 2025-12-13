@@ -290,58 +290,6 @@ export default function HomeFree() {
 
 
 
-        {/* Free Plan Usage Overview */}
-        <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200 mb-6">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-blue-800">Free Plan Usage</h3>
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Bell className="h-4 w-4 text-blue-600" />
-                    <span>{freeUsage.reminders}/{freeUsage.effectiveLimit} reminders this month</span>
-                    {rewardedFeatures.extraReminders > 0 && (
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                        +{rewardedFeatures.extraReminders} bonus
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Volume2 className="h-4 w-4 text-blue-600" />
-                    <span>{freeUsage.voiceCharacters}/{FREE_LIMITS.voiceCharacters} voice characters</span>
-                    {hasTemporaryPremiumVoices && (
-                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
-                        Premium active
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {/* Progress bar for reminders */}
-                <div className="w-48">
-                  <div className="flex justify-between text-xs text-blue-600 mb-1">
-                    <span>Reminders Used</span>
-                    <span>{Math.round((freeUsage.reminders / freeUsage.effectiveLimit) * 100)}%</span>
-                  </div>
-                  <div className="w-full bg-blue-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${Math.min((freeUsage.reminders / freeUsage.effectiveLimit) * 100, 100)}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                className="border-blue-300 text-blue-700 hover:bg-blue-100 text-xs sm:text-sm px-2 sm:px-4"
-                onClick={() => window.location.href = '/subscribe'}
-              >
-                <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="whitespace-nowrap">Upgrade</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Reward Ad Banner */}
         <RewardAdBanner 
           onRewardEarned={() => {
@@ -576,6 +524,58 @@ export default function HomeFree() {
           isPlayingVoice={isPlayingVoice}
         />
       )}
+
+      {/* Free Plan Usage Overview - Bottom Section */}
+      <div className="container mx-auto px-4 pb-6 max-w-7xl">
+        <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-blue-800">Free Plan Usage</h3>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-4 w-4 text-blue-600" />
+                    <span>{freeUsage.reminders}/{freeUsage.effectiveLimit} reminders this month</span>
+                    {rewardedFeatures.extraReminders > 0 && (
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                        +{rewardedFeatures.extraReminders} bonus
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-4 w-4 text-blue-600" />
+                    <span>{freeUsage.voiceCharacters}/{FREE_LIMITS.voiceCharacters} voice characters</span>
+                    {hasTemporaryPremiumVoices && (
+                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                        Premium active
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {/* Progress bar for reminders */}
+                <div className="w-48">
+                  <div className="flex justify-between text-xs text-blue-600 mb-1">
+                    <span>Reminders Used</span>
+                    <span>{Math.round((freeUsage.reminders / freeUsage.effectiveLimit) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${Math.min((freeUsage.reminders / freeUsage.effectiveLimit) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <Button 
+                className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0 text-sm font-semibold shadow-lg border-2 border-red-700 px-6"
+                onClick={() => window.location.href = '/subscribe'}
+              >
+                <span className="whitespace-nowrap">Upgrade</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* AdMob Integration for Free Users */}
       <AdMobManager 
