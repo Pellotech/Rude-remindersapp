@@ -258,17 +258,14 @@ export default function HomeFree() {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Guest Mode Banner - Apple App Store Compliant */}
+        {/* Guest Mode Banner */}
         {isGuest && (
           <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-sm text-blue-900 font-semibold">
-                    Create an account to sync your reminders.
-                  </p>
-                  <p className="text-xs text-blue-700 mt-1.5">
-                    This app works without an account. Optional account creation is only for syncing across devices.
+                  <p className="text-sm text-blue-900">
+                    Register and subscribe for premium, just press Sign In
                   </p>
                 </div>
                 <Button 
