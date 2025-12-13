@@ -29,7 +29,6 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
 import { RewardAdBanner } from "@/components/RewardAdBanner";
-import { NotificationTest } from "@/components/NotificationTest";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -415,22 +414,6 @@ export default function HomeFree() {
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
             />
-            {/* Free Plan Features Info */}
-            <div className="text-center text-sm text-muted-foreground p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
-              <div className="space-y-2">
-                <p className="font-medium text-blue-800">✨ Free Plan Features Active</p>
-                <p>• Template-based motivational responses</p>
-                <p>• Browser & voice notifications</p>
-                <p>• Up to {freeUsage.effectiveLimit} reminders per month (resets monthly)</p>
-                {rewardedFeatures.extraReminders > 0 && (
-                  <p className="text-green-700 font-medium">• +{rewardedFeatures.extraReminders} bonus reminders from watching ads!</p>
-                )}
-                {hasTemporaryPremiumVoices && (
-                  <p className="text-purple-700 font-medium">• Premium voices unlocked for {Math.ceil((rewardedFeatures.premiumVoicesUntil - Date.now()) / 60000)} minutes!</p>
-                )}
-                <p>• Basic voice characters</p>
-              </div>
-            </div>
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6">
@@ -641,9 +624,6 @@ export default function HomeFree() {
       <div className="fixed bottom-4 right-4 z-50 flex gap-2">
         <HelpMenu />
       </div>
-
-      {/* Test Notification Button (temporary for debugging) */}
-      <NotificationTest />
     </div>
   );
 }
