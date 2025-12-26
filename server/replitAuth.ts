@@ -253,7 +253,7 @@ export async function setupAuth(app: Express) {
       }
 
       // SECURITY: Verify the identity token with Apple's public keys
-      const { verifyAppleToken, validateAppleTokenAudience } = await import('./appleAuth.js');
+      const { verifyAppleToken, validateAppleTokenAudience } = await import('./services/appleAuthService');
       
       let verifiedPayload;
       try {
