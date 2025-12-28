@@ -1,0 +1,91 @@
+Goal: Update the iOS UI theme for Rude Reminders. Remove all instances of pink (#DA7F7F) and metallic gold (#D4AF37). New design should be clean, modern, and high-contrast with readable text.
+
+1) New Theme Colors
+
+App background (outer / page background): #C9A063 (muted gold)
+
+Surface cards / sections (inner boxes that were gold): #FFFFFF
+
+Buttons: #FFFFFF background
+
+Inputs / textfields / dropdowns: #FFFFFF background
+
+Borders / dividers: light neutral (ex: rgba(0,0,0,0.08))
+
+Text: use dark neutral (ex: #111827 for headings, #374151 for body)
+
+Primary accent for icons/selected states only: use a darker muted-gold/brown tone derived from background (ex: #6B4E2E) — do NOT reintroduce pink.
+
+2) Apply Globally (must-haves)
+
+Replace any hardcoded #DA7F7F, #D4AF37, and any “pink-ish” tones used in:
+
+background containers
+
+tabs
+
+pills/badges
+
+buttons
+
+toggles
+
+sliders
+
+input focus rings
+
+Ensure all form fields (text inputs, pickers, dropdowns) have:
+
+white background
+
+rounded corners (12–16px)
+
+padding 12–14px
+
+subtle border
+
+Ensure all buttons have:
+
+white background
+
+dark text
+
+subtle border + soft shadow
+
+pressed state slightly darker (ex: rgba(0,0,0,0.05))
+
+3) Screen-specific changes (based on Guest/Create page screenshot)
+
+The large “Create New Reminder” card should become a white card with:
+
+16–20px padding
+
+18–22px radius
+
+soft shadow
+
+The segmented tabs area should become a white pill container with a subtle border.
+
+Selected tab state: use a light tint (very subtle) or underline — no pink fills.
+
+The “Sign In” button should be white with dark text, subtle border, and shadow.
+
+4) Implementation approach
+
+Create a centralized theme:
+
+CSS variables (if web/Ionic)
+
+or a shared theme file (if React Native / custom components)
+
+Replace any per-component color styling with theme tokens.
+
+Verify contrast: text must stay readable on #C9A063 background.
+
+5) Deliverables
+
+Commit/return the changed theme file(s)
+
+Confirm which files were edited
+
+Provide before/after notes listing where pink/gold was removed

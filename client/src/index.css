@@ -43,49 +43,50 @@
 }
 
 :root {
-  --background: #DA7F7F;
-  --foreground: #1A1A1A;
-  --muted: #E5AFAF;
-  --muted-foreground: #4A4A4A;
-  --popover: #DA7F7F;
-  --popover-foreground: #1A1A1A;
-  --card: #D4AF37;
-  --card-foreground: #1A1A1A;
-  --border: #C19A2E;
-  --input: #DA7F7F;
-  --primary: #D4AF37;
-  --primary-foreground: #FFFFFF;
-  --secondary: #E5AFAF;
-  --secondary-foreground: #1A1A1A;
-  --accent: #D4AF37;
-  --accent-foreground: #1A1A1A;
-  --destructive: #FF453A;
+  /* New Clean Theme - Muted Gold Background with White Cards */
+  --background: #C9A063;
+  --foreground: #111827;
+  --muted: #E8DCC8;
+  --muted-foreground: #374151;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: #FFFFFF;
+  --primary: #FFFFFF;
+  --primary-foreground: #111827;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #111827;
+  --accent: #6B4E2E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --ring: #D4AF37;
-  --radius: 1.25rem;
+  --ring: #6B4E2E;
+  --radius: 0.875rem;
 }
 
 .dark {
-  --background: #DA7F7F;
-  --foreground: #1A1A1A;
-  --muted: #E5AFAF;
-  --muted-foreground: #4A4A4A;
-  --popover: #DA7F7F;
-  --popover-foreground: #1A1A1A;
-  --card: #D4AF37;
-  --card-foreground: #1A1A1A;
-  --border: #C19A2E;
-  --input: #DA7F7F;
-  --primary: #D4AF37;
-  --primary-foreground: #FFFFFF;
-  --secondary: #E5AFAF;
-  --secondary-foreground: #1A1A1A;
-  --accent: #D4AF37;
-  --accent-foreground: #1A1A1A;
-  --destructive: #FF453A;
+  --background: #C9A063;
+  --foreground: #111827;
+  --muted: #E8DCC8;
+  --muted-foreground: #374151;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --border: rgba(0, 0, 0, 0.08);
+  --input: #FFFFFF;
+  --primary: #FFFFFF;
+  --primary-foreground: #111827;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #111827;
+  --accent: #6B4E2E;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --ring: #D4AF37;
-  --radius: 1.25rem;
+  --ring: #6B4E2E;
+  --radius: 0.875rem;
 }
 
 @layer base {

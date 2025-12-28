@@ -18,7 +18,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
-  const isNativeMobile = Capacitor.isNativePlatform();
 
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [registerForm, setRegisterForm] = useState({
@@ -109,75 +108,75 @@ export default function LoginPage() {
   if (user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#DA7F7F] p-4 pt-safe">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-20 h-20 mx-auto bg-[#D4AF37] rounded-[20px] flex items-center justify-center shadow-lg mb-4">
+          <div className="w-20 h-20 mx-auto bg-white rounded-[18px] flex items-center justify-center shadow-md mb-4">
             <span className="text-4xl">😤</span>
           </div>
-          <h1 className="text-3xl font-bold text-[#2D2926]">Rude Reminders</h1>
-          <p className="text-[#4A3F3F] text-lg">The reminder that talks back</p>
+          <h1 className="text-3xl font-bold text-[#111827]">Rude Reminders</h1>
+          <p className="text-[#374151] text-lg">The reminder that talks back</p>
         </div>
 
         {/* Primary CTA - Start Using App */}
-        <Card className="bg-[#D4AF37] border-0 rounded-[20px] shadow-lg">
+        <Card className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] shadow-md">
           <CardContent className="pt-6 pb-6">
             <Button 
               onClick={handleContinueAsGuest}
-              className="w-full bg-[#2D2926] hover:bg-[#1A1A1A] text-white text-lg py-6 rounded-xl"
+              className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm active:bg-gray-100"
               size="lg"
               data-testid="button-continue-guest"
             >
-              <Zap className="mr-2 h-5 w-5" />
+              <Zap className="mr-2 h-5 w-5 text-[#6B4E2E]" />
               Start Using App
             </Button>
-            <p className="text-sm text-[#2D2926] text-center mt-3 font-medium">
+            <p className="text-sm text-[#374151] text-center mt-3">
               No account required to use this app
             </p>
           </CardContent>
         </Card>
 
         {/* Login/Register Form */}
-        <Card className="bg-[#FFF8F0] border-0 rounded-[20px] shadow-lg">
+        <Card className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] shadow-md">
           <CardContent className="pt-6">
-            <p className="text-sm text-[#5C4F4A] text-center mb-4">
+            <p className="text-sm text-[#374151] text-center mb-4">
               Optional — create an account to sync across devices
             </p>
             
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 bg-[#E8D5C4] rounded-xl">
-                <TabsTrigger value="login" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2D2926]">Login</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-lg data-[state=active]:bg-[#D4AF37] data-[state=active]:text-[#2D2926]">Register</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-[#F3F4F6] rounded-[12px] p-1 border border-[rgba(0,0,0,0.05)]">
+                <TabsTrigger value="login" className="rounded-[10px] text-[#374151] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Login</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-[10px] text-[#374151] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Register</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4 mt-4">
                   <div className="space-y-2">
-                    <Label className="text-[#2D2926]">Email</Label>
+                    <Label className="text-[#111827]">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                       <Input
                         type="email"
                         placeholder="your@email.com"
                         value={loginForm.email}
                         onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="pl-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827] py-3"
                         data-testid="input-login-email"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#2D2926]">Password</Label>
+                    <Label className="text-[#111827]">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter password"
                         value={loginForm.password}
                         onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                        className="pl-10 pr-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                        className="pl-10 pr-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827] py-3"
                         data-testid="input-login-password"
                         required
                       />
@@ -188,11 +187,11 @@ export default function LoginPage() {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-[#8B7355]" /> : <Eye className="h-4 w-4 text-[#8B7355]" />}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-[#6B4E2E]" /> : <Eye className="h-4 w-4 text-[#6B4E2E]" />}
                       </Button>
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-[#D4AF37] hover:bg-[#C19A2E] text-[#2D2926] rounded-xl py-5" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[12px] py-5 border border-[rgba(0,0,0,0.08)] shadow-sm" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
@@ -202,55 +201,55 @@ export default function LoginPage() {
                 <form onSubmit={handleRegister} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label className="text-[#2D2926]">First Name</Label>
+                      <Label className="text-[#111827]">First Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                         <Input
                           placeholder="First"
                           value={registerForm.firstName}
                           onChange={(e) => setRegisterForm(prev => ({ ...prev, firstName: e.target.value }))}
-                          className="pl-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                          className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[#2D2926]">Last Name</Label>
+                      <Label className="text-[#111827]">Last Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                         <Input
                           placeholder="Last"
                           value={registerForm.lastName}
                           onChange={(e) => setRegisterForm(prev => ({ ...prev, lastName: e.target.value }))}
-                          className="pl-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                          className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
                         />
                       </div>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#2D2926]">Email</Label>
+                    <Label className="text-[#111827]">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                       <Input
                         type="email"
                         placeholder="your@email.com"
                         value={registerForm.email}
                         onChange={(e) => setRegisterForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="pl-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
                         data-testid="input-register-email"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#2D2926]">Password</Label>
+                    <Label className="text-[#111827]">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Min 8 characters"
                         value={registerForm.password}
                         onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
-                        className="pl-10 pr-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                        className="pl-10 pr-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
                         data-testid="input-register-password"
                         required
                         minLength={8}
@@ -262,26 +261,26 @@ export default function LoginPage() {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-[#8B7355]" /> : <Eye className="h-4 w-4 text-[#8B7355]" />}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-[#6B4E2E]" /> : <Eye className="h-4 w-4 text-[#6B4E2E]" />}
                       </Button>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#2D2926]">Confirm Password</Label>
+                    <Label className="text-[#111827]">Confirm Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#8B7355]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm password"
                         value={registerForm.confirmPassword}
                         onChange={(e) => setRegisterForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="pl-10 bg-white border-[#E8D5C4] rounded-xl text-[#2D2926]"
+                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
                         data-testid="input-register-confirm-password"
                         required
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-[#D4AF37] hover:bg-[#C19A2E] text-[#2D2926] rounded-xl py-5" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[12px] py-5 border border-[rgba(0,0,0,0.08)] shadow-sm" disabled={isLoading}>
                     {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
@@ -291,7 +290,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center text-sm text-[#4A3F3F] space-y-2">
+        <div className="text-center text-sm text-[#374151] space-y-2">
           <p className="flex items-center justify-center gap-2 flex-wrap">
             <span>By continuing, you agree to our</span>
             <button
@@ -304,7 +303,7 @@ export default function LoginPage() {
                   window.open(url, "_blank");
                 }
               }}
-              className="text-[#2D2926] font-semibold hover:underline"
+              className="text-[#6B4E2E] font-semibold hover:underline"
               data-testid="link-terms-login"
             >
               Terms
@@ -320,7 +319,7 @@ export default function LoginPage() {
                   window.open(url, "_blank");
                 }
               }}
-              className="text-[#2D2926] font-semibold hover:underline"
+              className="text-[#6B4E2E] font-semibold hover:underline"
               data-testid="link-privacy-login"
             >
               Privacy Policy

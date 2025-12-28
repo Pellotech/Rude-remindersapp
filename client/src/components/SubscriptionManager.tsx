@@ -110,23 +110,23 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   };
 
   const renderHeader = () => (
-    <div className="sticky top-0 z-10 bg-[#DA7F7F]/95 backdrop-blur-sm safe-area-header">
+    <div className="sticky top-0 z-10 bg-[#C9A063]/95 backdrop-blur-sm safe-area-header">
       <div className="flex items-center justify-between px-4 py-3">
         {isSubscribed ? (
           <Link href="/settings">
-            <div className="flex items-center text-[#2D2926] cursor-pointer" data-testid="button-back">
+            <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
               <span className="text-[17px] font-medium">Settings</span>
             </div>
           </Link>
         ) : showPlans ? (
-          <button onClick={() => setShowPlans(false)} className="flex items-center text-[#2D2926]" data-testid="button-back-plans">
+          <button onClick={() => setShowPlans(false)} className="flex items-center text-[#111827]" data-testid="button-back-plans">
             <ChevronLeft className="h-5 w-5" />
             <span className="text-[17px] font-medium">Back</span>
           </button>
         ) : (
           <Link href="/">
-            <div className="flex items-center text-[#2D2926] cursor-pointer" data-testid="button-back">
+            <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
               <span className="text-[17px] font-medium">Back</span>
             </div>
@@ -137,17 +137,17 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   const renderUnlockPremium = () => (
-    <div className="bg-[#D4AF37] rounded-[20px] p-8 shadow-lg">
+    <div className="bg-white rounded-[18px] p-8 shadow-md border border-[rgba(0,0,0,0.08)]">
       <div className="text-center space-y-6">
-        <div className="w-24 h-24 mx-auto bg-[#FFF8F0] rounded-full flex items-center justify-center shadow-md">
-          <Crown className="h-12 w-12 text-[#D4AF37]" />
+        <div className="w-24 h-24 mx-auto bg-[#F3F4F6] rounded-full flex items-center justify-center">
+          <Crown className="h-12 w-12 text-[#6B4E2E]" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-[#2D2926] mb-2">Unlock Premium</h1>
-          <p className="text-[#4A3F3F]">Get all advanced reminder features</p>
+          <h1 className="text-3xl font-bold text-[#111827] mb-2">Unlock Premium</h1>
+          <p className="text-[#374151]">Get all advanced reminder features</p>
         </div>
-        <Button onClick={handleShowPlans} className="w-full bg-[#2D2926] hover:bg-[#1A1A1A] text-white text-lg py-6 rounded-xl" size="lg" data-testid="button-subscribe-now">
-          <Crown className="h-5 w-5 mr-2" />
+        <Button onClick={handleShowPlans} className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm" size="lg" data-testid="button-subscribe-now">
+          <Crown className="h-5 w-5 mr-2 text-[#6B4E2E]" />
           Subscribe Now
         </Button>
       </div>
@@ -155,86 +155,86 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   const renderAvailablePlans = () => (
-    <div className="bg-[#FFF8F0] rounded-[20px] p-8 shadow-lg">
+    <div className="bg-white rounded-[18px] p-8 shadow-md border border-[rgba(0,0,0,0.08)]">
       <div className="text-center space-y-6">
-        <div className="w-20 h-20 mx-auto bg-[#D4AF37] rounded-[20px] flex items-center justify-center shadow-md">
+        <div className="w-20 h-20 mx-auto bg-[#F3F4F6] rounded-[18px] flex items-center justify-center">
           <span className="text-4xl">😤</span>
         </div>
-        <h1 className="text-2xl font-bold text-[#2D2926]">Choose Your Plan</h1>
+        <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
         <div className="space-y-3">
           <button
             onClick={() => setSelectedPlan('monthly')}
-            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${selectedPlan === 'monthly' ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-[#E8D5C4] bg-white'}`}
+            className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selectedPlan === 'monthly' ? 'border-[#6B4E2E] bg-[#F9F7F4]' : 'border-[rgba(0,0,0,0.08)] bg-white'}`}
             data-testid="plan-monthly"
           >
             <div className="text-left">
-              <div className="text-[#2D2926] font-semibold text-lg">Monthly</div>
-              <div className="text-[#5C4F4A] text-sm">$6.99 per month</div>
+              <div className="text-[#111827] font-semibold text-lg">Monthly</div>
+              <div className="text-[#374151] text-sm">$6.99 per month</div>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#D4AF37] bg-[#D4AF37]' : 'border-[#C19A2E]'}`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#6B4E2E] bg-[#6B4E2E]' : 'border-[rgba(0,0,0,0.2)]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
             </div>
           </button>
           <button
             onClick={() => setSelectedPlan('yearly')}
-            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${selectedPlan === 'yearly' ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-[#E8D5C4] bg-white'}`}
+            className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selectedPlan === 'yearly' ? 'border-[#6B4E2E] bg-[#F9F7F4]' : 'border-[rgba(0,0,0,0.08)] bg-white'}`}
             data-testid="plan-yearly"
           >
             <div className="text-left">
               <div className="flex items-center gap-2">
-                <span className="text-[#2D2926] font-semibold text-lg">Yearly</span>
-                <span className="bg-[#4CAF50] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
+                <span className="text-[#111827] font-semibold text-lg">Yearly</span>
+                <span className="bg-[#22C55E] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              <div className="text-[#5C4F4A] text-sm">$59.99 per year (Save 28%)</div>
+              <div className="text-[#374151] text-sm">$59.99 per year (Save 28%)</div>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#D4AF37] bg-[#D4AF37]' : 'border-[#C19A2E]'}`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#6B4E2E] bg-[#6B4E2E]' : 'border-[rgba(0,0,0,0.2)]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
             </div>
           </button>
         </div>
         {offeringsError && (
-          <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-xl p-4">
+          <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-[12px] p-4">
             <p className="text-sm text-[#92400E]">Please sign into a Sandbox App Store account to test purchases.</p>
           </div>
         )}
-        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-[#D4AF37] hover:bg-[#C19A2E] text-[#2D2926] text-lg py-6 rounded-xl" size="lg" data-testid="button-continue-purchase">
+        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm" size="lg" data-testid="button-continue-purchase">
           {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
-        <p className="text-xs text-[#5C4F4A]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
+        <p className="text-xs text-[#374151]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
       </div>
     </div>
   );
 
   const renderPremiumDashboard = () => (
-    <div className="bg-[#D4AF37] rounded-[20px] p-8 shadow-lg">
+    <div className="bg-white rounded-[18px] p-8 shadow-md border border-[rgba(0,0,0,0.08)]">
       <div className="space-y-6">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-[16px] bg-[#FFF8F0] flex items-center justify-center shadow-md">
+          <div className="w-16 h-16 rounded-[14px] bg-[#F3F4F6] flex items-center justify-center">
             <span className="text-3xl">😤</span>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[#2D2926]">Rude Reminders</h1>
+            <h1 className="text-2xl font-bold text-[#111827]">Rude Reminders</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="bg-[#4CAF50] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
+              <span className="bg-[#22C55E] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
             </div>
           </div>
         </div>
-        <div className="bg-[#FFF8F0] rounded-xl p-4 space-y-3">
+        <div className="bg-[#F3F4F6] rounded-[14px] p-4 space-y-3">
           <div className="flex items-center gap-3">
             <span className="text-lg">💳</span>
-            <span className="text-[#2D2926]">{user?.subscriptionPlan === 'yearly' ? '$59.99 per year' : '$6.99 per month'}</span>
+            <span className="text-[#111827]">{user?.subscriptionPlan === 'yearly' ? '$59.99 per year' : '$6.99 per month'}</span>
           </div>
           {user?.subscriptionEndsAt && (
             <div className="flex items-center gap-3">
               <span className="text-lg">📅</span>
-              <span className="text-[#2D2926]">Renews {new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
+              <span className="text-[#111827]">Renews {new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
             </div>
           )}
         </div>
-        <button onClick={handleCancelSubscription} className="w-full py-3 text-[#DC3545] text-base font-medium active:opacity-70" data-testid="button-cancel-subscription">
+        <button onClick={handleCancelSubscription} className="w-full py-3 px-4 bg-white text-[#111827] text-base font-medium rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm hover:bg-gray-50 active:bg-gray-100" data-testid="button-cancel-subscription">
           Cancel Subscription
         </button>
-        <p className="text-sm text-[#4A3F3F] text-center">
+        <p className="text-sm text-[#374151] text-center">
           Cancellation is managed through your device's subscription settings.
         </p>
       </div>
@@ -242,7 +242,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   return (
-    <div className="min-h-screen bg-[#DA7F7F]">
+    <div className="min-h-screen bg-[#C9A063]">
       <div className="max-w-lg mx-auto">
         {renderHeader()}
         <div className="flex items-center justify-center p-4 pt-8">
