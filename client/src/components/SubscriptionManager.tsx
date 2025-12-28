@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Loader2, Crown, Sparkles, Home, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Loader2, Crown, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { Link } from "wouter";
@@ -14,18 +14,13 @@ interface SubscriptionManagerProps {
 async function loadOfferingsSafe() {
   try {
     const { Purchases } = await import('@revenuecat/purchases-capacitor');
-    
     try {
       const offeringsResult: any = await Purchases.getOfferings();
-      if (offeringsResult.current) {
-        return offeringsResult;
-      }
+      if (offeringsResult.current) return offeringsResult;
     } catch (e) {
       console.warn("Offerings failed, attempting sync:", e);
     }
-
     await Purchases.syncPurchases();
-
     try {
       const offeringsResult: any = await Purchases.getOfferings();
       return offeringsResult;
@@ -41,7 +36,6 @@ async function loadOfferingsSafe() {
 
 export default function SubscriptionManager({ isAuthenticated = false, user }: SubscriptionManagerProps) {
   const [loading, setLoading] = useState(false);
-  const [canceling, setCanceling] = useState(false);
   const [offeringsError, setOfferingsError] = useState(false);
   const [showPlans, setShowPlans] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
@@ -50,131 +44,60 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
 
   const isSubscribed = user?.subscriptionStatus === 'active';
 
-  // Handle guest users - force login before subscribing
   const handleGuestSubscribe = () => {
-    toast({
-      title: "Sign in Required",
-      description: "Create an account to subscribe.",
-      variant: "default",
-    });
-    setTimeout(() => {
-      window.location.href = '/login';
-    }, 500);
+    toast({ title: "Sign in Required", description: "Create an account to subscribe." });
+    setTimeout(() => { window.location.href = '/login'; }, 500);
   };
 
-  // Go to plan selection screen
   const handleShowPlans = () => {
-    if (!isAuthenticated) {
-      handleGuestSubscribe();
-      return;
-    }
+    if (!isAuthenticated) { handleGuestSubscribe(); return; }
     setShowPlans(true);
   };
 
-  // Go back to unlock premium screen
-  const handleBackFromPlans = () => {
-    setShowPlans(false);
-  };
-
-  // Handle purchase with selected plan
   const handlePurchase = async () => {
     setLoading(true);
     setOfferingsError(false);
-
     try {
       if (platform.isNative) {
         const offeringsResult = await loadOfferingsSafe();
-        
         if (!offeringsResult || !offeringsResult.current) {
           setOfferingsError(true);
           setLoading(false);
           return;
         }
-
         const packages = offeringsResult.current.availablePackages;
-        
-        // Find the package based on user's selection
         let packageToPurchase;
         if (selectedPlan === 'yearly') {
-          packageToPurchase = packages.find((p: any) => 
-            p.identifier === '$rc_annual' || 
-            p.packageType === 'ANNUAL' ||
-            p.identifier.includes('annual') ||
-            p.identifier.includes('yearly')
-          );
+          packageToPurchase = packages.find((p: any) => p.identifier === '$rc_annual' || p.packageType === 'ANNUAL' || p.identifier.includes('annual') || p.identifier.includes('yearly'));
         } else {
-          packageToPurchase = packages.find((p: any) => 
-            p.identifier === '$rc_monthly' || 
-            p.packageType === 'MONTHLY' ||
-            p.identifier.includes('monthly')
-          );
+          packageToPurchase = packages.find((p: any) => p.identifier === '$rc_monthly' || p.packageType === 'MONTHLY' || p.identifier.includes('monthly'));
         }
-        
-        // Fallback to first package if not found
         packageToPurchase = packageToPurchase || packages[0];
-        
         if (!packageToPurchase) {
           setOfferingsError(true);
           setLoading(false);
           return;
         }
-
         const { Purchases } = await import('@revenuecat/purchases-capacitor');
-        
         try {
-          const { customerInfo } = await Purchases.purchasePackage({
-            aPackage: packageToPurchase
-          });
-
+          const { customerInfo } = await Purchases.purchasePackage({ aPackage: packageToPurchase });
           const isPremiumNow = Object.keys(customerInfo.entitlements.active).length > 0;
-          
           if (isPremiumNow) {
-            toast({
-              title: "Success!",
-              description: "Subscription activated!",
-            });
-            
-            // Sync subscription with backend database
+            toast({ title: "Success!", description: "Subscription activated!" });
             try {
-              await apiRequest("/api/sync-subscription", {
-                method: "POST",
-                body: JSON.stringify({
-                  subscriptionStatus: 'active',
-                  subscriptionPlan: 'premium'
-                })
-              });
-            } catch (syncError) {
-              console.log('Backend sync will happen via webhook');
-            }
-            
-            // Refresh user data and reload page to show paid member view
+              await apiRequest("/api/sync-subscription", { method: "POST", body: JSON.stringify({ subscriptionStatus: 'active', subscriptionPlan: 'premium' }) });
+            } catch { console.log('Backend sync will happen via webhook'); }
             queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
+            setTimeout(() => { window.location.reload(); }, 1000);
           }
         } catch (purchaseError: any) {
-          if (purchaseError.userCancelled) {
-            console.log('User cancelled purchase');
-            return;
-          }
-          
+          if (purchaseError.userCancelled) return;
           if (purchaseError.code === 509 || purchaseError.code === '509') {
             setOfferingsError(true);
-            toast({
-              title: "Sandbox Account Required",
-              description: "Please sign into a Sandbox App Store account for testing.",
-              variant: "destructive",
-            });
+            toast({ title: "Sandbox Account Required", description: "Please sign into a Sandbox App Store account for testing.", variant: "destructive" });
             return;
           }
-          
-          console.error('Purchase failed:', purchaseError);
-          toast({
-            title: "Purchase Failed",
-            description: "Please try again.",
-            variant: "destructive",
-          });
+          toast({ title: "Purchase Failed", description: "Please try again.", variant: "destructive" });
         }
       }
     } finally {
@@ -182,58 +105,30 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     }
   };
 
-  const handleCancelSubscription = async () => {
-    setCanceling(true);
-    try {
-      const data = await apiRequest("/api/cancel-subscription", { method: "POST" });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      toast({
-        title: "Manage Subscription",
-        description: data.message || "Please manage your subscription through your device settings.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process request. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setCanceling(false);
-    }
+  const handleCancelSubscription = () => {
+    toast({ title: "How to Cancel", description: "Go to Settings → Your Name → Subscriptions on your iOS device." });
   };
 
-  // Render header based on current state
   const renderHeader = () => (
-    <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+    <div className="sticky top-0 z-10 bg-[#DA7F7F]/95 backdrop-blur-sm safe-area-header">
       <div className="flex items-center justify-between px-4 py-3">
         {isSubscribed ? (
-          <>
-            <Link href="/settings">
-              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
-                <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px]">Settings</span>
-              </div>
-            </Link>
-            <Link href="/">
-              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
-                <Home className="h-5 w-5" />
-              </div>
-            </Link>
-          </>
+          <Link href="/settings">
+            <div className="flex items-center text-[#2D2926] cursor-pointer" data-testid="button-back">
+              <ChevronLeft className="h-5 w-5" />
+              <span className="text-[17px] font-medium">Settings</span>
+            </div>
+          </Link>
         ) : showPlans ? (
-          <button 
-            onClick={handleBackFromPlans}
-            className="flex items-center text-[#0A84FF] cursor-pointer"
-            data-testid="button-back-plans"
-          >
+          <button onClick={() => setShowPlans(false)} className="flex items-center text-[#2D2926]" data-testid="button-back-plans">
             <ChevronLeft className="h-5 w-5" />
-            <span className="text-[17px]">Back</span>
+            <span className="text-[17px] font-medium">Back</span>
           </button>
         ) : (
           <Link href="/">
-            <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+            <div className="flex items-center text-[#2D2926] cursor-pointer" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px]">Back</span>
+              <span className="text-[17px] font-medium">Back</span>
             </div>
           </Link>
         )}
@@ -241,239 +136,118 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     </div>
   );
 
-  // Screen 1: Unlock Premium (Free User)
   const renderUnlockPremium = () => (
-    <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden p-8">
-      <div className="text-center space-y-8">
-        <div className="relative inline-block">
-          <Crown className="h-24 w-24 mx-auto text-purple-500" />
-          <Sparkles className="h-8 w-8 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />
+    <div className="bg-[#D4AF37] rounded-[20px] p-8 shadow-lg">
+      <div className="text-center space-y-6">
+        <div className="w-24 h-24 mx-auto bg-[#FFF8F0] rounded-full flex items-center justify-center shadow-md">
+          <Crown className="h-12 w-12 text-[#D4AF37]" />
         </div>
-      
         <div>
-          <h1 className="text-4xl font-bold text-white mb-3">
-            Unlock Premium
-          </h1>
-          <p className="text-[#8E8E93] text-lg">
-            Get all advanced reminder features
-          </p>
+          <h1 className="text-3xl font-bold text-[#2D2926] mb-2">Unlock Premium</h1>
+          <p className="text-[#4A3F3F]">Get all advanced reminder features</p>
         </div>
-
-        <div className="space-y-3">
-          <Button 
-            onClick={handleShowPlans}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white text-lg py-7"
-            size="lg"
-            data-testid="button-subscribe-now"
-          >
-            <Crown className="h-6 w-6 mr-3" />
-            Subscribe Now
-          </Button>
-        </div>
-
-        <p className="text-sm text-[#8E8E93]">
-          Unlock all premium features
-        </p>
+        <Button onClick={handleShowPlans} className="w-full bg-[#2D2926] hover:bg-[#1A1A1A] text-white text-lg py-6 rounded-xl" size="lg" data-testid="button-subscribe-now">
+          <Crown className="h-5 w-5 mr-2" />
+          Subscribe Now
+        </Button>
       </div>
     </div>
   );
 
-  // Screen 2: Available Plans Selection
   const renderAvailablePlans = () => (
-    <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden p-8">
+    <div className="bg-[#FFF8F0] rounded-[20px] p-8 shadow-lg">
       <div className="text-center space-y-6">
-        {/* App Icon */}
-        <div className="flex justify-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-            <span className="text-4xl">😌</span>
-          </div>
+        <div className="w-20 h-20 mx-auto bg-[#D4AF37] rounded-[20px] flex items-center justify-center shadow-md">
+          <span className="text-4xl">😤</span>
         </div>
-      
-        <h1 className="text-2xl font-bold text-white">
-          Available Plans
-        </h1>
-
-        {/* Plan Options */}
+        <h1 className="text-2xl font-bold text-[#2D2926]">Choose Your Plan</h1>
         <div className="space-y-3">
-          {/* Monthly Plan */}
           <button
             onClick={() => setSelectedPlan('monthly')}
-            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-              selectedPlan === 'monthly'
-                ? 'border-[#0A84FF] bg-[#0A84FF]/10'
-                : 'border-[#38383A] bg-[#2C2C2E]'
-            }`}
+            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${selectedPlan === 'monthly' ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-[#E8D5C4] bg-white'}`}
             data-testid="plan-monthly"
           >
             <div className="text-left">
-              <div className="text-white font-semibold text-lg">Rude Monthly Pro</div>
-              <div className="text-[#8E8E93] text-sm">$6.99 per month</div>
+              <div className="text-[#2D2926] font-semibold text-lg">Monthly</div>
+              <div className="text-[#5C4F4A] text-sm">$6.99 per month</div>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-              selectedPlan === 'monthly' 
-                ? 'border-[#0A84FF] bg-[#0A84FF]' 
-                : 'border-[#48484A]'
-            }`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#D4AF37] bg-[#D4AF37]' : 'border-[#C19A2E]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
             </div>
           </button>
-
-          {/* Yearly Plan */}
           <button
             onClick={() => setSelectedPlan('yearly')}
-            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
-              selectedPlan === 'yearly'
-                ? 'border-[#0A84FF] bg-[#0A84FF]/10'
-                : 'border-[#38383A] bg-[#2C2C2E]'
-            }`}
+            className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${selectedPlan === 'yearly' ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-[#E8D5C4] bg-white'}`}
             data-testid="plan-yearly"
           >
             <div className="text-left">
               <div className="flex items-center gap-2">
-                <span className="text-white font-semibold text-lg">Rude Yearly Pro</span>
-                <span className="bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">
-                  Save 37%
-                </span>
+                <span className="text-[#2D2926] font-semibold text-lg">Yearly</span>
+                <span className="bg-[#4CAF50] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              <div className="text-[#8E8E93] text-sm">$59.99 per year</div>
+              <div className="text-[#5C4F4A] text-sm">$59.99 per year (Save 28%)</div>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-              selectedPlan === 'yearly' 
-                ? 'border-[#0A84FF] bg-[#0A84FF]' 
-                : 'border-[#48484A]'
-            }`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#D4AF37] bg-[#D4AF37]' : 'border-[#C19A2E]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
             </div>
           </button>
         </div>
-
         {offeringsError && (
-          <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4">
-            <p className="text-sm text-yellow-200">
-              Please sign into a Sandbox App Store account to test purchases.
-            </p>
+          <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-xl p-4">
+            <p className="text-sm text-[#92400E]">Please sign into a Sandbox App Store account to test purchases.</p>
           </div>
         )}
-
-        {/* Continue Button */}
-        <div className="pt-4">
-          <Button 
-            onClick={handlePurchase}
-            disabled={loading}
-            className="w-full bg-[#0A84FF] hover:bg-[#0A84FF]/90 text-white text-lg py-6"
-            size="lg"
-            data-testid="button-continue-purchase"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                Continue with {selectedPlan === 'yearly' ? 'Yearly' : 'Monthly'}
-                <ChevronRight className="h-5 w-5 ml-2" />
-              </>
-            )}
-          </Button>
-        </div>
-
-        <p className="text-xs text-[#8E8E93]">
-          {selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime
-        </p>
+        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-[#D4AF37] hover:bg-[#C19A2E] text-[#2D2926] text-lg py-6 rounded-xl" size="lg" data-testid="button-continue-purchase">
+          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
+        </Button>
+        <p className="text-xs text-[#5C4F4A]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
       </div>
     </div>
   );
 
-  // Screen 4: Premium Dashboard (Active Subscription)
   const renderPremiumDashboard = () => (
-    <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden p-8">
+    <div className="bg-[#D4AF37] rounded-[20px] p-8 shadow-lg">
       <div className="space-y-6">
-        {/* App Icon & Title */}
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-            <span className="text-3xl">😌</span>
+          <div className="w-16 h-16 rounded-[16px] bg-[#FFF8F0] flex items-center justify-center shadow-md">
+            <span className="text-3xl">😤</span>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Rude Reminders</h1>
+            <h1 className="text-2xl font-bold text-[#2D2926]">Rude Reminders</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[#8E8E93]">
-                {user?.subscriptionPlan === 'premium' ? 'Premium' : 'Premium'} Plan
-              </span>
-              <Link href="#" className="text-[#0A84FF] text-sm">
-                See All Plans ›
-              </Link>
+              <span className="bg-[#4CAF50] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
             </div>
           </div>
         </div>
-
-        {/* Subscription Details */}
-        <div className="bg-[#2C2C2E] rounded-xl p-4 space-y-3">
+        <div className="bg-[#FFF8F0] rounded-xl p-4 space-y-3">
           <div className="flex items-center gap-3">
-            <div className="text-[#8E8E93]">💳</div>
-            <span className="text-white">$59.99 per year</span>
+            <span className="text-lg">💳</span>
+            <span className="text-[#2D2926]">{user?.subscriptionPlan === 'yearly' ? '$59.99 per year' : '$6.99 per month'}</span>
           </div>
           {user?.subscriptionEndsAt && (
             <div className="flex items-center gap-3">
-              <div className="text-[#8E8E93]">📅</div>
-              <span className="text-white">
-                Renews {new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </span>
+              <span className="text-lg">📅</span>
+              <span className="text-[#2D2926]">Renews {new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
             </div>
           )}
         </div>
-
-        {/* Cancel Subscription Button */}
-        <button
-          onClick={handleCancelSubscription}
-          disabled={canceling}
-          className="w-full py-3.5 bg-transparent text-red-500 text-lg rounded-lg font-medium active:opacity-70 disabled:opacity-50"
-          data-testid="button-cancel-subscription"
-        >
-          {canceling ? (
-            <>
-              <Loader2 className="h-5 w-5 mr-2 animate-spin inline" />
-              Processing...
-            </>
-          ) : (
-            'Cancel Subscription'
-          )}
+        <button onClick={handleCancelSubscription} className="w-full py-3 text-[#DC3545] text-base font-medium active:opacity-70" data-testid="button-cancel-subscription">
+          Cancel Subscription
         </button>
-
-        <p className="text-sm text-[#8E8E93] text-center">
-          If you cancel now, you can still access your subscription until{' '}
-          {user?.subscriptionEndsAt 
-            ? new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
-            : 'the renewal date'
-          }.
+        <p className="text-sm text-[#4A3F3F] text-center">
+          Cancellation is managed through your device's subscription settings.
         </p>
-
-        {/* About link */}
-        <div className="text-center pt-2">
-          <a href="#" className="text-[#0A84FF] text-sm">
-            About Subscriptions and Privacy
-          </a>
-        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#DA7F7F]">
       <div className="max-w-lg mx-auto">
         {renderHeader()}
-
         <div className="flex items-center justify-center p-4 pt-8">
           <div className="w-full max-w-md">
-            {isSubscribed 
-              ? renderPremiumDashboard()
-              : showPlans 
-                ? renderAvailablePlans()
-                : renderUnlockPremium()
-            }
+            {isSubscribed ? renderPremiumDashboard() : showPlans ? renderAvailablePlans() : renderUnlockPremium()}
           </div>
         </div>
       </div>
