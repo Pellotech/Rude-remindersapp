@@ -980,12 +980,12 @@ export default function ReminderForm({
               render={({ fieldState }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
-                    <FormLabel>{isMultiDay ? "Set time for all selected days" : "When should we remind you?"}</FormLabel>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-muted-foreground">Multiple Days</span>
                       <Switch
                         checked={isMultiDay}
                         onCheckedChange={handleMultiDayToggle}
+                        className="data-[state=checked]:bg-yellow-600 data-[state=unchecked]:bg-gray-300"
                       />
                     </div>
                   </div>
