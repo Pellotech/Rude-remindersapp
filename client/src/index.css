@@ -43,8 +43,8 @@
 }
 
 :root {
-  /* Clean Theme - Muted Gold Background with White Cards + Red Accent */
-  --background: #C9A063;
+  /* Clean Theme - Silver Background with White Cards + Red Accent */
+  --background: #C0C0C0;
   --foreground: #111827;
   --muted: #F9FAFB;
   --muted-foreground: #6B7280;
@@ -68,14 +68,14 @@
   /* Custom theme tokens */
   --rr-red: #C53B3B;
   --rr-red-light: #E85555;
-  --rr-gold: #C9A063;
+  --rr-gold: #C0C0C0;
   --rr-text-primary: #111827;
   --rr-text-secondary: #6B7280;
   --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
-  --background: #C9A063;
+  --background: #C0C0C0;
   --foreground: #111827;
   --muted: #F9FAFB;
   --muted-foreground: #6B7280;
@@ -98,7 +98,7 @@
   
   --rr-red: #C53B3B;
   --rr-red-light: #E85555;
-  --rr-gold: #C9A063;
+  --rr-gold: #C0C0C0;
   --rr-text-primary: #111827;
   --rr-text-secondary: #6B7280;
   --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
