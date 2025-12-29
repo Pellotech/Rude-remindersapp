@@ -416,8 +416,8 @@ export default function ReminderForm({
       toast({
         title: "Success!",
         description: isMultiDayResult
-          ? `Created ${result.count} recurring reminders with AI responses and motivational quotes!`
-          : `Your reminder has been created ${result.motivationalQuote ? 'with motivational quote ' : ''}and AI response generated automatically!`,
+          ? `Created ${result.count} recurring reminders!`
+          : `Your reminder has been created!`,
       });
 
       // Schedule native iOS/Android notifications if on mobile platform
@@ -1191,7 +1191,7 @@ export default function ReminderForm({
               )}
             />
 
-            {/* Context Categories for Better AI Responses */}
+            {/* Context Categories */}
             <FormField
               control={form.control}
               name="context"
@@ -1199,7 +1199,7 @@ export default function ReminderForm({
                 <FormItem>
                   <FormLabel className="flex items-center">
                     <span>What type of reminder is this?</span>
-                    <span className="text-xs text-muted-foreground ml-2">(Optional - helps AI give better responses)</span>
+                    <span className="text-xs text-muted-foreground ml-2">(Optional)</span>
                   </FormLabel>
 
                   {/* Quick Context Categories - Horizontal Scrolling */}
@@ -1554,7 +1554,7 @@ export default function ReminderForm({
               {createReminderMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Generating AI Response & Quote...
+                  Creating Reminder...
                 </>
               ) : isMultiDay ? (
                 selectedDays.length > 0

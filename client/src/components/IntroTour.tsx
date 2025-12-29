@@ -38,15 +38,15 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   const features = [
     {
       icon: <Crown className="h-6 w-6 text-yellow-600" />,
-      title: "Unlimited AI Responses with Premium",
-      description: "Get culturally-aware, contextually relevant rude reminders powered by advanced AI. From gentle nudges to hilariously rude wake-up calls - choose your perfect motivation level!",
+      title: "Unlimited Responses with Premium",
+      description: "Get culturally-aware, contextually relevant rude reminders. From gentle nudges to hilariously rude wake-up calls - choose your perfect motivation level!",
       badge: "Premium Feature",
       badgeColor: "bg-yellow-100 text-yellow-800"
     },
     {
       icon: <Calendar className="h-6 w-6 text-blue-600" />,
       title: "7-Day Free Trial",
-      description: "Experience all premium features for a full week! Create unlimited reminders, access all voice characters, and enjoy AI-generated responses completely free.",
+      description: "Experience all premium features for a full week! Create unlimited reminders, access all voice characters, and enjoy personalized responses completely free.",
       badge: "New Users",
       badgeColor: "bg-blue-100 text-blue-800"
     },

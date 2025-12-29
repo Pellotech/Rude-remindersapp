@@ -337,13 +337,13 @@ export default function DevPreview() {
                           Level {reminder.rudenessLevel}
                         </Badge>
                         {/* Premium/Free indicator based on actual user status */}
-                        {isPremium && features.aiGeneratedResponses ? (
+                        {isPremium ? (
                           <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                            Premium AI
+                            Premium
                           </Badge>
                         ) : (
                           <Badge variant="outline" className="text-xs border-gray-400 text-gray-600">
-                            Free Template
+                            Free
                           </Badge>
                         )}
                         {reminder.isMultiDay && (
@@ -390,17 +390,6 @@ export default function DevPreview() {
                 <div>
                   <div className="flex items-center justify-between">
                     <Label className="text-sm font-medium">Generated Response</Label>
-                    {selectedReminder.rudeMessage && (
-                      isPremium && features.aiGeneratedResponses ? (
-                        <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                          Premium AI Generated
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-xs border-gray-400 text-gray-600">
-                          Free Template Based
-                        </Badge>
-                      )
-                    )}
                   </div>
                   {selectedReminder.rudeMessage ? (
                     <div className={`mt-1 p-3 rounded-lg border-l-4 ${
@@ -415,20 +404,18 @@ export default function DevPreview() {
                   ) : selectedReminder.status === 'generating' ? (
                     <div className="mt-1 flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                      <span className="text-sm text-blue-600">Generating AI response...</span>
+                      <span className="text-sm text-blue-600">Generating response...</span>
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">AI response will be generated automatically</p>
+                    <p className="text-sm text-muted-foreground">Response will be generated automatically</p>
                   )}
                 </div>
 
-                {/* Show limited response variations (max 2) with correct labeling */}
+                {/* Show limited response variations (max 2) */}
                 {selectedReminder.responses && selectedReminder.responses.length > 1 && (
                   <div>
                     <Label className="text-sm font-medium">
-                      {isPremium && features.aiGeneratedResponses 
-                        ? "AI Response Variations (Showing 2)" 
-                        : "Template Response Variations (Showing 2)"}
+                      Response Variations (Showing 2)
                     </Label>
                     <div className="mt-2 space-y-2">
                       {selectedReminder.responses.slice(0, 2).map((response: string, index: number) => (
@@ -449,7 +436,7 @@ export default function DevPreview() {
                       ))}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Showing 2 of {selectedReminder.responses.length} {isPremium && features.aiGeneratedResponses ? "AI-generated" : "template-based"} variations
+                      Showing 2 of {selectedReminder.responses.length} variations
                     </p>
                   </div>
                 )}
@@ -536,16 +523,6 @@ export default function DevPreview() {
                   <div>
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-medium">Motivational Quote</Label>
-                      {/* Premium or cultural quote indicator based on user status */}
-                      {isPremium && features.aiGeneratedQuotes ? (
-                        <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                          Premium AI Quote
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-xs border-blue-400 text-blue-600">
-                          Cultural Quote
-                        </Badge>
-                      )}
                     </div>
                     <div className={`mt-1 p-3 rounded-lg border-l-4 ${
                       isPremium && features.aiGeneratedQuotes

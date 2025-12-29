@@ -97,17 +97,6 @@ export function RichReminderNotification({
           <div>
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium">Generated Response</Label>
-              {reminder.rudeMessage && (
-                isPremium && features.aiGeneratedResponses ? (
-                  <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                    Premium AI Generated
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-xs border-gray-400 text-gray-600">
-                    Free Template Based
-                  </Badge>
-                )
-              )}
             </div>
             {reminder.rudeMessage && (
               <div className={`mt-2 p-4 rounded-lg border-l-4 ${
@@ -122,13 +111,11 @@ export function RichReminderNotification({
             )}
           </div>
 
-          {/* AI Response Variations */}
+          {/* Response Variations */}
           {reminder.responses && reminder.responses.length > 1 && (
             <div>
               <Label className="text-sm font-medium">
-                {isPremium && features.aiGeneratedResponses 
-                  ? "AI Response Variations (Showing 2)" 
-                  : "Template Response Variations (Showing 2)"}
+                Response Variations (Showing 2)
               </Label>
               <div className="mt-2 space-y-3">
                 {reminder.responses.slice(0, 2).map((response: string, index: number) => (
@@ -149,7 +136,7 @@ export function RichReminderNotification({
                 ))}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Showing 2 of {reminder.responses.length} {isPremium && features.aiGeneratedResponses ? "AI-generated" : "template-based"} variations
+                Showing 2 of {reminder.responses.length} variations
               </p>
             </div>
           )}
@@ -159,15 +146,6 @@ export function RichReminderNotification({
             <div>
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Motivational Quote</Label>
-                {isPremium && features.aiGeneratedQuotes ? (
-                  <Badge className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                    Premium AI Quote
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-xs border-blue-400 text-blue-600">
-                    Cultural Quote
-                  </Badge>
-                )}
               </div>
               <div className={`mt-2 p-3 rounded-lg border-l-4 ${
                 isPremium && features.aiGeneratedQuotes

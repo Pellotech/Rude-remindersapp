@@ -367,7 +367,7 @@ export default function HomeFree() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <p className="text-[#6B7280]">
-                  Unlock unlimited reminders, premium voice characters, advanced AI responses, and more!
+                  Unlock unlimited reminders, premium voice characters, personalized responses, and more!
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,7 +388,7 @@ export default function HomeFree() {
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Advanced AI responses
+                        Personalized responses
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
