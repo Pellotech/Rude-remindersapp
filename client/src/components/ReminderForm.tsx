@@ -918,31 +918,29 @@ export default function ReminderForm({
 
 
   return (
-    <Card className="mt-4">
+    <Card className="mt-4 bg-white border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <Button
             type="button"
             variant="ghost"
-            className="flex items-center text-lg font-semibold p-0 h-auto hover:bg-transparent hover:text-blue-600"
+            className="flex items-center text-lg font-semibold p-0 h-auto hover:bg-transparent hover:text-[#C53B3B]"
             onClick={() => {
-              // Scroll to the submit button to focus user's attention on creating the reminder
               const submitButton = document.querySelector('button[type="submit"]');
               if (submitButton) {
                 submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Add a subtle highlight effect
-                submitButton.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+                submitButton.classList.add('ring-2', 'ring-[#C53B3B]', 'ring-offset-2');
                 setTimeout(() => {
-                  submitButton.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2');
+                  submitButton.classList.remove('ring-2', 'ring-[#C53B3B]', 'ring-offset-2');
                 }, 2000);
               }
             }}
           >
-            <PlusCircle className="text-rude-red-600 mr-3" />
+            <PlusCircle className="text-[#C53B3B] mr-3" />
             Create New Reminder
           </Button>
           {isSimplifiedInterface && (
-            <span className="text-sm text-muted-foreground bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-md">
+            <span className="text-sm text-[#6B7280] bg-[#F9FAFB] px-2 py-1 rounded-[8px] border border-[#EAEAEA]">
               Simplified Mode
             </span>
           )}
@@ -962,10 +960,10 @@ export default function ReminderForm({
                     <div className="relative">
                       <Input
                         placeholder="e.g., Finish that report, Call mom, Go to the gym"
-                        className="bg-white border-[3px] border-[#C9A063] focus:border-[#111827] focus:ring-0 rounded-[14px] py-3 text-[#111827]"
+                        className="bg-white border-2 border-[#EAEAEA] focus:border-[#C53B3B] focus:ring-0 rounded-[14px] py-3 text-[#111827] placeholder:text-[#9CA3AF]"
                         {...field}
                       />
-                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6B4E2E] h-4 w-4" />
+                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6B7280] h-4 w-4" />
                     </div>
                   </FormControl>
                   <FormMessage />

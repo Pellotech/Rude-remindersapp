@@ -1,0 +1,63 @@
+Here’s a strong prompt you can paste into Replit Assistant:
+
+Goal: Redesign the “main interface” screens (the 2nd and 3rd screenshots — Create/Manage/Upgrade area and the Create Reminder form UI) to match the visual style of the 1st screenshot (perfect look): muted gold background + white rounded “bubble card” sections, clean spacing, modern iOS feel.
+
+Brand / Theme:
+
+Background (entire page): Muted gold #C9A063 (solid).
+
+Primary surfaces/cards: White #FFFFFF with soft shadow.
+
+Borders/dividers: very light gray #EAEAEA / #EFEFEF.
+
+Text: near-black #111827 for headings; secondary #6B7280.
+
+Accent (buttons/interactive): thin red outline by default, and filled red when pressed/active. Use a consistent red like #C53B3B (or keep current red but unify it everywhere).
+
+What to change (must-do):
+
+Remove all pink/tan/gold filled UI blocks from screens 2 & 3. No filled gold containers on those screens.
+
+Convert major sections into white bubble cards (rounded 20–28px), with padding 16–20, gap 12–16, and a subtle shadow (iOS style).
+
+Inputs and “fill out areas” should be white with light gray border, rounded 14–16px. Focus state border uses the red accent lightly.
+
+Buttons:
+
+Default: white background with thin red border and red text/icon.
+
+Pressed/selected/primary: filled red with white text.
+
+Keep button height ~48–52px, radius 14–16px.
+
+Tabs (Create / Manage / Upgrade): make them a segmented control inside a white card:
+
+Unselected: white background, light border, dark text
+
+Selected: filled red, white text
+
+“Rudeness Level” slider and category chips:
+
+Slider track subtle gray; thumb red.
+
+Chips: default white w/ thin red outline; selected filled red.
+
+Make the layout consistent on iPhone and iPad: centered content column, max width ~520–620 on iPad, with side padding.
+
+Implementation requirements:
+
+Create a central theme file (CSS variables or Tailwind config) so colors are not hard-coded everywhere.
+
+Refactor existing components to use shared UI primitives: Card, PrimaryButton, OutlineButton, TextInput, Chip, SegmentedTabs.
+
+Keep accessibility: contrast, tap targets ≥44px, clear focus states.
+
+Do not change app logic—only styling/layout.
+
+Deliverables:
+
+Update the screens so 2nd & 3rd screenshot UI visually matches screenshot 1.
+
+Provide the updated files and a brief list of what changed.
+
+Ensure no leftover old theme colors remain (search for old hex values and remove them).

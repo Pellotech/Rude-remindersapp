@@ -319,20 +319,31 @@ export default function HomeFree() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="create" className="flex items-center gap-2">
-              <Bell className="h-4 w-4" />
-              Create
-            </TabsTrigger>
-            <TabsTrigger value="manage" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Manage
-            </TabsTrigger>
-            <TabsTrigger value="upgrade" className="flex items-center gap-2">
-              <Crown className="h-4 w-4" />
-              Upgrade
-            </TabsTrigger>
-          </TabsList>
+          <div className="bg-white rounded-[20px] p-1.5 shadow-[var(--rr-card-shadow)]">
+            <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
+              <TabsTrigger 
+                value="create" 
+                className="flex items-center gap-2 py-3 px-4 rounded-[16px] text-[#111827] border border-transparent data-[state=inactive]:bg-white data-[state=inactive]:border-[#EAEAEA] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white data-[state=active]:border-[#C53B3B] transition-all"
+              >
+                <Bell className="h-4 w-4" />
+                Create
+              </TabsTrigger>
+              <TabsTrigger 
+                value="manage" 
+                className="flex items-center gap-2 py-3 px-4 rounded-[16px] text-[#111827] border border-transparent data-[state=inactive]:bg-white data-[state=inactive]:border-[#EAEAEA] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white data-[state=active]:border-[#C53B3B] transition-all"
+              >
+                <Target className="h-4 w-4" />
+                Manage
+              </TabsTrigger>
+              <TabsTrigger 
+                value="upgrade" 
+                className="flex items-center gap-2 py-3 px-4 rounded-[16px] text-[#111827] border border-transparent data-[state=inactive]:bg-white data-[state=inactive]:border-[#EAEAEA] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white data-[state=active]:border-[#C53B3B] transition-all"
+              >
+                <Crown className="h-4 w-4" />
+                Upgrade
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="create" className="space-y-6">
             <ReminderForm 
@@ -347,56 +358,56 @@ export default function HomeFree() {
           </TabsContent>
 
           <TabsContent value="upgrade" className="space-y-6">
-            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+            <Card className="bg-white border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-purple-800">
-                  <Crown className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-[#111827]">
+                  <Crown className="h-5 w-5 text-[#C53B3B]" />
                   Upgrade to Premium
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <p className="text-purple-700">
+                <p className="text-[#6B7280]">
                   Unlock unlimited reminders, premium voice characters, advanced AI responses, and more!
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
-                    <h3 className="font-semibold text-purple-800">Premium Features:</h3>
-                    <ul className="space-y-2 text-sm text-purple-700">
+                    <h3 className="font-semibold text-[#111827]">Premium Features:</h3>
+                    <ul className="space-y-2 text-sm text-[#6B7280]">
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
                         Unlimited reminders
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
                         10 premium voice characters
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
                         Up to 5 photos/videos per reminder
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
                         Advanced AI responses
                       </li>
                       <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
                         Detailed analytics
                       </li>
                     </ul>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="text-center p-4 bg-white rounded-lg border border-purple-200">
-                      <div className="text-2xl font-bold text-purple-800">From $5.99/month</div>
-                      <div className="text-sm text-purple-600">$44.99 yearly or $5.99 monthly</div>
+                    <div className="text-center p-4 bg-[#F9FAFB] rounded-[16px] border border-[#EAEAEA]">
+                      <div className="text-2xl font-bold text-[#111827]">From $5.99/month</div>
+                      <div className="text-sm text-[#6B7280]">$44.99 yearly or $5.99 monthly</div>
                     </div>
                     <Button 
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-xs sm:text-sm px-3 sm:px-6 py-2 sm:py-3"
+                      className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-sm px-6 py-3 rounded-[14px] h-[52px]"
                       onClick={() => window.location.href = '/subscribe'}
                       data-testid="button-upgrade-premium-main"
                     >
-                      <Crown className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      <Crown className="h-4 w-4 mr-2" />
                       <span className="whitespace-nowrap">Choose Your Plan</span>
                     </Button>
                   </div>
@@ -429,17 +440,17 @@ export default function HomeFree() {
 
       {/* Free Plan Usage Overview - Bottom Section */}
       <div className="container mx-auto px-4 pb-6 max-w-7xl">
-        <Card className="bg-gradient-to-r from-blue-50 to-green-50 border-blue-200">
+        <Card className="bg-white border-[#EAEAEA] rounded-[20px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <h3 className="font-semibold text-blue-800">Free Plan Usage</h3>
+                <h3 className="font-semibold text-[#111827]">Free Plan Usage</h3>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <Bell className="h-4 w-4 text-blue-600" />
-                    <span>{freeUsage.reminders}/{freeUsage.effectiveLimit} reminders this month</span>
+                    <Bell className="h-4 w-4 text-[#C53B3B]" />
+                    <span className="text-[#6B7280]">{freeUsage.reminders}/{freeUsage.effectiveLimit} reminders this month</span>
                     {rewardedFeatures.extraReminders > 0 && (
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      <span className="text-xs bg-[#F9FAFB] text-[#111827] px-2 py-1 rounded-full border border-[#EAEAEA]">
                         +{rewardedFeatures.extraReminders} bonus
                       </span>
                     )}

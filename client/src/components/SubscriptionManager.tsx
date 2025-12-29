@@ -137,17 +137,17 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   const renderUnlockPremium = () => (
-    <div className="bg-white rounded-[18px] p-8 shadow-md border border-[rgba(0,0,0,0.08)]">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
-        <div className="w-24 h-24 mx-auto bg-[#F3F4F6] rounded-full flex items-center justify-center">
-          <Crown className="h-12 w-12 text-[#6B4E2E]" />
+        <div className="w-24 h-24 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
+          <Crown className="h-12 w-12 text-[#C53B3B]" />
         </div>
         <div>
           <h1 className="text-3xl font-bold text-[#111827] mb-2">Unlock Premium</h1>
-          <p className="text-[#374151]">Get all advanced reminder features</p>
+          <p className="text-[#6B7280]">Get all advanced reminder features</p>
         </div>
-        <Button onClick={handleShowPlans} className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm" size="lg" data-testid="button-subscribe-now">
-          <Crown className="h-5 w-5 mr-2 text-[#6B4E2E]" />
+        <Button onClick={handleShowPlans} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-subscribe-now">
+          <Crown className="h-5 w-5 mr-2" />
           Subscribe Now
         </Button>
       </div>
@@ -155,71 +155,71 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   const renderAvailablePlans = () => (
-    <div className="bg-white rounded-[18px] p-8 shadow-md border border-[rgba(0,0,0,0.08)]">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
-        <div className="w-20 h-20 mx-auto bg-[#F3F4F6] rounded-[18px] flex items-center justify-center">
+        <div className="w-20 h-20 mx-auto bg-[#F9FAFB] rounded-[20px] flex items-center justify-center">
           <span className="text-4xl">😤</span>
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
         <div className="space-y-3">
           <button
             onClick={() => setSelectedPlan('monthly')}
-            className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selectedPlan === 'monthly' ? 'border-[#6B4E2E] bg-[#F9F7F4]' : 'border-[rgba(0,0,0,0.08)] bg-white'}`}
+            className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#FEF2F2]' : 'border-[#EAEAEA] bg-white'}`}
             data-testid="plan-monthly"
           >
             <div className="text-left">
               <div className="text-[#111827] font-semibold text-lg">Monthly</div>
-              <div className="text-[#374151] text-sm">$6.99 per month</div>
+              <div className="text-[#6B7280] text-sm">$6.99 per month</div>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#6B4E2E] bg-[#6B4E2E]' : 'border-[rgba(0,0,0,0.2)]'}`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
             </div>
           </button>
           <button
             onClick={() => setSelectedPlan('yearly')}
-            className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selectedPlan === 'yearly' ? 'border-[#6B4E2E] bg-[#F9F7F4]' : 'border-[rgba(0,0,0,0.08)] bg-white'}`}
+            className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#FEF2F2]' : 'border-[#EAEAEA] bg-white'}`}
             data-testid="plan-yearly"
           >
             <div className="text-left">
               <div className="flex items-center gap-2">
                 <span className="text-[#111827] font-semibold text-lg">Yearly</span>
-                <span className="bg-[#22C55E] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
+                <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              <div className="text-[#374151] text-sm">$59.99 per year (Save 28%)</div>
+              <div className="text-[#6B7280] text-sm">$59.99 per year (Save 28%)</div>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#6B4E2E] bg-[#6B4E2E]' : 'border-[rgba(0,0,0,0.2)]'}`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
             </div>
           </button>
         </div>
         {offeringsError && (
-          <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-[12px] p-4">
+          <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-[14px] p-4">
             <p className="text-sm text-[#92400E]">Please sign into a Sandbox App Store account to test purchases.</p>
           </div>
         )}
-        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm" size="lg" data-testid="button-continue-purchase">
+        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-continue-purchase">
           {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
-        <p className="text-xs text-[#374151]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
+        <p className="text-xs text-[#6B7280]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
       </div>
     </div>
   );
 
   const renderPremiumDashboard = () => (
-    <div className="bg-white rounded-[18px] p-8 shadow-md border border-[rgba(0,0,0,0.08)]">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="space-y-6">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-[14px] bg-[#F3F4F6] flex items-center justify-center">
+          <div className="w-16 h-16 rounded-[16px] bg-[#F9FAFB] flex items-center justify-center">
             <span className="text-3xl">😤</span>
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#111827]">Rude Reminders</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="bg-[#22C55E] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
+              <span className="bg-[#C53B3B] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
             </div>
           </div>
         </div>
-        <div className="bg-[#F3F4F6] rounded-[14px] p-4 space-y-3">
+        <div className="bg-[#F9FAFB] rounded-[16px] p-4 space-y-3 border border-[#EAEAEA]">
           <div className="flex items-center gap-3">
             <span className="text-lg">💳</span>
             <span className="text-[#111827]">{user?.subscriptionPlan === 'yearly' ? '$59.99 per year' : '$6.99 per month'}</span>
@@ -231,10 +231,10 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             </div>
           )}
         </div>
-        <button onClick={handleCancelSubscription} className="w-full py-3 px-4 bg-white text-[#111827] text-base font-medium rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm hover:bg-gray-50 active:bg-gray-100" data-testid="button-cancel-subscription">
+        <button onClick={handleCancelSubscription} className="w-full py-3 px-4 bg-white text-[#C53B3B] text-base font-medium rounded-[14px] border-2 border-[#C53B3B] hover:bg-[#FEF2F2] active:bg-[#C53B3B] active:text-white h-[48px]" data-testid="button-cancel-subscription">
           Cancel Subscription
         </button>
-        <p className="text-sm text-[#374151] text-center">
+        <p className="text-sm text-[#6B7280] text-center">
           Cancellation is managed through your device's subscription settings.
         </p>
       </div>

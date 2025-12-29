@@ -43,50 +43,65 @@
 }
 
 :root {
-  /* New Clean Theme - Muted Gold Background with White Cards */
+  /* Clean Theme - Muted Gold Background with White Cards + Red Accent */
   --background: #C9A063;
   --foreground: #111827;
-  --muted: #E8DCC8;
-  --muted-foreground: #374151;
+  --muted: #F9FAFB;
+  --muted-foreground: #6B7280;
   --popover: #FFFFFF;
   --popover-foreground: #111827;
   --card: #FFFFFF;
   --card-foreground: #111827;
-  --border: rgba(0, 0, 0, 0.08);
+  --border: #EAEAEA;
   --input: #FFFFFF;
-  --primary: #FFFFFF;
-  --primary-foreground: #111827;
-  --secondary: #F3F4F6;
-  --secondary-foreground: #111827;
-  --accent: #6B4E2E;
+  --primary: #C53B3B;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFFFFF;
+  --secondary-foreground: #C53B3B;
+  --accent: #C53B3B;
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --ring: #6B4E2E;
-  --radius: 0.875rem;
+  --ring: #C53B3B;
+  --radius: 1rem;
+  
+  /* Custom theme tokens */
+  --rr-red: #C53B3B;
+  --rr-red-light: #E85555;
+  --rr-gold: #C9A063;
+  --rr-text-primary: #111827;
+  --rr-text-secondary: #6B7280;
+  --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
   --background: #C9A063;
   --foreground: #111827;
-  --muted: #E8DCC8;
-  --muted-foreground: #374151;
+  --muted: #F9FAFB;
+  --muted-foreground: #6B7280;
   --popover: #FFFFFF;
   --popover-foreground: #111827;
   --card: #FFFFFF;
   --card-foreground: #111827;
-  --border: rgba(0, 0, 0, 0.08);
+  --border: #EAEAEA;
   --input: #FFFFFF;
-  --primary: #FFFFFF;
-  --primary-foreground: #111827;
-  --secondary: #F3F4F6;
-  --secondary-foreground: #111827;
-  --accent: #6B4E2E;
+  --primary: #C53B3B;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FFFFFF;
+  --secondary-foreground: #C53B3B;
+  --accent: #C53B3B;
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --ring: #6B4E2E;
-  --radius: 0.875rem;
+  --ring: #C53B3B;
+  --radius: 1rem;
+  
+  --rr-red: #C53B3B;
+  --rr-red-light: #E85555;
+  --rr-gold: #C9A063;
+  --rr-text-primary: #111827;
+  --rr-text-secondary: #6B7280;
+  --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 @layer base {

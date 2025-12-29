@@ -116,38 +116,38 @@ export default function LoginPage() {
             <span className="text-4xl">😤</span>
           </div>
           <h1 className="text-3xl font-bold text-[#111827]">Rude Reminders</h1>
-          <p className="text-[#374151] text-lg">The reminder that talks back</p>
+          <p className="text-[#6B7280] text-lg">The reminder that talks back</p>
         </div>
 
         {/* Primary CTA - Start Using App */}
-        <Card className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] shadow-md">
+        <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6 pb-6">
             <Button 
               onClick={handleContinueAsGuest}
-              className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm active:bg-gray-100"
+              className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]"
               size="lg"
               data-testid="button-continue-guest"
             >
-              <Zap className="mr-2 h-5 w-5 text-[#6B4E2E]" />
+              <Zap className="mr-2 h-5 w-5" />
               Start Using App
             </Button>
-            <p className="text-sm text-[#374151] text-center mt-3">
+            <p className="text-sm text-[#6B7280] text-center mt-3">
               No account required to use this app
             </p>
           </CardContent>
         </Card>
 
         {/* Login/Register Form */}
-        <Card className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] shadow-md">
+        <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
-            <p className="text-sm text-[#374151] text-center mb-4">
+            <p className="text-sm text-[#6B7280] text-center mb-4">
               Optional — create an account to sync across devices
             </p>
             
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 bg-[#F3F4F6] rounded-[12px] p-1 border border-[rgba(0,0,0,0.05)]">
-                <TabsTrigger value="login" className="rounded-[10px] text-[#374151] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Login</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-[10px] text-[#374151] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Register</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
+                <TabsTrigger value="login" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white">Login</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white">Register</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
@@ -155,13 +155,13 @@ export default function LoginPage() {
                   <div className="space-y-2">
                     <Label className="text-[#111827]">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                       <Input
                         type="email"
                         placeholder="your@email.com"
                         value={loginForm.email}
                         onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827] py-3"
+                        className="pl-10 bg-white border-2 border-[#EAEAEA] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
                         data-testid="input-login-email"
                         required
                       />
@@ -170,13 +170,13 @@ export default function LoginPage() {
                   <div className="space-y-2">
                     <Label className="text-[#111827]">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter password"
                         value={loginForm.password}
                         onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                        className="pl-10 pr-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827] py-3"
+                        className="pl-10 pr-10 bg-white border-2 border-[#EAEAEA] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
                         data-testid="input-login-password"
                         required
                       />
@@ -187,11 +187,11 @@ export default function LoginPage() {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-[#6B4E2E]" /> : <Eye className="h-4 w-4 text-[#6B4E2E]" />}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-[#C53B3B]" /> : <Eye className="h-4 w-4 text-[#C53B3B]" />}
                       </Button>
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[12px] py-5 border border-[rgba(0,0,0,0.08)] shadow-sm" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#C53B3B] rounded-[14px] py-5 border-2 border-[#C53B3B] h-[48px] active:bg-[#C53B3B] active:text-white" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
@@ -203,7 +203,7 @@ export default function LoginPage() {
                     <div className="space-y-2">
                       <Label className="text-[#111827]">First Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                         <Input
                           placeholder="First"
                           value={registerForm.firstName}
@@ -215,7 +215,7 @@ export default function LoginPage() {
                     <div className="space-y-2">
                       <Label className="text-[#111827]">Last Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                         <Input
                           placeholder="Last"
                           value={registerForm.lastName}
@@ -228,7 +228,7 @@ export default function LoginPage() {
                   <div className="space-y-2">
                     <Label className="text-[#111827]">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                       <Input
                         type="email"
                         placeholder="your@email.com"
@@ -243,7 +243,7 @@ export default function LoginPage() {
                   <div className="space-y-2">
                     <Label className="text-[#111827]">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Min 8 characters"
@@ -261,14 +261,14 @@ export default function LoginPage() {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-[#6B4E2E]" /> : <Eye className="h-4 w-4 text-[#6B4E2E]" />}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-[#C53B3B]" /> : <Eye className="h-4 w-4 text-[#C53B3B]" />}
                       </Button>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label className="text-[#111827]">Confirm Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#6B4E2E]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm password"
@@ -280,7 +280,7 @@ export default function LoginPage() {
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[12px] py-5 border border-[rgba(0,0,0,0.08)] shadow-sm" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#C53B3B] rounded-[14px] py-5 border-2 border-[#C53B3B] h-[48px] active:bg-[#C53B3B] active:text-white" disabled={isLoading}>
                     {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
@@ -290,7 +290,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center text-sm text-[#374151] space-y-2">
+        <div className="text-center text-sm text-[#6B7280] space-y-2">
           <p className="flex items-center justify-center gap-2 flex-wrap">
             <span>By continuing, you agree to our</span>
             <button
@@ -303,7 +303,7 @@ export default function LoginPage() {
                   window.open(url, "_blank");
                 }
               }}
-              className="text-[#6B4E2E] font-semibold hover:underline"
+              className="text-[#C53B3B] font-semibold hover:underline"
               data-testid="link-terms-login"
             >
               Terms
@@ -319,7 +319,7 @@ export default function LoginPage() {
                   window.open(url, "_blank");
                 }
               }}
-              className="text-[#6B4E2E] font-semibold hover:underline"
+              className="text-[#C53B3B] font-semibold hover:underline"
               data-testid="link-privacy-login"
             >
               Privacy Policy
