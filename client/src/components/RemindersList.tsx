@@ -596,26 +596,26 @@ export default function RemindersList() {
                 {/* Current & Upcoming Reminders */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <h3 className="text-lg font-semibold text-blue-700">
+                    <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                    <h3 className="text-lg font-semibold text-gray-900">
                       Current & Upcoming Reminders ({upcomingReminders.length})
                     </h3>
                   </div>
-                  <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800">
+                  <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p className="text-sm text-gray-700">
                       Your active reminders that are scheduled for today and beyond. Manage, edit, or complete them here.
                     </p>
                   </div>
-                  <div className="max-h-96 overflow-y-auto space-y-3 border border-blue-200 rounded-lg p-3 bg-blue-50">
+                  <div className="max-h-96 overflow-y-auto space-y-3 border border-gray-200 rounded-lg p-3 bg-gray-50">
                     {upcomingReminders.length > 0 ? (
                       upcomingReminders.map(renderReminder)
                     ) : (
                       <div className="text-center py-8">
-                        <Clock className="h-12 w-12 text-blue-300 mx-auto mb-3" />
-                        <h4 className="text-sm font-medium text-blue-700 mb-1">
+                        <Clock className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                        <h4 className="text-sm font-medium text-gray-700 mb-1">
                           No upcoming reminders
                         </h4>
-                        <p className="text-xs text-blue-600">
+                        <p className="text-xs text-gray-600">
                           All caught up! Create a new reminder to get started.
                         </p>
                       </div>
