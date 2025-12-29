@@ -275,15 +275,11 @@ export default function HomeFree() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
                 <span className="truncate">{isGuest ? "Welcome Guest" : `Hey ${(user as any)?.name || 'Developer'}`}</span>
-                <Badge className="bg-gradient-to-r from-blue-600 to-green-600 text-white text-xs flex-shrink-0">
+                <Badge className="bg-gradient-to-r from-yellow-700 to-yellow-600 text-white text-xs flex-shrink-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free
                 </Badge>
               </h1>
-            </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-              <span className="text-xs sm:text-sm font-medium text-blue-600 whitespace-nowrap">{isGuest ? "Guest" : "Free"} Features Active</span>
             </div>
           </div>
         </div>
