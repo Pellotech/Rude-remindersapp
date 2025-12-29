@@ -476,17 +476,17 @@ export default function RemindersList() {
                 {overdueReminders.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <h3 className="text-lg font-semibold text-red-700">
+                      <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-gray-900">
                         Overdue ({overdueReminders.length})
                       </h3>
                     </div>
-                    <div className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-sm text-yellow-800">
-                        Let us know if you accomplished these so we know whether to build a mountain of disappointments or a mountain of accomplishments! ✅❌
+                    <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        Mark these reminders as accomplished or not accomplished to track your progress.
                       </p>
                     </div>
-                    <div className="max-h-96 overflow-y-auto space-y-3 border border-red-200 rounded-lg p-3 bg-red-50">
+                    <div className="max-h-96 overflow-y-auto space-y-3 border border-gray-200 rounded-lg p-3 bg-gray-50">
                       {overdueReminders.map((reminder: Reminder) => (
                         <SwipeableReminderCard
                           key={reminder.id}
