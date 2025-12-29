@@ -319,31 +319,20 @@ export default function HomeFree() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
-          <div className="bg-white rounded-[20px] p-1.5 shadow-[var(--rr-card-shadow)]">
-            <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
-              <TabsTrigger 
-                value="create" 
-                className="flex items-center gap-2 py-3 px-4 rounded-[16px] text-[#111827] border border-transparent data-[state=inactive]:bg-white data-[state=inactive]:border-[#EAEAEA] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white data-[state=active]:border-[#C53B3B] transition-all"
-              >
-                <Bell className="h-4 w-4" />
-                Create
-              </TabsTrigger>
-              <TabsTrigger 
-                value="manage" 
-                className="flex items-center gap-2 py-3 px-4 rounded-[16px] text-[#111827] border border-transparent data-[state=inactive]:bg-white data-[state=inactive]:border-[#EAEAEA] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white data-[state=active]:border-[#C53B3B] transition-all"
-              >
-                <Target className="h-4 w-4" />
-                Manage
-              </TabsTrigger>
-              <TabsTrigger 
-                value="upgrade" 
-                className="flex items-center gap-2 py-3 px-4 rounded-[16px] text-[#111827] border border-transparent data-[state=inactive]:bg-white data-[state=inactive]:border-[#EAEAEA] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white data-[state=active]:border-[#C53B3B] transition-all"
-              >
-                <Crown className="h-4 w-4" />
-                Upgrade
-              </TabsTrigger>
-            </TabsList>
-          </div>
+          <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
+            <TabsTrigger value="create" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              Create
+            </TabsTrigger>
+            <TabsTrigger value="manage" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Manage
+            </TabsTrigger>
+            <TabsTrigger value="upgrade" className="flex items-center gap-2">
+              <Crown className="h-4 w-4" />
+              Upgrade
+            </TabsTrigger>
+          </TabsList>
 
           <TabsContent value="create" className="space-y-6">
             <ReminderForm 
