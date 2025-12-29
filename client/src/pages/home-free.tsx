@@ -260,9 +260,9 @@ export default function HomeFree() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Guest Mode Banner */}
         {isGuest && (
-          <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+          <Card className="mb-6 bg-gray-100 border-gray-300">
             <CardContent className="pt-6">
-              <p className="text-sm text-blue-900">
+              <p className="text-sm text-gray-700">
                 Register and subscribe for premium, just press Sign In above.
               </p>
             </CardContent>
