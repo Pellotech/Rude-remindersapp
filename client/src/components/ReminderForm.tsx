@@ -962,10 +962,10 @@ export default function ReminderForm({
                     <div className="relative">
                       <Input
                         placeholder="e.g., Finish that report, Call mom, Go to the gym"
-                        className="border-2 border-blue-500 focus:border-blue-600"
+                        className="bg-white border-[3px] border-[#C9A063] focus:border-[#111827] focus:ring-0 rounded-[14px] py-3 text-[#111827]"
                         {...field}
                       />
-                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6B4E2E] h-4 w-4" />
                     </div>
                   </FormControl>
                   <FormMessage />
