@@ -346,7 +346,7 @@ export default function RemindersList() {
                 placeholder="Search reminders..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full"
+                className="pl-10 w-full bg-white focus-visible:border-yellow-600"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             </div>
