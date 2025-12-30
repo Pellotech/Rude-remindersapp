@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -33,8 +34,8 @@ export default function Billing() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#C9A063] flex items-center justify-center">
-        <div className="text-[#111827]">Loading...</div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
       </div>
     );
   }
@@ -46,7 +47,7 @@ export default function Billing() {
   const getStatusColor = () => {
     if (isSubscribed) return "text-[#22C55E]";
     if (user?.subscriptionStatus === "canceled") return "text-[#F59E0B]";
-    return "text-[#374151]";
+    return "text-[#8E8E93]";
   };
 
   const getStatusText = () => {
@@ -57,49 +58,49 @@ export default function Billing() {
   };
 
   return (
-    <div className="min-h-screen bg-[#C9A063]">
+    <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-[#C9A063]/95 backdrop-blur-sm safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/settings">
-              <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
+              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
                 <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px] font-medium">Settings</span>
+                <span className="text-[17px]">Settings</span>
               </div>
             </Link>
             <Link href="/">
-              <div className="text-[#111827] cursor-pointer" data-testid="button-home">
+              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
                 <Home className="h-5 w-5" />
               </div>
             </Link>
           </div>
-          <h1 className="text-[28px] font-bold text-[#111827] px-4 pb-3">Payment & Billing</h1>
+          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Payment & Billing</h1>
         </div>
 
-        <div className="py-6 px-4 space-y-6">
+        <div className="py-6 px-4 space-y-8">
           {/* Current Plan Section */}
           <div>
-            <h2 className="text-[13px] text-[#374151] uppercase tracking-wide px-4 mb-2 font-medium">Current Plan</h2>
-            <div className="bg-white rounded-[16px] overflow-hidden shadow-md border border-[rgba(0,0,0,0.08)]">
-              <div className="flex items-center justify-between px-4 py-3.5 border-b border-[rgba(0,0,0,0.06)]">
-                <span className="text-[#111827] text-[17px] font-medium">Plan</span>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Current Plan</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#38383A]">
+                <span className="text-white text-[17px]">Plan</span>
                 <div className="flex items-center gap-2">
-                  {subscriptionPlan === 'premium' && <Crown className="h-4 w-4 text-[#6B4E2E]" />}
-                  <span className="text-[#374151] text-[17px]">
+                  {subscriptionPlan === 'premium' && <Crown className="h-4 w-4 text-[#FFD700]" />}
+                  <span className="text-[#8E8E93] text-[17px]">
                     {subscriptionPlan === 'premium' ? 'Premium' : 'Free'}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between px-4 py-3.5 border-b border-[rgba(0,0,0,0.06)]">
-                <span className="text-[#111827] text-[17px] font-medium">Status</span>
+              <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#38383A]">
+                <span className="text-white text-[17px]">Status</span>
                 <span className={`text-[17px] font-semibold ${getStatusColor()}`}>
                   {getStatusText()}
                 </span>
               </div>
               {subscriptionEndsAt && isSubscribed && (
                 <div className="flex items-center justify-between px-4 py-3.5">
-                  <span className="text-[#111827] text-[17px] font-medium">Next Billing</span>
-                  <span className="text-[#374151] text-[17px]">
+                  <span className="text-white text-[17px]">Next Billing</span>
+                  <span className="text-[#8E8E93] text-[17px]">
                     {new Date(subscriptionEndsAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -109,17 +110,17 @@ export default function Billing() {
 
           {/* Subscription Management */}
           <div>
-            <h2 className="text-[13px] text-[#374151] uppercase tracking-wide px-4 mb-2 font-medium">Manage</h2>
-            <div className="bg-white rounded-[16px] overflow-hidden shadow-md border border-[rgba(0,0,0,0.08)]">
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Manage</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
               <Link href="/subscribe">
                 <div 
-                  className="flex items-center justify-between px-4 py-3.5 cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between px-4 py-3.5 cursor-pointer hover:bg-[#2C2C2E] transition-colors"
                   data-testid="button-review-plans"
                 >
-                  <span className="text-[#111827] text-[17px] font-medium">
+                  <span className="text-white text-[17px]">
                     {isSubscribed ? 'Manage Subscription' : 'Upgrade to Premium'}
                   </span>
-                  <ChevronRight className="h-5 w-5 text-[#6B4E2E]" />
+                  <ChevronRight className="h-5 w-5 text-[#48484A]" />
                 </div>
               </Link>
             </div>
@@ -130,7 +131,7 @@ export default function Billing() {
             <div className="pt-4">
               <button
                 onClick={() => setShowCancelDialog(true)}
-                className="w-full bg-white text-[#111827] text-[15px] py-3 px-4 font-medium rounded-[14px] border border-[rgba(0,0,0,0.08)] shadow-sm hover:bg-gray-50 active:bg-gray-100"
+                className="w-full bg-[#1C1C1E] text-white text-[17px] py-3.5 px-4 rounded-xl hover:bg-[#2C2C2E] transition-colors"
                 data-testid="button-cancel-subscription"
               >
                 Cancel Subscription
@@ -142,20 +143,20 @@ export default function Billing() {
 
       {/* Cancel Subscription Dialog */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="bg-white border-[rgba(0,0,0,0.08)] rounded-[18px]">
+        <AlertDialogContent className="bg-[#1C1C1E] border-[#38383A] rounded-xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[#111827]">Cancel Subscription</AlertDialogTitle>
-            <AlertDialogDescription className="text-[#374151]">
+            <AlertDialogTitle className="text-white">Cancel Subscription</AlertDialogTitle>
+            <AlertDialogDescription className="text-[#8E8E93]">
               To cancel, go to your iOS device Settings → Your Name → Subscriptions → Rude Reminders.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-[#F3F4F6] border-0 text-[#111827] hover:bg-[#E5E7EB] rounded-[12px]">
+            <AlertDialogCancel className="bg-[#2C2C2E] border-0 text-white hover:bg-[#3C3C3E] rounded-xl">
               Close
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleCancelSubscription}
-              className="bg-white hover:bg-gray-50 text-[#111827] border border-[rgba(0,0,0,0.08)] rounded-[12px]"
+              className="bg-[#0A84FF] hover:bg-[#0A7AEF] text-white border-0 rounded-xl"
             >
               Got It
             </AlertDialogAction>
