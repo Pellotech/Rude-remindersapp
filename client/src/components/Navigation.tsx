@@ -1,59 +1,31 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Settings, Home, Crown, Star, Bell, Shield } from "lucide-react";
+import { Settings, Home } from "lucide-react";
 import SettingsModal from "./SettingsModal";
-import { HelpMenu } from "./HelpMenu";
-import { Link, useLocation, useRoute } from "wouter";
+import { Link, useLocation } from "wouter";
 import type { User } from "@shared/schema";
-import logoImage from "@assets/translusant_logo2_1767105366642.png";
+import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 export default function Navigation() {
   const { user, isGuest } = useAuth() as { user: User | undefined; isGuest: boolean };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [location, navigate] = useLocation();
-
-  // Determine current mode based on URL
-  const isCurrentlyPremium = location.includes('premium');
-  const [developmentMode, setDevelopmentMode] = useState(isCurrentlyPremium);
-
-  // Handle switching between free and premium pages
-  const handleModeChange = (newMode: string) => {
-    const isPremium = newMode === "premium";
-    setDevelopmentMode(isPremium);
-
-    // Navigate to appropriate page
-    if (location === "/" || location === "/home-free" || location === "/home-premium") {
-      navigate(isPremium ? "/home-premium" : "/home-free");
-    }
-  };
+  const [location] = useLocation();
 
   return (
     <>
-      <nav className="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 relative z-50 safe-area-header">
+      <header className="bg-[#C9A063] relative z-50 safe-area-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20">
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-              <Link href="/">
-                <img 
-                  src={logoImage} 
-                  alt="Rude Reminders" 
-                  className="h-16 sm:h-18 w-auto max-w-[180px] sm:max-w-[220px] object-contain cursor-pointer"
-                  data-testid="nav-logo"
-                />
-              </Link>
-            </div>
-            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0 ml-4">{/* Removed HelpMenu from top nav to prevent header overlap */}
-
+          {/* Top row: utility buttons */}
+          <div className="flex justify-end items-center pt-3 pb-2">
+            <div className="flex items-center space-x-2">
               {/* Show Home button when not on home page */}
               {location !== "/" && (
                 <Link href="/">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-gray-500 hover:text-gray-700 p-2"
+                    className="text-[#111827]/70 hover:text-[#111827] hover:bg-[#C9A063]/50 p-2"
                   >
                     <Home className="h-4 w-4" />
                   </Button>
@@ -65,49 +37,62 @@ export default function Navigation() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={`text-gray-500 hover:text-gray-700 p-2 ${location === "/settings" ? "bg-gray-100 text-gray-900" : ""}`}
+                    className={`text-[#111827]/70 hover:text-[#111827] hover:bg-[#C9A063]/50 p-2 ${location === "/settings" ? "bg-[#C9A063]/30 text-[#111827]" : ""}`}
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
                 </Link>
               )}
 
-              <div className="flex items-center space-x-1 sm:space-x-2 ml-1 sm:ml-2">
-                {isGuest ? (
+              {isGuest ? (
+                <Button
+                  onClick={() => window.location.href = '/login'}
+                  className="bg-[#C53B3B] hover:bg-[#A83232] text-white text-sm px-4 py-2 font-semibold rounded-[12px] shadow-md"
+                  data-testid="button-nav-signin"
+                >
+                  Sign In
+                </Button>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  {user?.profileImageUrl && (
+                    <img
+                      src={user.profileImageUrl}
+                      alt="Profile"
+                      className="w-7 h-7 rounded-full object-cover"
+                    />
+                  )}
+                  <span className="text-sm font-medium text-[#111827] hidden sm:inline">
+                    {user?.firstName || user?.email || "User"}
+                  </span>
                   <Button
-                    onClick={() => window.location.href = '/login'}
-                    className="bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-2.5 flex-shrink-0 font-semibold shadow-lg border-2 border-red-700"
-                    data-testid="button-nav-signin"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.location.href = '/api/logout'}
+                    className="text-[#111827]/70 hover:text-[#111827] hover:bg-[#C9A063]/50 text-sm px-3 py-1"
                   >
-                    Sign In
+                    Logout
                   </Button>
-                ) : (
-                  <>
-                    {user?.profileImageUrl && (
-                      <img
-                        src={user.profileImageUrl}
-                        alt="Profile"
-                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
-                      />
-                    )}
-                    <span className="text-xs sm:text-sm font-medium text-gray-700 truncate max-w-20 sm:max-w-none hidden sm:inline">
-                      {user?.firstName || user?.email || "User"}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.location.href = '/api/logout'}
-                      className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm px-2 py-1 flex-shrink-0"
-                    >
-                      Logout
-                    </Button>
-                  </>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Center row: Logo - brand banner */}
+          <div className="flex justify-center items-center py-6">
+            <Link href="/">
+              <img 
+                src={logoImage} 
+                alt="Rude Reminders" 
+                className="w-[200px] sm:w-[240px] h-auto object-contain cursor-pointer"
+                data-testid="nav-logo"
+              />
+            </Link>
+          </div>
         </div>
-      </nav>
+        
+        {/* Subtle bottom separator */}
+        <div className="h-[1px] bg-gradient-to-r from-transparent via-[#111827]/10 to-transparent" />
+      </header>
 
       <SettingsModal
         isOpen={isSettingsOpen}
