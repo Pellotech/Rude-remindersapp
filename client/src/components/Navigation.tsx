@@ -40,7 +40,7 @@ export default function Navigation() {
                 <img 
                   src={logoImage} 
                   alt="Rude Reminders" 
-                  className="h-14 w-auto object-contain cursor-pointer"
+                  className="h-16 sm:h-18 w-auto max-w-[180px] sm:max-w-[220px] object-contain cursor-pointer"
                   data-testid="nav-logo"
                 />
               </Link>
