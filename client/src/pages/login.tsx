@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Zap, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Sparkles } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
+import AppHeader from "@/components/AppHeader";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
@@ -111,13 +112,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="w-20 h-20 mx-auto bg-white rounded-[18px] flex items-center justify-center shadow-md mb-4">
-            <span className="text-4xl">😤</span>
-          </div>
-          <h1 className="text-3xl font-bold text-[#111827]">Rude Reminders</h1>
-          <p className="text-[#6B7280] text-lg">The reminder that talks back</p>
-        </div>
+        <AppHeader className="mb-4" />
 
         {/* Primary CTA - Start Using App */}
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
@@ -128,7 +123,7 @@ export default function LoginPage() {
               size="lg"
               data-testid="button-continue-guest"
             >
-              <Zap className="mr-2 h-5 w-5" />
+              <Sparkles className="mr-2 h-5 w-5" />
               Start Using App
             </Button>
             <p className="text-sm text-[#6B7280] text-center mt-3">

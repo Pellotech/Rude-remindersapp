@@ -54,9 +54,6 @@ export default function Navigation() {
                     </h1>
                     <Megaphone className="h-6 w-6 text-red-600" />
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    The reminder that talks back
-                  </p>
                 </div>
               </div>
 

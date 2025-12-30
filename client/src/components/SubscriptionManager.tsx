@@ -158,7 +158,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
         <div className="w-20 h-20 mx-auto bg-[#F9FAFB] rounded-[20px] flex items-center justify-center">
-          <span className="text-4xl">😤</span>
+          <Crown className="h-10 w-10 text-[#C53B3B]" />
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
         <div className="space-y-3">
@@ -210,7 +210,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
       <div className="space-y-6">
         <div className="flex items-start gap-4">
           <div className="w-16 h-16 rounded-[16px] bg-[#F9FAFB] flex items-center justify-center">
-            <span className="text-3xl">😤</span>
+            <Crown className="h-8 w-8 text-[#C53B3B]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#111827]">Rude Reminders</h1>
