@@ -3,11 +3,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Volume2, Settings, Home, Crown, Star, Bell, Shield, Megaphone } from "lucide-react";
+import { Settings, Home, Crown, Star, Bell, Shield } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import { HelpMenu } from "./HelpMenu";
 import { Link, useLocation, useRoute } from "wouter";
 import type { User } from "@shared/schema";
+import logoImage from "@assets/translusant_logo2_1767105366642.png";
 
 export default function Navigation() {
   const { user, isGuest } = useAuth() as { user: User | undefined; isGuest: boolean };
@@ -35,29 +36,14 @@ export default function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20">
             <div className="flex items-center gap-4 flex-1 min-w-0">
-              <div className="flex-shrink-0 flex items-center gap-2">
-                <div className="p-2 bg-rude-red rounded-lg">
-                  <Volume2 className="h-7 w-7 text-white" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-2xl sm:text-3xl font-bold relative">
-                      <span className="relative inline-block"
-                            style={{
-                              color: '#ef4444',
-                              background: 'linear-gradient(to bottom, #f87171, #dc2626)',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent'
-                            }}>
-                        Rude Reminders
-                      </span>
-                    </h1>
-                    <Megaphone className="h-6 w-6 text-red-600" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Removed the Premium Toggle Input as requested */}
+              <Link href="/">
+                <img 
+                  src={logoImage} 
+                  alt="Rude Reminders" 
+                  className="h-14 w-auto object-contain cursor-pointer"
+                  data-testid="nav-logo"
+                />
+              </Link>
             </div>
             <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0 ml-4">{/* Removed HelpMenu from top nav to prevent header overlap */}
 
