@@ -330,7 +330,7 @@ export default function RemindersList() {
           <CardTitle>Your Reminders</CardTitle>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-2">
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-full sm:w-40 flex-shrink-0">
+              <SelectTrigger className="w-full sm:w-40 flex-shrink-0 border-2 border-gray-400 bg-white">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -346,7 +346,7 @@ export default function RemindersList() {
                 placeholder="Search reminders..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full bg-white border-2 border-yellow-600 focus-visible:border-red-500"
+                className="pl-10 w-full bg-white border-2 border-gray-400 focus-visible:border-gray-600"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             </div>
