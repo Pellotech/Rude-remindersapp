@@ -127,7 +127,7 @@ export default function LoginPage() {
               Start Using App
             </Button>
             <p className="text-sm text-[#6B7280] text-center mt-3">
-              free access
+              Free Access
             </p>
           </CardContent>
         </Card>
@@ -135,6 +135,9 @@ export default function LoginPage() {
         {/* Login/Register Form */}
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
+            <p className="text-sm text-[#6B7280] text-center mb-4">
+              Premium Access
+            </p>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
                 <TabsTrigger value="login" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Login</TabsTrigger>
