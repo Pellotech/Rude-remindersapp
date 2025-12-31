@@ -119,11 +119,11 @@ export default function LoginPage() {
           <CardContent className="pt-6 pb-6">
             <Button 
               onClick={handleContinueAsGuest}
-              className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]"
+              className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] h-[52px] border-2 border-[#EAEAEA] font-semibold"
               size="lg"
               data-testid="button-continue-guest"
             >
-              <Sparkles className="mr-2 h-5 w-5" />
+              <Sparkles className="mr-2 h-5 w-5 text-[#111827]" />
               Start Using App
             </Button>
             <p className="text-sm text-[#6B7280] text-center mt-3">
@@ -141,8 +141,8 @@ export default function LoginPage() {
             
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
-                <TabsTrigger value="login" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white">Login</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-[#C53B3B] data-[state=active]:text-white">Register</TabsTrigger>
+                <TabsTrigger value="login" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Login</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Register</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
@@ -186,7 +186,7 @@ export default function LoginPage() {
                       </Button>
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#C53B3B] rounded-[14px] py-5 border-2 border-[#C53B3B] h-[48px] active:bg-[#C53B3B] active:text-white" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
@@ -275,7 +275,7 @@ export default function LoginPage() {
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#C53B3B] rounded-[14px] py-5 border-2 border-[#C53B3B] h-[48px] active:bg-[#C53B3B] active:text-white" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
