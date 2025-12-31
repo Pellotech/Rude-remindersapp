@@ -1,0 +1,105 @@
+Prompt for Replit (copy/paste)
+
+Goal: Make the Reminder Alert modal (the screen that pops up when a reminder triggers) shorter/condensed so it fits fully on small iPhones without the Share button being cut off. Keep the design consistent with our muted gold + white bubble cards.
+
+Changes required
+
+Limit Variations to 2
+
+Only show two “Response Variations” max.
+
+Remove “Showing 2 of 4 variations” text.
+
+If there are more variations available, keep them in data but don’t render them here.
+
+Replace “Reminder Alert” header with the Rude Reminders logo
+
+Remove the text title “Reminder Alert”.
+
+Put the provided Rude Reminders logo image at the top-left (or centered) as the header branding.
+
+Keep the close “X” on the top-right.
+
+Move Share to the top as a small icon/button
+
+The Share action must be visible without scrolling.
+
+Replace the giant bottom “Share” button with a small share icon button in the header row (top-right near the close button OR top-left near logo).
+
+The modal should scroll for content, but header stays sticky (logo + share + close always visible).
+
+Layout condensation rules
+
+The modal content must fit on iPhone screens; reduce vertical padding everywhere.
+
+Use a single-column compact layout:
+
+Title (reminder title) smaller
+
+Rudeness Level pill smaller
+
+“Original Message” label can be smaller/optional, but keep the actual text visible.
+
+“Generated Response” keep visible and prioritize this.
+
+Show only 2 variations in smaller cards.
+
+Remove or collapse low-priority sections by default:
+
+Hide “Voice Character” and “Scheduled Time” behind a collapsed “Details” accordion (default collapsed).
+
+Reduce card padding and margins (ex: 8–12px instead of 16–24px).
+
+If attachments/images exist for the reminder, include them as a small thumbnail strip or single image preview, but keep it compact (max height ~120px).
+
+Implementation notes
+
+This is a Capacitor/Ionic style app: implement as a modal/bottom sheet with:
+
+max-height: 85vh;
+
+internal scroll (overflow-y: auto)
+
+sticky header (position: sticky; top: 0;)
+
+Share behavior:
+
+Share should share the exact reminder content the user sees (title + generated response + up to 2 variations + optional image thumbnail)
+
+Share should share as one composed image (render the condensed card to an image and share that), not just a URL.
+
+Acceptance criteria
+
+On iPhone, the modal opens and Share is visible immediately (no scrolling needed to find share).
+
+The modal shows:
+
+Rude Reminders logo header
+
+Reminder title
+
+Generated response
+
+Exactly 2 variations
+
+No “Share” button is cropped off at the bottom.
+
+“Voice Character” + “Scheduled Time” don’t take space unless expanded.
+
+Optional extra suggestion (makes it even cleaner)
+
+Tell Replit to also do this:
+
+Change the section order to:
+
+Title + rudeness pill
+
+Generated response
+
+Two variations
+
+Original message (smaller)
+
+Details accordion (voice + scheduled time)
+
+That keeps the “wow” part (the funny response) front and center.

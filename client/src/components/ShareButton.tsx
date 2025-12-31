@@ -295,141 +295,91 @@ export function ShareButton({
             className="rounded-2xl overflow-hidden"
             style={{ 
               backgroundColor: "#C9A063",
-              padding: "24px",
-              minHeight: "400px"
+              padding: "16px"
             }}
           >
-            <div className="bg-white rounded-2xl p-5 shadow-lg">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl">⏰</span>
-                <span className="font-bold text-xl text-gray-900">Reminder Alert</span>
+            <div className="bg-white rounded-2xl p-4 shadow-lg">
+              <div className="flex items-center justify-center mb-3">
+                <img 
+                  src={logoImage} 
+                  alt="Rude Reminders" 
+                  className="h-8 w-auto"
+                  crossOrigin="anonymous"
+                />
               </div>
 
-              <div className="text-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{reminderTitle}</h2>
-                <Badge className={`mt-2 ${getRudenessColor(rudenessLevel)}`}>
+              <div className="text-center mb-3">
+                <h2 className="text-lg font-bold text-gray-900 leading-tight">{reminderTitle}</h2>
+                <Badge className={`mt-1 text-xs ${getRudenessColor(rudenessLevel)}`}>
                   Rudeness Level {rudenessLevel}
                 </Badge>
               </div>
 
-              <div className="space-y-6 pt-4">
-                <div>
-                  <Label className="text-sm font-medium">Original Message</Label>
-                  <p className="text-sm text-muted-foreground mt-1">{originalMessage}</p>
-                </div>
-
+              <div className="space-y-3">
                 {rudeMessage && (
-                  <div>
-                    <Label className="text-sm font-medium">Generated Response</Label>
-                    <div className="mt-2 p-4 rounded-lg bg-gray-50 border-l-4 border-gray-400">
-                      <p className="text-base font-medium text-gray-800">{rudeMessage}</p>
-                    </div>
+                  <div className="p-3 rounded-lg bg-gray-50 border-l-4 border-gray-400">
+                    <p className="text-sm font-medium text-gray-800">{rudeMessage}</p>
                   </div>
                 )}
 
                 {responses.length > 1 && (
-                  <div>
-                    <Label className="text-sm font-medium">
-                      Response Variations (Showing 2)
-                    </Label>
-                    <div className="mt-2 space-y-3">
-                      {displayResponses.map((response: string, index: number) => (
-                        <div 
-                          key={index}
-                          className="p-3 rounded-lg flex items-start justify-between bg-gray-50 border-l-4 border-gray-400"
-                        >
-                          <p className="text-sm font-medium text-gray-800 flex-1">{response}</p>
-                          <Badge variant="outline" className="ml-2 text-xs">
-                            {index + 1}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Showing 2 of {responses.length} variations
-                    </p>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium text-gray-500">Response Variations</Label>
+                    {displayResponses.map((response: string, index: number) => (
+                      <div 
+                        key={index}
+                        className="p-2 rounded-lg flex items-start justify-between bg-gray-50 border-l-4 border-gray-400"
+                      >
+                        <p className="text-xs text-gray-700 flex-1">{response}</p>
+                        <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">
+                          {index + 1}
+                        </Badge>
+                      </div>
+                    ))}
                   </div>
                 )}
 
                 {motivationalQuote && (
-                  <div>
-                    <Label className="text-sm font-medium">Motivational Quote</Label>
-                    <div className="mt-2 p-3 rounded-lg bg-blue-50 border-l-4 border-blue-500">
-                      <p className="text-sm italic text-blue-800">"{motivationalQuote}"</p>
-                    </div>
+                  <div className="p-2 rounded-lg bg-blue-50 border-l-4 border-blue-500">
+                    <p className="text-xs italic text-blue-800">"{motivationalQuote}"</p>
                   </div>
                 )}
 
                 <div>
-                  <Label className="text-sm font-medium">Voice Character</Label>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {voiceCharacter?.replace('-', ' ') || "Default"}
-                  </p>
+                  <Label className="text-xs font-medium text-gray-500">Original Message</Label>
+                  <p className="text-xs text-gray-600 mt-0.5">{originalMessage}</p>
                 </div>
 
-                {scheduledTime && (
-                  <div>
-                    <Label className="text-sm font-medium">Scheduled Time</Label>
-                    <div className="flex items-center text-sm text-muted-foreground mt-1">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {scheduledTime}
-                    </div>
-                  </div>
-                )}
-
                 {attachments && attachments.length > 0 && (
-                  <div>
-                    <Label className="text-sm font-medium">Attachments</Label>
-                    <div className="mt-2 grid grid-cols-3 gap-2">
-                      {attachments.map((attachment: string, index: number) => {
-                        const isImage = isImagePath(attachment);
-                        const imageSrc = getImageSrc(attachment);
-                        
-                        return (
-                          <div 
-                            key={index}
-                            className="relative w-full h-20 rounded-md border overflow-hidden"
-                          >
-                            {isImage ? (
-                              <img
-                                src={imageSrc}
-                                alt={`Attachment ${index + 1}`}
-                                className="w-full h-full object-cover"
-                                crossOrigin="anonymous"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                                <div className="text-center">
-                                  <div className="text-lg">📁</div>
-                                  <div className="text-xs">File</div>
-                                </div>
-                              </div>
-                            )}
-                            <span className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-                              {index + 1}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {attachments.length} attachment(s) - tap to view
-                    </p>
+                  <div className="flex gap-1.5 overflow-x-auto">
+                    {attachments.slice(0, 4).map((attachment: string, index: number) => {
+                      const isImage = isImagePath(attachment);
+                      const imageSrc = getImageSrc(attachment);
+                      return (
+                        <div key={index} className="flex-shrink-0 w-14 h-14 rounded border overflow-hidden">
+                          {isImage ? (
+                            <img src={imageSrc} alt={`Attachment ${index + 1}`} className="w-full h-full object-cover" crossOrigin="anonymous" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
+                              <span className="text-sm">📁</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
-              </div>
 
-              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-center gap-2">
-                <img 
-                  src={logoImage} 
-                  alt="Rude Reminders" 
-                  className="h-6 w-auto"
-                  crossOrigin="anonymous"
-                />
+                {scheduledTime && (
+                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <Clock className="h-3 w-3" />
+                    <span>{scheduledTime}</span>
+                  </div>
+                )}
               </div>
               
-              <p className="text-xs text-gray-400 text-center mt-2">
-                Get the app at rudereminders.app
+              <p className="text-[10px] text-gray-400 text-center mt-3 pt-2 border-t border-gray-100">
+                rudereminders.app
               </p>
             </div>
           </div>

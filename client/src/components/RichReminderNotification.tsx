@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Volume2, Clock, X, Play, CheckCircle, ImageIcon } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Volume2, Clock, X, CheckCircle, ImageIcon, ChevronDown, Share2 } from "lucide-react";
 import { Reminder } from "@shared/schema";
+import { ShareButton } from "./ShareButton";
+import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
@@ -55,6 +57,8 @@ export function RichReminderNotification({
   isPlayingVoice = false
 }: RichReminderNotificationProps) {
   const [viewingImage, setViewingImage] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
   const getRudenessColor = (level: number) => {
     const colors = {
       1: "bg-green-100 text-green-800",
@@ -68,211 +72,152 @@ export function RichReminderNotification({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-bold">⏰ Reminder Alert</DialogTitle>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
+      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[85vh] flex flex-col">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Reminder</DialogTitle>
+        </DialogHeader>
+        
+        <div className="sticky top-0 z-10 bg-white border-b px-3 py-2 flex items-center justify-between">
+          <img src={logoImage} alt="Rude Reminders" className="h-8 w-auto" />
+          <div className="flex items-center gap-1">
+            <ShareButton reminder={reminder} iconOnly className="h-8 w-8 p-0" />
+            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
+              <X className="h-5 w-5" />
             </Button>
           </div>
-        </DialogHeader>
+        </div>
 
-        <div className="space-y-6 pt-4">
-          {/* Title */}
+        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">{reminder.title}</h2>
-            <Badge className={`mt-2 ${getRudenessColor(reminder.rudenessLevel)}`}>
+            <h2 className="text-lg font-bold text-gray-900 leading-tight">{reminder.title}</h2>
+            <Badge className={`mt-1 text-xs ${getRudenessColor(reminder.rudenessLevel)}`}>
               Rudeness Level {reminder.rudenessLevel}
             </Badge>
           </div>
 
-          {/* Original Message */}
-          <div>
-            <Label className="text-sm font-medium">Original Message</Label>
-            <p className="text-sm text-muted-foreground mt-1">{reminder.originalMessage}</p>
-          </div>
-
-          {/* Generated Response */}
-          <div>
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">Generated Response</Label>
+          {reminder.rudeMessage && (
+            <div className={`p-3 rounded-lg border-l-4 ${
+              isPremium && features.aiGeneratedResponses
+                ? 'bg-purple-50 border-purple-400'
+                : 'bg-gray-50 border-gray-400'
+            }`}>
+              <p className="text-sm font-medium text-gray-800">
+                {reminder.rudeMessage}
+              </p>
             </div>
-            {reminder.rudeMessage && (
-              <div className={`mt-2 p-4 rounded-lg border-l-4 ${
-                isPremium && features.aiGeneratedResponses
-                  ? 'bg-purple-50 border-purple-400'
-                  : 'bg-gray-50 border-gray-400'
-              }`}>
-                <p className="text-base font-medium text-gray-800">
-                  {reminder.rudeMessage}
-                </p>
-              </div>
-            )}
-          </div>
+          )}
 
-          {/* Response Variations */}
           {reminder.responses && reminder.responses.length > 1 && (
-            <div>
-              <Label className="text-sm font-medium">
-                Response Variations (Showing 2)
-              </Label>
-              <div className="mt-2 space-y-3">
-                {reminder.responses.slice(0, 2).map((response: string, index: number) => (
-                  <div key={index} className={`p-3 rounded-lg border-l-4 ${
-                    isPremium && features.aiGeneratedResponses
-                      ? 'bg-purple-50 border-purple-400'
-                      : 'bg-gray-50 border-gray-400'
-                  }`}>
-                    <div className="flex items-start justify-between">
-                      <p className="text-sm font-medium text-gray-800 flex-1">
-                        {response}
-                      </p>
-                      <Badge variant="outline" className="ml-2 text-xs">
-                        {index + 1}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Showing 2 of {reminder.responses.length} variations
-              </p>
-            </div>
-          )}
-
-          {/* Motivational Quote */}
-          {reminder.motivationalQuote && (
-            <div>
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium">Motivational Quote</Label>
-              </div>
-              <div className={`mt-2 p-3 rounded-lg border-l-4 ${
-                isPremium && features.aiGeneratedQuotes
-                  ? 'bg-purple-50 border-purple-500'
-                  : 'bg-blue-50 border-blue-500'
-              }`}>
-                <p className={`text-sm italic ${
-                  isPremium && features.aiGeneratedQuotes
-                    ? 'text-purple-800'
-                    : 'text-blue-800'
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-gray-500">Response Variations</Label>
+              {reminder.responses.slice(0, 2).map((response: string, index: number) => (
+                <div key={index} className={`p-2 rounded-lg border-l-4 ${
+                  isPremium && features.aiGeneratedResponses
+                    ? 'bg-purple-50 border-purple-400'
+                    : 'bg-gray-50 border-gray-400'
                 }`}>
-                  "{reminder.motivationalQuote}"
-                </p>
-              </div>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-xs text-gray-700 flex-1">{response}</p>
+                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">{index + 1}</Badge>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
-          {/* Voice Character */}
-          <div>
-            <Label className="text-sm font-medium">Voice Character</Label>
-            <div className="flex items-center justify-between mt-1">
-              <p className="text-sm text-muted-foreground">
-                {reminder.voiceCharacter?.replace('-', ' ') || "Default"}
-              </p>
-              {onPlayVoice && (
-                <Button
-                  onClick={onPlayVoice}
-                  disabled={isPlayingVoice}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Volume2 className="h-4 w-4 mr-1" />
-                  {isPlayingVoice ? "Playing..." : "Play Voice"}
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Scheduled Time */}
-          <div>
-            <Label className="text-sm font-medium">Scheduled Time</Label>
-            <div className="flex items-center mt-1">
-              <Clock className="h-4 w-4 mr-1 text-gray-500" />
-              <p className="text-sm text-muted-foreground">
-                {new Date(reminder.scheduledFor).toLocaleString()}
+          {reminder.motivationalQuote && (
+            <div className={`p-2 rounded-lg border-l-4 ${
+              isPremium && features.aiGeneratedQuotes
+                ? 'bg-purple-50 border-purple-500'
+                : 'bg-blue-50 border-blue-500'
+            }`}>
+              <p className={`text-xs italic ${
+                isPremium && features.aiGeneratedQuotes ? 'text-purple-800' : 'text-blue-800'
+              }`}>
+                "{reminder.motivationalQuote}"
               </p>
             </div>
+          )}
+
+          <div>
+            <Label className="text-xs font-medium text-gray-500">Original Message</Label>
+            <p className="text-xs text-gray-600 mt-0.5">{reminder.originalMessage}</p>
           </div>
 
-          {/* Attachments */}
           {reminder.attachments && reminder.attachments.length > 0 && (
             <div>
-              <Label className="text-sm font-medium">Attachments</Label>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {reminder.attachments.map((attachment: string, index: number) => {
+              <Label className="text-xs font-medium text-gray-500">Attachments</Label>
+              <div className="mt-1 flex gap-1.5 overflow-x-auto">
+                {reminder.attachments.slice(0, 4).map((attachment: string, index: number) => {
                   const isImage = isImagePath(attachment);
                   const imageSrc = getImageSrc(attachment);
-                  
                   return (
                     <div 
                       key={index} 
-                      className="relative group cursor-pointer"
+                      className="relative flex-shrink-0 cursor-pointer"
                       onClick={() => isImage && setViewingImage(imageSrc)}
                       data-testid={`attachment-${index}`}
                     >
-                      <div className="w-full h-20 rounded-md border overflow-hidden hover:ring-2 hover:ring-primary transition-all">
+                      <div className="w-16 h-16 rounded border overflow-hidden">
                         {isImage ? (
-                          <img
-                            src={imageSrc}
-                            alt={`Attachment ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              const container = target.parentElement!;
-                              container.innerHTML = `
-                                <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                                  <div class="text-center">
-                                    <div class="text-lg">📷</div>
-                                    <div class="text-xs">Image unavailable</div>
-                                  </div>
-                                </div>
-                              `;
-                            }}
-                          />
+                          <img src={imageSrc} alt={`Attachment ${index + 1}`} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
-                            <div className="text-center">
-                              <div className="text-lg">📁</div>
-                              <div className="text-xs">File</div>
-                            </div>
+                            <span className="text-lg">📁</span>
                           </div>
                         )}
                       </div>
-                      <span className="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
-                        {index + 1}
-                      </span>
-                      {isImage && (
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                          <ImageIcon className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                      )}
                     </div>
                   );
                 })}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {reminder.attachments.length} attachment(s) - tap to view
-              </p>
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-3 pt-4 border-t">
+          <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="w-full justify-between text-xs text-gray-500 h-7 px-2">
+                Details
+                <ChevronDown className={`h-3 w-3 transition-transform ${detailsOpen ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-2 pt-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <Volume2 className="h-3 w-3 text-gray-400" />
+                  <span className="text-xs text-gray-600">
+                    {reminder.voiceCharacter?.replace('-', ' ') || "Default"}
+                  </span>
+                </div>
+                {onPlayVoice && (
+                  <Button onClick={onPlayVoice} disabled={isPlayingVoice} variant="outline" size="sm" className="h-6 text-xs px-2">
+                    {isPlayingVoice ? "Playing..." : "Play"}
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3 text-gray-400" />
+                <span className="text-xs text-gray-600">
+                  {new Date(reminder.scheduledFor).toLocaleString()}
+                </span>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <div className="flex flex-col gap-2 pt-2 border-t">
             {onComplete && (
-              <Button onClick={onComplete} className="w-full" size="lg" data-testid="button-complete">
-                <CheckCircle className="h-4 w-4 mr-2" />
+              <Button onClick={onComplete} className="w-full h-9 text-sm" data-testid="button-complete">
+                <CheckCircle className="h-4 w-4 mr-1" />
                 Mark as Complete
               </Button>
             )}
-            <Button onClick={onClose} variant="outline" className="w-full" data-testid="button-dismiss">
-              Dismiss for Now
+            <Button onClick={onClose} variant="outline" className="w-full h-9 text-sm" data-testid="button-dismiss">
+              Dismiss
             </Button>
           </div>
         </div>
       </DialogContent>
 
-      {/* Image Viewer Modal */}
       <Dialog open={!!viewingImage} onOpenChange={() => setViewingImage(null)}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 bg-black/95">
           <DialogHeader className="sr-only">
