@@ -1,0 +1,79 @@
+✅ Prompt to give Replit (copy/paste)
+
+Goal: Fix sharing so users can share a reminder from the app and it works on iPhone/Android, with a share preview and the actual reminder content visible.
+
+Current problem: The share icon is triggering the WebView’s browser share menu (Twitter/X, Facebook, etc.) and “Copy Link” doesn’t work / doesn’t share the reminder content. It’s sharing a web URL (or nothing useful) instead of sharing the reminder.
+
+Build a real in-app Share feature (native share sheet)
+
+Replace the current “share” action with a dedicated function like shareReminder(reminderId) that uses:
+
+Capacitor Share plugin (@capacitor/share) for native share sheet
+
+Fallback to navigator.share() only if plugin isn’t available
+
+What to share (must include content):
+
+Title: Reminder Alert: {title}
+
+Text body (include the actual content):
+
+Original Message: ...
+
+AI Response: ...
+
+Rudeness Level: ...
+
+Scheduled Time: ...
+
+Add a short line: “Sent from Rude Reminders”
+
+Also include a link (optional but recommended):
+
+A deep link like rudereminders://reminder/{id} OR universal link like https://rudereminders.app/r/{id} if we have a domain.
+
+Make the “whole reminder pop up” when shared
+
+Generate a shareable image card (so the humour/AI response is visible when shared):
+
+Create a “Share Card” layout (like a screenshot) containing:
+
+App logo + “Rude Reminders”
+
+Reminder title
+
+Rudeness level badge
+
+Original message
+
+AI generated response (main highlight)
+
+Optional footer: “Get the app”
+
+Render the card to an image (PNG) using:
+
+HTML-to-canvas (e.g. html2canvas) OR a canvas renderer
+
+Save it temporarily and share it as a file using Capacitor Filesystem + Share:
+
+Share should include image + text + link
+
+On iOS and Android, the share sheet should show the image preview.
+
+UI requirements
+
+In the reminder view, keep the share icon, but it should call the new shareReminder() and NOT open the WebView share menu.
+
+Add a “Share Preview” modal optional: user taps “Share”, sees the card, then taps “Share Now”.
+
+Acceptance tests
+
+Sharing works on iPhone device build (not only simulator).
+
+Share sheet shows native options (Messages, Mail, WhatsApp, etc.)
+
+Shared content includes the reminder text AND an image card preview.
+
+“Copy Link” copies a usable link (deep link or universal link).
+
+No dependence on Twitter/Facebook menu inside the WebView.
