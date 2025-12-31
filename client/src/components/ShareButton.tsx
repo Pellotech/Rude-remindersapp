@@ -15,12 +15,12 @@ import {
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 interface ReminderData {
-  id?: number;
+  id?: string | number;
   title?: string;
   originalMessage?: string;
   rudeMessage?: string;
   rudenessLevel?: number;
-  scheduledFor?: string;
+  scheduledFor?: string | Date;
 }
 
 interface ShareButtonProps {
@@ -123,22 +123,27 @@ export function ShareButton({
       const shareText = generateShareText();
       
       if (Capacitor.isNativePlatform()) {
-        let imageUri: string | undefined;
-        
         const base64Image = await generateShareImage();
+        let files: string[] = [];
+        
         if (base64Image) {
           const savedUri = await saveImageToDevice(base64Image);
           if (savedUri) {
-            imageUri = savedUri;
+            files = [savedUri];
           }
         }
         
-        await Share.share({
+        const shareOptions: any = {
           title: `Rude Reminders: ${reminderTitle}`,
           text: shareText,
-          url: imageUri,
           dialogTitle: "Share your reminder",
-        });
+        };
+        
+        if (files.length > 0) {
+          shareOptions.files = files;
+        }
+        
+        await Share.share(shareOptions);
         
         toast({
           title: "Shared!",

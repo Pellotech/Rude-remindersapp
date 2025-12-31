@@ -423,9 +423,7 @@ export default function RemindersList() {
 
                         <div className="flex items-center gap-1 flex-shrink-0">
                           <ShareButton
-                            title={`My Reminder: ${reminder.title}`}
-                            message={reminder.rudeMessage || reminder.originalMessage}
-                            hashtags={["RudeReminders", "Productivity", "Goals"]}
+                            reminder={reminder}
                             className="h-8 w-8 p-0"
                             iconOnly={true}
                           />
@@ -532,9 +530,7 @@ export default function RemindersList() {
 
                                   <div className="flex items-center gap-1 flex-shrink-0">
                                     <ShareButton
-                                      title={`My Reminder: ${reminder.title}`}
-                                      message={reminder.rudeMessage || reminder.originalMessage}
-                                      hashtags={["RudeReminders", "Productivity", "Goals", "Accountability"]}
+                                      reminder={reminder}
                                       className="h-8 w-8 p-0"
                                       iconOnly={true}
                                     />

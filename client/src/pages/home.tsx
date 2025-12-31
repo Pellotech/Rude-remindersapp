@@ -96,8 +96,7 @@ export default function Home() {
                         voice.name.includes('Male') || 
                         voice.name.includes('David') ||
                         voice.name.includes('Daniel') ||
-                        voice.name.includes('Mark') ||
-                        voice.gender === 'male'
+                        voice.name.includes('Mark')
                       );
                       break;
                     case 'british-male':
@@ -111,8 +110,7 @@ export default function Home() {
                       selectedVoice = voices.find(voice => 
                         voice.name.includes('Female') ||
                         voice.name.includes('Samantha') ||
-                        voice.name.includes('Victoria') ||
-                        voice.gender === 'female'
+                        voice.name.includes('Victoria')
                       );
                       break;
                     case 'robotic':
@@ -199,7 +197,6 @@ export default function Home() {
           <ShareButton
             title="Discover Rude Reminders!"
             message="Found this amazing productivity app that gives me just the right push to get things done! Check out Rude Reminders."
-            hashtags={["RudeReminders", "Productivity", "GetThingsDone", "Motivation"]}
           />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -213,10 +210,7 @@ export default function Home() {
               <Sidebar />
             </div>
           </div>
-
-
         </div>
-      </div>
       
       {/* Intro Tour */}
       <IntroTour isOpen={showIntro} onClose={closeIntro} />

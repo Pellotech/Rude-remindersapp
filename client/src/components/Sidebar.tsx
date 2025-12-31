@@ -41,9 +41,8 @@ export default function Sidebar() {
           {stats.completedToday >= 3 && (
             <div className="mt-3 pt-3 border-t">
               <ShareButton
-                title="🎉 Daily goal achieved!"
+                title="Daily goal achieved!"
                 message={`Just completed ${stats.completedToday} tasks today with Rude Reminders! This app keeps me on track with the perfect amount of motivation.`}
-                hashtags={["RudeReminders", "ProductivityWin", "GoalAchieved", "Motivated"]}
                 className="w-full text-xs"
               />
             </div>
