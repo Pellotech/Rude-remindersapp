@@ -1,0 +1,139 @@
+Prompt to give Replit (Help page redesign + content)
+
+Goal: Redesign the in-app Help experience so it feels modern, useful, and covers the entire app (Free + Premium). Keep the existing “Start Tour” feature, but improve the Help UI and the content structure.
+
+1) Replace the current floating “Help” button + basic panel with a modern Help Center
+
+Keep a Help entry point always accessible (bottom-right is fine), but when tapped it should open a full-height bottom sheet (or modal) with:
+
+rounded corners (16–24px)
+
+subtle shadow
+
+smooth slide-up animation
+
+dismiss by “X” and by swipe down
+
+The Help Center should have:
+
+Search bar at the top: “Search help…”
+
+Start Tour card pinned near the top (keep this)
+
+A list of help categories as clean cards with icons + chevrons (like the screenshot style)
+
+2) Help should be smart + cover BOTH Free and Premium flows
+
+Inside Help Center, show sections that match what users actually struggle with. Write content for both Free + Premium.
+
+Create these categories (and make them expandable pages):
+
+Getting Started
+
+Start Using App (Guest)
+
+Creating an account (optional, for syncing)
+
+What “rudeness levels” mean
+
+Creating a Reminder
+
+Set time/date + multiple days
+
+Rudeness slider
+
+Categories (“Work”, “Family & Friends”, etc.)
+
+Voice Characters
+
+Media Attachments (include iPad notes)
+
+Motivational Quotes toggle/selector
+
+Manage Reminders
+
+Active vs Overdue vs Completed
+
+Editing reminders
+
+Marking accomplished / not accomplished
+
+Filters + search (how it works)
+
+Sharing
+
+How sharing works
+
+“Share card” preview
+
+Troubleshooting: if share sheet is blank / link not working
+
+Billing & Subscriptions
+
+Difference between Free and Premium
+
+Where to upgrade
+
+Restore purchases
+
+Manage subscription (iOS Settings)
+
+Troubleshooting
+
+Notifications not showing
+
+Subscription not updating
+
+Media upload issues
+
+App feels stuck / refresh steps
+
+3) Make it “intriguing” and actually helpful (not generic)
+
+For each category page:
+
+Use short bullet points, not long paragraphs.
+
+Include mini step-by-step (“Tap Manage → choose reminder → …”).
+
+Include 2–3 FAQs at the bottom of each category.
+
+Add a small “Need more help?” section with:
+
+“Contact support” button (email link)
+
+“Report a bug” button (opens feedback form or email with device info)
+
+4) Match the current app style (muted gold + white bubbles)
+
+Use the existing app theme:
+
+Background: muted gold (same as main screens)
+
+Help sheet/cards: white bubble cards
+
+Accent: use the same gold/tan accents currently used for tabs/chips
+
+Primary action buttons (like Start Tour): thin red outline, and on press solid red with white text.
+
+Keep spacing generous so it feels premium and not cramped.
+
+5) Navigation + behavior requirements
+
+Help Center opens from any tab (Create / Manage / Upgrade).
+
+Search should filter articles by title + keywords.
+
+“Start Tour” stays and triggers the existing tour flow.
+
+Persist last opened help section so when users reopen Help it returns where they left off.
+
+6) Deliverables I want from you (Replit)
+
+Implement the new Help Center UI (bottom sheet/modal) + category pages.
+
+Populate the text content with app-specific instructions (based on the current screens: Free main, Manage reminders, Upgrade/subscription).
+
+Keep code organized: HelpCenter.tsx, HelpArticle.tsx, helpContent.ts (or similar).
+
+Make sure it works well on iPhone sizes and doesn’t overflow; scroll inside the sheet.
