@@ -44,13 +44,6 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
       badgeColor: "bg-yellow-100 text-yellow-800"
     },
     {
-      icon: <Calendar className="h-6 w-6 text-blue-600" />,
-      title: "7-Day Free Trial",
-      description: "Experience all premium features for a full week! Create unlimited reminders, access all voice characters, and enjoy personalized responses completely free.",
-      badge: "New Users",
-      badgeColor: "bg-blue-100 text-blue-800"
-    },
-    {
       icon: <Star className="h-6 w-6 text-purple-600" />,
       title: "5-Level Rudeness Scale",
       description: "From polite reminders to savage motivation! Choose how 'rude' you want your reminders to be - our unique selling point that makes productivity fun.",
@@ -59,7 +52,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
     },
     {
       icon: <Volume2 className="h-6 w-6 text-green-600" />,
-      title: "10 Premium Voice Characters",
+      title: "5 Premium Voice Characters",
       description: "Drill Sergeant, Life Coach, Sarcastic Friend, Motivational Speaker, and more! Each voice has unique personality traits to match your mood.",
       badge: "Voice Features",
       badgeColor: "bg-green-100 text-green-800"
@@ -73,24 +66,10 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
     },
     {
       icon: <Image className="h-6 w-6 text-pink-600" />,
-      title: "Photo & Video Attachments",
-      description: "Add up to 5 photos or videos to your reminders for extra motivation. Perfect for goal photos, progress pics, or visual inspiration.",
+      title: "Photo Attachments",
+      description: "Add up to 5 photos to your reminders for extra motivation. Perfect for goal photos, progress pics, or visual inspiration.",
       badge: "Multimedia",
       badgeColor: "bg-pink-100 text-pink-800"
-    },
-    {
-      icon: <Smartphone className="h-6 w-6 text-orange-600" />,
-      title: "Native Mobile Apps",
-      description: `${platform.isIOS ? 'iOS' : 'iOS and Android'} apps with push notifications, camera integration, and offline functionality. Your reminders follow you everywhere!`,
-      badge: "Mobile Ready",
-      badgeColor: "bg-orange-100 text-orange-800"
-    },
-    {
-      icon: <Settings className="h-6 w-6 text-gray-600" />,
-      title: "Powerful Settings & Customization",
-      description: "Customize everything! Set personal info for tailored content, choose notification preferences, themes, and advanced reminder options.",
-      badge: "Customization",
-      badgeColor: "bg-gray-100 text-gray-800"
     },
     {
       icon: <BarChart3 className="h-6 w-6 text-indigo-600" />,
