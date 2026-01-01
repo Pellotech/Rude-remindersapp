@@ -249,8 +249,8 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
                 <h1 className="text-4xl font-bold text-white mb-3">
                   Unlock Premium
                 </h1>
-                <p className="text-[#8E8E93] text-lg">
-                  Get all advanced reminder features
+                <p className="text-[#4115ba] text-lg font-bold">
+                  Please create an account before subscribing
                 </p>
               </div>
 
