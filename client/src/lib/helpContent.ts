@@ -333,13 +333,15 @@ export const helpCategories: HelpCategory[] = [
         icon: "ArrowUpCircle",
         keywords: ["upgrade", "subscribe", "buy", "purchase"],
         steps: [
+          "First, create an account if you haven't already (tap 'Sign In' or 'Register')",
           "Go to the Upgrade tab in the bottom navigation",
           "Review the premium features and pricing",
           "Tap 'Subscribe' and confirm with Face ID/Touch ID",
           "Your premium status activates immediately"
         ],
         faqs: [
-          { question: "Which payment methods work?", answer: "We use Apple/Google Pay through the app stores. All cards linked to your app store account work." }
+          { question: "Which payment methods work?", answer: "We use Apple/Google Pay through the app stores. All cards linked to your app store account work." },
+          { question: "Do I need an account to subscribe?", answer: "Yes, you must be registered and logged in to subscribe to premium. This ensures your subscription syncs across all your devices." }
         ]
       },
       {
