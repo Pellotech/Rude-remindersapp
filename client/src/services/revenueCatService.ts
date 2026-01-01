@@ -26,11 +26,11 @@ export class RevenueCatService {
       const platform = Capacitor.getPlatform();
       
       // Use environment variables to support switching between test and production
-      // For test store (development): Use test store API keys
-      // For production: Use platform-specific production API keys
+      // PRODUCTION MODE: Using production API keys
+      // Get your production keys from RevenueCat Dashboard > Projects > API Keys
       const apiKey = platform === 'ios' 
-        ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP')
-        : (import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY || 'goog_toKBkiOYlLLEWPbPmwtiOGzmTcN');
+        ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'YOUR_PRODUCTION_IOS_API_KEY_HERE')
+        : (import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY || 'YOUR_PRODUCTION_ANDROID_API_KEY_HERE');
       
       await Purchases.configure({ apiKey });
       console.log('RevenueCat configured for platform:', platform);
