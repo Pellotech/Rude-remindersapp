@@ -355,41 +355,34 @@ export default function HomeFree() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <p className="text-[#6B7280]">
-                  Unlock unlimited reminders, premium voice characters, personalized responses, and more!
-                </p>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <h3 className="font-semibold text-[#111827]">Premium Features:</h3>
                     <ul className="space-y-2 text-sm text-[#6B7280]">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Unlimited reminders
+                        Unlimited unique reminders
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        10 premium voice characters
+                        Various voice characters
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Up to 5 photos/videos per reminder
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Personalized responses
+                        Upload more photos
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
                         Detailed analytics
                       </li>
+                      <li className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
+                        Hilarious uplifting and cruel responses
+                      </li>
                     </ul>
                   </div>
-
                   <div className="space-y-4">
-                    <div className="text-center p-4 bg-[#F9FAFB] rounded-[16px] border border-[#EAEAEA]">
-                      <div className="text-2xl font-bold text-[#111827]">From $5.99/month</div>
-                      <div className="text-sm text-[#6B7280]">$44.99 yearly or $5.99 monthly</div>
+                    <div className="pt-4">
                     </div>
                     <Button 
                       className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-sm px-6 py-3 rounded-[14px] h-[52px]"
