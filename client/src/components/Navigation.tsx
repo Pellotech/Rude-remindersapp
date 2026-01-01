@@ -28,15 +28,15 @@ export default function Navigation() {
             </Link>
           </div>
 
-          {/* Action buttons below logo */}
-          <div className="flex justify-center items-center gap-2">
+          {/* Action buttons below logo, aligned right */}
+          <div className="flex justify-end items-center gap-2">
             {/* Show Home button when not on home page */}
             {location !== "/" && (
               <Link href="/">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 px-3"
+                  className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
                   data-testid="button-nav-home"
                 >
                   <Home className="h-4 w-4" />
@@ -65,22 +65,20 @@ export default function Navigation() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className={`bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 px-3 ${location === "/settings" ? "bg-[#C53B3B] text-white border-[#C53B3B]" : ""}`}
+                    className={`bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0 ${location === "/settings" ? "bg-[#C53B3B] text-white border-[#C53B3B]" : ""}`}
                     data-testid="button-nav-settings"
                   >
-                    <Settings className="h-4 w-4 mr-1" />
-                    Settings
+                    <Settings className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => window.location.href = '/api/logout'}
-                  className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 px-3"
+                  className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
                   data-testid="button-nav-logout"
                 >
-                  <LogOut className="h-4 w-4 mr-1" />
-                  Logout
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             )}
