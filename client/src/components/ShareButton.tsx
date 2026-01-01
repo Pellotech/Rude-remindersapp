@@ -177,59 +177,78 @@ export function ShareButton({
       const shareText = generateShareText();
       
       if (Capacitor.isNativePlatform()) {
-        const base64Image = await generateShareImage();
-        let files: string[] = [];
-        
-        if (base64Image) {
-          const savedUri = await saveImageToDevice(base64Image);
-          if (savedUri) {
-            files = [savedUri];
+        // Try to share with image first
+        try {
+          const base64Image = await generateShareImage();
+          if (base64Image) {
+            const savedUri = await saveImageToDevice(base64Image);
+            if (savedUri) {
+              await Share.share({
+                title: `Rude Reminders: ${reminderTitle}`,
+                text: "Get the app at rudereminders.app",
+                files: [savedUri],
+                dialogTitle: "Share your reminder",
+              });
+              toast({
+                title: "Shared!",
+                description: "Your reminder has been shared.",
+              });
+              return;
+            }
           }
+        } catch (imgError) {
+          console.log("Image share failed, trying text-only share");
         }
         
-        const shareOptions: any = {
+        // Fallback to text-only share on native
+        await Share.share({
           title: `Rude Reminders: ${reminderTitle}`,
-          text: files.length > 0 ? "Get the app at rudereminders.app" : shareText,
+          text: shareText,
           dialogTitle: "Share your reminder",
-        };
-        
-        if (files.length > 0) {
-          shareOptions.files = files;
-        }
-        
-        await Share.share(shareOptions);
+        });
         
         toast({
           title: "Shared!",
           description: "Your reminder has been shared.",
         });
       } else if (navigator.share) {
-        const base64Image = await generateShareImage();
-        let files: File[] = [];
-        
-        if (base64Image) {
-          const response = await fetch(base64Image);
-          const blob = await response.blob();
-          const file = new File([blob], "rude-reminder.png", { type: "image/png" });
-          files = [file];
+        // Web Share API
+        try {
+          const base64Image = await generateShareImage();
+          if (base64Image) {
+            const response = await fetch(base64Image);
+            const blob = await response.blob();
+            const file = new File([blob], "rude-reminder.png", { type: "image/png" });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: `Rude Reminders: ${reminderTitle}`,
+                text: "Get the app at rudereminders.app",
+                files: [file],
+              });
+              toast({
+                title: "Shared!",
+                description: "Your reminder has been shared.",
+              });
+              return;
+            }
+          }
+        } catch (imgError) {
+          console.log("Image share failed, trying text-only share");
         }
         
-        const shareData: ShareData = {
+        // Fallback to text-only share on web
+        await navigator.share({
           title: `Rude Reminders: ${reminderTitle}`,
-          text: files.length > 0 ? "Get the app at rudereminders.app" : shareText,
-        };
-        
-        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-          shareData.files = files;
-        }
-        
-        await navigator.share(shareData);
+          text: shareText,
+        });
         
         toast({
           title: "Shared!",
           description: "Your reminder has been shared.",
         });
       } else {
+        // No share API available - clipboard fallback
         await navigator.clipboard.writeText(shareText);
         toast({
           title: "Copied to clipboard!",
@@ -237,21 +256,26 @@ export function ShareButton({
         });
       }
     } catch (error: any) {
-      if (error.name !== "AbortError") {
-        console.error("Share failed:", error);
-        try {
-          await navigator.clipboard.writeText(generateShareText());
-          toast({
-            title: "Copied to clipboard",
-            description: "Share text copied instead.",
-          });
-        } catch {
-          toast({
-            title: "Share failed",
-            description: "Unable to share at this time.",
-            variant: "destructive",
-          });
-        }
+      // User cancelled share - don't show error
+      if (error.name === "AbortError" || error.message?.includes("cancel")) {
+        return;
+      }
+      
+      console.error("Share failed:", error);
+      
+      // Final fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(generateShareText());
+        toast({
+          title: "Copied to clipboard",
+          description: "Share text copied instead.",
+        });
+      } catch {
+        toast({
+          title: "Share failed",
+          description: "Unable to share at this time.",
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSharing(false);
