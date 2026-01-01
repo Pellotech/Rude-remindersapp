@@ -173,22 +173,32 @@ export function ShareButton({
   const handleShare = async () => {
     setIsSharing(true);
     
+    const isNative = Capacitor.isNativePlatform();
+    const platform = Capacitor.getPlatform();
+    console.log(`📤 Share initiated - isNative: ${isNative}, platform: ${platform}`);
+    
     try {
       const shareText = generateShareText();
       
-      if (Capacitor.isNativePlatform()) {
+      if (isNative) {
         // Try to share with image first
         try {
+          console.log("📷 Generating share image...");
           const base64Image = await generateShareImage();
           if (base64Image) {
+            console.log("💾 Saving image to device...");
             const savedUri = await saveImageToDevice(base64Image);
             if (savedUri) {
-              await Share.share({
+              console.log(`📁 Image saved at: ${savedUri}`);
+              const sharePayload = {
                 title: `Rude Reminders: ${reminderTitle}`,
                 text: "Get the app at rudereminders.app",
                 files: [savedUri],
                 dialogTitle: "Share your reminder",
-              });
+              };
+              console.log("📤 Calling Share.share with files:", JSON.stringify(sharePayload));
+              await Share.share(sharePayload);
+              console.log("✅ Share completed successfully");
               toast({
                 title: "Shared!",
                 description: "Your reminder has been shared.",
@@ -196,16 +206,20 @@ export function ShareButton({
               return;
             }
           }
-        } catch (imgError) {
-          console.log("Image share failed, trying text-only share");
+        } catch (imgError: any) {
+          console.log("⚠️ Image share failed:", imgError?.message || imgError);
         }
         
         // Fallback to text-only share on native
-        await Share.share({
+        console.log("📝 Falling back to text-only share");
+        const textPayload = {
           title: `Rude Reminders: ${reminderTitle}`,
           text: shareText,
           dialogTitle: "Share your reminder",
-        });
+        };
+        console.log("📤 Calling Share.share with text:", JSON.stringify(textPayload));
+        await Share.share(textPayload);
+        console.log("✅ Text share completed successfully");
         
         toast({
           title: "Shared!",
@@ -258,10 +272,18 @@ export function ShareButton({
     } catch (error: any) {
       // User cancelled share - don't show error
       if (error.name === "AbortError" || error.message?.includes("cancel")) {
+        console.log("📤 Share cancelled by user");
         return;
       }
       
-      console.error("Share failed:", error);
+      const errorCode = error?.code || "";
+      const errorMessage = error?.message || JSON.stringify(error);
+      console.error(`❌ Share failed - code: ${errorCode}, message: ${errorMessage}`, error);
+      
+      // Check if it's an UNIMPLEMENTED error (plugin not synced)
+      if (errorCode === "UNIMPLEMENTED" || errorMessage.includes("UNIMPLEMENTED")) {
+        console.error("⚠️ Share plugin not available. Run 'npx cap sync' and rebuild the app.");
+      }
       
       // Final fallback to clipboard
       try {
