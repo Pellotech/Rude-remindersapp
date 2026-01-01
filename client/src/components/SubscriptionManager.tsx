@@ -144,7 +144,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
         </div>
         <div>
           <h1 className="text-3xl font-bold text-[#111827] mb-2">Unlock Premium</h1>
-          <p className="text-[#6B7280]">Get all advanced reminder features</p>
+          <p className="font-bold text-[#4115ba]">Please create an account before subscribing</p>
         </div>
         <Button onClick={handleShowPlans} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-subscribe-now">
           <Crown className="h-5 w-5 mr-2" />
