@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Home } from "lucide-react";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 interface ToggleProps {
   checked: boolean;
@@ -37,7 +38,7 @@ export default function Notifications() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (settings: any) => {
-      const response = await fetch("/api/settings", {
+      const response = await fetch(getFullApiUrl("/api/settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),

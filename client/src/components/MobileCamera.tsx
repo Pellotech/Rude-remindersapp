@@ -7,6 +7,7 @@ import { AppLauncher } from "@capacitor/app-launcher";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CameraIcon, Image, AlertCircle, Settings } from "lucide-react";
+import { getFullApiUrl } from "@/lib/queryClient";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -165,7 +166,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const formData = new FormData();
       formData.append('file', blob, `photo-${Date.now()}.${extension}`);
 
-      const uploadResponse = await fetch('/api/upload', {
+      const uploadResponse = await fetch(getFullApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
         credentials: 'include', // Include session cookie
@@ -225,7 +226,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       console.log('FormData created with filename:', filename);
 
       console.log('Uploading to /api/upload...');
-      const response = await fetch('/api/upload', {
+      const response = await fetch(getFullApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
         credentials: 'include', // Include session cookie

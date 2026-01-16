@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Settings, Crown, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 interface DevToolsProps {
   isVisible: boolean;
@@ -29,9 +30,10 @@ export function DevTools({ isVisible, onToggle }: DevToolsProps) {
   // Mutation to toggle premium status
   const togglePremiumMutation = useMutation({
     mutationFn: async (isPremium: boolean) => {
-      const response = await fetch('/api/dev/toggle-premium', {
+      const response = await fetch(getFullApiUrl('/api/dev/toggle-premium'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ isPremium })
       });
       if (!response.ok) throw new Error('Failed to toggle premium status');

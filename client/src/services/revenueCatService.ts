@@ -1,5 +1,6 @@
 
 import { Capacitor } from '@capacitor/core';
+import { getFullApiUrl } from '@/lib/queryClient';
 
 export class RevenueCatService {
   private static instance: RevenueCatService;
@@ -65,7 +66,9 @@ export class RevenueCatService {
   async getCustomerInfo(): Promise<any> {
     if (!Capacitor.isNativePlatform()) {
       // Fall back to server-side customer info for web
-      const response = await fetch('/api/customer-info');
+      const response = await fetch(getFullApiUrl('/api/customer-info'), {
+        credentials: 'include',
+      });
       return response.json();
     }
 

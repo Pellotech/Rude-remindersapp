@@ -7,6 +7,7 @@ import ReminderForm from "@/components/ReminderForm";
 import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import Sidebar from "@/components/Sidebar";
 import { ShareButton } from "@/components/ShareButton";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 export default function Home() {
   const { toast } = useToast();
@@ -71,9 +72,10 @@ export default function Home() {
 
             // Fetch voice settings from backend for consistency
             if (reminder.voiceCharacter) {
-              fetch('/api/voices/test', {
+              fetch(getFullApiUrl('/api/voices/test'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({
                   voiceCharacter: reminder.voiceCharacter,
                   testMessage: reminder.rudeMessage

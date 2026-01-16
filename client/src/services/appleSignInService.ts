@@ -1,5 +1,6 @@
 import { SignInWithApple, SignInWithAppleOptions, SignInWithAppleResponse } from '@capacitor-community/apple-sign-in';
 import { Capacitor } from '@capacitor/core';
+import { getFullApiUrl } from '@/lib/queryClient';
 
 export interface AppleAuthResponse {
   identityToken: string;
@@ -65,7 +66,7 @@ class AppleSignInService {
    */
   async authenticateWithBackend(appleResponse: AppleAuthResponse): Promise<boolean> {
     try {
-      const response = await fetch('/api/auth/apple', {
+      const response = await fetch(getFullApiUrl('/api/auth/apple'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

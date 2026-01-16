@@ -1,4 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import * as path from 'path';
@@ -8,6 +9,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// CORS configuration for native mobile apps
+app.use(cors({
+  origin: [
+    // Native iOS Capacitor app
+    'capacitor://localhost',
+    // Native Android Capacitor app  
+    'http://localhost',
+    // Production web app
+    'https://rudereminder.replit.app',
+    // Development
+    /\.replit\.dev$/,
+    /\.replit\.app$/,
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

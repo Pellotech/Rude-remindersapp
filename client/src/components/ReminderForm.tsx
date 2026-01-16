@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getFullApiUrl } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { guestStorage } from "@/services/guestStorage";
@@ -200,7 +200,7 @@ export default function ReminderForm({
   const { data: voiceCharacters = [], isLoading: voicesLoading } = useQuery({
     queryKey: ["/api/voices"],
     queryFn: async () => {
-      const response = await fetch("/api/voices");
+      const response = await fetch(getFullApiUrl("/api/voices"), { credentials: "include" });
       if (!response.ok) throw new Error("Failed to fetch voices");
       return response.json();
     }
@@ -266,9 +266,10 @@ export default function ReminderForm({
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('/api/upload', {
+        const response = await fetch(getFullApiUrl('/api/upload'), {
           method: 'POST',
           body: formData,
+          credentials: 'include',
         });
 
         if (response.ok) {
@@ -560,11 +561,12 @@ export default function ReminderForm({
     // Audio playback doesn't require microphone permissions
 
     try {
-      const response = await fetch("/api/voices/test", {
+      const response = await fetch(getFullApiUrl("/api/voices/test"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           voiceCharacter: selectedVoiceId,
           testMessage: message,
@@ -617,9 +619,10 @@ export default function ReminderForm({
         speechSynthesis.cancel();
 
         // Fetch voice settings from backend for the selected character
-        fetch('/api/voices/test', {
+        fetch(getFullApiUrl('/api/voices/test'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             voiceCharacter: form.watch("voiceCharacter"), // Use form.watch here
             testMessage: message

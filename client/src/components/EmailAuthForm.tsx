@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 interface EmailAuthFormProps {
   onSuccess: () => void;
@@ -36,9 +37,10 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(getFullApiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(loginForm)
       });
 
@@ -93,9 +95,10 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch(getFullApiUrl("/api/auth/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           email: registerForm.email,
           password: registerForm.password,
@@ -114,9 +117,10 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
         
         // Automatically log in after registration
         try {
-          const loginResponse = await fetch("/api/auth/login", {
+          const loginResponse = await fetch(getFullApiUrl("/api/auth/login"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
               email: registerForm.email,
               password: registerForm.password

@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 export function useAuth() {
   const { data: user, isLoading, refetch } = useQuery({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
-      const res = await fetch("/api/auth/user", {
+      const res = await fetch(getFullApiUrl("/api/auth/user"), {
         credentials: "include",
       });
       

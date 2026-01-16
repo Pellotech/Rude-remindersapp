@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PlayCircle, Loader2, Clock, User, Volume2, ArrowUpDown } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, getFullApiUrl } from '@/lib/queryClient';
 import type { Reminder } from '@shared/schema';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
@@ -102,11 +102,12 @@ export default function DevPreview() {
     setIsPlayingVoice(true);
 
     try {
-      const response = await fetch('/api/test-speech', {
+      const response = await fetch(getFullApiUrl('/api/test-speech'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           text: selectedReminder.rudeMessage,
           voiceId: selectedReminder.voiceCharacter,

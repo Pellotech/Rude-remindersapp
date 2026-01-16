@@ -11,6 +11,7 @@ import { Mail, Lock, User, Eye, EyeOff, Sparkles } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import AppHeader from "@/components/AppHeader";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
@@ -39,9 +40,10 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch(getFullApiUrl("/api/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(loginForm)
       });
       const data = await response.json();
@@ -72,9 +74,10 @@ export default function LoginPage() {
       return;
     }
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch(getFullApiUrl("/api/auth/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           email: registerForm.email,
           password: registerForm.password,
@@ -85,9 +88,10 @@ export default function LoginPage() {
       const data = await response.json();
       if (response.ok) {
         toast({ title: "Success!", description: "Account created. Logging you in..." });
-        await fetch("/api/auth/login", {
+        await fetch(getFullApiUrl("/api/auth/login"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ email: registerForm.email, password: registerForm.password })
         });
         setTimeout(() => refetch(), 100);

@@ -1,4 +1,21 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { Capacitor } from "@capacitor/core";
+
+// Production API URL for native apps (when UI is bundled locally)
+const PRODUCTION_API_URL = "https://rudereminder.replit.app";
+
+// Get the base URL for API calls - production URL for native, relative for web
+export function getApiBaseUrl(): string {
+  if (Capacitor.isNativePlatform()) {
+    return PRODUCTION_API_URL;
+  }
+  return ""; // Relative URLs for web development
+}
+
+// Helper to get full API URL for any path
+export function getFullApiUrl(path: string): string {
+  return path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path;
+}
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -8,6 +25,8 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(url: string, options?: RequestInit) {
+  // Prepend base URL for native platforms
+  const fullUrl = url.startsWith('/') ? `${getApiBaseUrl()}${url}` : url;
   const fetchOptions: RequestInit = {
     ...options,
     headers: {
@@ -22,7 +41,7 @@ export async function apiRequest(url: string, options?: RequestInit) {
     fetchOptions.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(url, fetchOptions);
+  const response = await fetch(fullUrl, fetchOptions);
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -43,7 +62,9 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const path = queryKey.join("/") as string;
+    const fullUrl = path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path;
+    const res = await fetch(fullUrl, {
       credentials: "include",
     });
 
