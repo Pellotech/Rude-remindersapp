@@ -1,0 +1,68 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % npx cap copy ios && npx cap sync ios
+✔ Copying web assets from public to ios/App/App/public in 5.13ms
+✔ Creating capacitor.config.json in ios/App/App in 666.63μs
+✔ copy ios in 91.14ms
+✔ Copying web assets from public to ios/App/App/public in 4.46ms
+✔ Creating capacitor.config.json in ios/App/App in 458.88μs
+✔ copy ios in 42.24ms
+✔ Updating iOS plugins in 7.71ms
+✔ Updating iOS native dependencies with pod install in 2.95s
+[info] Found 10 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @revenuecat/purchases-capacitor@11.2.1
+✔ update ios in 3.00s
+[info] Sync finished in 3.376s
+macbookpro@The-Book-of-OTG Rude-remindersapp % cd ios/App && pod install
+Analyzing dependencies
+Downloading dependencies
+Generating Pods project
+Integrating client project
+Pod installation complete! There are 12 dependencies from the Podfile and 17 total pods installed.
+macbookpro@The-Book-of-OTG App % npm run build
+npx cap sync ios
+npx cap open ios
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (2) ../vite/modulepreload-polyfill.jsBrowserslist: browsers data (caniuse-lite) is 15 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2119 modules transformed.
+../dist/public/index.html                   0.63 kB │ gzip:   0.38 kB
+../dist/public/assets/index-3Sm45VnJ.css   83.51 kB │ gzip:  14.02 kB
+../dist/public/assets/web-Bu4iO4SJ.js       1.26 kB │ gzip:   0.43 kB
+../dist/public/assets/web-fjW4b5kF.js       3.44 kB │ gzip:   1.09 kB
+../dist/public/assets/index-B5_iv1yp.js     6.38 kB │ gzip:   2.42 kB
+../dist/public/assets/web-Ce8VR8q4.js       9.77 kB │ gzip:   1.99 kB
+../dist/public/assets/index-BN29BBYe.js   707.85 kB │ gzip: 201.90 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.82s
+
+  dist/index.js  154.1kb
+
+⚡ Done in 10ms
+[error] ios platform has not been added yet.
+        See the docs for adding the ios platform:
+        https://capacitorjs.com/docs/ios#adding-the-ios-platform
+[error] ios platform has not been added yet.
+        See the docs for adding the ios platform:
+        https://capacitorjs.com/docs/ios#adding-the-ios-platform
+macbookpro@The-Book-of-OTG App % npx cap open ios
+[error] ios platform has not been added yet.
+        See the docs for adding the ios platform:
+        https://capacitorjs.com/docs/ios#adding-the-ios-platform
+macbookpro@The-Book-of-OTG App % 
