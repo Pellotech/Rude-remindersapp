@@ -1,0 +1,56 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % git checkout --theirs ios/App/App/Info.plist
+git checkout --theirs capacitor.config.ts
+git checkout --theirs package.json
+git checkout --theirs package-lock.json
+
+Updated 1 path from the index
+Updated 1 path from the index
+Updated 0 paths from the index
+Updated 0 paths from the index
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm run build
+npx cap copy ios && npx cap sync ios
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 15 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 6 modules transformed.
+x Build failed in 534ms
+error during build:
+[vite]: Rollup failed to resolve import "capacitor-plugin-safe-area" from "/Users/macbookpro/Documents/GitHub/Rude-remindersapp/client/src/utils/safeAreaSetup.ts".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at viteWarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/@vitejs/plugin-react/dist/index.mjs:280:9)
+    at onRollupWarning (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+    at file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+    at Object.logger [as onLog] (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+    at ModuleLoader.resolveDynamicImport (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20125:58)
+    at async file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20013:32
+✔ Copying web assets from public to ios/App/App/public in 6.80ms
+✔ Creating capacitor.config.json in ios/App/App in 400.58μs
+✔ copy ios in 83.51ms
+✔ Copying web assets from public to ios/App/App/public in 4.25ms
+✔ Creating capacitor.config.json in ios/App/App in 439.46μs
+✔ copy ios in 43.60ms
+✔ Updating iOS plugins in 8.20ms
+✔ Updating iOS native dependencies with pod install in 2.45s
+[info] Found 10 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @revenuecat/purchases-capacitor@11.2.1
+✔ update ios in 2.50s
+[info] Sync finished in 2.844s
