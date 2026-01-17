@@ -26,7 +26,8 @@ import { LocalNotifications } from "@capacitor/local-notifications";
 
 const useNormalizedLocation = (): [string, (to: string) => void] => {
   const navigate = useCallback((to: string) => {
-    window.history.pushState(null, "", to);
+    const normalized = (to === "/index.html" || to === "") ? "/" : to;
+    window.history.pushState(null, "", normalized);
     window.dispatchEvent(new PopStateEvent("popstate"));
   }, []);
 
@@ -94,8 +95,8 @@ function AppRouter() {
 
   return (
     <Switch>
-      <Route path="/" component={HomeRouter} />
       <Route path="/index.html" component={HomeRouter} />
+      <Route path="/" component={HomeRouter} />
       <Route path="/login" component={LoginPage} />
       <Route path="/subscribe" component={Subscribe} />
 
