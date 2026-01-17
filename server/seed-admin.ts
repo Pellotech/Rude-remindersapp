@@ -5,8 +5,8 @@ import { users } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 async function seedAdminUser() {
-  const email = 'letmeknow6@icloud.com';
-  const password = '1236';
+  const email = 'ruderemindersinfo@gmail.com';
+  const password = '1236qwer';
   
   try {
     // Hash the password

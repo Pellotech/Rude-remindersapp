@@ -414,7 +414,7 @@ class MemoryStorage implements IStorage {
   private reminders: Reminder[] = [];
   private rudePhrasesSeeded = false;
   private rudePhrasesStore: RudePhrase[] = [];
-  private whitelistEmails: Set<string> = new Set(['letmeknow6@icloud.com']);
+  private whitelistEmails: Set<string> = new Set(['ruderemindersinfo@gmail.com']);
 
   constructor() {
     // Add a default dev user for testing

@@ -34,7 +34,8 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Dynamic AI Responses**: Integration with DeepSeek AI for personalized, context-aware motivational messages with adjustable humor levels.
 - **Subscription System**: Differentiates features for free and premium users, including AI-generated content.
   - **Automatic Expiration Handling**: Daily cleanup task (runs at 2 AM) automatically downgrades expired subscriptions to free tier
-  - **Premium Whitelist**: Developers and test accounts (testuserzzwai_@rudereminders.com, appstoreuser@rudereminders.com, ruderemindersinfo@gmail.com, letmeknow6@icloud.com) always receive premium features
+  - **Premium Whitelist**: Test accounts (testuserzzwai_@rudereminders.com, appstoreuser@rudereminders.com) always receive premium features
+  - **Admin Access**: Only ruderemindersinfo@gmail.com has access to the admin panel to manage whitelist
   - **RevenueCat Webhooks**: Real-time subscription updates via webhooks for instant premium status changes
   - **Graceful Degradation**: Users retain login access and data when subscription expires; only premium features are restricted
 - **Comprehensive User Personalization**: Allows gender and cultural background selection for tailored content.

@@ -8,8 +8,8 @@ import { useAuth } from '@/hooks/useAuth';
 export default function AdminPage() {
   const { user } = useAuth();
 
-  // Only allow access to specific email or developer email
-  const isAuthorized = user?.email === 'letmeknow6@icloud.com' || user?.email === 'developer@example.com';
+  // Only allow access to admin email
+  const isAuthorized = user?.email === 'ruderemindersinfo@gmail.com';
 
   if (!isAuthorized) {
     return (
