@@ -1,0 +1,72 @@
+It means your app is “looking in the right place,” but you’re checking the wrong place.
+
+The simple version
+
+You have two environments:
+
+DEV (development) = what you see inside your Replit workspace Database Studio
+
+PROD (production) = what your iPhone app is calling (rudereminder.replit.app)
+
+Each environment has its own database.
+
+So if you added your “whitelisted” users in DEV, but your iPhone is logging in against PROD, the app won’t find them—because they’re not in the PROD database.
+
+Why it “worked before”
+
+Earlier, your iPhone app might have been hitting DEV (example: you were using a dev server URL or a different API base URL).
+Now that you’re correctly running “production style,” it’s hitting PROD, and the whitelist/users aren’t there.
+
+How this affects your “whitelist”
+
+When you say “whitelisted accounts,” it usually means:
+
+you have a list of allowed emails in a table/collection
+
+OR user records flagged isWhitelisted: true
+
+OR a “beta access” table
+
+If that list exists only in the DEV database, your production server will act like nobody is whitelisted.
+
+How to confirm in 2 minutes (no guessing)
+Step 1: Verify what server the app is calling
+
+Find where your app sets the API base URL (often API_URL / BASE_URL).
+
+If it’s:
+
+https://rudereminder.replit.app → you’re on PROD
+
+something like https://<workspace>.replit.dev or localhost → you’re on DEV
+
+Step 2: Check PROD data, not DEV data
+
+You need to look at the production Replit database, not the workspace DB Studio you’re currently viewing.
+
+Fix options (pick what matches what you want)
+Option A — Put the whitelist/users into PROD (most common)
+
+Add those whitelisted users to the production database
+
+OR re-register those accounts through the iPhone app (so they get created in PROD)
+
+Option B — Point the app to DEV (only for internal testing)
+
+Only do this if you’re intentionally testing with the dev database.
+
+One extra detail: passwords
+
+Even if emails exist in PROD, sometimes password hashes or auth tokens differ (like if one DB has accounts created without passwords / social login only). That would also look like “not recognized.”
+
+What I need from you to tell you exactly what to do next
+
+Paste one thing:
+
+the code (or .env values) where your app sets BASE_URL / API_URL for login
+
+or tell me:
+
+when you log in on iPhone, what is the exact domain being called (you can see it in Xcode logs or Network tab)?
+
+Then I’ll tell you the quickest way to get your whitelist working again without breaking production.
