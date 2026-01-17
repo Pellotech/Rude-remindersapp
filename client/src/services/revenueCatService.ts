@@ -32,6 +32,19 @@ export class RevenueCatService {
     try {
       const { Purchases } = await import('@revenuecat/purchases-capacitor');
       
+      // Check if RevenueCat is already configured at native level
+      // This handles WebView reloads where JS context resets but native SDK persists
+      try {
+        const { isConfigured } = await Purchases.isConfigured();
+        if (isConfigured) {
+          console.log('RevenueCat already configured at native level, skipping');
+          revenueCatConfigured = true;
+          return;
+        }
+      } catch {
+        // isConfigured not available in older versions, continue with configure
+      }
+      
       const platform = Capacitor.getPlatform();
       const apiKey = platform === 'ios' 
         ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'YOUR_PRODUCTION_IOS_API_KEY_HERE')
