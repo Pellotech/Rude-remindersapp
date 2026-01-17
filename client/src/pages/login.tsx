@@ -12,9 +12,6 @@ import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import AppHeader from "@/components/AppHeader";
 import { getFullApiUrl } from "@/lib/queryClient";
-import { SiApple, SiGoogle, SiFacebook } from "react-icons/si";
-import { inAppOAuthService } from "@/services/inAppOAuthService";
-import { appleSignInService } from "@/services/appleSignInService";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
@@ -113,78 +110,6 @@ export default function LoginPage() {
     setLocation("/");
   };
 
-  const isNativeIOS = Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
-
-  const handleAppleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const result = await appleSignInService.signIn();
-      // If we get here, sign in was successful - now verify with backend
-      const response = await fetch(getFullApiUrl("/api/auth/apple/native"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          identityToken: result.identityToken,
-          email: result.email,
-          givenName: result.givenName,
-          familyName: result.familyName,
-          user: result.user
-        })
-      });
-      
-      if (response.ok) {
-        toast({ title: "Welcome!", description: "Signed in with Apple successfully" });
-        refetch();
-      } else {
-        const data = await response.json();
-        toast({ title: "Sign In Failed", description: data.message || "Apple Sign In failed", variant: "destructive" });
-      }
-    } catch (error: any) {
-      if (!error.message?.includes('cancelled')) {
-        toast({ title: "Error", description: error.message || "Apple Sign In failed", variant: "destructive" });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const baseUrl = getFullApiUrl("");
-      const result = await inAppOAuthService.signInWithGoogle(baseUrl);
-      if (result.success) {
-        toast({ title: "Welcome!", description: "Signed in with Google successfully" });
-        refetch();
-      } else if (result.error) {
-        toast({ title: "Sign In Failed", description: result.error, variant: "destructive" });
-      }
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message || "Google Sign In failed", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFacebookSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const baseUrl = getFullApiUrl("");
-      const result = await inAppOAuthService.signInWithFacebook(baseUrl);
-      if (result.success) {
-        toast({ title: "Welcome!", description: "Signed in with Facebook successfully" });
-        refetch();
-      } else if (result.error) {
-        toast({ title: "Sign In Failed", description: result.error, variant: "destructive" });
-      }
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message || "Facebook Sign In failed", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (user) return null;
 
   return (
@@ -267,50 +192,6 @@ export default function LoginPage() {
                   <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
-
-                  {/* Social Login Buttons */}
-                  <div className="mt-6 space-y-3">
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t border-[#EAEAEA]" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-2 text-[#6B7280]">Or continue with</span>
-                      </div>
-                    </div>
-
-                    {isNativeIOS && (
-                      <Button
-                        type="button"
-                        onClick={handleAppleSignIn}
-                        className="w-full bg-black hover:bg-gray-900 text-white rounded-[14px] py-5 h-[48px] font-semibold"
-                        disabled={isLoading}
-                      >
-                        <SiApple className="mr-2 h-5 w-5" />
-                        Sign in with Apple
-                      </Button>
-                    )}
-
-                    <Button
-                      type="button"
-                      onClick={handleGoogleSignIn}
-                      className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold"
-                      disabled={isLoading}
-                    >
-                      <SiGoogle className="mr-2 h-5 w-5 text-[#4285F4]" />
-                      Sign in with Google
-                    </Button>
-
-                    <Button
-                      type="button"
-                      onClick={handleFacebookSignIn}
-                      className="w-full bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-[14px] py-5 h-[48px] font-semibold"
-                      disabled={isLoading}
-                    >
-                      <SiFacebook className="mr-2 h-5 w-5" />
-                      Sign in with Facebook
-                    </Button>
-                  </div>
                 </form>
               </TabsContent>
 

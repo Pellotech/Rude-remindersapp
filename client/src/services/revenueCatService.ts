@@ -2,6 +2,9 @@
 import { Capacitor } from '@capacitor/core';
 import { getFullApiUrl } from '@/lib/queryClient';
 
+// TEMPORARY: Disable RevenueCat to prevent reload loop issues
+const DISABLE_REVENUECAT = true;
+
 // Use sessionStorage to persist configuration state across WebView reloads
 const STORAGE_KEY = 'revenuecat_configured';
 let revenueCatConfigured = false;
@@ -35,6 +38,11 @@ export class RevenueCatService {
   }
 
   async initialize(): Promise<void> {
+    if (DISABLE_REVENUECAT) {
+      console.log('RevenueCat DISABLED for debugging');
+      return;
+    }
+    
     if (!Capacitor.isNativePlatform()) {
       return;
     }
