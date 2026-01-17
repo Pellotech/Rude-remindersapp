@@ -125,13 +125,10 @@ function AppRouter() {
 
 function App() {
   useEffect(() => {
-    // TEMPORARILY DISABLED - Testing if RevenueCat causes reload loop
-    // let revenueCatTimeout: ReturnType<typeof setTimeout>;
-    // if (Capacitor.isNativePlatform()) {
-    //   revenueCatTimeout = setTimeout(() => {
-    //     revenueCatService.initialize().catch(console.error);
-    //   }, 1500);
-    // }
+    // Initialize RevenueCat (has DISABLE flag in service for debugging)
+    if (Capacitor.isNativePlatform()) {
+      revenueCatService.initialize().catch(console.error);
+    }
 
     // Request notification permissions on mobile app launch
     const requestNotificationPermissions = async () => {

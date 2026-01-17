@@ -2,6 +2,9 @@
 import { Capacitor } from '@capacitor/core';
 import { getFullApiUrl } from '@/lib/queryClient';
 
+// TEMPORARY: Completely disable RevenueCat to debug reload loop
+const DISABLE_REVENUECAT = true;
+
 let revenueCatConfigured = false;
 let initializationPromise: Promise<void> | null = null;
 
@@ -16,6 +19,11 @@ export class RevenueCatService {
   }
 
   async initialize(): Promise<void> {
+    if (DISABLE_REVENUECAT) {
+      console.log('RevenueCat DISABLED for debugging');
+      return;
+    }
+    
     if (revenueCatConfigured || !Capacitor.isNativePlatform()) {
       return;
     }
