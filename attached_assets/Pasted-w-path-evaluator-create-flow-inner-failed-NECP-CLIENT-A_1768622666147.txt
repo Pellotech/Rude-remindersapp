@@ -1,0 +1,54 @@
+w_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{C611C759-47D7-467E-A997-F98688BBC8A4}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW AFCAF972-3E51-48E1-8E68-C510E2FE556C [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C592.1.1.1 99.86.57.116:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C592.1.1.1 99.86.57.116:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{C611C759-47D7-467E-A997-F98688BBC8A4}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 4E58F2BE-2255-493E-AEF8-2368C95D5326 [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C592.1.1.2 99.86.57.61:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C592.1.1.2 99.86.57.61:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{C611C759-47D7-467E-A997-F98688BBC8A4}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW A005947A-3F47-465C-871A-FF6049FA1E35 [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C592.1.1.3 99.86.57.36:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C592.1.1.3 99.86.57.36:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{C611C759-47D7-467E-A997-F98688BBC8A4}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW C2FBA0C5-C352-4090-8B4A-07955893A799 [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C592.1.1.4 99.86.57.19:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C592.1.1.4 99.86.57.19:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_endpoint_flow_failed_with_error [C592.1.1.4 99.86.57.19:443 cancelled channel-flow ((null))] already failing, returning
+Connection 592: received failure notification
+Connection 592: failed to connect 1:12, reason -1
+Connection 592: encountered error(1:12)
+Task <586DCAB9-BEC8-4285-9A51-3D23675D70C8>.<3> HTTP load failed, 0/0 bytes (error code: 12 [1:12])
+⚡️  WebView loaded
+Task <586DCAB9-BEC8-4285-9A51-3D23675D70C8>.<3> finished with error [12] Error Domain=NSPOSIXErrorDomain Code=12 "Cannot allocate memory" UserInfo={_NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <586DCAB9-BEC8-4285-9A51-3D23675D70C8>.<3>, _kCFStreamErrorDomainKey=1, _kCFStreamErrorCodeKey=12, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <586DCAB9-BEC8-4285-9A51-3D23675D70C8>.<3>"
+), _NSURLErrorNWPathKey=satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi}
+DEBUG: ℹ️ API request failed: GET '/v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4' (<>): The operation couldn’t be completed. Cannot allocate memory
+WARN: ⚠️ Attempt to update CustomerInfo from network failed.
+The operation couldn’t be completed. (RevenueCat.BackendError error 0.)
+Underlying error: The operation couldn’t be completed. Cannot allocate memory
+DEBUG: ℹ️ GetCustomerInfoOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4, 0 requests left in the queue
+⚡️  To Native ->  Purchases configure -1
+INFO: ℹ️ Purchases instance already set. Did you mean to configure two Purchases objects?
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+DEBUG: 👤 Identifying App User ID
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ Delegate set
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4/offerings
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {"line":462,"column":20338,"sourceURL":"capacitor://localhost/assets/index-BN29BBYe.js"}
+⚡️  [log] - RevenueCat initialized successfully
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3A9a14d11a6ea04e0eb313121b53263be4/offerings'

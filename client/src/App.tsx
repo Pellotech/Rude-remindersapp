@@ -1,4 +1,4 @@
-import { Route, Switch, useLocation } from "wouter";
+import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,10 +19,33 @@ import Subscribe from "@/pages/subscribe";
 import AdminPage from "@/pages/admin";
 import LoginPage from "@/pages/login";
 import NotFound from "@/pages/not-found";
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
+
+const useNormalizedLocation = (): [string, (to: string) => void] => {
+  const navigate = useCallback((to: string) => {
+    window.history.pushState(null, "", to);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, []);
+
+  const subscribe = useCallback((callback: () => void) => {
+    window.addEventListener("popstate", callback);
+    return () => window.removeEventListener("popstate", callback);
+  }, []);
+
+  const getSnapshot = useCallback(() => {
+    let path = window.location.pathname;
+    if (path === "/index.html" || path === "") {
+      path = "/";
+    }
+    return path;
+  }, []);
+
+  const location = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  return [location, navigate];
+};
 
 function HomeRouter() {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -47,11 +70,17 @@ function HomeRouter() {
   return isPremium ? <HomePremium /> : <HomeFree />;
 }
 
-function Router() {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  const [location] = useLocation();
+function RedirectToLogin() {
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    setLocation('/login');
+  }, [setLocation]);
+  return null;
+}
 
-  // Show loading state while checking authentication
+function AppRouter() {
+  const { isAuthenticated, isLoading } = useAuth();
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -65,12 +94,11 @@ function Router() {
 
   return (
     <Switch>
-      {/* Guest mode: Allow access to home without login */}
       <Route path="/" component={HomeRouter} />
+      <Route path="/index.html" component={HomeRouter} />
       <Route path="/login" component={LoginPage} />
       <Route path="/subscribe" component={Subscribe} />
 
-      {/* Account-required routes - redirect to login if not authenticated */}
       {isAuthenticated ? (
         <>
           <Route path="/settings/billing" component={Billing} />
@@ -85,19 +113,8 @@ function Router() {
         </>
       ) : (
         <>
-          {/* Redirect to login for protected routes */}
-          <Route path="/settings/:rest*">
-            {() => {
-              window.location.href = '/login';
-              return null;
-            }}
-          </Route>
-          <Route path="/admin">
-            {() => {
-              window.location.href = '/login';
-              return null;
-            }}
-          </Route>
+          <Route path="/settings/:rest*" component={RedirectToLogin} />
+          <Route path="/admin" component={RedirectToLogin} />
         </>
       )}
       <Route component={NotFound} />
@@ -132,12 +149,14 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <NotificationProvider>
-          <Toaster />
-          <Router />
-        </NotificationProvider>
-      </TooltipProvider>
+      <WouterRouter hook={useNormalizedLocation}>
+        <TooltipProvider>
+          <NotificationProvider>
+            <Toaster />
+            <AppRouter />
+          </NotificationProvider>
+        </TooltipProvider>
+      </WouterRouter>
     </QueryClientProvider>
   );
 }

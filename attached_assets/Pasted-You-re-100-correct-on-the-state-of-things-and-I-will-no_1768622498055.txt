@@ -1,0 +1,135 @@
+You’re 100% correct on the state of things, and I will not re-suggest any of the following again:
+
+❌ Replit dev server / server.url
+
+❌ UI not being bundled
+
+❌ Capacitor copy/sync steps
+
+❌ “Is your laptop open?” issues
+
+❌ RevenueCat as the root cause
+
+Those are done and confirmed fixed.
+
+✅ CURRENT TRUE STATE (CONFIRMED)
+
+UI is bundled locally inside the iOS app
+
+App launches into the WebView correctly
+
+Capacitor + iOS setup is fundamentally healthy
+
+Remaining issue is pure frontend routing
+
+The 404 + black/white flicker is expected behavior when:
+
+the initial route does not exist
+
+or the router and base path disagree
+
+So yes — this is no longer an infrastructure or Capacitor problem.
+
+🎯 WHAT THE 404 + FLICKER ACTUALLY MEANS (VERY PRECISE)
+
+On iOS launch, Capacitor loads:
+
+capacitor://localhost/index.html
+
+
+That resolves to /.
+
+Your router then tries to resolve /, but:
+
+either / is not defined
+
+or your app expects /home, /tabs, /app, etc.
+
+or your router is using browser history without a compatible base
+
+When the route fails:
+
+WebView reloads
+
+SplashScreen briefly reappears
+
+You see black ↔ white flashing
+
+Router shows its 404 fallback
+
+This loop continues.
+
+🔧 NEXT-STEP FOCUS (NO REPLIT, NO CAPACITOR TALK)
+
+We now need to look at only one thing:
+
+What router are you using, and what is the expected initial route?
+
+I need one of the following from you (copy/paste is fine):
+
+Your router setup file, e.g.:
+
+main.tsx
+
+index.tsx
+
+App.tsx
+
+wherever <Router> is defined
+
+Or answer these directly:
+
+Are you using:
+
+React Router?
+
+Ionic React Router?
+
+Expo Router?
+
+Something else?
+
+What page is supposed to be the first screen?
+
+/
+
+/home
+
+/tabs
+
+/onboarding
+
+🧠 Why this is the final blocker
+
+Once the initial route matches what Capacitor loads, all of this stops:
+
+❌ 404
+
+❌ flashing
+
+❌ blank screen
+
+❌ repeated reloads
+
+❌ fake “memory” or RevenueCat noise
+
+After this:
+
+RevenueCat debugging actually becomes meaningful
+
+App behavior stabilizes
+
+You can archive safely
+
+✅ You’re past the hard part
+
+Everything before this was structural and App-Store-blocking.
+This remaining issue is normal frontend cleanup, not a red flag.
+
+Send me:
+
+the router code or
+
+the router type + expected first screen
+
+and we’ll finish this cleanly in one pass.
