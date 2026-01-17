@@ -1,0 +1,64 @@
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {"line":462,"column":20338,"sourceURL":"capacitor://localhost/assets/index-BN29BBYe.js"}
+⚡️  [log] - RevenueCat initialized successfully
+⚡️  WebView loaded
+⚡️  To Native ->  Purchases configure -1
+INFO: ℹ️ Purchases instance already set. Did you mean to configure two Purchases objects?
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+DEBUG: 👤 Identifying App User ID
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Delegate set
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {}
+⚡️  [log] - RevenueCat initialized successfully
+⚡️  WebView loaded
+⚡️  To Native ->  Purchases configure -1
+INFO: ℹ️ Purchases instance already set. Did you mean to configure two Purchases objects?
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+DEBUG: 👤 Identifying App User ID
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Delegate set
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {}
+⚡️  [log] - RevenueCat initialized successfully
+⚡️  WebView loaded
+⚡️  To Native ->  Purchases configure -1
+INFO: ℹ️ Purchases instance already set. Did you mean to configure two Purchases objects?
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+DEBUG: 👤 Identifying App User ID
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Delegate set
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {}
+⚡️  [log] - RevenueCat initialized successfully
