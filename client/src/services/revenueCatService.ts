@@ -2,11 +2,27 @@
 import { Capacitor } from '@capacitor/core';
 import { getFullApiUrl } from '@/lib/queryClient';
 
-// TEMPORARY: Completely disable RevenueCat to debug reload loop
-const DISABLE_REVENUECAT = true;
-
+// Use sessionStorage to persist configuration state across WebView reloads
+const STORAGE_KEY = 'revenuecat_configured';
 let revenueCatConfigured = false;
 let initializationPromise: Promise<void> | null = null;
+
+// Check if we already configured in this session (survives WebView reloads)
+function wasConfiguredThisSession(): boolean {
+  try {
+    return sessionStorage.getItem(STORAGE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function markConfigured(): void {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, 'true');
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 export class RevenueCatService {
   private static instance: RevenueCatService;
@@ -19,12 +35,20 @@ export class RevenueCatService {
   }
 
   async initialize(): Promise<void> {
-    if (DISABLE_REVENUECAT) {
-      console.log('RevenueCat DISABLED for debugging');
+    if (!Capacitor.isNativePlatform()) {
       return;
     }
     
-    if (revenueCatConfigured || !Capacitor.isNativePlatform()) {
+    // Check module-level flag first
+    if (revenueCatConfigured) {
+      console.log('RevenueCat already configured (module flag)');
+      return;
+    }
+    
+    // Check session storage (survives WebView reloads within same app session)
+    if (wasConfiguredThisSession()) {
+      console.log('RevenueCat already configured (session storage)');
+      revenueCatConfigured = true;
       return;
     }
 
@@ -41,12 +65,12 @@ export class RevenueCatService {
       const { Purchases } = await import('@revenuecat/purchases-capacitor');
       
       // Check if RevenueCat is already configured at native level
-      // This handles WebView reloads where JS context resets but native SDK persists
       try {
         const { isConfigured } = await Purchases.isConfigured();
         if (isConfigured) {
-          console.log('RevenueCat already configured at native level, skipping');
+          console.log('RevenueCat already configured at native level');
           revenueCatConfigured = true;
+          markConfigured();
           return;
         }
       } catch {
@@ -55,14 +79,15 @@ export class RevenueCatService {
       
       const platform = Capacitor.getPlatform();
       const apiKey = platform === 'ios' 
-        ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'YOUR_PRODUCTION_IOS_API_KEY_HERE')
+        ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP')
         : (import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY || 'YOUR_PRODUCTION_ANDROID_API_KEY_HERE');
       
       await Purchases.configure({ apiKey });
       console.log('RevenueCat configured for platform:', platform);
       
       revenueCatConfigured = true;
-      console.log('RevenueCat initialized successfully (anonymous mode)');
+      markConfigured();
+      console.log('RevenueCat initialized successfully');
     } catch (error) {
       console.error('Failed to initialize RevenueCat:', error);
       initializationPromise = null;
