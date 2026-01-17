@@ -125,8 +125,15 @@ function AppRouter() {
 
 function App() {
   useEffect(() => {
-    // Initialize RevenueCat when app starts
-    revenueCatService.initialize().catch(console.error);
+    let revenueCatTimeout: ReturnType<typeof setTimeout>;
+    
+    // Delay RevenueCat initialization to let app stabilize first
+    // This prevents retry storms during initial render
+    if (Capacitor.isNativePlatform()) {
+      revenueCatTimeout = setTimeout(() => {
+        revenueCatService.initialize().catch(console.error);
+      }, 1500);
+    }
 
     // Request notification permissions on mobile app launch
     const requestNotificationPermissions = async () => {
@@ -146,6 +153,10 @@ function App() {
     };
 
     requestNotificationPermissions();
+    
+    return () => {
+      if (revenueCatTimeout) clearTimeout(revenueCatTimeout);
+    };
   }, []);
 
   return (

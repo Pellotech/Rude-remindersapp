@@ -1,0 +1,56 @@
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 0B25ACB4-ECA8-4FF3-837A-3BC2D507FC0B [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C687.1.1.1 99.86.57.36:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C687.1.1.1 99.86.57.36:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 89E9A6FB-1613-4280-8B4C-D49513158A44 [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C687.1.1.2 99.86.57.19:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C687.1.1.2 99.86.57.19:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 4D058077-14E4-45D3-AF46-C8F4DA283A0A [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C687.1.1.3 99.86.57.61:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C687.1.1.3 99.86.57.61:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW FCE5437C-C289-492E-B652-2650A58B6A3B [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C687.1.1.4 99.86.57.116:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C687.1.1.4 99.86.57.116:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_endpoint_flow_failed_with_error [C687.1.1.4 99.86.57.116:443 cancelled channel-flow ((null))] already failing, returning
+Connection 687: received failure notification
+Connection 687: failed to connect 1:12, reason -1
+Connection 687: encountered error(1:12)
+Task <68358790-24D9-4814-BEAB-EF361BAF666E>.<2> HTTP load failed, 0/0 bytes (error code: 12 [1:12])
+Task <68358790-24D9-4814-BEAB-EF361BAF666E>.<2> finished with error [12] Error Domain=NSPOSIXErrorDomain Code=12 "Cannot allocate memory" UserInfo={_NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <68358790-24D9-4814-BEAB-EF361BAF666E>.<2>, _kCFStreamErrorDomainKey=1, _kCFStreamErrorCodeKey=12, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <68358790-24D9-4814-BEAB-EF361BAF666E>.<2>"
+), _NSURLErrorNWPathKey=satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi}
+DEBUG: ℹ️ API request failed: GET '/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/health_report_availability' (<>): The operation couldn’t be completed. Cannot allocate memory
+DEBUG: ℹ️ HealthReportAvailabilityOperation: Finished
+DEBUG: ℹ️ GetCustomerInfoOperation: Started
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/health_report_availability, 0 requests left in the queue
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72'
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 0B25ACB4-ECA8-4FF3-837A-3BC2D507FC0B [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C688.1.1.1 99.86.57.36:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C688.1.1.1 99.86.57.36:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 89E9A6FB-1613-4280-8B4C-D49513158A44 [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C688.1.1.2 99.86.57.19:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C688.1.1.2 99.86.57.19:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW 4D058077-14E4-45D3-AF46-C8F4DA283A0A [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C688.1.1.3 99.86.57.61:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C688.1.1.3 99.86.57.61:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_path_evaluator_create_flow_inner failed NECP_CLIENT_ACTION_ADD_FLOW (null) evaluator parameters: tcp, url: https://api.revenuecat.com/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72/offerings, tls, definite, attribution: developer, context: com.apple.CFNetwork.NSURLSession.{78E57C2A-AD5F-4F4B-8ADD-804CC1671951}{(null)}{Y}{3}{0x0} (sensitive), proc: 1D40746A-0A41-3120-A30C-4FFB05075DDF, no transport, known tracker
+nw_path_evaluator_create_flow_inner NECP_CLIENT_ACTION_ADD_FLOW FCE5437C-C289-492E-B652-2650A58B6A3B [12: Cannot allocate memory]
+nw_endpoint_flow_setup_channel [C688.1.1.4 99.86.57.116:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] failed to request add nexus flow
+nw_endpoint_flow_failed_with_error [C688.1.1.4 99.86.57.116:443 in_progress channel-flow (satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi)] already failing, returning
+nw_endpoint_flow_failed_with_error [C688.1.1.4 99.86.57.116:443 cancelled channel-flow ((null))] already failing, returning
+Connection 688: received failure notification
+Connection 688: failed to connect 1:12, reason -1
+Connection 688: encountered error(1:12)
+Task <428BD583-BB7A-4729-B4A3-F35FB2062A77>.<3> HTTP load failed, 0/0 bytes (error code: 12 [1:12])
+Task <428BD583-BB7A-4729-B4A3-F35FB2062A77>.<3> finished with error [12] Error Domain=NSPOSIXErrorDomain Code=12 "Cannot allocate memory" UserInfo={_NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <428BD583-BB7A-4729-B4A3-F35FB2062A77>.<3>, _kCFStreamErrorDomainKey=1, _kCFStreamErrorCodeKey=12, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <428BD583-BB7A-4729-B4A3-F35FB2062A77>.<3>"
+), _NSURLErrorNWPathKey=satisfied (Path is satisfied), interface: en0[802.11], ipv4, ipv6, dns, uses wifi}
+DEBUG: ℹ️ API request failed: GET '/v1/subscribers/$RCAnonymousID%3A552995d182de4760a75a897328338b72' (<>): The operation couldn’t be completed. Cannot allocate memory
+M

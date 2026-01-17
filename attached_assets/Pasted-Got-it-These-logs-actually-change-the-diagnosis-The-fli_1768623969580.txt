@@ -1,0 +1,93 @@
+Got it. These logs actually change the diagnosis. The flicker is very likely being caused by a crash/reload loop triggered by RevenueCat network calls, not routing anymore.
+
+Why I’m saying that
+
+Your log is dominated by:
+
+nw_path_evaluator_create_flow_inner ... NECP_CLIENT_ACTION_ADD_FLOW
+
+Error Domain=NSPOSIXErrorDomain Code=12 "Cannot allocate memory"
+
+Requests to https://api.revenuecat.com/.../offerings and /subscribers/...
+
+That means iOS is failing to create new network flows because it’s running out of memory/resources. If your app keeps retrying requests (RevenueCat does retries), you can get a loop that looks exactly like “black/white flicker” because the WebView keeps restarting.
+
+So: routing fix may be correct, but you still have a second loop now: RevenueCat.
+
+✅ The fastest way to confirm (no guessing)
+Test A — Disable RevenueCat initialization completely for 1 run
+
+In your App.tsx (or wherever you call Purchases.configure / RevenueCat setup), wrap it like this:
+
+const DISABLE_REVENUECAT = true;
+
+useEffect(() => {
+  if (DISABLE_REVENUECAT) return;
+
+  // RevenueCat init here
+}, []);
+
+
+Build + run on the phone.
+
+✅ If flicker stops: RevenueCat init / retries are the cause.
+❌ If flicker continues: then it’s still router/another crash loop.
+
+This is the cleanest “binary” test.
+
+If RevenueCat is the cause, here’s what usually fixes it
+1) Make sure you only configure once (VERY common bug)
+
+If Purchases.configure(...) runs more than once (because the component remounts or strict mode runs effects twice in dev), it can spiral.
+
+Add a module-level guard:
+
+let revenueCatConfigured = false;
+
+export function initRevenueCat() {
+  if (revenueCatConfigured) return;
+  revenueCatConfigured = true;
+  Purchases.configure({ apiKey: "YOUR_KEY" });
+}
+
+
+And call initRevenueCat() once.
+
+2) Stop repeated “get offerings” calls
+
+Only fetch offerings once, and never in a render loop. Example:
+
+let offeringsPromise: Promise<any> | null = null;
+
+export function getOfferingsOnce() {
+  if (!offeringsPromise) {
+    offeringsPromise = Purchases.getOfferings();
+  }
+  return offeringsPromise;
+}
+
+3) Don’t call RevenueCat until after the app is stable
+
+Delay it 1–2 seconds just to prove it’s the trigger:
+
+useEffect(() => {
+  const t = setTimeout(() => initRevenueCat(), 1500);
+  return () => clearTimeout(t);
+}, []);
+
+
+If the flicker stops with a delay, you’ve confirmed the loop.
+
+One more important iOS-specific thing
+
+If you’re missing the correct iOS entitlements/capabilities or you’re in a weird sandbox state, it shouldn’t cause “cannot allocate memory”… but a retry storm can.
+
+So the real fix is: prevent retry storms by ensuring:
+
+configure once
+
+fetch once
+
+don’t fetch offerings repeatedly on auth changes / renders
+
+don’t crash → remount → configure again
