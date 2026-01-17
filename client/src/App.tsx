@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/components/NotificationProvider";
 import { useAuth } from "@/hooks/useAuth";
+import IPadFrame from "@/components/iPadFrame";
 import Home from "@/pages/home";
 import HomeFree from "@/pages/home-free";
 import HomePremium from "@/pages/home-premium";
@@ -155,8 +156,10 @@ function App() {
       <WouterRouter hook={useNormalizedLocation}>
         <TooltipProvider>
           <NotificationProvider>
-            <Toaster />
-            <AppRouter />
+            <IPadFrame>
+              <Toaster />
+              <AppRouter />
+            </IPadFrame>
           </NotificationProvider>
         </TooltipProvider>
       </WouterRouter>
