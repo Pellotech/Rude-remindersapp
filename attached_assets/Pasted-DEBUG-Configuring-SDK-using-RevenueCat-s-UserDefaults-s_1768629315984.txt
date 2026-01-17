@@ -1,0 +1,71 @@
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+DEBUG: 👤 Identifying App User ID
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Delegate set
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ GetOfferingsOperation: Started
+⚡️  TO JS undefined
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {"line":462,"column":20338,"sourceURL":"capacitor://localhost/assets/index-BN29BBYe.js"}
+⚡️  [log] - RevenueCat initialized successfully
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings' (304)
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056' (304)
+DEBUG: 😻 CustomerInfo updated from network.
+DEBUG: ℹ️ GetCustomerInfoOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056, 0 requests left in the queue
+DEBUG: ℹ️ HealthReportOperation: Started
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/health_report
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/health_report'
+DEBUG: ℹ️ No existing products cached, starting store products request for: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings, 0 requests left in the queue
+⚡️  WebView loaded
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/health_report_availability' (200)
+DEBUG: ℹ️ HealthReportAvailabilityOperation: Finished
+DEBUG: ℹ️ GetOfferingsOperation: Started
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/health_report_availability, 0 requests left in the queue
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings'
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/health_report_availability' (200)
+DEBUG: ℹ️ HealthReportAvailabilityOperation: Finished
+⚡️  To Native ->  Purchases configure -1
+INFO: ℹ️ Purchases instance already set. Did you mean to configure two Purchases objects?
+DEBUG: ℹ️ Configuring SDK using RevenueCat's UserDefaults suite.
+DEBUG: 👤 Identifying App User ID
+DEBUG: ℹ️ Observing StoreKit.Transaction.updates
+DEBUG: ℹ️ Debug logging enabled
+DEBUG: ℹ️ SDK Version - 5.38.2
+DEBUG: ℹ️ Bundle ID - com.goosebumpsmw.rudereminders
+DEBUG: ℹ️ System Version - Version 18.6.2 (Build 22G100)
+DEBUG: ℹ️ Not using a simulator.
+DEBUG: 👤 No initial App User ID
+DEBUG: ℹ️ Purchases is configured with informational response verification
+DEBUG: ℹ️ Purchases is configured with StoreKit version 2
+DEBUG: ℹ️ Delegate set
+DEBUG: ℹ️ Observing StoreKit.PurchaseIntent.intents
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+⚡️  TO JS undefined
+DEBUG: ℹ️ GetOfferingsOperation: Started
+⚡️  [log] - RevenueCat configured for platform: ios
+⚡️  [error] - Failed to get current user: {"line":462,"column":20338,"sourceURL":"capacitor://localhost/assets/index-BN29BBYe.js"}
+⚡️  [log] - RevenueCat initialized successfully
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings
+DEBUG: ℹ️ GetCustomerInfoOperation: Started
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/offerings'
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056/health_report_availability, 0 requests left in the queue
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/$RCAnonymousID%3Af7d0a070dfb3459cb989c7d4c0a70056'
+DEBUG: 😻 Store products request received response
+DEBUG: ℹ️ Store products request finished
+DEBUG: 😻 Offerings updated from network.
