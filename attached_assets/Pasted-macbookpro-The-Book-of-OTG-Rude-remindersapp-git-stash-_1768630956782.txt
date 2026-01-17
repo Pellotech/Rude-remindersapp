@@ -1,0 +1,784 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % git stash
+git pull origin main
+git stash pop
+npm run build
+npx cap copy ios && npx cap sync ios
+Saved working directory and index state WIP on main: b4972b6 Add initial project setup and configuration files
+remote: Enumerating objects: 11, done.
+remote: Counting objects: 100% (11/11), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 9 (delta 6), reused 9 (delta 6), pack-reused 0 (from 0)
+Unpacking objects: 100% (9/9), 4.04 KiB | 275.00 KiB/s, done.
+From https://github.com/Pellotech/Rude-remindersapp
+ * branch            main       -> FETCH_HEAD
+   7926fe7..6f2630d  main       -> origin/main
+Updating b4972b6..6f2630d
+Fast-forward
+ .replit                                            |    4 -
+ APPLE_REVIEW_FIXES_SUMMARY.md                      |  297 +++++
+ APPLE_REVIEW_FIX_REVENUECAT.md                     |   92 ++
+ IOS_SETUP.md                                       |   82 ++
+ REVENUECAT_WEB_SETUP.md                            |  164 +++
+ android/app/capacitor.build.gradle                 |    4 +
+ android/capacitor.settings.gradle                  |   12 +
+ attached_assets/1763915196859-442901231.jpg        |  Bin 0 -> 1116008 bytes
+ attached_assets/1763915360070-971450038.jpg        |  Bin 0 -> 1278477 bytes
+ attached_assets/1763916190046-737819097.jpg        |  Bin 0 -> 585431 bytes
+ attached_assets/1763916287276-23857924.jpg         |  Bin 0 -> 361774 bytes
+ attached_assets/1763916491301-326426193.jpg        |  Bin 0 -> 585431 bytes
+ attached_assets/1763918395745-488979369.jpg        |  Bin 0 -> 585431 bytes
+ attached_assets/1763919272114-793772836.jpg        |  Bin 0 -> 221183 bytes
+ attached_assets/1763919772353-441455509.jpg        |  Bin 0 -> 585431 bytes
+ attached_assets/1763920419939-818774708.jpg        |  Bin 0 -> 585431 bytes
+ attached_assets/1763920453616-355351713.jpg        |  Bin 0 -> 1448901 bytes
+ attached_assets/1763921979213-222478354.jpg        |  Bin 0 -> 585431 bytes
+ attached_assets/1763922849472-159180691.jpg        |  Bin 0 -> 317426 bytes
+ attached_assets/1764031613752-751317955.jpg        |  Bin 0 -> 597654 bytes
+ attached_assets/1764043670452-603359217.jpg        |  Bin 0 -> 411907 bytes
+ attached_assets/1764044771987-518100081.jpg        |  Bin 0 -> 252286 bytes
+ attached_assets/1764130005071-422086351.jpg        |  Bin 0 -> 277763 bytes
+ attached_assets/1764130020242-30909089.jpg         |  Bin 0 -> 294896 bytes
+ attached_assets/1764389463729-353385607.jpg        |  Bin 0 -> 313087 bytes
+ attached_assets/1764648751534-496850022.jpg        |  Bin 0 -> 203117 bytes
+ ...ce9cd8fe9f99af007e0e20cb8ebf9_1763599981307.png |  Bin 0 -> 108763 bytes
+ attached_assets/IMG_0048_1767044886087.PNG         |  Bin 0 -> 248181 bytes
+ attached_assets/IMG_0049_1767044886086.PNG         |  Bin 0 -> 252434 bytes
+ attached_assets/IMG_0050_1767044886086.PNG         |  Bin 0 -> 244639 bytes
+ attached_assets/IMG_0050_1767046779463.PNG         |  Bin 0 -> 244639 bytes
+ attached_assets/IMG_0050_1767056800349.PNG         |  Bin 0 -> 244639 bytes
+ attached_assets/IMG_0117_1767184602500.PNG         |  Bin 0 -> 263428 bytes
+ attached_assets/IMG_1148_1768528754342.PNG         |  Bin 0 -> 260841 bytes
+ attached_assets/IMG_1148_1768530042283.PNG         |  Bin 0 -> 260841 bytes
+ attached_assets/IMG_1156_1768548983520.png         |  Bin 0 -> 131306 bytes
+ attached_assets/IMG_1158_1768548983520.png         |  Bin 0 -> 235422 bytes
+ attached_assets/IMG_1171_1768558114726.PNG         |  Bin 0 -> 48098 bytes
+ attached_assets/IMG_1172_1768558114726.PNG         |  Bin 0 -> 78516 bytes
+ attached_assets/IMG_1173_1768558114725.PNG         |  Bin 0 -> 50823 bytes
+ .../IMG_146CE2144C7F-1_1762315789466.jpeg          |  Bin 0 -> 825321 bytes
+ .../IMG_146CE2144C7F-1_1762401364320.jpeg          |  Bin 0 -> 825321 bytes
+ .../IMG_16BF30DDFE1C-1_1763873716085.jpeg          |  Bin 0 -> 1020555 bytes
+ attached_assets/IMG_5561_1762043617184.PNG         |  Bin 0 -> 443084 bytes
+ attached_assets/IMG_5562_1762043617184.PNG         |  Bin 0 -> 267400 bytes
+ attached_assets/IMG_5563_1762043617185.PNG         |  Bin 0 -> 428794 bytes
+ attached_assets/IMG_5578_1762044870494.PNG         |  Bin 0 -> 569623 bytes
+ attached_assets/IMG_5579_1762044878138.PNG         |  Bin 0 -> 115908 bytes
+ attached_assets/IMG_5589_1762316421112.PNG         |  Bin 0 -> 447340 bytes
+ attached_assets/IMG_5594_1762054039660.PNG         |  Bin 0 -> 202558 bytes
+ attached_assets/IMG_5821_1762397330290.PNG         |  Bin 0 -> 250451 bytes
+ attached_assets/IMG_5821_1762401378236.PNG         |  Bin 0 -> 250451 bytes
+ attached_assets/IMG_5822_1762397330289.PNG         |  Bin 0 -> 234656 bytes
+ attached_assets/IMG_5823_1762400540304.PNG         |  Bin 0 -> 531917 bytes
+ attached_assets/IMG_5824_1762400540303.PNG         |  Bin 0 -> 258548 bytes
+ .../IMG_59D588C1BD1B-1_1767043417503.jpeg          |  Bin 0 -> 635595 bytes
+ attached_assets/IMG_6433_1763310287136.PNG         |  Bin 0 -> 505082 bytes
+ attached_assets/IMG_6637_1763600000155.PNG         |  Bin 0 -> 265681 bytes
+ attached_assets/IMG_6638_1763600000154.PNG         |  Bin 0 -> 514698 bytes
+ attached_assets/IMG_6645_1763776571130.PNG         |  Bin 0 -> 481089 bytes
+ attached_assets/IMG_6755_1763770254126.PNG         |  Bin 0 -> 235490 bytes
+ attached_assets/IMG_6755_1763776525707.PNG         |  Bin 0 -> 235490 bytes
+ attached_assets/IMG_6780_1763772276351.PNG         |  Bin 0 -> 122344 bytes
+ attached_assets/IMG_6781_1763772526019.PNG         |  Bin 0 -> 510585 bytes
+ attached_assets/IMG_6789_1763773111447.PNG         |  Bin 0 -> 638412 bytes
+ attached_assets/IMG_6857_1763870220231.PNG         |  Bin 0 -> 130462 bytes
+ attached_assets/IMG_6857_1763871719577.PNG         |  Bin 0 -> 130462 bytes
+ attached_assets/IMG_6863_1763871712215.PNG         |  Bin 0 -> 323563 bytes
+ attached_assets/IMG_6864_1763871712214.PNG         |  Bin 0 -> 322966 bytes
+ attached_assets/IMG_6884_1763880442324.PNG         |  Bin 0 -> 257959 bytes
+ attached_assets/IMG_6896_1763905676533.PNG         |  Bin 0 -> 539805 bytes
+ attached_assets/IMG_6896_1763912805715.PNG         |  Bin 0 -> 539805 bytes
+ attached_assets/IMG_6897_1763905676534.PNG         |  Bin 0 -> 540321 bytes
+ attached_assets/IMG_6897_1763912805715.PNG         |  Bin 0 -> 540321 bytes
+ attached_assets/IMG_6909_1763913939391.PNG         |  Bin 0 -> 238433 bytes
+ attached_assets/IMG_6909_1763914388719.PNG         |  Bin 0 -> 238433 bytes
+ attached_assets/IMG_6910_1763913939390.PNG         |  Bin 0 -> 243800 bytes
+ attached_assets/IMG_6910_1763914388718.PNG         |  Bin 0 -> 243800 bytes
+ attached_assets/IMG_6916_1763915504407.PNG         |  Bin 0 -> 350009 bytes
+ attached_assets/IMG_6921_1763916534446.PNG         |  Bin 0 -> 405050 bytes
+ attached_assets/IMG_6922_1763916534446.PNG         |  Bin 0 -> 245544 bytes
+ attached_assets/IMG_6923_1763916534445.PNG         |  Bin 0 -> 359684 bytes
+ attached_assets/IMG_6924 2_1764029228958.PNG       |  Bin 0 -> 286539 bytes
+ attached_assets/IMG_6924_1763936046157.PNG         |  Bin 0 -> 286539 bytes
+ attached_assets/IMG_6928_1763922020795.PNG         |  Bin 0 -> 1486182 bytes
+ attached_assets/IMG_6928_1763922029261.PNG         |  Bin 0 -> 1486182 bytes
+ attached_assets/IMG_6929_1764029228957.PNG         |  Bin 0 -> 272707 bytes
+ attached_assets/IMG_7007_1764044019254.PNG         |  Bin 0 -> 256340 bytes
+ attached_assets/IMG_7008_1764044019253.PNG         |  Bin 0 -> 217173 bytes
+ attached_assets/IMG_7050_1764126751433.PNG         |  Bin 0 -> 166380 bytes
+ attached_assets/IMG_7459_1764732112543.PNG         |  Bin 0 -> 842072 bytes
+ attached_assets/IMG_7460_1764732112543.PNG         |  Bin 0 -> 81360 bytes
+ attached_assets/IMG_7471 2_1764733252827.PNG       |  Bin 0 -> 766066 bytes
+ attached_assets/IMG_7473_1764733252826.PNG         |  Bin 0 -> 86301 bytes
+ attached_assets/IMG_8012_1765304875090.PNG         |  Bin 0 -> 166180 bytes
+ attached_assets/IMG_8012_2_1765339444748.PNG       |  Bin 0 -> 166180 bytes
+ attached_assets/IMG_8012_2_1765342192406.PNG       |  Bin 0 -> 166180 bytes
+ attached_assets/IMG_8013_2_1765304846628.PNG       |  Bin 0 -> 202522 bytes
+ attached_assets/IMG_8013_2_1765339384329.PNG       |  Bin 0 -> 202522 bytes
+ attached_assets/IMG_8014_2_1765304846627.PNG       |  Bin 0 -> 458194 bytes
+ attached_assets/IMG_8014_2_1765339393176.PNG       |  Bin 0 -> 458194 bytes
+ attached_assets/IMG_8020_2_1765304846627.PNG       |  Bin 0 -> 714430 bytes
+ attached_assets/IMG_8089_1765341755674.PNG         |  Bin 0 -> 120386 bytes
+ attached_assets/IMG_8090_1765308575542.PNG         |  Bin 0 -> 111995 bytes
+ attached_assets/IMG_8090_1765339513406.PNG         |  Bin 0 -> 111995 bytes
+ attached_assets/IMG_8121_1765339185710.PNG         |  Bin 0 -> 428009 bytes
+ attached_assets/IMG_8121_1765342044740.PNG         |  Bin 0 -> 428009 bytes
+ attached_assets/IMG_8122_1765339185710.PNG         |  Bin 0 -> 202522 bytes
+ attached_assets/IMG_8122_1765341934721.PNG         |  Bin 0 -> 202522 bytes
+ attached_assets/IMG_8136_1765346339171.PNG         |  Bin 0 -> 183192 bytes
+ .../IMG_8A957A15702A-1_1763873716085.jpeg          |  Bin 0 -> 350957 bytes
+ .../IMG_907588FC9D11-1_1763604250407.jpeg          |  Bin 0 -> 757259 bytes
+ .../IMG_94CC4A577AEE-1_1763880752822.jpeg          |  Bin 0 -> 793530 bytes
+ .../IMG_A8B75ED66F47-1_1767046281110.jpeg          |  Bin 0 -> 752803 bytes
+ .../IMG_DA5F0D3A784D-1_1762386622691.jpeg          |  Bin 0 -> 927967 bytes
+ .../IMG_DA5F0D3A784D-1_1762386671781.jpeg          |  Bin 0 -> 927967 bytes
+ .../IMG_DA5F0D3A784D-2_1762315789466.jpeg          |  Bin 0 -> 825321 bytes
+ .../IMG_EC72E9B6E055-1_1763778024214.jpeg          |  Bin 0 -> 930533 bytes
+ .../IMG_EDB41D274D66-1_1763777497124.jpeg          |  Bin 0 -> 218197 bytes
+ .../IMG_F42D1BDF878F-1_1763919379034.jpeg          |  Bin 0 -> 903906 bytes
+ ...STORE-REVIEW-Gu-1763595363903_1763595363904.txt |  144 +++
+ ...bumpsmw-rudereminders-DEBUG-S_1768624792024.txt |   76 ++
+ ...PASTE-THIS-TO-Y-1763602648020_1763602648021.txt |  183 +++
+ ...tire-subscripti-1763775111263_1763775111264.txt |   89 ++
+ ...way-replit-dev--1762316175206_1762316175207.txt |   43 +
+ ...t-Apps-with-the-world-in-just_1768543908618.txt |  143 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343465663.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343469381.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343481561.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343488370.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343509436.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510099.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510258.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510436.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510571.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343534662.txt |  179 +++
+ ...PROMPT-FOR-REPLIT-UI-BUILDERS_1765343549078.txt |  179 +++
+ ...design-my-entir-1764128110308_1764128110309.txt |  208 ++++
+ ...lock-into-Repli-1763776500507_1763776500509.txt |   47 +
+ ...lock-into-Repli-1763776943533_1763776943535.txt |   47 +
+ ...y-paste-Goal-Fix-sharing-so-u_1767183800797.txt |   79 ++
+ ...-DEBUG-applicat-1763875392589_1763875392590.txt |   20 +
+ ...rk-attachments--1762317149055_1762317149055.txt |   18 +
+ ...rk-attachments--1762317169840_1762317169841.txt |   18 +
+ ...ueCat-configured-for-platform_1768625605560.txt |   64 ++
+ ...ueCat-configured-for-platform_1768625813990.txt |  126 +++
+ ...ferings-83062926-DEBUG-No-cac_1764954667765.txt |   20 +
+ ...nfo-plist-file--1763873635637_1763873635638.txt |   15 +
+ ...-DialogContent--1763874665257_1763874665258.txt |   17 +
+ ...ooks-correct-in-1762312208361_1762312208362.txt |   83 ++
+ ...d-GET-v1-subscribers-RCAnonym_1768627701232.txt |  144 +++
+ ...ET-v1-subscribers-RCAnonymous_1768560197118.txt |   39 +
+ ...a4cc3f8781d4fa8-1764734287603_1764734287604.txt |   21 +
+ ...g-RevenueCat-s-UserDefaults-s_1768629315984.txt |   71 ++
+ ...ndefined-log-RevenueCat-confi_1768627632869.txt |   42 +
+ ...om-network-DEBUG-CustomerInfo_1768628912339.txt |   99 ++
+ ...g-from-network--1762303010582_1762303010582.txt |   51 +
+ ...th-your-configuration-Check-t_1765001337034.txt |   43 +
+ ...NaN-or-not-a-nu-1762304693842_1762304693843.txt |   61 +
+ ...me-for-Rude-Reminders-Remove-_1766964697820.txt |   91 ++
+ ...-change-the-diagnosis-The-fli_1768623969580.txt |   93 ++
+ ...-can-paste-into-Replit-Assist_1767014023756.txt |   63 ++
+ ...-can-paste-into-Replit-Assist_1767014054373.txt |   63 ++
+ ...ng-our-Quicksta-1764387930411_1764387930412.txt |  141 +++
+ ...he-screen-on-th-1763760669941_1763760669942.txt |   85 ++
+ ...incorrect-and-s-1763771182117_1763771182118.txt |   32 +
+ ...te-Goal-Make-the-Reminder-Ale_1767198879625.txt |  105 ++
+ ...-page-redesign-content-Goal-R_1767275992186.txt |  139 +++
+ ...1-Guideline-2-2-1763607419801_1763607419802.txt |  163 +++
+ ...ts-in-the-follo-1762312918235_1762312918235.txt |   93 ++
+ ...figured-correctly-but-contain_1765298902553.txt |   20 +
+ ...ant-to-address--1763311307331_1763311307333.txt |   22 +
+ ...ant-to-address--1763772037941_1763772037942.txt |   48 +
+ ...state-of-things-and-I-will-no_1768622498055.txt |  135 +++
+ ...-i-keep-getting-1763517123155_1763517123155.txt |   27 +
+ ...-Rude-remindersapp-cd-Users-m_1768629341979.txt |   74 ++
+ ...-Rude-remindersapp-npx-cap-co_1768550490901.txt |   68 ++
+ ...low-inner-failed-NECP-CLIENT-_1768623897146.txt |   56 +
+ ...ow-inner-failed-NECP-CLIENT-A_1768622666147.txt |   54 +
+ ...aved-false-And--1763881620445_1763881620447.txt |  105 ++
+ ...cording_01-16-2026_03-05-37_1_1768558114724.MP4 |  Bin 0 -> 8148718 bytes
+ ...01 at 10.59.22\342\200\257PM_1762059565007.png" |  Bin 0 -> 400753 bytes
+ ...01 at 6.27.27\342\200\257PM_1762043617185.jpeg" |  Bin 0 -> 779678 bytes
+ ...-01 at 8.43.15\342\200\257AM_1762008200732.png" |  Bin 0 -> 112326 bytes
+ ...-04 at 8.30.05\342\200\257PM_1762313409825.png" |  Bin 0 -> 769220 bytes
+ ...-05 at 5.17.44\342\200\257PM_1762388266573.png" |  Bin 0 -> 78502 bytes
+ ...-05 at 5.19.40\342\200\257PM_1762388383155.png" |  Bin 0 -> 106980 bytes
+ ...-16 at 9.49.38\342\200\257PM_1763354985527.png" |  Bin 0 -> 242456 bytes
+ ...-17 at 6.02.00\342\200\257PM_1763427724582.png" |  Bin 0 -> 328667 bytes
+ ...-17 at 6.04.11\342\200\257PM_1763427855398.png" |  Bin 0 -> 1301870 bytes
+ ...-17 at 7.45.26\342\200\257PM_1763433930657.png" |  Bin 0 -> 1411485 bytes
+ ...-18 at 6.51.28\342\200\257PM_1763517094690.png" |  Bin 0 -> 847936 bytes
+ ...-18 at 8.13.19\342\200\257PM_1763522004769.png" |  Bin 0 -> 928183 bytes
+ ...-18 at 8.54.11\342\200\257PM_1763524459181.png" |  Bin 0 -> 922280 bytes
+ ...-18 at 9.27.56\342\200\257PM_1763526479236.png" |  Bin 0 -> 1461345 bytes
+ ...-19 at 5.01.35\342\200\257PM_1763596898492.png" |  Bin 0 -> 1419306 bytes
+ ...-19 at 6.13.48\342\200\257PM_1763601232485.png" |  Bin 0 -> 1265350 bytes
+ ...-19 at 6.32.57\342\200\257PM_1763602382835.png" |  Bin 0 -> 907138 bytes
+ ...-19 at 7.30.55\342\200\257PM_1763605859053.png" |  Bin 0 -> 1377033 bytes
+ ...-19 at 7.56.29\342\200\257PM_1763607394192.png" |  Bin 0 -> 869927 bytes
+ ...22 at 11.15.51\342\200\257PM_1763878555816.png" |  Bin 0 -> 95610 bytes
+ ...22 at 11.20.17\342\200\257PM_1763878820109.png" |  Bin 0 -> 659876 bytes
+ ...-24 at 8.21.31\342\200\257PM_1764040894940.png" |  Bin 0 -> 155307 bytes
+ ...-01 at 8.24.31\342\200\257PM_1764645876697.png" |  Bin 0 -> 1499985 bytes
+ ...-01 at 8.26.42\342\200\257PM_1764646006654.png" |  Bin 0 -> 1499984 bytes
+ ...-02 at 7.19.43\342\200\257PM_1764728385422.png" |  Bin 0 -> 260134 bytes
+ .../Screenshot-1118-094025_1763776508015.png       |  Bin 0 -> 213995 bytes
+ ...shot_2025-11-12_at_6.30.36_PM_1765412788582.png |  Bin 0 -> 1085215 bytes
+ ...shot_2025-11-12_at_6.30.36_PM_1765412866227.png |  Bin 0 -> 1085215 bytes
+ ...hot_2025-12-05_at_10.02.43_PM_1764997369103.png |  Bin 0 -> 1165709 bytes
+ ...hot_2025-12-05_at_10.12.13_AM_1764955421605.png |  Bin 0 -> 1396482 bytes
+ ...hot_2025-12-05_at_10.12.17_AM_1764954743288.png |  Bin 0 -> 1369315 bytes
+ ...hot_2025-12-05_at_10.28.56_PM_1764999199745.png |  Bin 0 -> 666514 bytes
+ ...hot_2025-12-05_at_10.37.40_PM_1764999516726.png |  Bin 0 -> 246355 bytes
+ ...hot_2025-12-05_at_10.37.47_PM_1764999516726.png |  Bin 0 -> 743298 bytes
+ ...hot_2025-12-05_at_10.38.15_PM_1764999516725.png |  Bin 0 -> 273076 bytes
+ ...hot_2025-12-05_at_10.40.17_AM_1764956421894.png |  Bin 0 -> 1378549 bytes
+ ...hot_2025-12-05_at_10.43.56_PM_1764999856444.png |  Bin 0 -> 1104274 bytes
+ ...shot_2025-12-05_at_2.12.22_PM_1764969176285.png |  Bin 0 -> 932101 bytes
+ ...shot_2025-12-05_at_3.44.32_PM_1764974677957.png |  Bin 0 -> 1264732 bytes
+ ...shot_2025-12-05_at_3.46.13_PM_1764974785023.png |  Bin 0 -> 1375823 bytes
+ ...shot_2025-12-05_at_9.00.56_PM_1764993662406.png |  Bin 0 -> 785533 bytes
+ ...shot_2025-12-05_at_9.39.09_PM_1764995957833.png |  Bin 0 -> 869008 bytes
+ ...shot_2025-12-05_at_9.53.35_PM_1764997527417.png |  Bin 0 -> 867505 bytes
+ ...shot_2025-12-05_at_9.53.45_PM_1764997527416.png |  Bin 0 -> 855246 bytes
+ ...hot_2025-12-08_at_11.56.36_AM_1765220201463.png |  Bin 0 -> 1306783 bytes
+ ...shot_2025-12-10_at_5.24.07_PM_1765412788581.png |  Bin 0 -> 215970 bytes
+ ...shot_2025-12-10_at_5.24.07_PM_1765412866226.png |  Bin 0 -> 215970 bytes
+ ...shot_2025-12-10_at_5.24.18_PM_1765412788581.png |  Bin 0 -> 149762 bytes
+ ...shot_2025-12-10_at_5.24.18_PM_1765412866226.png |  Bin 0 -> 149762 bytes
+ ...shot_2025-12-10_at_5.24.25_PM_1765412788581.png |  Bin 0 -> 220783 bytes
+ ...shot_2025-12-10_at_5.24.25_PM_1765412866226.png |  Bin 0 -> 220783 bytes
+ ...shot_2025-12-10_at_5.24.32_PM_1765412788581.png |  Bin 0 -> 141488 bytes
+ ...shot_2025-12-10_at_5.24.32_PM_1765412866226.png |  Bin 0 -> 141488 bytes
+ ...shot_2025-12-10_at_5.24.40_PM_1765412788581.png |  Bin 0 -> 227594 bytes
+ ...shot_2025-12-10_at_5.24.40_PM_1765412866226.png |  Bin 0 -> 227594 bytes
+ ...shot_2025-12-10_at_5.24.54_PM_1765412788581.png |  Bin 0 -> 272655 bytes
+ ...shot_2025-12-10_at_5.24.54_PM_1765412866226.png |  Bin 0 -> 272655 bytes
+ ...shot_2025-12-10_at_5.25.14_PM_1765412788581.png |  Bin 0 -> 199294 bytes
+ ...shot_2025-12-10_at_5.25.14_PM_1765412866225.png |  Bin 0 -> 199294 bytes
+ ...shot_2025-12-10_at_5.25.32_PM_1765412788581.png |  Bin 0 -> 164049 bytes
+ ...shot_2025-12-10_at_5.25.32_PM_1765412866225.png |  Bin 0 -> 164049 bytes
+ ...shot_2025-12-12_at_8.06.28_PM_1765595190792.png |  Bin 0 -> 113982 bytes
+ ...shot_2025-12-12_at_8.06.40_PM_1765595202982.png |  Bin 0 -> 76698 bytes
+ ...shot_2025-12-12_at_9.08.25_PM_1765598907572.png |  Bin 0 -> 78299 bytes
+ ...shot_2025-12-12_at_9.14.47_PM_1765599289566.png |  Bin 0 -> 47495 bytes
+ ...shot_2025-12-12_at_9.49.11_PM_1765601353648.png |  Bin 0 -> 85657 bytes
+ ...shot_2025-12-13_at_1.35.39_AM_1765614942129.png |  Bin 0 -> 99033 bytes
+ ...shot_2025-12-28_at_4.57.11_PM_1766966234474.png |  Bin 0 -> 50362 bytes
+ ...shot_2025-12-28_at_5.02.57_PM_1766966580413.png |  Bin 0 -> 84202 bytes
+ ...shot_2025-12-28_at_5.14.53_PM_1766967297456.png |  Bin 0 -> 52611 bytes
+ ...shot_2025-12-28_at_5.19.15_PM_1766967558829.png |  Bin 0 -> 65064 bytes
+ ...shot_2025-12-28_at_5.23.48_PM_1766967831238.png |  Bin 0 -> 27417 bytes
+ ...shot_2025-12-29_at_1.25.54_PM_1767039957241.png |  Bin 0 -> 190477 bytes
+ ...shot_2025-12-29_at_2.32.54_PM_1767043977954.png |  Bin 0 -> 166553 bytes
+ ...shot_2025-12-29_at_2.49.56_PM_1767044999258.png |  Bin 0 -> 34041 bytes
+ ...shot_2025-12-29_at_3.13.02_PM_1767046388483.png |  Bin 0 -> 173810 bytes
+ ...shot_2025-12-29_at_3.26.26_PM_1767047189471.png |  Bin 0 -> 117152 bytes
+ ...shot_2025-12-29_at_5.15.15_AM_1767143816151.png |  Bin 0 -> 134444 bytes
+ ...shot_2025-12-29_at_6.45.49_AM_1767015952454.png |  Bin 0 -> 162696 bytes
+ ...shot_2025-12-29_at_6.46.17_AM_1767015984244.png |  Bin 0 -> 45781 bytes
+ ...shot_2025-12-29_at_6.47.01_AM_1767016025190.png |  Bin 0 -> 67683 bytes
+ ...shot_2025-12-29_at_7.47.03_AM_1767019625644.png |  Bin 0 -> 68806 bytes
+ ...shot_2025-12-29_at_7.47.18_AM_1767019640503.png |  Bin 0 -> 44549 bytes
+ ...shot_2025-12-29_at_8.01.08_AM_1767020471150.png |  Bin 0 -> 43186 bytes
+ ...shot_2025-12-29_at_8.33.21_AM_1767022404420.png |  Bin 0 -> 23473 bytes
+ ...shot_2025-12-29_at_8.36.19_AM_1767022581969.png |  Bin 0 -> 19038 bytes
+ ...hot_2025-12-30_at_10.44.44_AM_1767116730160.png |  Bin 0 -> 79348 bytes
+ ...hot_2025-12-30_at_10.46.07_AM_1767116770074.png |  Bin 0 -> 82409 bytes
+ ...shot_2025-12-30_at_5.29.28_AM_1767097776593.png |  Bin 0 -> 199532 bytes
+ ...shot_2025-12-30_at_7.35.14_AM_1767105318855.png |  Bin 0 -> 27935 bytes
+ ...shot_2025-12-31_at_2.59.20_AM_1767175166944.png |  Bin 0 -> 40028 bytes
+ ...shot_2025-12-31_at_3.47.32_AM_1767178056002.png |  Bin 0 -> 59481 bytes
+ ...shot_2025-12-31_at_4.25.40_AM_1767180344224.png |  Bin 0 -> 175063 bytes
+ ...shot_2025-12-31_at_5.36.13_AM_1767184576133.png |  Bin 0 -> 93181 bytes
+ ...shot_2025-12-31_at_7.55.08_AM_1767192915728.png |  Bin 0 -> 194872 bytes
+ ...shot_2025-12-31_at_7.56.02_AM_1767192964949.png |  Bin 0 -> 113502 bytes
+ ...shot_2025-12-31_at_8.38.52_AM_1767195538324.png |  Bin 0 -> 182907 bytes
+ ...shot_2026-01-01_at_4.28.18_AM_1767266901934.png |  Bin 0 -> 138477 bytes
+ ...shot_2026-01-01_at_6.03.47_AM_1767272634342.png |  Bin 0 -> 143988 bytes
+ ...shot_2026-01-01_at_6.04.10_AM_1767272653500.png |  Bin 0 -> 147899 bytes
+ ...shot_2026-01-01_at_6.04.27_AM_1767272671049.png |  Bin 0 -> 146077 bytes
+ ...shot_2026-01-01_at_6.04.47_AM_1767272690900.png |  Bin 0 -> 138950 bytes
+ ...shot_2026-01-01_at_6.05.10_AM_1767272713835.png |  Bin 0 -> 147819 bytes
+ ...shot_2026-01-01_at_7.37.34_AM_1767278257473.png |  Bin 0 -> 151241 bytes
+ ...shot_2026-01-01_at_7.38.14_AM_1767278300773.png |  Bin 0 -> 59463 bytes
+ ...shot_2026-01-01_at_7.40.54_AM_1767278456557.png |  Bin 0 -> 58532 bytes
+ ...shot_2026-01-01_at_7.46.33_AM_1767278796310.png |  Bin 0 -> 59463 bytes
+ ...hot_2026-01-07_at_10.22.21_AM_1767806578885.png |  Bin 0 -> 299509 bytes
+ ...hot_2026-01-07_at_10.22.31_AM_1767806578884.png |  Bin 0 -> 123130 bytes
+ ...shot_2026-01-16_at_2.30.52_AM_1768555976828.png |  Bin 0 -> 195872 bytes
+ ...shot_2026-01-16_at_2.31.00_AM_1768555982314.png |  Bin 0 -> 181013 bytes
+ ...shot_2026-01-16_at_2.31.11_AM_1768555990773.png |  Bin 0 -> 168263 bytes
+ ...shot_2026-01-16_at_2.31.21_AM_1768555998985.png |  Bin 0 -> 252896 bytes
+ ...shot_2026-01-16_at_2.31.46_AM_1768555948004.png |  Bin 0 -> 275181 bytes
+ ...shot_2026-01-16_at_2.31.55_AM_1768555954988.png |  Bin 0 -> 258229 bytes
+ ...shot_2026-01-16_at_2.43.02_AM_1768556601257.png |  Bin 0 -> 554682 bytes
+ ...shot_2026-01-16_at_3.20.26_AM_1768558831573.png |  Bin 0 -> 46080 bytes
+ ...w_Customers-20251111-20251208_1765210207386.csv |   29 +
+ .../translusant_logo1_1767105109175.png            |  Bin 0 -> 1052994 bytes
+ .../translusant_logo2_1767105366642.png            |  Bin 0 -> 1031158 bytes
+ .../translusant_logo2_1767108484844.png            |  Bin 0 -> 1031158 bytes
+ capacitor.config.ts                                |    5 +-
+ client/index.html                                  |   11 +-
+ client/src/App.tsx                                 |  147 ++-
+ client/src/components/AdminWhitelist.tsx           |   86 +-
+ client/src/components/AppHeader.tsx                |   18 +
+ client/src/components/BackNavigation.tsx           |   54 +-
+ client/src/components/DevTools.tsx                 |    4 +-
+ client/src/components/EmailAuthForm.tsx            |  161 ++-
+ client/src/components/HelpArticle.tsx              |   99 ++
+ client/src/components/HelpCenter.tsx               |  214 ++++
+ client/src/components/HelpMenu.tsx                 |  416 +------
+ client/src/components/IntroTour.tsx                |   33 +-
+ client/src/components/MobileCamera.tsx             |  439 +++++++-
+ client/src/components/MobileNotifications.tsx      |  119 +-
+ client/src/components/Navigation.tsx               |  141 +--
+ client/src/components/NotificationProvider.tsx     |  199 ++++
+ client/src/components/NotificationTest.tsx         |   51 +
+ client/src/components/PremiumScreen.tsx            |  305 +++++
+ client/src/components/ReminderForm.tsx             |  142 ++-
+ client/src/components/RemindersList.tsx            |  504 +++++----
+ client/src/components/RichReminderNotification.tsx |  340 +++---
+ client/src/components/SettingsModal.tsx            |    4 +-
+ client/src/components/ShareButton.tsx              |  521 +++++++--
+ client/src/components/Sidebar.tsx                  |    3 +-
+ client/src/components/SubscriptionManager.tsx      |  256 +++++
+ client/src/components/SwipeableReminderCard.tsx    |  119 ++
+ client/src/components/ui/input.tsx                 |    2 +-
+ client/src/hooks/useAuth.ts                        |   21 +-
+ client/src/index.css                               |  162 ++-
+ client/src/lib/helpContent.ts                      |  472 ++++++++
+ client/src/lib/queryClient.ts                      |   30 +-
+ client/src/lib/soundEffects.ts                     |   78 ++
+ client/src/main.tsx                                |    3 +
+ client/src/pages/DevPreview.tsx                    |   49 +-
+ client/src/pages/SettingsLanding.tsx               |  141 +--
+ client/src/pages/admin.tsx                         |   19 -
+ client/src/pages/home-free.tsx                     |  305 ++---
+ client/src/pages/home-premium.tsx                  |   44 +-
+ client/src/pages/home.tsx                          |   16 +-
+ client/src/pages/login.tsx                         |  353 +++++-
+ client/src/pages/not-found.tsx                     |   24 +
+ client/src/pages/settings.tsx                      | 1175 ++++++--------------
+ client/src/pages/settings/Appearance.tsx           |  226 ++--
+ client/src/pages/settings/Billing.tsx              |  516 +++------
+ client/src/pages/settings/Notifications.tsx        |  336 ++----
+ client/src/pages/settings/PersonalInfo.tsx         |  289 ++---
+ client/src/pages/settings/ReminderHistory.tsx      |  412 +++----
+ client/src/pages/subscribe.tsx                     |  370 +-----
+ client/src/services/admobService.ts                |    2 +-
+ client/src/services/appleSignInService.ts          |  107 ++
+ client/src/services/guestStorage.ts                |  173 +++
+ client/src/services/inAppOAuthService.ts           |  129 +++
+ client/src/services/revenueCatService.ts           |   90 +-
+ client/src/utils/safeAreaSetup.ts                  |   33 +
+ ios/App/App/Info.plist                             |  133 ++-
+ ios/App/App/Products.storekit                      |  117 ++
+ ios/App/Podfile                                    |    6 +
+ package-lock.json                                  |  346 +++++-
+ package.json                                       |   14 +
+ replit.md                                          |  148 +--
+ server/appleAuth.ts                                |   88 ++
+ server/index.ts                                    |   20 +
+ server/replitAuth.ts                               |  666 +++++++++++
+ server/routes.ts                                   |  419 ++++++-
+ server/seed-admin.ts                               |   52 +
+ server/services/notificationService.ts             |    4 +-
+ server/services/reminderService.ts                 |    6 +-
+ server/services/smartResponseService.ts            |   25 +-
+ server/storage.ts                                  |  146 +++
+ server/utils/premiumCheck.ts                       |  123 +-
+ shared/schema.ts                                   |   36 +-
+ 373 files changed, 14293 insertions(+), 4365 deletions(-)
+ create mode 100644 APPLE_REVIEW_FIXES_SUMMARY.md
+ create mode 100644 APPLE_REVIEW_FIX_REVENUECAT.md
+ create mode 100644 IOS_SETUP.md
+ create mode 100644 REVENUECAT_WEB_SETUP.md
+ create mode 100644 attached_assets/1763915196859-442901231.jpg
+ create mode 100644 attached_assets/1763915360070-971450038.jpg
+ create mode 100644 attached_assets/1763916190046-737819097.jpg
+ create mode 100644 attached_assets/1763916287276-23857924.jpg
+ create mode 100644 attached_assets/1763916491301-326426193.jpg
+ create mode 100644 attached_assets/1763918395745-488979369.jpg
+ create mode 100644 attached_assets/1763919272114-793772836.jpg
+ create mode 100644 attached_assets/1763919772353-441455509.jpg
+ create mode 100644 attached_assets/1763920419939-818774708.jpg
+ create mode 100644 attached_assets/1763920453616-355351713.jpg
+ create mode 100644 attached_assets/1763921979213-222478354.jpg
+ create mode 100644 attached_assets/1763922849472-159180691.jpg
+ create mode 100644 attached_assets/1764031613752-751317955.jpg
+ create mode 100644 attached_assets/1764043670452-603359217.jpg
+ create mode 100644 attached_assets/1764044771987-518100081.jpg
+ create mode 100644 attached_assets/1764130005071-422086351.jpg
+ create mode 100644 attached_assets/1764130020242-30909089.jpg
+ create mode 100644 attached_assets/1764389463729-353385607.jpg
+ create mode 100644 attached_assets/1764648751534-496850022.jpg
+ create mode 100644 attached_assets/940684eff56ce9cd8fe9f99af007e0e20cb8ebf9_1763599981307.png
+ create mode 100644 attached_assets/IMG_0048_1767044886087.PNG
+ create mode 100644 attached_assets/IMG_0049_1767044886086.PNG
+ create mode 100644 attached_assets/IMG_0050_1767044886086.PNG
+ create mode 100644 attached_assets/IMG_0050_1767046779463.PNG
+ create mode 100644 attached_assets/IMG_0050_1767056800349.PNG
+ create mode 100644 attached_assets/IMG_0117_1767184602500.PNG
+ create mode 100644 attached_assets/IMG_1148_1768528754342.PNG
+ create mode 100644 attached_assets/IMG_1148_1768530042283.PNG
+ create mode 100644 attached_assets/IMG_1156_1768548983520.png
+ create mode 100644 attached_assets/IMG_1158_1768548983520.png
+ create mode 100644 attached_assets/IMG_1171_1768558114726.PNG
+ create mode 100644 attached_assets/IMG_1172_1768558114726.PNG
+ create mode 100644 attached_assets/IMG_1173_1768558114725.PNG
+ create mode 100644 attached_assets/IMG_146CE2144C7F-1_1762315789466.jpeg
+ create mode 100644 attached_assets/IMG_146CE2144C7F-1_1762401364320.jpeg
+ create mode 100644 attached_assets/IMG_16BF30DDFE1C-1_1763873716085.jpeg
+ create mode 100644 attached_assets/IMG_5561_1762043617184.PNG
+ create mode 100644 attached_assets/IMG_5562_1762043617184.PNG
+ create mode 100644 attached_assets/IMG_5563_1762043617185.PNG
+ create mode 100644 attached_assets/IMG_5578_1762044870494.PNG
+ create mode 100644 attached_assets/IMG_5579_1762044878138.PNG
+ create mode 100644 attached_assets/IMG_5589_1762316421112.PNG
+ create mode 100644 attached_assets/IMG_5594_1762054039660.PNG
+ create mode 100644 attached_assets/IMG_5821_1762397330290.PNG
+ create mode 100644 attached_assets/IMG_5821_1762401378236.PNG
+ create mode 100644 attached_assets/IMG_5822_1762397330289.PNG
+ create mode 100644 attached_assets/IMG_5823_1762400540304.PNG
+ create mode 100644 attached_assets/IMG_5824_1762400540303.PNG
+ create mode 100644 attached_assets/IMG_59D588C1BD1B-1_1767043417503.jpeg
+ create mode 100644 attached_assets/IMG_6433_1763310287136.PNG
+ create mode 100644 attached_assets/IMG_6637_1763600000155.PNG
+ create mode 100644 attached_assets/IMG_6638_1763600000154.PNG
+ create mode 100644 attached_assets/IMG_6645_1763776571130.PNG
+ create mode 100644 attached_assets/IMG_6755_1763770254126.PNG
+ create mode 100644 attached_assets/IMG_6755_1763776525707.PNG
+ create mode 100644 attached_assets/IMG_6780_1763772276351.PNG
+ create mode 100644 attached_assets/IMG_6781_1763772526019.PNG
+ create mode 100644 attached_assets/IMG_6789_1763773111447.PNG
+ create mode 100644 attached_assets/IMG_6857_1763870220231.PNG
+ create mode 100644 attached_assets/IMG_6857_1763871719577.PNG
+ create mode 100644 attached_assets/IMG_6863_1763871712215.PNG
+ create mode 100644 attached_assets/IMG_6864_1763871712214.PNG
+ create mode 100644 attached_assets/IMG_6884_1763880442324.PNG
+ create mode 100644 attached_assets/IMG_6896_1763905676533.PNG
+ create mode 100644 attached_assets/IMG_6896_1763912805715.PNG
+ create mode 100644 attached_assets/IMG_6897_1763905676534.PNG
+ create mode 100644 attached_assets/IMG_6897_1763912805715.PNG
+ create mode 100644 attached_assets/IMG_6909_1763913939391.PNG
+ create mode 100644 attached_assets/IMG_6909_1763914388719.PNG
+ create mode 100644 attached_assets/IMG_6910_1763913939390.PNG
+ create mode 100644 attached_assets/IMG_6910_1763914388718.PNG
+ create mode 100644 attached_assets/IMG_6916_1763915504407.PNG
+ create mode 100644 attached_assets/IMG_6921_1763916534446.PNG
+ create mode 100644 attached_assets/IMG_6922_1763916534446.PNG
+ create mode 100644 attached_assets/IMG_6923_1763916534445.PNG
+ create mode 100644 attached_assets/IMG_6924 2_1764029228958.PNG
+ create mode 100644 attached_assets/IMG_6924_1763936046157.PNG
+ create mode 100644 attached_assets/IMG_6928_1763922020795.PNG
+ create mode 100644 attached_assets/IMG_6928_1763922029261.PNG
+ create mode 100644 attached_assets/IMG_6929_1764029228957.PNG
+ create mode 100644 attached_assets/IMG_7007_1764044019254.PNG
+ create mode 100644 attached_assets/IMG_7008_1764044019253.PNG
+ create mode 100644 attached_assets/IMG_7050_1764126751433.PNG
+ create mode 100644 attached_assets/IMG_7459_1764732112543.PNG
+ create mode 100644 attached_assets/IMG_7460_1764732112543.PNG
+ create mode 100644 attached_assets/IMG_7471 2_1764733252827.PNG
+ create mode 100644 attached_assets/IMG_7473_1764733252826.PNG
+ create mode 100644 attached_assets/IMG_8012_1765304875090.PNG
+ create mode 100644 attached_assets/IMG_8012_2_1765339444748.PNG
+ create mode 100644 attached_assets/IMG_8012_2_1765342192406.PNG
+ create mode 100644 attached_assets/IMG_8013_2_1765304846628.PNG
+ create mode 100644 attached_assets/IMG_8013_2_1765339384329.PNG
+ create mode 100644 attached_assets/IMG_8014_2_1765304846627.PNG
+ create mode 100644 attached_assets/IMG_8014_2_1765339393176.PNG
+ create mode 100644 attached_assets/IMG_8020_2_1765304846627.PNG
+ create mode 100644 attached_assets/IMG_8089_1765341755674.PNG
+ create mode 100644 attached_assets/IMG_8090_1765308575542.PNG
+ create mode 100644 attached_assets/IMG_8090_1765339513406.PNG
+ create mode 100644 attached_assets/IMG_8121_1765339185710.PNG
+ create mode 100644 attached_assets/IMG_8121_1765342044740.PNG
+ create mode 100644 attached_assets/IMG_8122_1765339185710.PNG
+ create mode 100644 attached_assets/IMG_8122_1765341934721.PNG
+ create mode 100644 attached_assets/IMG_8136_1765346339171.PNG
+ create mode 100644 attached_assets/IMG_8A957A15702A-1_1763873716085.jpeg
+ create mode 100644 attached_assets/IMG_907588FC9D11-1_1763604250407.jpeg
+ create mode 100644 attached_assets/IMG_94CC4A577AEE-1_1763880752822.jpeg
+ create mode 100644 attached_assets/IMG_A8B75ED66F47-1_1767046281110.jpeg
+ create mode 100644 attached_assets/IMG_DA5F0D3A784D-1_1762386622691.jpeg
+ create mode 100644 attached_assets/IMG_DA5F0D3A784D-1_1762386671781.jpeg
+ create mode 100644 attached_assets/IMG_DA5F0D3A784D-2_1762315789466.jpeg
+ create mode 100644 attached_assets/IMG_EC72E9B6E055-1_1763778024214.jpeg
+ create mode 100644 attached_assets/IMG_EDB41D274D66-1_1763777497124.jpeg
+ create mode 100644 attached_assets/IMG_F42D1BDF878F-1_1763919379034.jpeg
+ create mode 100644 attached_assets/Pasted--COPY-PASTE-THIS-INTO-REPLIT-FOR-YOUR-DEVELOPER-TITLE-FIX-REQUIRED-FOR-APPLE-APP-STORE-REVIEW-Gu-1763595363903_1763595363904.txt
+ create mode 100644 attached_assets/Pasted--DEBUG-Bundle-ID-com-goosebumpsmw-rudereminders-DEBUG-S_1768624792024.txt
+ create mode 100644 attached_assets/Pasted--DEVELOPER-PROMPT-2-FIX-METADATA-ANDROID-REFERENCES-Guideline-2-3-10-COPY-PASTE-THIS-TO-Y-1763602648020_1763602648021.txt
+ create mode 100644 attached_assets/Pasted--FULL-DEVELOPER-PROMPT-Paste-This-Into-Replit-I-need-you-to-completely-fix-the-entire-subscripti-1763775111263_1763775111264.txt
+ create mode 100644 attached_assets/Pasted--Loading-app-at-https-b5ac04f4-914d-4b4c-9d0e-8469759b5af1-00-qkc03alh73v0-janeway-replit-dev--1762316175206_1762316175207.txt
+ create mode 100644 attached_assets/Pasted--Overview-Share-your-Replit-Apps-with-the-world-in-just_1768543908618.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343465663.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343469381.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343481561.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343488370.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343509436.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510099.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510258.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510436.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343510571.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343534662.txt
+ create mode 100644 attached_assets/Pasted--POLISHED-DEVELOPER-READY-PROMPT-FOR-REPLIT-UI-BUILDERS_1765343549078.txt
+ create mode 100644 attached_assets/Pasted--PROMPT-Modern-Dark-Theme-Settings-Redesign-Full-Architecture-I-want-you-to-redesign-my-entir-1764128110308_1764128110309.txt
+ create mode 100644 attached_assets/Pasted--PROMPT-TO-FIX-NAVIGATION-BUTTONS-OVERLAPPING-STATUS-BAR-Copy-paste-this-entire-block-into-Repli-1763776500507_1763776500509.txt
+ create mode 100644 attached_assets/Pasted--PROMPT-TO-FIX-NAVIGATION-BUTTONS-OVERLAPPING-STATUS-BAR-Copy-paste-this-entire-block-into-Repli-1763776943533_1763776943535.txt
+ create mode 100644 attached_assets/Pasted--Prompt-to-give-Replit-copy-paste-Goal-Fix-sharing-so-u_1767183800797.txt
+ create mode 100644 attached_assets/Pasted--TO-JS-display-granted-log-Notification-permissions-granted-DEBUG-applicat-1763875392589_1763875392590.txt
+ create mode 100644 attached_assets/Pasted--TO-JS-sound-default-id-999999-body-If-you-see-this-notifications-work-attachments--1762317149055_1762317149055.txt
+ create mode 100644 attached_assets/Pasted--TO-JS-sound-default-id-999999-body-If-you-see-this-notifications-work-attachments--1762317169840_1762317169841.txt
+ create mode 100644 attached_assets/Pasted--TO-JS-undefined-log-RevenueCat-configured-for-platform_1768625605560.txt
+ create mode 100644 attached_assets/Pasted--TO-JS-undefined-log-RevenueCat-configured-for-platform_1768625813990.txt
+ create mode 100644 attached_assets/Pasted--To-Native-Purchases-getOfferings-83062926-DEBUG-No-cac_1764954667765.txt
+ create mode 100644 attached_assets/Pasted--error-message-You-are-missing-NSPhotoLibraryAddUsageDescription-in-your-Info-plist-file--1763873635637_1763873635638.txt
+ create mode 100644 attached_assets/Pasted--warn-Warning-Missing-Description-or-aria-describedby-undefined-for-DialogContent--1763874665257_1763874665258.txt
+ create mode 100644 attached_assets/Pasted-ChatGPT-said-That-s-a-really-good-question-and-it-s-frustrating-when-everything-looks-correct-in-1762312208361_1762312208362.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-API-request-completed-GET-v1-subscribers-RCAnonym_1768627701232.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-API-request-failed-GET-v1-subscribers-RCAnonymous_1768560197118.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-API-request-started-GET-v1-subscribers-RCAnonymousID-3Ae25c112e8fca441fa4cc3f8781d4fa8-1764734287603_1764734287604.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-Configuring-SDK-using-RevenueCat-s-UserDefaults-s_1768629315984.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-Delegate-set-TO-JS-undefined-log-RevenueCat-confi_1768627632869.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-Offerings-updated-from-network-DEBUG-CustomerInfo_1768628912339.txt
+ create mode 100644 attached_assets/Pasted-DEBUG-applicationWillEnterForeground-DEBUG-Offerings-cache-is-stale-updating-from-network--1762303010582_1762303010582.txt
+ create mode 100644 attached_assets/Pasted-ERROR-There-is-an-issue-with-your-configuration-Check-t_1765001337034.txt
+ create mode 100644 attached_assets/Pasted-Error-this-application-or-a-library-it-uses-has-passed-an-invalid-numeric-value-NaN-or-not-a-nu-1762304693842_1762304693843.txt
+ create mode 100644 attached_assets/Pasted-Goal-Update-the-iOS-UI-theme-for-Rude-Reminders-Remove-_1766964697820.txt
+ create mode 100644 attached_assets/Pasted-Got-it-These-logs-actually-change-the-diagnosis-The-fli_1768623969580.txt
+ create mode 100644 attached_assets/Pasted-Here-s-a-strong-prompt-you-can-paste-into-Replit-Assist_1767014023756.txt
+ create mode 100644 attached_assets/Pasted-Here-s-a-strong-prompt-you-can-paste-into-Replit-Assist_1767014054373.txt
+ create mode 100644 attached_assets/Pasted-If-this-is-your-first-time-integrating-RevenueCat-into-your-app-we-recommend-following-our-Quicksta-1764387930411_1764387930412.txt
+ create mode 100644 attached_assets/Pasted-PROMPT-TO-SEND-Fix-the-Safari-iCloud-password-popup-appearing-on-the-left-side-of-the-screen-on-th-1763760669941_1763760669942.txt
+ create mode 100644 attached_assets/Pasted-Please-completely-redesign-the-guest-mode-subscription-screen-The-current-screen-is-incorrect-and-s-1763771182117_1763771182118.txt
+ create mode 100644 attached_assets/Pasted-Prompt-for-Replit-copy-paste-Goal-Make-the-Reminder-Ale_1767198879625.txt
+ create mode 100644 attached_assets/Pasted-Prompt-to-give-Replit-Help-page-redesign-content-Goal-R_1767275992186.txt
+ create mode 100644 attached_assets/Pasted-These-are-VERY-common-and-easy-to-fix-once-we-know-what-Apple-wants-REJECTION-1-Guideline-2-2-1763607419801_1763607419802.txt
+ create mode 100644 attached_assets/Pasted-Unable-to-simultaneously-satisfy-constraints-Probably-at-least-one-of-the-constraints-in-the-follo-1762312918235_1762312918235.txt
+ create mode 100644 attached_assets/Pasted-WARN-RevenueCat-SDK-is-configured-correctly-but-contain_1765298902553.txt
+ create mode 100644 attached_assets/Pasted-WARN-RevenueCat-SDK-is-configured-correctly-but-contains-some-issues-you-might-want-to-address--1763311307331_1763311307333.txt
+ create mode 100644 attached_assets/Pasted-WARN-RevenueCat-SDK-is-configured-correctly-but-contains-some-issues-you-might-want-to-address--1763772037941_1763772037942.txt
+ create mode 100644 attached_assets/Pasted-You-re-100-correct-on-the-state-of-things-and-I-will-no_1768622498055.txt
+ create mode 100644 attached_assets/Pasted-im-trying-to-submit-my-in-ap-purchase-for-review-so-that-i-can-test-ourchases-out-but-i-keep-getting-1763517123155_1763517123155.txt
+ create mode 100644 attached_assets/Pasted-macbookpro-The-Book-of-OTG-Rude-remindersapp-cd-Users-m_1768629341979.txt
+ create mode 100644 attached_assets/Pasted-macbookpro-The-Book-of-OTG-Rude-remindersapp-npx-cap-co_1768550490901.txt
+ create mode 100644 attached_assets/Pasted-nw-path-evaluator-create-flow-inner-failed-NECP-CLIENT-_1768623897146.txt
+ create mode 100644 attached_assets/Pasted-w-path-evaluator-create-flow-inner-failed-NECP-CLIENT-A_1768622666147.txt
+ create mode 100644 attached_assets/Pasted-webPath-capacitor-localhost-capacitor-file-private-var-tmp-photo-2-jpg-saved-false-And--1763881620445_1763881620447.txt
+ create mode 100644 attached_assets/ScreenRecording_01-16-2026_03-05-37_1_1768558114724.MP4
+ create mode 100644 "attached_assets/Screenshot 2025-11-01 at 10.59.22\342\200\257PM_1762059565007.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-01 at 6.27.27\342\200\257PM_1762043617185.jpeg"
+ create mode 100644 "attached_assets/Screenshot 2025-11-01 at 8.43.15\342\200\257AM_1762008200732.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-04 at 8.30.05\342\200\257PM_1762313409825.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-05 at 5.17.44\342\200\257PM_1762388266573.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-05 at 5.19.40\342\200\257PM_1762388383155.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-16 at 9.49.38\342\200\257PM_1763354985527.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-17 at 6.02.00\342\200\257PM_1763427724582.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-17 at 6.04.11\342\200\257PM_1763427855398.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-17 at 7.45.26\342\200\257PM_1763433930657.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-18 at 6.51.28\342\200\257PM_1763517094690.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-18 at 8.13.19\342\200\257PM_1763522004769.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-18 at 8.54.11\342\200\257PM_1763524459181.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-18 at 9.27.56\342\200\257PM_1763526479236.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-19 at 5.01.35\342\200\257PM_1763596898492.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-19 at 6.13.48\342\200\257PM_1763601232485.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-19 at 6.32.57\342\200\257PM_1763602382835.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-19 at 7.30.55\342\200\257PM_1763605859053.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-19 at 7.56.29\342\200\257PM_1763607394192.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-22 at 11.15.51\342\200\257PM_1763878555816.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-22 at 11.20.17\342\200\257PM_1763878820109.png"
+ create mode 100644 "attached_assets/Screenshot 2025-11-24 at 8.21.31\342\200\257PM_1764040894940.png"
+ create mode 100644 "attached_assets/Screenshot 2025-12-01 at 8.24.31\342\200\257PM_1764645876697.png"
+ create mode 100644 "attached_assets/Screenshot 2025-12-01 at 8.26.42\342\200\257PM_1764646006654.png"
+ create mode 100644 "attached_assets/Screenshot 2025-12-02 at 7.19.43\342\200\257PM_1764728385422.png"
+ create mode 100644 attached_assets/Screenshot-1118-094025_1763776508015.png
+ create mode 100644 attached_assets/Screenshot_2025-11-12_at_6.30.36_PM_1765412788582.png
+ create mode 100644 attached_assets/Screenshot_2025-11-12_at_6.30.36_PM_1765412866227.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.02.43_PM_1764997369103.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.12.13_AM_1764955421605.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.12.17_AM_1764954743288.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.28.56_PM_1764999199745.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.37.40_PM_1764999516726.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.37.47_PM_1764999516726.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.38.15_PM_1764999516725.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.40.17_AM_1764956421894.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_10.43.56_PM_1764999856444.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_2.12.22_PM_1764969176285.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_3.44.32_PM_1764974677957.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_3.46.13_PM_1764974785023.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_9.00.56_PM_1764993662406.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_9.39.09_PM_1764995957833.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_9.53.35_PM_1764997527417.png
+ create mode 100644 attached_assets/Screenshot_2025-12-05_at_9.53.45_PM_1764997527416.png
+ create mode 100644 attached_assets/Screenshot_2025-12-08_at_11.56.36_AM_1765220201463.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.07_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.07_PM_1765412866226.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.18_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.18_PM_1765412866226.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.25_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.25_PM_1765412866226.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.32_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.32_PM_1765412866226.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.40_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.40_PM_1765412866226.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.54_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.24.54_PM_1765412866226.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.25.14_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.25.14_PM_1765412866225.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.25.32_PM_1765412788581.png
+ create mode 100644 attached_assets/Screenshot_2025-12-10_at_5.25.32_PM_1765412866225.png
+ create mode 100644 attached_assets/Screenshot_2025-12-12_at_8.06.28_PM_1765595190792.png
+ create mode 100644 attached_assets/Screenshot_2025-12-12_at_8.06.40_PM_1765595202982.png
+ create mode 100644 attached_assets/Screenshot_2025-12-12_at_9.08.25_PM_1765598907572.png
+ create mode 100644 attached_assets/Screenshot_2025-12-12_at_9.14.47_PM_1765599289566.png
+ create mode 100644 attached_assets/Screenshot_2025-12-12_at_9.49.11_PM_1765601353648.png
+ create mode 100644 attached_assets/Screenshot_2025-12-13_at_1.35.39_AM_1765614942129.png
+ create mode 100644 attached_assets/Screenshot_2025-12-28_at_4.57.11_PM_1766966234474.png
+ create mode 100644 attached_assets/Screenshot_2025-12-28_at_5.02.57_PM_1766966580413.png
+ create mode 100644 attached_assets/Screenshot_2025-12-28_at_5.14.53_PM_1766967297456.png
+ create mode 100644 attached_assets/Screenshot_2025-12-28_at_5.19.15_PM_1766967558829.png
+ create mode 100644 attached_assets/Screenshot_2025-12-28_at_5.23.48_PM_1766967831238.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_1.25.54_PM_1767039957241.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_2.32.54_PM_1767043977954.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_2.49.56_PM_1767044999258.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_3.13.02_PM_1767046388483.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_3.26.26_PM_1767047189471.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_5.15.15_AM_1767143816151.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_6.45.49_AM_1767015952454.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_6.46.17_AM_1767015984244.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_6.47.01_AM_1767016025190.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_7.47.03_AM_1767019625644.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_7.47.18_AM_1767019640503.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_8.01.08_AM_1767020471150.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_8.33.21_AM_1767022404420.png
+ create mode 100644 attached_assets/Screenshot_2025-12-29_at_8.36.19_AM_1767022581969.png
+ create mode 100644 attached_assets/Screenshot_2025-12-30_at_10.44.44_AM_1767116730160.png
+ create mode 100644 attached_assets/Screenshot_2025-12-30_at_10.46.07_AM_1767116770074.png
+ create mode 100644 attached_assets/Screenshot_2025-12-30_at_5.29.28_AM_1767097776593.png
+ create mode 100644 attached_assets/Screenshot_2025-12-30_at_7.35.14_AM_1767105318855.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_2.59.20_AM_1767175166944.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_3.47.32_AM_1767178056002.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_4.25.40_AM_1767180344224.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_5.36.13_AM_1767184576133.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_7.55.08_AM_1767192915728.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_7.56.02_AM_1767192964949.png
+ create mode 100644 attached_assets/Screenshot_2025-12-31_at_8.38.52_AM_1767195538324.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_4.28.18_AM_1767266901934.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_6.03.47_AM_1767272634342.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_6.04.10_AM_1767272653500.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_6.04.27_AM_1767272671049.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_6.04.47_AM_1767272690900.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_6.05.10_AM_1767272713835.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_7.37.34_AM_1767278257473.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_7.38.14_AM_1767278300773.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_7.40.54_AM_1767278456557.png
+ create mode 100644 attached_assets/Screenshot_2026-01-01_at_7.46.33_AM_1767278796310.png
+ create mode 100644 attached_assets/Screenshot_2026-01-07_at_10.22.21_AM_1767806578885.png
+ create mode 100644 attached_assets/Screenshot_2026-01-07_at_10.22.31_AM_1767806578884.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.30.52_AM_1768555976828.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.31.00_AM_1768555982314.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.31.11_AM_1768555990773.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.31.21_AM_1768555998985.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.31.46_AM_1768555948004.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.31.55_AM_1768555954988.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_2.43.02_AM_1768556601257.png
+ create mode 100644 attached_assets/Screenshot_2026-01-16_at_3.20.26_AM_1768558831573.png
+ create mode 100644 attached_assets/rc-1765209871062-New_Customers-20251111-20251208_1765210207386.csv
+ create mode 100644 attached_assets/translusant_logo1_1767105109175.png
+ create mode 100644 attached_assets/translusant_logo2_1767105366642.png
+ create mode 100644 attached_assets/translusant_logo2_1767108484844.png
+ create mode 100644 client/src/components/AppHeader.tsx
+ create mode 100644 client/src/components/HelpArticle.tsx
+ create mode 100644 client/src/components/HelpCenter.tsx
+ create mode 100644 client/src/components/NotificationProvider.tsx
+ create mode 100644 client/src/components/NotificationTest.tsx
+ create mode 100644 client/src/components/PremiumScreen.tsx
+ create mode 100644 client/src/components/SubscriptionManager.tsx
+ create mode 100644 client/src/components/SwipeableReminderCard.tsx
+ create mode 100644 client/src/lib/helpContent.ts
+ create mode 100644 client/src/lib/soundEffects.ts
+ create mode 100644 client/src/services/appleSignInService.ts
+ create mode 100644 client/src/services/guestStorage.ts
+ create mode 100644 client/src/services/inAppOAuthService.ts
+ create mode 100644 client/src/utils/safeAreaSetup.ts
+ create mode 100644 ios/App/App/Products.storekit
+ create mode 100644 server/appleAuth.ts
+ create mode 100644 server/seed-admin.ts
+Auto-merging capacitor.config.ts
+CONFLICT (content): Merge conflict in capacitor.config.ts
+Auto-merging ios/App/App/Info.plist
+CONFLICT (content): Merge conflict in ios/App/App/Info.plist
+Auto-merging ios/App/App/Products.storekit
+CONFLICT (add/add): Merge conflict in ios/App/App/Products.storekit
+Auto-merging ios/App/Podfile
+Auto-merging package-lock.json
+Auto-merging package.json
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   ios/App/App.xcodeproj/project.pbxproj
+	new file:   ios/App/App/App.entitlements
+	modified:   ios/App/Podfile
+	modified:   ios/App/Podfile.lock
+	modified:   package-lock.json
+
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add <file>..." to mark resolution)
+	both modified:   capacitor.config.ts
+	both modified:   ios/App/App/Info.plist
+	both added:      ios/App/App/Products.storekit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	ios/App/App.xcodeproj/xcshareddata/
+
+The stash entry is kept in case you need it again.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 15 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 7 modules transformed.
+x Build failed in 755ms
+error during build:
+[vite]: Rollup failed to resolve import "capacitor-plugin-safe-area" from "/Users/macbookpro/Documents/GitHub/Rude-remindersapp/client/src/utils/safeAreaSetup.ts".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at viteWarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/@vitejs/plugin-react/dist/index.mjs:280:9)
+    at onRollupWarning (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+    at file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+    at Object.logger [as onLog] (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+    at ModuleLoader.resolveDynamicImport (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20125:58)
+    at async file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20013:32
+✔ Copying web assets from public to ios/App/App/public in 10.11ms
+✔ Creating capacitor.config.json in ios/App/App in 617.08μs
+✔ copy ios in 134.62ms
+✔ Copying web assets from public to ios/App/App/public in 3.87ms
+✔ Creating capacitor.config.json in ios/App/App in 460.08μs
+✔ copy ios in 44.17ms
+✔ Updating iOS plugins in 8.54ms
+✔ Updating iOS native dependencies with pod install in 2.35s
+[info] Found 10 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @revenuecat/purchases-capacitor@11.2.1
+✔ update ios in 2.40s
+[info] Sync finished in 2.773s
+macbookpro@The-Book-of-OTG Rude-remindersapp % 
