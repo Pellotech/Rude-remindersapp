@@ -29,9 +29,6 @@ export default function LoginPage() {
     firstName: "",
     lastName: ""
   });
-  const [setPasswordForm, setSetPasswordForm] = useState({ email: "", password: "", confirmPassword: "" });
-  const [showSetPassword, setShowSetPassword] = useState(false);
-
   useEffect(() => {
     if (user) {
       setLocation("/");
@@ -110,47 +107,6 @@ export default function LoginPage() {
   const handleContinueAsGuest = () => {
     toast({ title: "Welcome!", description: "Your reminders will be stored locally." });
     setLocation("/");
-  };
-
-  const handleSetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    if (setPasswordForm.password !== setPasswordForm.confirmPassword) {
-      toast({ title: "Error", description: "Passwords don't match", variant: "destructive" });
-      setIsLoading(false);
-      return;
-    }
-    
-    if (setPasswordForm.password.length < 6) {
-      toast({ title: "Error", description: "Password must be at least 6 characters", variant: "destructive" });
-      setIsLoading(false);
-      return;
-    }
-    
-    try {
-      const response = await fetch(getFullApiUrl("/api/auth/set-password"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          email: setPasswordForm.email,
-          password: setPasswordForm.password
-        })
-      });
-      const data = await response.json();
-      
-      if (response.ok) {
-        toast({ title: "Success!", description: "Password set. Logging you in..." });
-        setTimeout(() => refetch(), 100);
-      } else {
-        toast({ title: "Failed", description: data.message || "Failed to set password", variant: "destructive" });
-      }
-    } catch {
-      toast({ title: "Error", description: "Network error. Please try again.", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   if (user) return null;
@@ -235,90 +191,8 @@ export default function LoginPage() {
                   <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setShowSetPassword(true)}
-                    className="w-full text-center text-sm text-[#6B7280] hover:text-[#C53B3B] mt-2"
-                  >
-                    Have an account but no password? Set one here
-                  </button>
                 </form>
               </TabsContent>
-              
-              {showSetPassword && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                  <Card className="w-full max-w-md bg-white rounded-[24px]">
-                    <CardContent className="pt-6">
-                      <h3 className="text-lg font-semibold text-[#111827] mb-4">Set Password</h3>
-                      <p className="text-sm text-[#6B7280] mb-4">
-                        If your account was created without a password, you can set one here.
-                      </p>
-                      <form onSubmit={handleSetPassword} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label className="text-[#111827]">Email</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
-                            <Input
-                              type="email"
-                              placeholder="your@email.com"
-                              value={setPasswordForm.email}
-                              onChange={(e) => setSetPasswordForm(prev => ({ ...prev, email: e.target.value }))}
-                              className="pl-10 bg-white border-2 border-[#EAEAEA] rounded-[14px] text-[#111827]"
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-[#111827]">New Password</Label>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
-                            <Input
-                              type="password"
-                              placeholder="Enter new password"
-                              value={setPasswordForm.password}
-                              onChange={(e) => setSetPasswordForm(prev => ({ ...prev, password: e.target.value }))}
-                              className="pl-10 bg-white border-2 border-[#EAEAEA] rounded-[14px] text-[#111827]"
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-[#111827]">Confirm Password</Label>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
-                            <Input
-                              type="password"
-                              placeholder="Confirm password"
-                              value={setPasswordForm.confirmPassword}
-                              onChange={(e) => setSetPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                              className="pl-10 bg-white border-2 border-[#EAEAEA] rounded-[14px] text-[#111827]"
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="flex gap-3">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setShowSetPassword(false)}
-                            className="flex-1 rounded-[14px]"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            type="submit"
-                            className="flex-1 bg-[#C53B3B] hover:bg-[#A32F2F] text-white rounded-[14px]"
-                            disabled={isLoading}
-                          >
-                            {isLoading ? "Setting..." : "Set Password"}
-                          </Button>
-                        </div>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
 
               <TabsContent value="register">
                 <form onSubmit={handleRegister} className="space-y-4 mt-4">

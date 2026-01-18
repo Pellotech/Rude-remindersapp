@@ -204,62 +204,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Set password for existing accounts that don't have one (e.g., created via social login)
-  app.post('/api/auth/set-password', async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-      
-      if (password.length < 6) {
-        return res.status(400).json({ message: "Password must be at least 6 characters" });
-      }
-      
-      const user = await db.query.users.findFirst({
-        where: eq(users.email, email.toLowerCase().trim()),
-      });
-      
-      if (!user) {
-        return res.status(404).json({ message: "No account found with this email" });
-      }
-      
-      if (user.passwordHash) {
-        return res.status(400).json({ message: "This account already has a password. Use login instead." });
-      }
-      
-      // Set the password for the existing account
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await db.update(users)
-        .set({ passwordHash: hashedPassword })
-        .where(eq(users.id, user.id));
-      
-      // Log them in automatically
-      (req as any).session.userId = user.id;
-      
-      (req as any).session.save((err: any) => {
-        if (err) {
-          console.error("Session save error:", err);
-          return res.status(500).json({ message: "Password set but failed to create session" });
-        }
-        
-        res.json({ 
-          message: "Password set successfully",
-          id: user.id, 
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          subscriptionStatus: user.subscriptionStatus || 'free',
-          subscriptionPlan: user.subscriptionPlan || 'free',
-        });
-      });
-    } catch (error) {
-      console.error("Set password error:", error);
-      res.status(500).json({ message: "Failed to set password" });
-    }
-  });
-
   app.delete('/api/account', async (req: any, res) => {
     try {
       let userId = req.session?.userId;
