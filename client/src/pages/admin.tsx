@@ -9,7 +9,7 @@ export default function AdminPage() {
   const { user } = useAuth();
 
   // Only allow access to admin email
-  const isAuthorized = user?.email === 'ruderemindersinfo@gmail.com';
+  const isAuthorized = user?.email === 'loqvm1@gmail.com';
 
   if (!isAuthorized) {
     return (
