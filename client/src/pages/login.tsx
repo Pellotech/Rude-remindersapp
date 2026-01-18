@@ -21,6 +21,12 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
 
+  // Get redirect URL from query params
+  const getRedirectUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('redirect') || '/';
+  };
+
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [registerForm, setRegisterForm] = useState({
     email: "",
@@ -31,7 +37,7 @@ export default function LoginPage() {
   });
   useEffect(() => {
     if (user) {
-      setLocation("/");
+      setLocation(getRedirectUrl());
     }
   }, [user, setLocation]);
 
@@ -49,7 +55,7 @@ export default function LoginPage() {
       if (response.ok) {
         toast({ title: "Welcome back!", description: "Logged in successfully" });
         await refetch();
-        setLocation("/");
+        setLocation(getRedirectUrl());
       } else {
         toast({ title: "Login Failed", description: data.message || "Invalid credentials", variant: "destructive" });
       }
@@ -95,7 +101,7 @@ export default function LoginPage() {
           body: JSON.stringify({ email: registerForm.email, password: registerForm.password })
         });
         await refetch();
-        setLocation("/");
+        setLocation(getRedirectUrl());
       } else {
         toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
       }

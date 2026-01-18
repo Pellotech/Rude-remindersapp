@@ -1,16 +1,55 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { AdminWhitelist } from '@/components/AdminWhitelist';
 import { BackNavigation } from '@/components/BackNavigation';
-import { Shield, Settings, Users, Crown } from 'lucide-react';
+import { Shield, Settings, Users, Crown, LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function AdminPage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
 
   // Only allow access to admin email
   const isAuthorized = user?.email === 'loqvm1@gmail.com';
 
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+      </div>
+    );
+  }
+
+  // Not logged in - show login prompt
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <Card className="w-full max-w-md mx-4">
+          <CardContent className="pt-6">
+            <div className="flex mb-4 gap-2 items-center">
+              <Shield className="h-8 w-8 text-purple-600" />
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Login Required</h1>
+            </div>
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Please log in with your admin account to access the admin panel.
+            </p>
+            <Button 
+              onClick={() => setLocation("/login?redirect=/admin")}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
+              <LogIn className="h-4 w-4 mr-2" />
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Logged in but not authorized
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -20,9 +59,19 @@ export default function AdminPage() {
               <Shield className="h-8 w-8 text-red-500" />
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Access Denied</h1>
             </div>
-            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 mb-2">
               You don't have permission to access the admin panel.
             </p>
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              Logged in as: {user.email}
+            </p>
+            <Button 
+              onClick={() => setLocation("/")}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Go to Home
+            </Button>
           </CardContent>
         </Card>
       </div>
