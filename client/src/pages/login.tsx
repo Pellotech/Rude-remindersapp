@@ -48,7 +48,8 @@ export default function LoginPage() {
       const data = await response.json();
       if (response.ok) {
         toast({ title: "Welcome back!", description: "Logged in successfully" });
-        refetch();
+        await refetch();
+        setLocation("/");
       } else {
         toast({ title: "Login Failed", description: data.message || "Invalid credentials", variant: "destructive" });
       }
@@ -93,7 +94,8 @@ export default function LoginPage() {
           credentials: "include",
           body: JSON.stringify({ email: registerForm.email, password: registerForm.password })
         });
-        setTimeout(() => refetch(), 100);
+        await refetch();
+        setLocation("/");
       } else {
         toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
       }
