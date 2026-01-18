@@ -1,0 +1,142 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % git fetch origin
+git reset --hard origin/main
+npm run build
+npx cap copy ios && npx cap sync ios
+remote: Enumerating objects: 140, done.
+remote: Counting objects: 100% (140/140), done.
+remote: Compressing objects: 100% (55/55), done.
+remote: Total 124 (delta 82), reused 110 (delta 68), pack-reused 0 (from 0)
+Receiving objects: 100% (124/124), 3.42 MiB | 562.00 KiB/s, done.
+Resolving deltas: 100% (82/82), completed with 15 local objects.
+From https://github.com/Pellotech/Rude-remindersapp
+   6f2630d..7fef0a6  main       -> origin/main
+HEAD is now at 7fef0a6 Fix merge conflicts to update application code
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 15 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2157 modules transformed.
+../dist/public/index.html                                               0.52 kB │ gzip:   0.33 kB
+../dist/public/assets/translusant_logo2_1767108484844-BOsWl_2_.png  1,031.16 kB
+../dist/public/assets/translusant_logo1_1767105109175-BsNH3-Uw.png  1,052.99 kB
+../dist/public/assets/index-BC_f54OT.css                               90.67 kB │ gzip:  15.09 kB
+../dist/public/assets/web-BFcZX-zR.js                                   0.19 kB │ gzip:   0.17 kB
+../dist/public/assets/web-BM_6yHDn.js                                   0.36 kB │ gzip:   0.25 kB
+../dist/public/assets/web-B09FcImx.js                                   0.38 kB │ gzip:   0.25 kB
+../dist/public/assets/web-DdiMpP2j.js                                   0.38 kB │ gzip:   0.24 kB
+../dist/public/assets/index-yWnFh5Dh.js                                 0.43 kB │ gzip:   0.30 kB
+../dist/public/assets/web-DQ4pppoB.js                                   1.26 kB │ gzip:   0.43 kB
+../dist/public/assets/web-B4vn0J2s.js                                   2.44 kB │ gzip:   1.09 kB
+../dist/public/assets/web-PGT-Aty0.js                                   3.44 kB │ gzip:   1.09 kB
+../dist/public/assets/index-qjTjKIvx.js                                 6.38 kB │ gzip:   2.42 kB
+../dist/public/assets/web-DqUXuUPl.js                                   8.73 kB │ gzip:   2.97 kB
+../dist/public/assets/web-DqX_z7Fi.js                                   9.77 kB │ gzip:   1.99 kB
+../dist/public/assets/index-BQUej1Gq.js                             2,186.61 kB │ gzip: 524.52 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.87s
+
+  dist/index.js  196.4kb
+
+⚡ Done in 10ms
+✔ Copying web assets from public to ios/App/App/public in 7.03ms
+✔ Creating capacitor.config.json in ios/App/App in 317.92μs
+✔ copy ios in 94.09ms
+✔ Copying web assets from public to ios/App/App/public in 8.75ms
+✔ Creating capacitor.config.json in ios/App/App in 4.22ms
+✔ copy ios in 72.16ms
+✔ Updating iOS plugins in 10.34ms
+✔ Updating iOS native dependencies with pod install in 2.40s
+[info] Found 16 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor-community/apple-sign-in@7.1.0
+       @capacitor/app@7.1.0
+       @capacitor/app-launcher@7.0.2
+       @capacitor/browser@7.0.2
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @capawesome/capacitor-file-picker@7.2.0
+       @revenuecat/purchases-capacitor@11.2.1
+       capacitor-plugin-safe-area@4.0.3
+✔ update ios in 2.49s
+[info] Sync finished in 2.87s
+macbookpro@The-Book-of-OTG Rude-remindersapp % git fetch origin && git reset --hard origin/main
+npm run build
+npx cap copy ios && npx cap sync ios
+HEAD is now at 7fef0a6 Fix merge conflicts to update application code
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 15 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2157 modules transformed.
+../dist/public/index.html                                               0.52 kB │ gzip:   0.33 kB
+../dist/public/assets/translusant_logo2_1767108484844-BOsWl_2_.png  1,031.16 kB
+../dist/public/assets/translusant_logo1_1767105109175-BsNH3-Uw.png  1,052.99 kB
+../dist/public/assets/index-BC_f54OT.css                               90.67 kB │ gzip:  15.09 kB
+../dist/public/assets/web-BFcZX-zR.js                                   0.19 kB │ gzip:   0.17 kB
+../dist/public/assets/web-BM_6yHDn.js                                   0.36 kB │ gzip:   0.25 kB
+../dist/public/assets/web-B09FcImx.js                                   0.38 kB │ gzip:   0.25 kB
+../dist/public/assets/web-DdiMpP2j.js                                   0.38 kB │ gzip:   0.24 kB
+../dist/public/assets/index-yWnFh5Dh.js                                 0.43 kB │ gzip:   0.30 kB
+../dist/public/assets/web-DQ4pppoB.js                                   1.26 kB │ gzip:   0.43 kB
+../dist/public/assets/web-B4vn0J2s.js                                   2.44 kB │ gzip:   1.09 kB
+../dist/public/assets/web-PGT-Aty0.js                                   3.44 kB │ gzip:   1.09 kB
+../dist/public/assets/index-qjTjKIvx.js                                 6.38 kB │ gzip:   2.42 kB
+../dist/public/assets/web-DqUXuUPl.js                                   8.73 kB │ gzip:   2.97 kB
+../dist/public/assets/web-DqX_z7Fi.js                                   9.77 kB │ gzip:   1.99 kB
+../dist/public/assets/index-BQUej1Gq.js                             2,186.61 kB │ gzip: 524.52 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 3.14s
+
+  dist/index.js  196.4kb
+
+⚡ Done in 11ms
+✔ Copying web assets from public to ios/App/App/public in 7.91ms
+✔ Creating capacitor.config.json in ios/App/App in 298.92μs
+✔ copy ios in 93.18ms
+✔ Copying web assets from public to ios/App/App/public in 6.93ms
+✔ Creating capacitor.config.json in ios/App/App in 377.00μs
+✔ copy ios in 51.78ms
+✔ Updating iOS plugins in 9.40ms
+✔ Updating iOS native dependencies with pod install in 3.53s
+[info] Found 16 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor-community/apple-sign-in@7.1.0
+       @capacitor/app@7.1.0
+       @capacitor/app-launcher@7.0.2
+       @capacitor/browser@7.0.2
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @capawesome/capacitor-file-picker@7.2.0
+       @revenuecat/purchases-capacitor@11.2.1
+       capacitor-plugin-safe-area@4.0.3
+✔ update ios in 3.59s
+[info] Sync finished in 3.935s
+macbookpro@The-Book-of-OTG Rude-remindersapp % 
