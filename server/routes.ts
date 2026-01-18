@@ -1,18 +1,82 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, registerSchema, loginSchema } from "@shared/schema";
+import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, registerSchema, loginSchema, authTokens } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
 import { isUserPremium, addEmailToWhitelist, removeEmailFromWhitelist, getWhitelistedEmails, cleanupExpiredSubscriptions } from "./utils/premiumCheck";
-import crypto from 'crypto'; // Import crypto module for UUID generation
+import crypto from 'crypto';
 import { DeepSeekService } from './services/deepseekService';
 import bcrypt from 'bcryptjs';
+
+// Generate cryptographically secure auth token
+function generateSecureToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+// Create auth token for user (valid for 30 days)
+async function createAuthToken(userId: string): Promise<string> {
+  const token = generateSecureToken();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  
+  await db.insert(authTokens).values({
+    userId,
+    token,
+    expiresAt,
+  });
+  
+  return token;
+}
+
+// Validate auth token and return user ID
+async function validateAuthToken(token: string): Promise<string | null> {
+  const tokenRecord = await db.query.authTokens.findFirst({
+    where: and(
+      eq(authTokens.token, token),
+      gt(authTokens.expiresAt, new Date())
+    ),
+  });
+  
+  return tokenRecord?.userId || null;
+}
+
+// Middleware to check Authorization header for token-based auth
+async function tokenAuthMiddleware(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    const userId = await validateAuthToken(token);
+    
+    if (userId) {
+      (req as any).tokenUserId = userId;
+      (req as any).authToken = token; // Store token for potential revocation
+    }
+  }
+  
+  next();
+}
+
+// Helper to get authenticated user ID from any auth method
+function getAuthUserId(req: any): string | null {
+  // Priority: token auth > session auth > Replit auth
+  return req.tokenUserId || req.session?.userId || req.user?.claims?.sub || null;
+}
+
+// Revoke auth token (for logout)
+async function revokeAuthToken(token: string): Promise<void> {
+  await db.delete(authTokens).where(eq(authTokens.token, token));
+}
+
+// Revoke all tokens for a user (for account deletion)
+async function revokeAllUserTokens(userId: string): Promise<void> {
+  await db.delete(authTokens).where(eq(authTokens.userId, userId));
+}
 
 import express from 'express';
 import multer from 'multer';
@@ -59,6 +123,9 @@ if (!process.env.REVENUECAT_SECRET_KEY) {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // Token-based auth middleware for mobile apps
+  app.use(tokenAuthMiddleware);
 
   // Initialize storage (will auto-detect database availability)
   await storage.seedRudePhrases();
@@ -125,12 +192,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastName: validatedData.lastName,
       });
       
+      // Generate auth token for mobile apps
+      const authToken = await createAuthToken(userId);
+      
       (req as any).session.userId = userId;
       
       (req as any).session.save((err: any) => {
         if (err) {
           console.error("Session save error:", err);
-          return res.status(500).json({ message: "Failed to create session" });
         }
         
         res.json({ 
@@ -140,6 +209,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lastName: newUser.lastName,
           subscriptionStatus: newUser.subscriptionStatus || 'free',
           subscriptionPlan: newUser.subscriptionPlan || 'free',
+          authToken, // Include token for mobile auth
         });
       });
     } catch (error) {
@@ -169,12 +239,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid email or password" });
       }
       
+      // Generate auth token for mobile apps
+      const authToken = await createAuthToken(user.id);
+      
       (req as any).session.userId = user.id;
       
       (req as any).session.save((err: any) => {
         if (err) {
           console.error("Session save error:", err);
-          return res.status(500).json({ message: "Failed to create session" });
         }
         
         res.json({ 
@@ -184,6 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lastName: user.lastName,
           subscriptionStatus: user.subscriptionStatus || 'free',
           subscriptionPlan: user.subscriptionPlan || 'free',
+          authToken, // Include token for mobile auth
         });
       });
     } catch (error) {
@@ -195,8 +268,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/auth/logout', (req, res) => {
-    req.session.destroy((err) => {
+  app.post('/api/auth/logout', async (req: any, res) => {
+    // Revoke auth token if present
+    if (req.authToken) {
+      await revokeAuthToken(req.authToken);
+    }
+    
+    req.session.destroy((err: any) => {
       if (err) {
         return res.status(500).json({ message: "Logout failed" });
       }
@@ -206,15 +284,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/account', async (req: any, res) => {
     try {
-      let userId = req.session?.userId;
-      
-      if (!userId && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-      }
+      const userId = getAuthUserId(req);
       
       if (!userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
+      
+      // Revoke all tokens for this user
+      await revokeAllUserTokens(userId);
       
       await storage.deleteUser(userId);
       
@@ -231,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get('/api/auth/check', (req, res) => {
-    const userId = (req as any).session?.userId;
+    const userId = getAuthUserId(req);
     if (userId) {
       res.json({ authenticated: true, userId });
     } else {
@@ -239,14 +316,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Protected auth routes (supports both Replit Auth and session-based auth)
+  // Protected auth routes (supports Replit Auth, session-based auth, and token-based auth)
   app.get('/api/auth/user', async (req: any, res) => {
     try {
-      let userId = req.session?.userId;
-      
-      if (!userId && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-      }
+      const userId = getAuthUserId(req);
       
       if (!userId) {
         return res.status(401).json({ message: "Not authenticated" });
@@ -268,7 +341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User settings routes
   app.patch('/api/user/settings', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const updates = req.body;
       const user = await storage.updateUser(userId, updates);
       res.json(user);
@@ -281,7 +354,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Settings route (alias for user settings)
   app.put('/api/settings', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const updates = req.body;
 
       // Ensure notification settings are properly stored
@@ -316,7 +389,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Reminder routes
   app.get('/api/reminders', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminders = await storage.getReminders(userId);
       res.json(reminders);
     } catch (error) {
@@ -355,7 +428,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new reminder
   app.post('/api/reminders', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user) {
@@ -659,7 +732,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
@@ -673,7 +746,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const validatedData = updateReminderSchema.parse(req.body);
       const reminder = await storage.updateReminder(req.params.id, userId, validatedData);
 
@@ -693,7 +766,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate AI response for existing reminder
   app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
@@ -715,7 +788,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get additional responses for a reminder
   app.get('/api/reminders/:id/more-responses', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
 
       if (!reminder) {
@@ -755,7 +828,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate AI response for a specific reminder (Premium feature)
   app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
@@ -788,7 +861,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       await storage.deleteReminder(req.params.id, userId);
       reminderService.unscheduleReminder(req.params.id);
       res.status(204).send();
@@ -800,7 +873,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/reminders/:id/complete', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminder = await storage.completeReminder(req.params.id, userId);
       reminderService.unscheduleReminder(req.params.id);
       res.json(reminder);
@@ -812,7 +885,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/reminders/:id/not-accomplished', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminder = await storage.markReminderNotAccomplished(req.params.id, userId);
       reminderService.unscheduleReminder(req.params.id);
       res.json(reminder);
@@ -825,7 +898,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Statistics routes
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const reminders = await storage.getReminders(userId);
       const user = await storage.getUser(userId);
 
@@ -970,7 +1043,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Developer preview endpoint
   app.post('/api/dev/preview', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const { task, rudenessLevel, voiceCharacter, category } = req.body;
 
       console.log(`Generating preview for user ${userId}:`, { task, rudenessLevel, voiceCharacter, category });
@@ -1074,7 +1147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Premium Quotes API - Get personalized AI or cultural quotes
   app.get('/api/quotes/personalized', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const { category, ethnicity, gender } = req.query;
 
       const context = {
@@ -1101,7 +1174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Topic-specific quote routes
   app.get('/api/quotes/sports', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'sports' });
       const isPremium = await isUserPremium(userId);
 
@@ -1120,7 +1193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/quotes/historical', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'historical' });
       const isPremium = await isUserPremium(userId);
 
@@ -1139,7 +1212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/quotes/entrepreneurs', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'entrepreneurs' });
       const isPremium = await isUserPremium(userId);
 
@@ -1158,7 +1231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/quotes/scientists', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'scientists' });
       const isPremium = await isUserPremium(userId);
 
@@ -1177,7 +1250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/quotes/motivational', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'motivational' });
       const isPremium = await isUserPremium(userId);
 
@@ -1197,7 +1270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Check premium status endpoint
   app.get('/api/user/premium-status', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const { isPremium, user, source } = await import('./utils/premiumCheck').then(m => m.getUserPremiumStatus(userId));
 
       res.json({ 
@@ -1219,7 +1292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Developer endpoint to toggle premium status (only for development)
   app.post('/api/dev/toggle-premium', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const { isPremium } = req.body;
 
       // Update user subscription status
@@ -1276,7 +1349,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate quick AI preview for testing (doesn't save to database)
   app.post('/api/preview-reminder', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user) {
@@ -1341,7 +1414,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // RevenueCat customer info route
   app.get('/api/customer-info', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user) {
@@ -1368,7 +1441,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // This provides immediate feedback before RevenueCat webhook arrives
   app.post('/api/sync-subscription', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const { subscriptionStatus, subscriptionPlan } = req.body;
       
       if (subscriptionStatus === 'active' && subscriptionPlan === 'premium') {
@@ -1391,7 +1464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // This route handles subscription status updates from webhooks
   app.post('/api/cancel-subscription', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = getAuthUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user || user.subscriptionStatus === 'free') {
@@ -1510,7 +1583,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
     try {
       const { email, password } = req.body;
-      const userId = req.user.claims.sub || req.session?.userId;
+      const userId = getAuthUserId(req);
 
       if (!email || typeof email !== 'string') {
         return res.status(400).json({ message: "Valid email is required" });

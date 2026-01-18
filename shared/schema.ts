@@ -106,6 +106,15 @@ export const premiumWhitelist = pgTable("premium_whitelist", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Auth tokens for mobile authentication (cross-origin cookie workaround)
+export const authTokens = pgTable("auth_tokens", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: varchar("token").unique().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [index("IDX_auth_tokens_token").on(table.token), index("IDX_auth_tokens_user").on(table.userId)]);
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,

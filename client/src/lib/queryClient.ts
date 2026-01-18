@@ -4,6 +4,24 @@ import { Capacitor } from "@capacitor/core";
 // Production API URL for native apps (when UI is bundled locally)
 const PRODUCTION_API_URL = "https://rudereminder.replit.app";
 
+// Token storage key
+const AUTH_TOKEN_KEY = "rude_reminders_auth_token";
+
+// Store auth token
+export function setAuthToken(token: string) {
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+}
+
+// Get stored auth token
+export function getAuthToken(): string | null {
+  return localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+// Clear auth token (on logout)
+export function clearAuthToken() {
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+}
+
 // Get the base URL for API calls - production URL for native, relative for web
 export function getApiBaseUrl(): string {
   if (Capacitor.isNativePlatform()) {
@@ -15,6 +33,15 @@ export function getApiBaseUrl(): string {
 // Helper to get full API URL for any path
 export function getFullApiUrl(path: string): string {
   return path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path;
+}
+
+// Get auth headers (include token if available)
+function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  if (token) {
+    return { 'Authorization': `Bearer ${token}` };
+  }
+  return {};
 }
 
 async function throwIfResNotOk(res: Response) {
@@ -31,9 +58,10 @@ export async function apiRequest(url: string, options?: RequestInit) {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...getAuthHeaders(),
       ...options?.headers,
     },
-    credentials: 'include', // Ensure cookies are sent for authentication
+    credentials: 'include', // Keep cookies for web
   };
 
   // Stringify body if it's an object
@@ -66,6 +94,7 @@ export const getQueryFn: <T>(options: {
     const fullUrl = path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path;
     const res = await fetch(fullUrl, {
       credentials: "include",
+      headers: getAuthHeaders(),
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

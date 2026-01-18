@@ -6,6 +6,7 @@ import SettingsModal from "./SettingsModal";
 import { Link, useLocation } from "wouter";
 import type { User } from "@shared/schema";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import { clearAuthToken, getFullApiUrl } from "@/lib/queryClient";
 
 export default function Navigation() {
   const { user, isGuest } = useAuth() as { user: User | undefined; isGuest: boolean };
@@ -74,7 +75,7 @@ export default function Navigation() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => window.location.href = '/api/logout'}
+                  onClick={() => { clearAuthToken(); window.location.href = getFullApiUrl('/api/auth/logout'); }}
                   className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
                   data-testid="button-nav-logout"
                 >

@@ -11,7 +11,7 @@ import { Mail, Lock, User, Eye, EyeOff, Sparkles } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import AppHeader from "@/components/AppHeader";
-import { getFullApiUrl } from "@/lib/queryClient";
+import { getFullApiUrl, setAuthToken } from "@/lib/queryClient";
 
 export default function LoginPage() {
   const { user, refetch } = useAuth();
@@ -53,6 +53,10 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
+        // Store auth token for mobile apps
+        if (data.authToken) {
+          setAuthToken(data.authToken);
+        }
         toast({ title: "Welcome back!", description: "Logged in successfully" });
         await refetch();
         setLocation(getRedirectUrl());
@@ -93,13 +97,11 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
+        // Store auth token for mobile apps (register returns token directly)
+        if (data.authToken) {
+          setAuthToken(data.authToken);
+        }
         toast({ title: "Success!", description: "Account created. Logging you in..." });
-        await fetch(getFullApiUrl("/api/auth/login"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ email: registerForm.email, password: registerForm.password })
-        });
         await refetch();
         setLocation(getRedirectUrl());
       } else {
