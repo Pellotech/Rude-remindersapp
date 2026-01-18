@@ -11,8 +11,8 @@ export default function AdminPage() {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Only allow access to admin email
-  const isAuthorized = user?.email === 'loqvm1@gmail.com';
+  // Only allow access to admin email (case-insensitive)
+  const isAuthorized = user?.email?.toLowerCase() === 'loqvm1@gmail.com';
 
   // Show loading while checking auth
   if (isLoading) {
