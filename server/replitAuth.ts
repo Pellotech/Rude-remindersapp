@@ -2,6 +2,7 @@ import * as client from "openid-client";
 import { Strategy, type VerifyFunction } from "openid-client/passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 import passport from "passport";
 import session from "express-session";
@@ -9,6 +10,27 @@ import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
+import { db } from "./db";
+import { authTokens } from "@shared/schema";
+
+// Generate cryptographically secure auth token
+function generateSecureToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+// Create auth token for user (valid for 30 days)
+async function createAuthToken(userId: string): Promise<string> {
+  const token = generateSecureToken();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  
+  await db.insert(authTokens).values({
+    userId,
+    token,
+    expiresAt,
+  });
+  
+  return token;
+}
 
 if (!process.env.REPLIT_DOMAINS) {
   throw new Error("Environment variable REPLIT_DOMAINS not provided");
@@ -235,11 +257,25 @@ export async function setupAuth(app: Express) {
         return res.status(401).json({ message: info?.message || "Invalid credentials" });
       }
 
-      req.logIn(user, (err) => {
+      req.logIn(user, async (err) => {
         if (err) {
           return res.status(500).json({ message: "Login failed" });
         }
-        res.json({ success: true, message: "Logged in successfully" });
+        
+        // Generate auth token for mobile apps
+        const authToken = await createAuthToken(user.id);
+        
+        res.json({ 
+          success: true, 
+          message: "Logged in successfully",
+          authToken,
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          }
+        });
       });
     })(req, res, next);
   });

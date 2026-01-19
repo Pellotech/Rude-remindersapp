@@ -43,8 +43,6 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("🔥🔥🔥 HANDLE LOGIN CALLED 🔥🔥🔥");
-    alert("HANDLE LOGIN CALLED - LoginPage.tsx");
     setIsLoading(true);
     try {
       const response = await fetch(getFullApiUrl("/api/auth/login"), {
