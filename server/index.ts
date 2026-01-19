@@ -9,37 +9,21 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Manual CORS middleware for native mobile apps (capacitor:// protocol)
-const allowedOrigins = [
-  'capacitor://localhost',
-  'ionic://localhost',
-  'http://localhost',
-  'https://rudereminder.replit.app',
-];
-
+// CORS middleware - MUST be first, before anything else
+// Simplified: always allow origin for preflight, hard stop on OPTIONS
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
-  // Debug logging for CORS
-  console.log("CORS origin:", origin, "method:", req.method, "path:", req.path);
 
-  // Handle preflight first - always set headers for OPTIONS
-  if (req.method === 'OPTIONS') {
-    if (origin) {
-      res.header('Access-Control-Allow-Origin', origin);
-      res.header('Access-Control-Allow-Credentials', 'true');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
-      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    }
-    return res.sendStatus(204);
+  if (origin) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie");
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
   }
 
-  // For regular requests, check origin
-  if (!origin || allowedOrigins.includes(origin) || (origin && origin.endsWith('.replit.app')) || (origin && origin.endsWith('.replit.dev'))) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  // HARD STOP for preflight - nothing else runs
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
   }
 
   next();
