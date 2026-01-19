@@ -11,10 +11,10 @@ import { Mail, Lock, User, Eye, EyeOff, Sparkles } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import AppHeader from "@/components/AppHeader";
-import { getFullApiUrl, setAuthToken } from "@/lib/queryClient";
+import { getFullApiUrl, setAuthToken, queryClient } from "@/lib/queryClient";
 
 export default function LoginPage() {
-  const { user, refetch } = useAuth();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +57,9 @@ export default function LoginPage() {
         if (data.authToken) {
           await setAuthToken(data.authToken);
         }
+        // Force refresh auth query (staleTime: Infinity requires invalidation)
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
         toast({ title: "Welcome back!", description: "Logged in successfully" });
-        await refetch();
         setLocation(getRedirectUrl());
       } else {
         toast({ title: "Login Failed", description: data.message || "Invalid credentials", variant: "destructive" });
@@ -101,8 +102,9 @@ export default function LoginPage() {
         if (data.authToken) {
           await setAuthToken(data.authToken);
         }
+        // Force refresh auth query (staleTime: Infinity requires invalidation)
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
         toast({ title: "Success!", description: "Account created. Logging you in..." });
-        await refetch();
         setLocation(getRedirectUrl());
       } else {
         toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
