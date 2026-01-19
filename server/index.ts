@@ -19,17 +19,27 @@ const allowedOrigins = [
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  
+  // Debug logging for CORS
+  console.log("CORS origin:", origin, "method:", req.method, "path:", req.path);
 
+  // Handle preflight first - always set headers for OPTIONS
+  if (req.method === 'OPTIONS') {
+    if (origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    }
+    return res.sendStatus(204);
+  }
+
+  // For regular requests, check origin
   if (!origin || allowedOrigins.includes(origin) || (origin && origin.endsWith('.replit.app')) || (origin && origin.endsWith('.replit.dev'))) {
     res.header('Access-Control-Allow-Origin', origin || '*');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-  }
-
-  // Handle preflight immediately - return 204 before any route runs
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
   }
 
   next();

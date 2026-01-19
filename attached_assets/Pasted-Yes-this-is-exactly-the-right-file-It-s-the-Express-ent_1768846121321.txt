@@ -1,0 +1,75 @@
+Yes — this is exactly the right file. ✅
+It’s the Express entry file (the one that creates const app = express()), and your manual CORS middleware is in the correct place (before routes). That’s what we needed.
+
+Now the confusing part:
+
+Why are you still seeing “Origin capacitor://localhost is not allowed” in Safari?
+
+Because Safari is showing you the response from the server that is currently deployed, and it’s still not returning the headers Safari expects.
+
+With your new middleware, a request from capacitor://localhost should always get:
+
+Access-Control-Allow-Origin: capacitor://localhost
+
+and the OPTIONS preflight should return 204 (not 500)
+
+So if you still see the CORS error after this code is published, it means one of these:
+
+1) The published server is not running this exact code yet
+
+Even if you saved it in Replit, the running production instance might still be on an older version until republish/restart fully takes.
+
+2) Safari is complaining because the preflight response is missing headers
+
+Your middleware returns 204 for OPTIONS, but you only set headers inside the if (!origin || allowedOrigins.includes...) block.
+
+If the origin string is present but doesn’t match exactly what the server sees (for example it includes a trailing slash or is null for preflight), headers might not be set the way you expect.
+
+Easy improvement: always set preflight headers when origin exists
+
+Change your preflight block to set headers before returning 204.
+
+Replace:
+
+if (req.method === 'OPTIONS') {
+  return res.sendStatus(204);
+}
+
+
+with:
+
+if (req.method === 'OPTIONS') {
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  }
+  return res.sendStatus(204);
+}
+
+
+This makes Safari happy even if origin matching is weird.
+
+3) Your origin list needs to allow BOTH replit domains you hit
+
+You already added .replit.app and .replit.dev endsWith checks — good.
+
+What I’d do next (fast, no guessing)
+Step A — Add one debug log to prove what origin the server is seeing
+
+Add this inside your CORS middleware at the top:
+
+console.log("CORS origin:", origin, "method:", req.method, "path:", req.path);
+
+
+Publish, then try login once. Check Replit logs.
+If you see capacitor://localhost in logs, we’re aligned.
+
+Step B — Make the preflight header change (above), publish again
+
+Then re-test Safari Web Inspector.
+
+Tiny but important note
+
+Your /api/auth/user will still show 401 until login is allowed through CORS and a token is saved. So ignore the 401 for now — focus only on removing the preflight/CORS red lines.
