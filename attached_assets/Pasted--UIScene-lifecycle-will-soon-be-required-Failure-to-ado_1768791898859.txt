@@ -1,0 +1,124 @@
+`UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
+Could not create a sandbox extension for '/var/containers/Bundle/Application/8DFBEB3E-4B9D-4F43-818E-5918B26262B7/App.app'
+Loading network plugin
+⚡️  Loading app at capacitor://localhost...
+Reachable via WiFi
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+WebContent[4632] Unable to hide query parameters from script (missing data)
+⚡️  WebView loaded
+⚡️  To Native ->  LocalNotifications requestPermissions 10484327
+⚡️  To Native ->  SafeArea getSafeAreaInsets 10484328
+⚡️  [log] - 📱 Global notification listener registered
+⚡️  [log] - RevenueCat DISABLED for debugging
+⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+⚡️  TO JS {"insets":{"top":62,"right":0,"bottom":34,"left":0}}
+⚡️  To Native ->  SafeArea addListener 10484329
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  To Native ->  LocalNotifications addListener 10484330
+⚡️  To Native ->  LocalNotifications addListener 10484331
+⚡️  [log] - Disconnected from WebSocket
+SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen
+⚡️  WebView loaded
+⚡️  [log] - 📱 Global notification listener registered
+⚡️  [log] - RevenueCat DISABLED for debugging
+⚡️  To Native ->  ⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+LocalNotifications requestPermissions 84122022
+⚡️  To Native ->  SafeArea getSafeAreaInsets 84122023
+⚡️  TO JS {"insets":{"bottom":34,"left":0,"top":62,"right":0}}
+⚡️  To Native ->  SafeArea addListener 84122024
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x11de2d6d0 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11dd86e00.width == _UIButtonBarButton:0x11dc99680.width   (active)>",
+    "<NSLayoutConstraint:0x11de2d810 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x11dd95c00]   (active, names: '|':_UIButtonBarButton:0x11dc99680 )>",
+    "<NSLayoutConstraint:0x11de2d860 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11dd95c00]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11dc99680 )>",
+    "<NSLayoutConstraint:0x11de2ddb0 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11dd86e00.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x11de2d860 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11dd95c00]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11dc99680 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x11de2e210 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11dd87200.width == _UIButtonBarButton:0x11dc99b80.width   (active)>",
+    "<NSLayoutConstraint:0x11de2e350 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x11dd95f80]   (active, names: '|':_UIButtonBarButton:0x11dc99b80 )>",
+    "<NSLayoutConstraint:0x11de2e3a0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11dd95f80]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11dc99b80 )>",
+    "<NSLayoutConstraint:0x11de2e850 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11dd87200.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x11de2e3a0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11dd95f80]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11dc99b80 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x11de2ec60 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11dd87600.width == _UIButtonBarButton:0x11dc9a080.width   (active)>",
+    "<NSLayoutConstraint:0x11de2ed50 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x11dd96300]   (active, names: '|':_UIButtonBarButton:0x11dc9a080 )>",
+    "<NSLayoutConstraint:0x11de2eda0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11dd96300]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11dc9a080 )>",
+    "<NSLayoutConstraint:0x11de2f250 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11dd87600.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x11de2eda0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11dd96300]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11dc9a080 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 0BF860AE-A6F8-4CCB-9D06-4FD0C4B12D1E
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 0BF860AE-A6F8-4CCB-9D06-4FD0C4B12D1E
+⚡️  To Native ->  LocalNotifications addListener 84122025
+⚡️  To Native ->  LocalNotifications addListener 84122026
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - Disconnected from WebSocket
+⚡️  To Native ->  LocalNotifications removeAllListeners 84122027
+⚡️  To Native ->  LocalNotifications addListener 84122028
+⚡️  To Native ->  LocalNotifications addListener 84122029
+⚡️  TO JS undefined
+⚡️  To Native ->  LocalNotifications removeAllListeners 84122030
+⚡️  To Native ->  LocalNotifications addListener 84122031
+⚡️  To Native ->  LocalNotifications addListener 84122032
+⚡️  TO JS undefined
+⚡️  To Native ->  LocalNotifications removeAllListeners 84122033
+⚡️  TO JS undefined
+⚡️  To Native ->  LocalNotifications addListener 84122034
+⚡️  To Native ->  LocalNotifications addListener 84122035
+⚡️  To Native ->  Device getInfo 84122036
+⚡️  TO JS {"name":"iPhone","model":"iPhone17,1","webViewVersion":"26.2","manufacturer":"Apple","memUsed":176357376,"operatingSystem":"ios","platform":"ios","isVirtual":false,"iOSVersion":260200,"osVersion":"26.2"}
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = <null selector>, customInfoType = UIEmojiSearchOperations
+⚡️  WebView loaded
+⚡️  [log] - 📱 Global notification listener registered
+⚡️  [log] - RevenueCat DISABLED for debugging
+⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+⚡️  To Native ->  LocalNotifications requestPermissions 123355495
+⚡️  To Native ->  SafeArea getSafeAreaInsets 123355496
+⚡️  TO JS {"insets":{"top":62,"left":0,"right":0,"bottom":34}}
+⚡️  To Native ->  SafeArea addListener 123355497
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+-[RTIInputSystemClient remoteTextInputSessionWithID:performInputOperation:]  perform input operation requires a valid sessionID. inputModality = Keyboard, inputOperation = dismissAutoFillPanel, customInfoType = UIUserInteractionRemoteInputOperations
+Snapshotting a view (0x11c938400, UIKeyboardImpl) that is not in a visible window requires afterScreenUpdates:YES.
