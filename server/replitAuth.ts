@@ -264,14 +264,14 @@ export async function setupAuth(app: Express) {
         
         // The user object from passport has claims.sub structure
         const userId = user.claims?.sub;
-        const userEmail = user.claims?.email;
-        const firstName = user.claims?.first_name;
-        const lastName = user.claims?.last_name;
         
         if (!userId) {
           console.error("Login failed: user.claims.sub is missing", user);
           return res.status(500).json({ message: "Login failed - user ID not found" });
         }
+        
+        // Fetch full user data from database to get subscription info
+        const fullUser = await storage.getUser(userId);
         
         // Generate auth token for mobile apps
         const authToken = await createAuthToken(userId);
@@ -282,9 +282,12 @@ export async function setupAuth(app: Express) {
           authToken,
           user: {
             id: userId,
-            email: userEmail,
-            firstName: firstName,
-            lastName: lastName
+            email: fullUser?.email || user.claims?.email,
+            firstName: fullUser?.firstName || user.claims?.first_name,
+            lastName: fullUser?.lastName || user.claims?.last_name,
+            subscriptionStatus: fullUser?.subscriptionStatus || 'free',
+            subscriptionPlan: fullUser?.subscriptionPlan || 'free',
+            isPremium: fullUser?.subscriptionStatus === 'active' && fullUser?.subscriptionPlan === 'premium'
           }
         });
       });
