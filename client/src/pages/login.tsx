@@ -52,11 +52,15 @@ export default function LoginPage() {
         body: JSON.stringify(loginForm)
       });
       const data = await response.json();
-      console.log("LOGIN RESPONSE DATA:", data);
+      console.log("LOGIN response.ok:", response.ok);
+      console.log("LOGIN data:", JSON.stringify(data));
       if (response.ok) {
         // Store auth token for mobile apps (async for native storage)
-        if (data.authToken) {
-          await setAuthToken(data.authToken);
+        // Support multiple possible token field names
+        const token = data.authToken ?? data.token ?? data.accessToken;
+        console.log("SAVING authToken to Preferences:", token ? "exists" : "missing");
+        if (token) {
+          await setAuthToken(token);
         }
         // Force refresh auth query (staleTime: Infinity requires invalidation + refetch)
         await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -99,10 +103,15 @@ export default function LoginPage() {
         })
       });
       const data = await response.json();
+      console.log("REGISTER response.ok:", response.ok);
+      console.log("REGISTER data:", JSON.stringify(data));
       if (response.ok) {
         // Store auth token for mobile apps (async for native storage)
-        if (data.authToken) {
-          await setAuthToken(data.authToken);
+        // Support multiple possible token field names
+        const token = data.authToken ?? data.token ?? data.accessToken;
+        console.log("SAVING authToken to Preferences:", token ? "exists" : "missing");
+        if (token) {
+          await setAuthToken(token);
         }
         // Force refresh auth query (staleTime: Infinity requires invalidation + refetch)
         await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
