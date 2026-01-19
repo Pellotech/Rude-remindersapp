@@ -331,7 +331,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      res.json(user);
+      // Check if user is in premium whitelist
+      let isWhitelisted = false;
+      if (user.email) {
+        try {
+          isWhitelisted = await storage.isEmailWhitelisted(user.email);
+        } catch (e) {
+          console.error("Whitelist check failed:", e);
+        }
+      }
+      
+      // Premium is true if: (active subscription with premium plan) OR whitelisted
+      const dbPremium = user.subscriptionStatus === 'active' && user.subscriptionPlan === 'premium';
+      const isPremium = dbPremium || isWhitelisted;
+      
+      res.json({
+        ...user,
+        subscriptionStatus: isPremium ? 'active' : (user.subscriptionStatus || 'free'),
+        subscriptionPlan: isPremium ? 'premium' : (user.subscriptionPlan || 'free'),
+        isPremium: isPremium
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
