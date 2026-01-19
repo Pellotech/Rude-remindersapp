@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
-import { getFullApiUrl } from "@/lib/queryClient";
+import { getFullApiUrl, setAuthToken, queryClient } from "@/lib/queryClient";
 
 interface EmailAuthFormProps {
   onSuccess: () => void;
@@ -45,8 +45,19 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
       });
 
       const data = await response.json();
+      console.log("LOGIN response.ok:", response.ok);
+      console.log("LOGIN data:", JSON.stringify(data));
 
       if (response.ok) {
+        // Store auth token for mobile apps (async for native storage)
+        const token = data.authToken ?? data.token ?? data.accessToken;
+        console.log("SAVING authToken to Preferences:", token ? "exists" : "missing");
+        if (token) {
+          await setAuthToken(token);
+        }
+        // Force refresh auth query (staleTime: Infinity requires invalidation + refetch)
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
         toast({
           title: "Success!",
           description: "Logged in successfully"
@@ -128,22 +139,23 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
           });
 
           if (loginResponse.ok) {
-            // Wait a moment for session to be fully established before calling onSuccess
-            setTimeout(() => {
-              onSuccess();
-            }, 100);
+            const loginData = await loginResponse.json();
+            // Store auth token for mobile apps
+            const token = loginData.authToken ?? loginData.token ?? loginData.accessToken;
+            if (token) {
+              await setAuthToken(token);
+            }
+            // Force refresh auth query
+            await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+            await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+            onSuccess();
           } else {
             // Account created but auto-login failed, still call onSuccess
-            // User can manually log in
-            setTimeout(() => {
-              onSuccess();
-            }, 100);
+            onSuccess();
           }
         } catch {
           // Network error during auto-login, still call onSuccess
-          setTimeout(() => {
-            onSuccess();
-          }, 100);
+          onSuccess();
         }
       } else {
         toast({

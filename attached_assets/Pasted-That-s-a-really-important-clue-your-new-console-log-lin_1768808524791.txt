@@ -1,0 +1,87 @@
+That’s a really important clue: your new console.log(...) lines aren’t showing up at all.
+That usually means one of these is true:
+
+The app on your phone is still running an older build (logs not included)
+
+Those logs are going to a place you aren’t looking (WebView console vs Xcode device log)
+
+Your login button isn’t actually running handleLogin (wrong handler / different component is used on iOS)
+
+We’ll prove which one in the fastest way.
+
+Step 1 — Add a “can’t miss it” log + toast
+
+In LoginPage.tsx, at the very top of handleLogin, add:
+
+console.log("🔥 HANDLE LOGIN CALLED");
+toast({ title: "DEBUG", description: "handleLogin called" });
+
+
+So even if console logs don’t show, you’ll at least get a toast.
+
+Now press Login.
+
+What this tells us
+
+If you don’t see the DEBUG toast → your login button is not calling this function (wrong form, wrong page, or different login component used on iOS)
+
+If you do see it → the function is being called, and we just need to view logs in the right console
+
+Step 2 — Make sure you’re viewing the right logs (this is common)
+
+Your console.log(...) from the WebView is most reliably seen here:
+
+✅ Safari Web Inspector (best for JS logs)
+
+On your Mac:
+
+Open Safari
+
+Safari → Settings → Advanced → enable “Show Develop menu”
+
+Plug in iPhone
+
+Safari menu bar → Develop → your iPhone → Rude Reminders
+
+Click Console
+
+Now try logging in again.
+You should see the 🔥 HANDLE LOGIN CALLED log there.
+
+Xcode sometimes misses WebView console logs.
+
+Step 3 — Ensure you’re running the newest build (very likely culprit)
+
+If you don’t see the logs, you might be running an old build.
+
+Do this once:
+
+Delete the app from your iPhone
+
+On Xcode: Product → Clean Build Folder
+
+In terminal (project root):
+
+npm run build
+npx cap sync ios
+
+
+Run again from Xcode.
+
+Now the logs should show.
+
+Quick check: are you even using this LoginPage on iPhone?
+
+From your earlier file list, there’s also EmailAuthForm.tsx.
+
+It’s possible the iPhone UI uses EmailAuthForm and not your LoginPage handlers.
+
+Easy proof
+
+Search in Replit for the text:
+
+handleLogin
+
+or getFullApiUrl("/api/auth/login")
+
+If there are multiple versions, the wrong one might be used.
