@@ -52,13 +52,15 @@ export default function LoginPage() {
         body: JSON.stringify(loginForm)
       });
       const data = await response.json();
+      console.log("LOGIN RESPONSE DATA:", data);
       if (response.ok) {
         // Store auth token for mobile apps (async for native storage)
         if (data.authToken) {
           await setAuthToken(data.authToken);
         }
-        // Force refresh auth query (staleTime: Infinity requires invalidation)
+        // Force refresh auth query (staleTime: Infinity requires invalidation + refetch)
         await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
         toast({ title: "Welcome back!", description: "Logged in successfully" });
         setLocation(getRedirectUrl());
       } else {
@@ -102,8 +104,9 @@ export default function LoginPage() {
         if (data.authToken) {
           await setAuthToken(data.authToken);
         }
-        // Force refresh auth query (staleTime: Infinity requires invalidation)
+        // Force refresh auth query (staleTime: Infinity requires invalidation + refetch)
         await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
         toast({ title: "Success!", description: "Account created. Logging you in..." });
         setLocation(getRedirectUrl());
       } else {

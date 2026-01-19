@@ -1,0 +1,97 @@
+Perfect — this is exactly what we wanted. ✅
+
+Your main.tsx now does the right thing:
+
+initializeSafeArea();
+
+await initAuthToken(); ✅ loads the cached token into cachedToken
+
+then renders <App />
+
+So the “token not initialized at startup” issue is fixed.
+
+Why you can STILL get “Logged in successfully” but land on Guest
+
+At this point, the remaining cause is almost always one of these:
+
+1) The login response isn’t returning authToken
+
+Your code only stores the token if:
+
+if (data.authToken) await setAuthToken(data.authToken);
+
+
+If the server returns { token: "..." } (different key), you’ll show success but never store it.
+
+✅ Quick proof: add this temporarily inside handleLogin right after const data = await response.json();
+
+console.log("LOGIN RESPONSE DATA:", data);
+
+
+Then check Xcode console.
+We need to see whether data.authToken exists.
+
+2) /api/auth/user is still 401 after login
+
+Even if token is saved, we need to confirm the next request is authenticated.
+
+✅ Add this log inside useAuth.ts before fetch:
+
+console.log("useAuth token exists?", !!token);
+
+
+And (optional) log status:
+
+console.log("auth/user status:", res.status);
+
+
+If token exists but status is 401 → server isn’t accepting the Authorization header (backend expects cookie session only, or expects a different header).
+
+3) You redirect too fast
+
+You do:
+
+await invalidateQueries(...)
+setLocation(...)
+
+
+That can navigate before the refetch finishes.
+
+✅ Safer:
+
+await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+setLocation(getRedirectUrl());
+
+
+This removes “guest flash” and ensures user state is loaded before leaving login.
+
+One more thing I noticed (important)
+
+Your useAuth.ts query key is:
+
+queryKey: ["/api/auth/user"],
+
+
+That matches the invalidation key you’re using. ✅ Good.
+
+But your QueryClient default has staleTime: Infinity. That’s fine as long as you refetch after login (which we’ll do with refetchQueries).
+
+What I want you to do now (minimal, no guessing)
+Step A — Make the “redirect too fast” fix
+
+In LoginPage.tsx, change both login and register success blocks to:
+
+await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+toast(...);
+setLocation(getRedirectUrl());
+
+Step B — Add one temporary log
+
+Add:
+
+console.log("LOGIN RESPONSE DATA:", data);
+
+
+Run on iPhone once and tell me what prints (especially whether it has authToken or something like token).
