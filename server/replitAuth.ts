@@ -262,18 +262,29 @@ export async function setupAuth(app: Express) {
           return res.status(500).json({ message: "Login failed" });
         }
         
+        // The user object from passport has claims.sub structure
+        const userId = user.claims?.sub;
+        const userEmail = user.claims?.email;
+        const firstName = user.claims?.first_name;
+        const lastName = user.claims?.last_name;
+        
+        if (!userId) {
+          console.error("Login failed: user.claims.sub is missing", user);
+          return res.status(500).json({ message: "Login failed - user ID not found" });
+        }
+        
         // Generate auth token for mobile apps
-        const authToken = await createAuthToken(user.id);
+        const authToken = await createAuthToken(userId);
         
         res.json({ 
           success: true, 
           message: "Logged in successfully",
           authToken,
           user: {
-            id: user.id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName
+            id: userId,
+            email: userEmail,
+            firstName: firstName,
+            lastName: lastName
           }
         });
       });
