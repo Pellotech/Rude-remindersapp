@@ -1,0 +1,81 @@
+Got it — and these two screenshots confirm the same thing:
+
+✅ Your app is trying to hit https://rudereminder.replit.app/api/auth/login
+❌ The server is still returning CORS preflight 500 and “Origin capacitor://localhost not allowed”
+➡️ so the app shows “Network error. Please try again.”
+
+So we don’t need more guessing. The backend is still not sending the right CORS headers on OPTIONS, or it’s throwing during preflight.
+
+The quickest reliable fix now
+
+Stop trying to “validate origin” inside Express for native requests. For now, make the server always allow the Capacitor origin and always succeed OPTIONS.
+
+Replace your CORS/origin logic with this (minimal + safe)
+
+Put this right after const app = express(); and before anything else:
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin as string | undefined;
+
+  // Allow Capacitor + your production web domain
+  const isAllowed =
+    origin === "capacitor://localhost" ||
+    origin === "ionic://localhost" ||
+    origin === "https://rudereminder.replit.app" ||
+    (origin?.endsWith(".replit.app") ?? false) ||
+    (origin?.endsWith(".replit.dev") ?? false);
+
+  if (origin && isAllowed) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  }
+
+  if (req.method === "OPTIONS") {
+    // Always end preflight cleanly
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+And make sure of these two things
+
+Remove any other cors() middleware (don’t run both).
+
+In the error handler, do not throw err.
+
+Why this will work
+
+Safari preflight cares about:
+
+Access-Control-Allow-Origin
+
+Access-Control-Allow-Headers includes Authorization
+
+OPTIONS returns 2xx (204 is perfect)
+
+Right now you’re getting 500, which means either:
+
+headers aren’t being set for the OPTIONS request, or
+
+something throws later
+
+This rewrite makes OPTIONS exit immediately, every time.
+
+One more sanity check in Replit (this catches “wrong server file” issues)
+
+In that same middleware, temporarily add:
+
+console.log("CORS HIT:", req.method, req.path, "origin=", origin);
+
+
+Then publish, try login once, and look at Replit logs:
+
+You should see origin= capacitor://localhost
+
+And OPTIONS /api/auth/login
+
+If you don’t see this line in Replit logs, you’re not deploying the file you think you are.

@@ -10,32 +10,31 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // === CORS + Preflight (must be first middleware) ===
-const ALLOWED_ORIGINS = new Set([
-  "capacitor://localhost",
-  "ionic://localhost",
-  "http://localhost",
-  "https://rudereminder.replit.app",
-]);
-
 app.use((req, res, next) => {
   const origin = req.headers.origin as string | undefined;
+  
+  // Debug logging
+  console.log("CORS HIT:", req.method, req.path, "origin=", origin);
 
-  // Always respond to OPTIONS without touching routes/auth
-  if (req.method === "OPTIONS") {
-    if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".replit.app") || origin.endsWith(".replit.dev"))) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-    }
-    return res.sendStatus(204);
-  }
+  // Allow Capacitor + production web domain
+  const isAllowed =
+    origin === "capacitor://localhost" ||
+    origin === "ionic://localhost" ||
+    origin === "https://rudereminder.replit.app" ||
+    (origin?.endsWith(".replit.app") ?? false) ||
+    (origin?.endsWith(".replit.dev") ?? false);
 
-  // Normal requests
-  if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".replit.app") || origin.endsWith(".replit.dev"))) {
+  if (origin && isAllowed) {
     res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  }
+
+  if (req.method === "OPTIONS") {
+    // Always end preflight cleanly
+    return res.sendStatus(204);
   }
 
   next();
