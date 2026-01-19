@@ -1,0 +1,49 @@
+Rewrite it. At this point, “heat seeking” the exact micro-cause is wasting time — your screenshots keep showing the same thing: OPTIONS preflight returns 500, and Safari blocks the real login request. The fastest, safest move is to make preflight impossible to fail.
+
+The simple rewrite (bulletproof CORS + preflight)
+
+Tell Replit to replace the current CORS logic with this exact block, placed immediately after const app = express(); and before any other app.use / registerRoutes / logging / vite.
+
+// === CORS + Preflight (must be first middleware) ===
+const ALLOWED_ORIGINS = new Set([
+  "capacitor://localhost",
+  "ionic://localhost",
+  "http://localhost",
+  "https://rudereminder.replit.app",
+]);
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin as string | undefined;
+
+  // Always respond to OPTIONS without touching routes/auth
+  if (req.method === "OPTIONS") {
+    if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".replit.app") || origin.endsWith(".replit.dev"))) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    }
+    return res.sendStatus(204);
+  }
+
+  // Normal requests
+  if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".replit.app") || origin.endsWith(".replit.dev"))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  }
+
+  next();
+});
+
+Also do this small stability fix
+
+In your error handler, do not throw err after sending a response. It can cause weird crashes and 500s.
+
+Why rewriting is the right move
+
+Safari + Capacitor (capacitor://localhost) is strict about preflight.
+
+If anything returns 500 on OPTIONS, login never even runs.
+
+A “hard stop” OPTIONS handler makes preflight succeed every time.

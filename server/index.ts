@@ -9,21 +9,33 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// CORS middleware - MUST be first, before anything else
-// Simplified: always allow origin for preflight, hard stop on OPTIONS
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
+// === CORS + Preflight (must be first middleware) ===
+const ALLOWED_ORIGINS = new Set([
+  "capacitor://localhost",
+  "ionic://localhost",
+  "http://localhost",
+  "https://rudereminder.replit.app",
+]);
 
-  if (origin) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie");
-    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+app.use((req, res, next) => {
+  const origin = req.headers.origin as string | undefined;
+
+  // Always respond to OPTIONS without touching routes/auth
+  if (req.method === "OPTIONS") {
+    if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".replit.app") || origin.endsWith(".replit.dev"))) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    }
+    return res.sendStatus(204);
   }
 
-  // HARD STOP for preflight - nothing else runs
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
+  // Normal requests
+  if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith(".replit.app") || origin.endsWith(".replit.dev"))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   }
 
   next();
