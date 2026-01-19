@@ -1,0 +1,65 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % git stash
+git pull origin main --rebase
+git stash pop
+git add .
+git commit -m "Merge with Replit changes"
+git push origin main
+Saved working directory and index state WIP on main: 2407467 Enable cross-origin cookie functionality for mobile login
+remote: Enumerating objects: 49, done.
+remote: Counting objects: 100% (49/49), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 33 (delta 25), reused 33 (delta 25), pack-reused 0 (from 0)
+Unpacking objects: 100% (33/33), 289.94 KiB | 1.15 MiB/s, done.
+From https://github.com/Pellotech/Rude-remindersapp
+ * branch            main       -> FETCH_HEAD
+   2407467..4eee9ee  main       -> origin/main
+Updating 2407467..4eee9ee
+Fast-forward
+ ...-be-required-Failure-to-ado_1768778197267.txt |  90 ++++++++++
+ ...-be-required-Failure-to-ado_1768790369886.txt | 102 +++++++++++
+ ...-be-required-Failure-to-ado_1768791898859.txt | 124 ++++++++++++++
+ ...ude-remindersapp-git-fetch-_1768778181276.txt |  72 ++++++++
+ ...ude-remindersapp-git-fetch-_1768790355123.txt | 135 +++++++++++++++
+ ...ude-remindersapp-git-pull-o_1768791860262.txt |  68 ++++++++
+ ...ot_2026-01-18_at_8.02.23_PM_1768791749768.png | Bin 0 -> 368419 bytes
+ client/src/components/Navigation.tsx             |   3 +-
+ client/src/hooks/useAuth.ts                      |  12 +-
+ client/src/lib/queryClient.ts                    |  33 +++-
+ client/src/pages/login.tsx                       |  16 +-
+ server/routes.ts                                 | 167 +++++++++++++------
+ shared/schema.ts                                 |   9 +
+ 13 files changed, 772 insertions(+), 59 deletions(-)
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-ado_1768778197267.txt
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-ado_1768790369886.txt
+ create mode 100644 attached_assets/Pasted--UIScene-lifecycle-will-soon-be-required-Failure-to-ado_1768791898859.txt
+ create mode 100644 attached_assets/Pasted-macbookpro-The-Book-of-OTG-Rude-remindersapp-git-fetch-_1768778181276.txt
+ create mode 100644 attached_assets/Pasted-macbookpro-The-Book-of-OTG-Rude-remindersapp-git-fetch-_1768790355123.txt
+ create mode 100644 attached_assets/Pasted-macbookpro-The-Book-of-OTG-Rude-remindersapp-git-pull-o_1768791860262.txt
+ create mode 100644 attached_assets/Screenshot_2026-01-18_at_8.02.23_PM_1768791749768.png
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ios/App/Podfile
+	modified:   ios/App/Podfile.lock
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	ios/App/App.xcodeproj/xcshareddata/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (f1a25d37595dc9585ba762b77d242b5508f0a037)
+[main 3114d65] Merge with Replit changes
+ 3 files changed, 129 insertions(+), 5 deletions(-)
+ create mode 100644 ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
+Enumerating objects: 16, done.
+Counting objects: 100% (16/16), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (10/10), 2.25 KiB | 2.25 MiB/s, done.
+Total 10 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/Pellotech/Rude-remindersapp.git
+   4eee9ee..3114d65  main -> main
