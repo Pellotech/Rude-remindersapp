@@ -1,0 +1,61 @@
+Awesome — and that log confirms it: login + premium are working ✅
+
+Now, two things to address:
+
+Logout causing Safari/browser + 404
+
+A couple 401s still happening after login (worth cleaning up)
+
+1) Message to send Replit about the logout issue (copy/paste)
+
+Problem: In the iOS Capacitor app, tapping Logout opens a browser/webview and lands on a 404 “Page Not Found”. It looks like the backend /api/logout does a redirect which breaks the in-app router.
+
+Fix requested: For mobile, logout should be an API call that returns JSON (no redirect), and the app should navigate with wouter.
+
+Please change /api/logout to JSON + POST:
+
+app.post("/api/logout", (req, res) => {
+  req.logout(() => {
+    // If using sessions:
+    req.session?.destroy?.(() => {});
+    res.clearCookie("connect.sid"); // optional
+    res.json({ success: true });
+  });
+});
+
+
+Then update the client logout handler to:
+
+call POST /api/logout
+
+await clearAuthToken()
+
+await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] })
+
+navigate with wouter to /login (no window.location, no full-page redirect)
+
+This keeps users inside the app and prevents the 404 screen.
+
+(If they need to preserve Replit OIDC logout for web, keep that redirect only for web browsers—detect by checking req.headers.origin or a query param like ?platform=web.)
+
+2) What else I see in the log
+
+In your screenshot, after login you still have 401s hitting:
+
+/api/auth/user (at the top, before login — normal)
+
+/api/stats
+
+/api/reminders
+
+Those last two should not stay 401 after login if the app is passing the Bearer token consistently.
+
+What that usually means
+
+Those endpoints are protected by session-based auth (req.isAuthenticated()), not the Bearer token you just saved. So they still reject requests coming from the mobile app.
+
+What to tell Replit (quick add-on)
+
+“After login, /api/stats and /api/reminders still return 401 in the iOS app. These routes likely use session auth middleware. Please update API auth middleware to accept Authorization: Bearer <authToken> (lookup in auth_tokens table) for mobile requests, or add a token-based isTokenAuthenticated middleware for /api/* routes.”
+
+(They already have an auth_tokens table and are creating tokens — they just need to use them for protected routes.)

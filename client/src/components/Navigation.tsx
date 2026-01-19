@@ -6,12 +6,28 @@ import SettingsModal from "./SettingsModal";
 import { Link, useLocation } from "wouter";
 import type { User } from "@shared/schema";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
-import { clearAuthToken, getFullApiUrl } from "@/lib/queryClient";
+import { clearAuthToken, apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function Navigation() {
   const { user, isGuest } = useAuth() as { user: User | undefined; isGuest: boolean };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
+  
+  const handleLogout = async () => {
+    try {
+      // Call logout API (POST, returns JSON - no redirect)
+      await apiRequest('/api/auth/logout', { method: 'POST' });
+    } catch (e) {
+      // Ignore errors - we're logging out anyway
+    }
+    // Clear auth token
+    await clearAuthToken();
+    // Invalidate auth queries
+    queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/user/premium-status'] });
+    // Navigate to login page (stays in app, no Safari)
+    navigate('/login');
+  };
 
   return (
     <>
@@ -75,7 +91,7 @@ export default function Navigation() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={async () => { await clearAuthToken(); window.location.href = getFullApiUrl('/api/auth/logout'); }}
+                  onClick={handleLogout}
                   className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
                   data-testid="button-nav-logout"
                 >
