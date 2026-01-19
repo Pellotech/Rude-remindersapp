@@ -1,0 +1,110 @@
+This is almost right — you’re super close. The reason you’re still getting:
+
+“Origin capacitor://localhost is not allowed…”
+
+preflight (OPTIONS) returns 500
+
+is because your origin list is not being applied the way you think.
+
+What’s wrong in your CORS config
+
+cors expects origin to be:
+
+a string
+
+a RegExp
+
+a function (recommended when you want multiple)
+
+or true/false
+
+But you’re giving it an array that mixes strings + RegExp. In practice, that can behave inconsistently and often fails for non-http origins like capacitor://.
+
+Also, you’re missing a common Capacitor origin:
+
+ionic://localhost (some setups use this)
+
+And the 500 on preflight strongly suggests your server is throwing instead of gracefully answering OPTIONS.
+
+✅ Fix: use an origin function + handle OPTIONS
+
+Replace your CORS block with this exact one:
+
+const allowedOrigins = [
+  "capacitor://localhost",
+  "ionic://localhost",
+  "http://localhost",
+  "https://rudereminder.replit.app",
+];
+
+const allowedOriginRegex = [
+  /\.replit\.dev$/,
+  /\.replit\.app$/,
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like curl, server-to-server, some native cases)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowedOriginRegex.some((re) => re.test(origin))) return callback(null, true);
+
+    // Block anything else
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+// IMPORTANT: respond to preflight
+app.options("*", cors());
+
+Why this works
+
+Handles capacitor://localhost reliably
+
+Allows ionic://localhost too
+
+Makes OPTIONS preflight succeed instead of 500’ing
+
+Doesn’t depend on mixed arrays behaving correctly
+
+One more tweak (recommended)
+
+You don’t need Cookie in allowedHeaders if you’re using Bearer tokens. Keep it simple:
+
+Content-Type
+
+Authorization
+
+After you change that
+
+Publish in Replit
+
+Re-test login on iPhone with Web Inspector Console
+
+You should see:
+
+no preflight errors
+
+login response includes authToken
+
+then /api/auth/user stops returning 401
+
+Quick check
+
+If you still see 500, it’s coming from your global error handler:
+
+throw err;
+
+
+That line can cause ugly behavior in production. Better is:
+
+// remove "throw err;"
+
+
+Because throwing after sending a response can crash the process or spam logs. Not required for CORS, but it helps stability.
+
+If you want, paste the exact console lines after you publish this change (just the red CORS lines) and I’ll confirm it’s fixed.

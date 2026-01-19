@@ -11,22 +11,38 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // CORS configuration for native mobile apps
-app.use(cors({
-  origin: [
-    // Native iOS Capacitor app
-    'capacitor://localhost',
-    // Native Android Capacitor app  
-    'http://localhost',
-    // Production web app
-    'https://rudereminder.replit.app',
-    // Development
-    /\.replit\.dev$/,
-    /\.replit\.app$/,
-  ],
+const allowedOrigins = [
+  "capacitor://localhost",
+  "ionic://localhost", 
+  "http://localhost",
+  "https://rudereminder.replit.app",
+];
+
+const allowedOriginRegex = [
+  /\.replit\.dev$/,
+  /\.replit\.app$/,
+];
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (like curl, server-to-server, some native cases)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (allowedOriginRegex.some((re) => re.test(origin))) return callback(null, true);
+    
+    // Block anything else
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight OPTIONS requests explicitly
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -67,9 +83,11 @@ app.use((req, res, next) => {
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
+    
+    // Log error but don't throw (can crash process)
+    console.error('Server error:', err.message);
+    
     res.status(status).json({ message });
-    throw err;
   });
 
   // Serve static files from client dist
