@@ -1,0 +1,92 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % npx cap open ios
+✔ Opening the Xcode workspace... in 3.00s
+macbookpro@The-Book-of-OTG Rude-remindersapp % 
+  [Restored Jan 18, 2026 at 10:36:39 PM]
+Last login: Sun Jan 18 22:36:07 on console
+/bin/date: option requires an argument -- r
+usage: date [-jnRu] [-I[date|hours|minutes|seconds|ns]] [-f input_fmt]
+            [ -z output_zone ] [-r filename|seconds] [-v[+|-]val[y|m|w|d|H|M|S]]
+            [[[[mm]dd]HH]MM[[cc]yy][.SS] | new_date] [+output_fmt]
+Restored session: 
+macbookpro@The-Book-of-OTG Rude-remindersapp % npx cap open ios
+✔ Opening the Xcode workspace... in 3.01s
+macbookpro@The-Book-of-OTG Rude-remindersapp % git add .
+git commit -m "Fix iOS auth with Capacitor Preferences"
+git push origin main
+
+npm run build
+npx cap sync ios
+npx cap open ios
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+To https://github.com/Pellotech/Rude-remindersapp.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/Pellotech/Rude-remindersapp.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 15 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 2157 modules transformed.
+../dist/public/index.html                                               0.52 kB │ gzip:   0.33 kB
+../dist/public/assets/translusant_logo2_1767108484844-BOsWl_2_.png  1,031.16 kB
+../dist/public/assets/translusant_logo1_1767105109175-BsNH3-Uw.png  1,052.99 kB
+../dist/public/assets/index-B65GNDDV.css                               90.63 kB │ gzip:  15.08 kB
+../dist/public/assets/web-BStuyCTm.js                                   0.19 kB │ gzip:   0.17 kB
+../dist/public/assets/web-1BPjP34M.js                                   0.36 kB │ gzip:   0.25 kB
+../dist/public/assets/web-VXFSveIZ.js                                   0.38 kB │ gzip:   0.25 kB
+../dist/public/assets/web-BOO0nLH1.js                                   0.38 kB │ gzip:   0.24 kB
+../dist/public/assets/index-JZbNglHP.js                                 0.43 kB │ gzip:   0.30 kB
+../dist/public/assets/web-DOx7AHwQ.js                                   1.26 kB │ gzip:   0.43 kB
+../dist/public/assets/web-D2hFCI9E.js                                   2.44 kB │ gzip:   1.09 kB
+../dist/public/assets/web-B1XK-6r1.js                                   3.44 kB │ gzip:   1.09 kB
+../dist/public/assets/index-CU836veo.js                                 6.38 kB │ gzip:   2.41 kB
+../dist/public/assets/web-Br5JBPip.js                                   8.73 kB │ gzip:   2.97 kB
+../dist/public/assets/web-CGNc1HkD.js                                   9.77 kB │ gzip:   1.99 kB
+../dist/public/assets/index-Co2nagls.js                             2,184.81 kB │ gzip: 524.55 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.98s
+
+  dist/index.js  196.6kb
+
+⚡ Done in 11ms
+✔ Copying web assets from public to ios/App/App/public in 6.80ms
+✔ Creating capacitor.config.json in ios/App/App in 3.41ms
+✔ copy ios in 71.85ms
+✔ Updating iOS plugins in 8.88ms
+✔ Updating iOS native dependencies with pod install in 2.97s
+⠏ update ios [info] Found 16 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor-community/apple-sign-in@7.1.0
+       @capacitor/app@7.1.0
+       @capacitor/app-launcher@7.0.2
+       @capacitor/browser@7.0.2
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @capawesome/capacitor-file-picker@7.2.0
+       @revenuecat/purchases-capacitor@11.2.1
+       capacitor-plugin-safe-area@4.0.3
+✔ update ios in 3.02s
+[info] Sync finished in 3.489s
+✔ Opening the Xcode workspace... in 3.00s
+macbookpro@The-Book-of-OTG Rude-remindersapp % 
