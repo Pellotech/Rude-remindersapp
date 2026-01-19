@@ -1,5 +1,4 @@
 import express, { type Request, Response, NextFunction } from "express";
-import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import * as path from 'path';
@@ -10,39 +9,31 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// CORS configuration for native mobile apps
+// Manual CORS middleware for native mobile apps (capacitor:// protocol)
 const allowedOrigins = [
-  "capacitor://localhost",
-  "ionic://localhost", 
-  "http://localhost",
-  "https://rudereminder.replit.app",
+  'capacitor://localhost',
+  'ionic://localhost',
+  'http://localhost',
+  'https://rudereminder.replit.app',
 ];
 
-const allowedOriginRegex = [
-  /\.replit\.dev$/,
-  /\.replit\.app$/,
-];
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Allow requests with no origin (like curl, server-to-server, some native cases)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    if (allowedOriginRegex.some((re) => re.test(origin))) return callback(null, true);
-    
-    // Block anything else
-    return callback(new Error(`Origin ${origin} not allowed by CORS`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+  if (!origin || allowedOrigins.includes(origin) || (origin && origin.endsWith('.replit.app')) || (origin && origin.endsWith('.replit.dev'))) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  }
 
-app.use(cors(corsOptions));
+  // Handle preflight immediately - return 204 before any route runs
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
 
-// Handle preflight OPTIONS requests explicitly
-app.options("*", cors(corsOptions));
+  next();
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
