@@ -1,0 +1,111 @@
+This pattern (everything works in “dev mode,” then breaks in “production mode”) almost always comes down to one of these three mismatches:
+
+
+Your phone app and your web app are talking to a different server than you think (DEV vs PROD API)
+
+
+Login “success” isn’t being persisted on iOS (token/cookie not saved/loaded in the WebView)
+
+
+Whitelist/premium check is reading the wrong field or stale cached user data (API returns “free” even though DB says premium)
+
+
+The key is: we need to stop guessing and do 2 proof checks that identify which mismatch it is.
+
+Proof Check 1: Confirm your app is hitting PRODUCTION API (web + iOS)
+In your code (or temporarily in the login screen), log:
+console.log("API_BASE_URL:", API_BASE_URL);
+
+And in the backend (server), log every request host + path:
+console.log("REQ", req.method, req.path, "host:", req.headers.host);
+
+What you want to see:
+
+
+iOS and web both call https://rudereminder.replit.app
+
+
+not a replit dev URL, not localhost, not a Mac IP
+
+
+If the phone is hitting a different base URL than web, login + whitelist will disagree.
+
+Proof Check 2: See what the server actually returns after login
+The “web logs in but still Free” claim is only possible if the API response after login does not include premium info (or includes it in a different shape).
+On the web version (desktop browser):
+
+
+DevTools → Network
+
+
+Find the call that loads current user (usually /me, /user, /profile, /session)
+
+
+Look at the JSON response
+
+
+You’re looking for something like:
+
+
+subscriptionPlan: "premium"
+or isWhitelisted: true
+or role: "beta" etc.
+
+
+If the response says “free,” the UI is correctly showing “free” even if the DB has premium. That means the backend logic is wrong or reading the wrong DB/table.
+
+Why the iPhone app says “success” but stays guest
+That usually means:
+
+
+login endpoint returns success
+
+
+token is not stored or not re-used on the next “get current user” call
+
+
+app falls back to guest view
+
+
+In Capacitor, the most reliable fix is: store token with @capacitor/preferences, not just cookies.
+
+The quickest “fix path” that doesn’t waste time
+Step A — Make production login + session rock-solid (server)
+Use token auth (Authorization header), not cookie-only, and return user in login response.
+Login response should include:
+
+
+token
+
+
+user (including premium status)
+
+
+Step B — On iOS, store token using Capacitor Preferences
+Then on app launch, load token and call /me with Authorization.
+Step C — Whitelist logic must be computed server-side and included in /me
+Don’t rely on client-side checking a field that might not exist.
+
+What I need from you to fix this without back-and-forth
+Paste only these two things:
+
+
+The API base URL code (where you set PRODUCTION_API_URL / API_BASE_URL)
+
+
+The backend route for “current user” (usually /me) and the login route (/login)
+
+
+With those, I can tell you exactly why:
+
+
+web logs in but doesn’t become premium
+
+
+iOS logs in but returns to guest
+
+
+
+One more thing: don’t revert to dev server UI
+You’re right that dev mode “worked,” but that path can fail App Store review because it often depends on dev URLs or your computer. We want production-correct behavior now so reviewers/testers get the same experience.
+If you paste the two snippets above, I’ll give you a single clean set of changes to make dev/prod consistent.

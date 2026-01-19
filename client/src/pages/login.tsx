@@ -53,9 +53,9 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        // Store auth token for mobile apps
+        // Store auth token for mobile apps (async for native storage)
         if (data.authToken) {
-          setAuthToken(data.authToken);
+          await setAuthToken(data.authToken);
         }
         toast({ title: "Welcome back!", description: "Logged in successfully" });
         await refetch();
@@ -97,9 +97,9 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        // Store auth token for mobile apps (register returns token directly)
+        // Store auth token for mobile apps (async for native storage)
         if (data.authToken) {
-          setAuthToken(data.authToken);
+          await setAuthToken(data.authToken);
         }
         toast({ title: "Success!", description: "Account created. Logging you in..." });
         await refetch();

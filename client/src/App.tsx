@@ -23,6 +23,7 @@ import { useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
+import { initAuthToken } from "@/lib/queryClient";
 
 const useNormalizedLocation = (): [string, (to: string) => void] => {
   const navigate = useCallback((to: string) => {
@@ -125,6 +126,11 @@ function AppRouter() {
 
 function App() {
   useEffect(() => {
+    // Initialize auth token from persistent storage (important for iOS)
+    initAuthToken().then(() => {
+      console.log('🔐 Auth token initialization complete');
+    }).catch(console.error);
+
     // Initialize RevenueCat (has DISABLE flag in service for debugging)
     if (Capacitor.isNativePlatform()) {
       revenueCatService.initialize().catch(console.error);

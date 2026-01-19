@@ -1,5 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { Capacitor } from "@capacitor/core";
+import { Preferences } from "@capacitor/preferences";
 
 // Production API URL for native apps (when UI is bundled locally)
 const PRODUCTION_API_URL = "https://rudereminder.replit.app";
@@ -7,19 +8,60 @@ const PRODUCTION_API_URL = "https://rudereminder.replit.app";
 // Token storage key
 const AUTH_TOKEN_KEY = "rude_reminders_auth_token";
 
-// Store auth token
-export function setAuthToken(token: string) {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
+// In-memory cache for fast synchronous access
+let cachedToken: string | null = null;
+
+// Initialize token from persistent storage (call on app start)
+export async function initAuthToken(): Promise<string | null> {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const { value } = await Preferences.get({ key: AUTH_TOKEN_KEY });
+      cachedToken = value;
+      console.log("🔑 Auth token loaded from native storage:", cachedToken ? "exists" : "none");
+      return cachedToken;
+    } catch (error) {
+      console.error("Error loading auth token:", error);
+      return null;
+    }
+  } else {
+    cachedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    return cachedToken;
+  }
 }
 
-// Get stored auth token
+// Store auth token (async for native, sync for web)
+export async function setAuthToken(token: string): Promise<void> {
+  cachedToken = token;
+  if (Capacitor.isNativePlatform()) {
+    try {
+      await Preferences.set({ key: AUTH_TOKEN_KEY, value: token });
+      console.log("🔑 Auth token saved to native storage");
+    } catch (error) {
+      console.error("Error saving auth token:", error);
+    }
+  } else {
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+  }
+}
+
+// Get stored auth token (synchronous from cache)
 export function getAuthToken(): string | null {
-  return localStorage.getItem(AUTH_TOKEN_KEY);
+  return cachedToken;
 }
 
 // Clear auth token (on logout)
-export function clearAuthToken() {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
+export async function clearAuthToken(): Promise<void> {
+  cachedToken = null;
+  if (Capacitor.isNativePlatform()) {
+    try {
+      await Preferences.remove({ key: AUTH_TOKEN_KEY });
+      console.log("🔑 Auth token cleared from native storage");
+    } catch (error) {
+      console.error("Error clearing auth token:", error);
+    }
+  } else {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  }
 }
 
 // Get the base URL for API calls - production URL for native, relative for web

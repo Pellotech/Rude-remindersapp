@@ -75,7 +75,7 @@ export default function Navigation() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => { clearAuthToken(); window.location.href = getFullApiUrl('/api/auth/logout'); }}
+                  onClick={async () => { await clearAuthToken(); window.location.href = getFullApiUrl('/api/auth/logout'); }}
                   className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
                   data-testid="button-nav-logout"
                 >
