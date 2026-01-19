@@ -272,6 +272,21 @@ export async function setupAuth(app: Express) {
         
         // Fetch full user data from database to get subscription info
         const fullUser = await storage.getUser(userId);
+        const userEmail = fullUser?.email || user.claims?.email;
+        
+        // Check if user is in premium whitelist
+        let isWhitelisted = false;
+        if (userEmail) {
+          try {
+            isWhitelisted = await storage.isEmailWhitelisted(userEmail);
+          } catch (e) {
+            console.error("Whitelist check failed:", e);
+          }
+        }
+        
+        // Premium is true if: (active subscription with premium plan) OR whitelisted
+        const dbPremium = fullUser?.subscriptionStatus === 'active' && fullUser?.subscriptionPlan === 'premium';
+        const isPremium = dbPremium || isWhitelisted;
         
         // Generate auth token for mobile apps
         const authToken = await createAuthToken(userId);
@@ -282,12 +297,12 @@ export async function setupAuth(app: Express) {
           authToken,
           user: {
             id: userId,
-            email: fullUser?.email || user.claims?.email,
+            email: userEmail,
             firstName: fullUser?.firstName || user.claims?.first_name,
             lastName: fullUser?.lastName || user.claims?.last_name,
-            subscriptionStatus: fullUser?.subscriptionStatus || 'free',
-            subscriptionPlan: fullUser?.subscriptionPlan || 'free',
-            isPremium: fullUser?.subscriptionStatus === 'active' && fullUser?.subscriptionPlan === 'premium'
+            subscriptionStatus: isPremium ? 'active' : (fullUser?.subscriptionStatus || 'free'),
+            subscriptionPlan: isPremium ? 'premium' : (fullUser?.subscriptionPlan || 'free'),
+            isPremium: isPremium
           }
         });
       });

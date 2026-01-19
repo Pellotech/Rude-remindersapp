@@ -1,0 +1,112 @@
+Yes — you found the exact spot. 👍
+In this file (replitAuth.ts), the fields you’re asking about are created right here in your POST /api/auth/login response:
+
+res.json({ 
+  success: true, 
+  message: "Logged in successfully",
+  authToken,
+  user: {
+    ...
+    subscriptionStatus: fullUser?.subscriptionStatus || 'free',
+    subscriptionPlan: fullUser?.subscriptionPlan || 'free',
+    isPremium: fullUser?.subscriptionStatus === 'active' && fullUser?.subscriptionPlan === 'premium'
+  }
+});
+
+
+That’s the only place those values are being set for mobile right now.
+
+Why your whitelist isn’t turning premium on
+
+Your logic currently says:
+
+premium = only if DB user row has subscriptionStatus='active' AND subscriptionPlan='premium'
+
+But your whitelist table (premium_whitelist) is separate, and this login handler never checks it — so whitelist membership does nothing.
+
+That’s why your login response showed:
+
+subscriptionStatus: "free"
+
+subscriptionPlan: "free"
+
+isPremium: false
+
+even though your email is in premium_whitelist.
+
+The fix you need (add whitelist check right here)
+
+Add a whitelist lookup after fullUser is fetched, then compute premium using (subscription OR whitelist).
+
+Drop-in patch (minimal change)
+
+Put this right after:
+
+const fullUser = await storage.getUser(userId);
+
+
+Add:
+
+// Check premium whitelist by email (case-insensitive)
+const emailToCheck = (fullUser?.email || user.claims?.email || "").toLowerCase();
+
+let isWhitelisted = false;
+try {
+  const result = await db.execute(
+    `SELECT 1 FROM premium_whitelist WHERE LOWER(email) = $1 LIMIT 1`,
+    [emailToCheck]
+  );
+  // Depending on db.execute return shape, this may be result.rows
+  // If result has "rows", use that:
+  // isWhitelisted = (result.rows?.length ?? 0) > 0;
+  isWhitelisted = (result as any).rows ? (result as any).rows.length > 0 : false;
+} catch (e) {
+  console.error("Whitelist check failed:", e);
+}
+
+
+Then change your premium calculation inside res.json to:
+
+const dbPremium =
+  fullUser?.subscriptionStatus === "active" &&
+  fullUser?.subscriptionPlan === "premium";
+
+const premium = dbPremium || isWhitelisted;
+
+
+And return:
+
+subscriptionStatus: premium ? "active" : (fullUser?.subscriptionStatus || "free"),
+subscriptionPlan: premium ? "premium" : (fullUser?.subscriptionPlan || "free"),
+isPremium: premium,
+
+Even simpler (if Replit prefers SQL console style)
+
+The idea is the same:
+
+If email exists in premium_whitelist, force premium true.
+
+One more thing you should know
+
+You still have a separate middleware at the bottom:
+
+export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  if (!req.isAuthenticated() || !user.expires_at) return 401;
+  ...
+};
+
+
+That middleware is session-based (req.isAuthenticated()), not token-based.
+So if you have a /api/auth/user endpoint protected by isAuthenticated, it may still 401 even though you have an authToken.
+
+That does not block premium if you’re using the login response to set premium, but long-term you’ll want /api/auth/user to also accept the Bearer token.
+
+Bottom line
+
+✅ subscriptionStatus/subscriptionPlan/isPremium are set in the res.json inside /api/auth/login (you found it).
+
+❌ whitelist isn’t used right now.
+
+✅ fix is to add a whitelist query + OR it into isPremium.
+
+If you want, paste the /api/auth/user route code (where it returns the current user). I’ll show you how to make that endpoint also return premium correctly and accept the Bearer token too.
