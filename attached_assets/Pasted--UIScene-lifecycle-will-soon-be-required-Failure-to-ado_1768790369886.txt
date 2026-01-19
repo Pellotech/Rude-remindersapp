@@ -1,0 +1,102 @@
+`UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
+Could not create a sandbox extension for '/var/containers/Bundle/Application/CF1004D8-1326-46E1-8F06-314C2CF1A371/App.app'
+Loading network plugin
+⚡️  Loading app at capacitor://localhost...
+Reachable via WiFi
+WebContent[4506] Unable to hide query parameters from script (missing data)
+⚡️  WebView loaded
+⚡️  To Native ->  SafeArea getSafeAreaInsets 6040957
+⚡️  TO JS {"insets":{"bottom":20,"left":62,"top":0,"right":62}}
+⚡️  [log] - 📱 Global notification listener registered
+⚡️  [log] - RevenueCat DISABLED for debugging
+⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+⚡️  To Native ->  LocalNotifications requestPermissions 6040958
+⚡️  To Native ->  SafeArea addListener 6040959
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  To Native ->  LocalNotifications addListener 6040960
+⚡️  To Native ->  LocalNotifications addListener 6040961
+⚡️  [log] - Disconnected from WebSocket
+SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+⚡️  TO JS {"insets":{"bottom":34,"top":62,"left":0,"right":0}}
+⚡️  WebView loaded
+⚡️  [log] - 📱 Global notification listener registered
+⚡️  [log] - RevenueCat DISABLED for debugging
+⚡️  [log] - 📱 Mobile app detected - requesting notification permissions...
+⚡️  To Native ->  LocalNotifications requestPermissions 18632481
+⚡️  To Native ->  SafeArea getSafeAreaInsets 18632482
+⚡️  TO JS {"insets":{"bottom":34,"top":62,"left":0,"right":0}}
+⚡️  To Native ->  SafeArea addListener 18632483
+⚡️  TO JS {"display":"granted"}
+⚡️  [log] - ✅ Notification permissions granted!
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x11be317c0 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11bd7ee00.width == _UIButtonBarButton:0x11bcad680.width   (active)>",
+    "<NSLayoutConstraint:0x11be31900 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x11bd8dc00]   (active, names: '|':_UIButtonBarButton:0x11bcad680 )>",
+    "<NSLayoutConstraint:0x11be31950 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11bd8dc00]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11bcad680 )>",
+    "<NSLayoutConstraint:0x11be31ea0 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11bd7ee00.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x11be31950 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11bd8dc00]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11bcad680 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x11be32350 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11bd7f200.width == _UIButtonBarButton:0x11bcadb80.width   (active)>",
+    "<NSLayoutConstraint:0x11be32490 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x11bd8df80]   (active, names: '|':_UIButtonBarButton:0x11bcadb80 )>",
+    "<NSLayoutConstraint:0x11be324e0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11bd8df80]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11bcadb80 )>",
+    "<NSLayoutConstraint:0x11be32990 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11bd7f200.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x11be324e0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11bd8df80]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11bcadb80 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x11be32da0 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11bd7f600.width == _UIButtonBarButton:0x11bcae080.width   (active)>",
+    "<NSLayoutConstraint:0x11be32e90 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x11bd8e300]   (active, names: '|':_UIButtonBarButton:0x11bcae080 )>",
+    "<NSLayoutConstraint:0x11be32ee0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11bd8e300]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11bcae080 )>",
+    "<NSLayoutConstraint:0x11be33390 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x11bd7f600.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x11be32ee0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x11bd8e300]-(8)-|   (active, names: '|':_UIButtonBarButton:0x11bcae080 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 55DB87E7-0707-4306-BCA0-2300B24EE44E
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 55DB87E7-0707-4306-BCA0-2300B24EE44E
+⚡️  To Native ->  LocalNotifications addListener 18632484
+⚡️  To Native ->  LocalNotifications addListener 18632485
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - Disconnected from WebSocket
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+Tracking element window has a non-placeholder input view: (null)
+⚡️  TO JS {"insets":{"left":62,"bottom":20,"top":0,"right":62}}
