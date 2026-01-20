@@ -63,7 +63,7 @@ export default function Navigation() {
 
             {isGuest ? (
               <Button
-                onClick={() => window.location.href = '/login'}
+                onClick={() => navigate('/login')}
                 className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white font-semibold h-9 px-4"
                 data-testid="button-nav-signin"
               >

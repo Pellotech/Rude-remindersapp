@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,7 @@ const FREE_LIMITS = {
 export default function HomeFree() {
   const { user, isGuest } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
   const [currentReminder, setCurrentReminder] = useState<Reminder | null>(null);
   const [showRichNotification, setShowRichNotification] = useState(false);
@@ -386,7 +388,7 @@ export default function HomeFree() {
                     </div>
                     <Button 
                       className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-sm px-6 py-3 rounded-[14px] h-[52px]"
-                      onClick={() => window.location.href = '/subscribe'}
+                      onClick={() => setLocation('/subscribe')}
                       data-testid="button-upgrade-premium-main"
                     >
                       <Crown className="h-4 w-4 mr-2" />
@@ -454,7 +456,7 @@ export default function HomeFree() {
               </div>
               <Button 
                 className="bg-red-600 hover:bg-red-700 text-white flex-shrink-0 text-sm font-semibold shadow-lg border-2 border-red-700 px-6"
-                onClick={() => window.location.href = '/subscribe'}
+                onClick={() => setLocation('/subscribe')}
               >
                 <span className="whitespace-nowrap">Upgrade</span>
               </Button>

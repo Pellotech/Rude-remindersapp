@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Crown, Sparkles } from "lucide-react";
@@ -44,6 +45,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
   const [loading, setLoading] = useState(false);
   const [offeringsError, setOfferingsError] = useState(false);
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const platform = getPlatformInfo();
 
   // Handle guest users - force login before subscribing
@@ -54,7 +56,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
       variant: "default",
     });
     setTimeout(() => {
-      window.location.href = '/login';
+      setLocation('/login');
     }, 500);
   };
 

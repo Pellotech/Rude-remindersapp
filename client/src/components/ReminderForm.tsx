@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { apiRequest, getFullApiUrl } from "@/lib/queryClient";
+import { useLocation } from "wouter";
+import { apiRequest, getFullApiUrl, getAuthToken } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { guestStorage } from "@/services/guestStorage";
@@ -179,6 +180,7 @@ export default function ReminderForm({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuth();
+  const [, setLocation] = useLocation();
   const { scheduleReminder: scheduleNativeNotification, requestPermissions } = useMobileNotifications();
 
   // Get user settings for simplified interface
@@ -514,7 +516,7 @@ export default function ReminderForm({
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          setLocation("/login");
         }, 500);
         return;
       }
@@ -796,12 +798,18 @@ export default function ReminderForm({
   // New function specifically for generating quotes during form submission
   const generateQuoteForSubmission = async (category: string): Promise<string | null> => {
     try {
-      // Make API call to get quote for the specific category
-      const response = await fetch(`/api/quotes/${category}`, {
+      // Make API call to get quote for the specific category - use getFullApiUrl and auth token
+      const token = getAuthToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(getFullApiUrl(`/api/quotes/${category}`), {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         credentials: 'include',
       });
 

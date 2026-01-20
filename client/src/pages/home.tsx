@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -11,6 +12,7 @@ import { getFullApiUrl } from "@/lib/queryClient";
 
 export default function Home() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const { isAuthenticated, isLoading } = useAuth();
   const { showIntro, closeIntro } = useIntroTour();
 
@@ -23,7 +25,7 @@ export default function Home() {
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
+        setLocation("/login");
       }, 500);
       return;
     }

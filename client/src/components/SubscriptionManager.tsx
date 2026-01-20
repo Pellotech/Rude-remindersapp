@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Loader2, Crown, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
-import { Link } from "wouter";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface SubscriptionManagerProps {
@@ -40,13 +40,14 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const [showPlans, setShowPlans] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const platform = getPlatformInfo();
 
   const isSubscribed = user?.subscriptionStatus === 'active';
 
   const handleGuestSubscribe = () => {
     toast({ title: "Sign in Required", description: "Create an account to subscribe." });
-    setTimeout(() => { window.location.href = '/login'; }, 500);
+    setTimeout(() => { setLocation('/login'); }, 500);
   };
 
   const handleShowPlans = () => {

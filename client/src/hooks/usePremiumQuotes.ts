@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { getFullApiUrl, getAuthToken } from "@/lib/queryClient";
 
 interface QuoteContext {
   category?: string;
@@ -24,9 +25,18 @@ export function usePremiumQuotes(context: QuoteContext = {}) {
 
   const { data, isLoading, error, refetch } = useQuery<QuoteResponse>({
     queryKey: ["/api/quotes/personalized", context],
-    queryFn: () => 
-      fetch(`/api/quotes/personalized?${queryParams.toString()}`)
-        .then(res => res.json()),
+    queryFn: async () => {
+      const token = getAuthToken();
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const response = await fetch(getFullApiUrl(`/api/quotes/personalized?${queryParams.toString()}`), {
+        headers,
+        credentials: 'include',
+      });
+      return response.json();
+    },
     retry: false,
   });
 
