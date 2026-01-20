@@ -96,6 +96,8 @@ async function throwIfResNotOk(res: Response) {
 export async function apiRequest(url: string, options?: RequestInit) {
   // Prepend base URL for native platforms
   const fullUrl = url.startsWith('/') ? `${getApiBaseUrl()}${url}` : url;
+  console.log('apiRequest fullUrl:', fullUrl);
+  
   const fetchOptions: RequestInit = {
     ...options,
     headers: {
@@ -112,10 +114,12 @@ export async function apiRequest(url: string, options?: RequestInit) {
   }
 
   const response = await fetch(fullUrl, fetchOptions);
+  const contentType = response.headers.get('content-type') || '';
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Request failed: ${response.statusText}`);
+    const text = await response.text().catch(() => '');
+    console.error('apiRequest error:', response.status, text.slice(0, 200));
+    throw new Error(`HTTP ${response.status}: ${text.slice(0, 200) || response.statusText}`);
   }
 
   // Handle 204 No Content responses (e.g., DELETE requests)
@@ -123,7 +127,14 @@ export async function apiRequest(url: string, options?: RequestInit) {
     return null;
   }
 
-  return response.json();
+  // Only parse JSON if response is JSON
+  if (contentType.includes('application/json')) {
+    return response.json();
+  } else {
+    const text = await response.text();
+    console.error('Non-JSON response:', text.slice(0, 200));
+    throw new Error(`Non-JSON response: ${text.slice(0, 200)}`);
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";

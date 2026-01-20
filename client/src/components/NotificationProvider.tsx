@@ -63,10 +63,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       
       try {
         // Use apiRequest to properly fetch with token + base URL for Capacitor
+        console.log('POPUP fetch reminderId:', reminderId);
+        console.log('POPUP full URL:', `/api/reminders/${reminderId}`);
         const reminder = await apiRequest(`/api/reminders/${reminderId}`) as Reminder;
+        console.log('POPUP reminder fetched:', reminder?.id);
         showNotification(reminder);
-      } catch (error) {
-        console.error('Error fetching reminder for popup:', error);
+      } catch (error: any) {
+        console.error('POPUP fetch error:', error?.message || error);
         toast({
           title: "Could not load reminder",
           description: "Unable to display the reminder details",

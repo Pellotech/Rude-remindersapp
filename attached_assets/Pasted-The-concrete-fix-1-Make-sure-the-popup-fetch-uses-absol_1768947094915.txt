@@ -1,0 +1,73 @@
+The concrete fix
+1) Make sure the popup fetch uses absolute production URL
+
+Even though you call apiRequest(), the easiest way to guarantee it is correct is:
+
+const reminder = await apiRequest(`/api/reminders/${reminderId}`, { method: "GET" });
+
+
+You already have that.
+
+So the next step is to prove what URL apiRequest is actually hitting.
+
+Add one log (temporary) in NotificationProvider right before apiRequest:
+console.log("POPUP fetch reminderId:", reminderId);
+console.log("POPUP full URL:", `/api/reminders/${reminderId}`);
+
+
+And in apiRequest inside queryClient.ts, add:
+
+console.log("apiRequest fullUrl:", fullUrl);
+
+
+When you tap a notification, the log should show something like:
+https://rudereminder.replit.app/api/reminders/<id>
+
+If it shows capacitor://localhost/... or just /api/..., that’s the bug.
+
+2) Add the safe JSON parsing fix (this will stop the confusing SyntaxError)
+
+In apiRequest, replace the return response.json() part with:
+
+const contentType = response.headers.get("content-type") || "";
+if (!response.ok) {
+  const text = await response.text().catch(() => "");
+  throw new Error(`HTTP ${response.status}: ${text.slice(0, 200)}`);
+}
+if (response.status === 204) return null;
+
+if (contentType.includes("application/json")) {
+  return await response.json();
+} else {
+  const text = await response.text();
+  throw new Error(`Non-JSON response: ${text.slice(0, 200)}`);
+}
+
+
+Then the popup error will become readable, like:
+
+HTTP 404: Cannot GET /api/reminders/...
+or
+
+HTTP 401: Unauthorized
+or
+
+Non-JSON response: <!doctype html>...
+
+That will tell us exactly what the server is returning.
+
+3) One more important thing: the endpoint might not exist
+
+Many backends don’t have GET /api/reminders/:id.
+
+If that route is missing, server returns HTML 404 → JSON parse fails.
+
+So ask Replit to confirm:
+
+Does GET /api/reminders/:id exist?
+
+Does it return JSON?
+
+What to tell Replit (copy/paste)
+
+“The popup still fails with SyntaxError: string did not match expected pattern after tapping notification. Please verify GET /api/reminders/:id exists and returns JSON. Also add logging or update apiRequest to throw a readable error when response is non-JSON. I suspect the endpoint is returning HTML/404 or redirect, which causes JSON parsing to fail.”
