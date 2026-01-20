@@ -62,21 +62,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       }
       
       try {
-        // Use queryClient.fetchQuery to properly fetch with TanStack Query
-        const reminder = await queryClient.fetchQuery<Reminder>({
-          queryKey: ["/api/reminders", reminderId],
-          queryFn: async () => {
-            const response = await fetch(`/api/reminders/${reminderId}`, {
-              credentials: 'include'
-            });
-            if (!response.ok) {
-              throw new Error(`Failed to fetch reminder: ${response.status}`);
-            }
-            return response.json();
-          },
-          staleTime: 0, // Always fetch fresh data for notifications
-        });
-        
+        // Use apiRequest to properly fetch with token + base URL for Capacitor
+        const reminder = await apiRequest(`/api/reminders/${reminderId}`) as Reminder;
         showNotification(reminder);
       } catch (error) {
         console.error('Error fetching reminder for popup:', error);
