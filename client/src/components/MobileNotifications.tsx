@@ -5,7 +5,6 @@ import {
   ActionPerformed,
   LocalNotificationSchema
 } from "@capacitor/local-notifications";
-import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Capacitor } from "@capacitor/core";
 import { useToast } from "@/hooks/use-toast";
 
@@ -160,45 +159,6 @@ export function useMobileNotifications(): MobileNotificationService {
     }
   };
 
-  // Download and save attachment locally for iOS notifications
-  const prepareAttachment = async (serverUrl: string): Promise<string | null> => {
-    try {
-      // Fetch the image from server
-      const response = await fetch(serverUrl);
-      if (!response.ok) {
-        console.error('Failed to fetch attachment:', serverUrl);
-        return null;
-      }
-
-      const blob = await response.blob();
-      
-      // Convert blob to base64
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const result = reader.result as string;
-          resolve(result.split(',')[1]); // Remove data:image/jpeg;base64, prefix
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-
-      // Save to local filesystem
-      const filename = `notification_${Date.now()}.jpg`;
-      const result = await Filesystem.writeFile({
-        path: filename,
-        data: base64,
-        directory: Directory.Cache, // Use Cache directory for temporary notification files
-      });
-
-      // Return local file path (iOS needs file:// URL)
-      return result.uri;
-    } catch (error) {
-      console.error('Error preparing attachment:', error);
-      return null;
-    }
-  };
-
   const scheduleReminder = async (reminder: {
     id: string;
     title: string;
@@ -230,29 +190,9 @@ export function useMobileNotifications(): MobileNotificationService {
         notificationBody += `\n\n💪 ${reminder.motivationalQuote}`;
       }
 
-      // Download and prepare attachments for local notification
-      let localAttachments: any[] | undefined;
-      if (reminder.attachments && reminder.attachments.length > 0) {
-        console.log('📎 Preparing attachments for notification...');
-        const preparedAttachments = await Promise.all(
-          reminder.attachments.map(async (url) => {
-            const localPath = await prepareAttachment(url);
-            if (localPath) {
-              return {
-                id: `attachment_${Date.now()}`,
-                url: localPath, // Use local file path instead of server URL
-                options: {
-                  iosUNNotificationAttachmentOptionsTypeHintKey: 'public.jpeg',
-                }
-              };
-            }
-            return null;
-          })
-        );
-        localAttachments = preparedAttachments.filter(a => a !== null);
-        console.log(`✅ Prepared ${localAttachments.length} local attachment(s)`);
-      }
-
+      // Note: iOS LocalNotifications require local file URIs for attachments,
+      // which server URLs cannot provide. Attachments are stored on the reminder
+      // and displayed in-app when the user opens it, but not shown in the notification itself.
       const options: ScheduleOptions = {
         notifications: [
           {
@@ -261,12 +201,12 @@ export function useMobileNotifications(): MobileNotificationService {
             id: numericId,
             schedule: { at: reminder.scheduledFor },
             sound: 'beep.wav',
-            attachments: localAttachments,
+            attachments: [],
             actionTypeId: 'OPEN_REMINDER',
             extra: {
               reminderId: reminder.id,
               hasMotivation: !!reminder.motivationalQuote,
-              hasAttachments: !!(localAttachments?.length),
+              hasAttachments: !!(reminder.attachments?.length),
               shouldPlayVoice: reminder.voiceNotification,
               voiceCharacter: reminder.voiceCharacter || 'default'
             }
