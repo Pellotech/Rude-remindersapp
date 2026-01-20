@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Share2, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
+import { getFullApiUrl } from "@/lib/queryClient";
 import { Share } from "@capacitor/share";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import html2canvas from "html2canvas";
@@ -43,9 +44,9 @@ const getImageSrc = (attachment: string): string => {
     return attachment;
   }
   if (attachment.startsWith('/')) {
-    return attachment;
+    return getFullApiUrl(attachment);
   }
-  return `/${attachment}`;
+  return getFullApiUrl(`/${attachment}`);
 };
 
 export function ShareButton({

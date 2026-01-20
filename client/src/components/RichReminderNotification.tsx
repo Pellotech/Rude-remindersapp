@@ -8,6 +8,7 @@ import { Volume2, Clock, X, CheckCircle, ImageIcon, ChevronDown, Share2 } from "
 import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import { getFullApiUrl } from "@/lib/queryClient";
 
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
@@ -27,9 +28,9 @@ const getImageSrc = (attachment: string): string => {
     return attachment;
   }
   if (attachment.startsWith('/')) {
-    return attachment;
+    return getFullApiUrl(attachment);
   }
-  return `/${attachment}`;
+  return getFullApiUrl(`/${attachment}`);
 };
 
 interface RichReminderNotificationProps {
