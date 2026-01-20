@@ -975,36 +975,15 @@ export async function setupAuth(app: Express) {
     }
   });
 
+  // GET /api/logout - ALWAYS returns JSON, NEVER redirects (mobile-safe)
   app.get("/api/logout", (req, res) => {
-    const user = req.user as any;
-    
-    // Check if request is from mobile/Capacitor (should return JSON, no redirect)
-    const origin = req.headers.origin || '';
-    const isMobile = origin.includes('capacitor://') || origin.includes('ionic://') || origin.includes('localhost');
-    
     req.logout(() => {
       // Destroy session
       if (req.session) {
         req.session.destroy(() => {});
       }
-      
-      // For mobile apps, return JSON (no redirect to avoid Safari opening)
-      if (isMobile) {
-        return res.json({ success: true, message: "Logged out successfully" });
-      }
-      
-      // For web: If it's a Replit user, redirect to Replit logout
-      if (user && user.access_token !== "local-auth") {
-        res.redirect(
-          client.buildEndSessionUrl(config, {
-            client_id: process.env.REPL_ID!,
-            post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
-          }).href
-        );
-      } else {
-        // For local auth users, just redirect to home
-        res.redirect("/");
-      }
+      // Always return JSON - never redirect (prevents Safari opening on mobile)
+      return res.json({ success: true, message: "Logged out successfully" });
     });
   });
 }
