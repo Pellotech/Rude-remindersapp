@@ -1,0 +1,97 @@
+What to tell Replit (copy/paste)
+
+Mobile Bearer token is not honored on protected routes (/api/reminders and /api/upload)
+
+We can log in on iOS, receive authToken, and save it to Preferences. But API calls still return 401:
+
+POST /api/reminders → 401
+
+POST /api/upload → 401
+
+The mobile client is using apiRequest() which sends Authorization: Bearer <authToken>.
+
+Please update route protection to accept Bearer tokens:
+
+Create middleware requireAuthToken:
+
+Read Authorization header
+
+Validate token in auth_tokens table (not expired)
+
+Attach req.userId / req.user.claims.sub
+
+Use requireAuthToken on /api/reminders, /api/upload, /api/stats, and /api/auth/user for mobile requests.
+
+Acceptance:
+
+After login on iOS, POST /api/reminders returns 200 and creates reminders.
+
+POST /api/upload returns 200 and uploads succeed.
+
+The exact backend implementation pattern (so they can do it fast)
+
+They already insert tokens into auth_tokens using Drizzle (authTokens schema). Add this middleware (rough sketch):
+
+import { db } from "./db";
+import { authTokens } from "@shared/schema";
+import { eq } from "drizzle-orm";
+
+export const requireAuthToken: RequestHandler = async (req, res, next) => {
+  const auth = req.headers.authorization || "";
+  const match = auth.match(/^Bearer\s+(.+)$/);
+  if (!match) return res.status(401).json({ message: "Unauthorized" });
+
+  const token = match[1];
+
+  const rows = await db.select().from(authTokens).where(eq(authTokens.token, token)).limit(1);
+  const row = rows[0];
+  if (!row) return res.status(401).json({ message: "Unauthorized" });
+
+  if (row.expiresAt && new Date(row.expiresAt) < new Date()) {
+    return res.status(401).json({ message: "Token expired" });
+  }
+
+  (req as any).userId = row.userId;
+  next();
+};
+
+
+Then apply it:
+
+app.post("/api/reminders", requireAuthToken, ...)
+app.post("/api/upload", requireAuthToken, ...)
+
+
+(Or wherever these endpoints are defined in routes.ts.)
+
+One frontend fix you should also make (small but important)
+
+In your ReminderForm.tsx you still have this inside onError:
+
+window.location.href = "/api/login";
+
+
+That can throw you into Safari again. Replace it with in-app navigation later, but it’s not the reason for the 401.
+
+Why upload fails too
+
+Your upload uses:
+
+fetch(getFullApiUrl('/api/upload'), { credentials: 'include' })
+
+
+That request does not add the Authorization header. So even after backend supports tokens, upload will still fail unless you add the header or route it through apiRequest().
+
+Quick client patch for upload (when you’re ready)
+
+Change upload fetch to include auth header:
+
+const token = getAuthToken();
+const response = await fetch(getFullApiUrl('/api/upload'), {
+  method: 'POST',
+  body: formData,
+  headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+});
+
+
+But first: backend must accept token.
