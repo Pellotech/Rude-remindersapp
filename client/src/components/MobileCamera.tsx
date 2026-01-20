@@ -7,7 +7,7 @@ import { AppLauncher } from "@capacitor/app-launcher";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CameraIcon, Image, AlertCircle, Settings } from "lucide-react";
-import { getFullApiUrl } from "@/lib/queryClient";
+import { getFullApiUrl, getAuthToken } from "@/lib/queryClient";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -166,10 +166,12 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       const formData = new FormData();
       formData.append('file', blob, `photo-${Date.now()}.${extension}`);
 
+      const token = getAuthToken();
       const uploadResponse = await fetch(getFullApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
-        credentials: 'include', // Include session cookie
+        credentials: 'include',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
       });
 
       if (!uploadResponse.ok) {
@@ -226,10 +228,12 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
       console.log('FormData created with filename:', filename);
 
       console.log('Uploading to /api/upload...');
+      const token = getAuthToken();
       const response = await fetch(getFullApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
-        credentials: 'include', // Include session cookie
+        credentials: 'include',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
       });
 
       console.log('Upload response:', response.status, response.ok);

@@ -268,10 +268,12 @@ export default function ReminderForm({
         const formData = new FormData();
         formData.append('file', file);
 
+        const token = getAuthToken();
         const response = await fetch(getFullApiUrl('/api/upload'), {
           method: 'POST',
           body: formData,
           credentials: 'include',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
         });
 
         if (response.ok) {
