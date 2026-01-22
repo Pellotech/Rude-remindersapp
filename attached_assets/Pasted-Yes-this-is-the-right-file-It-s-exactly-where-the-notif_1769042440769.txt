@@ -1,0 +1,116 @@
+Yes — this is the right file. ✅ It’s exactly where the notification tap / “app open” event gets dispatched, and it’s also where the extra payload is created.
+
+Two important improvements to make here:
+
+1) Fix hasAttachments mismatch
+
+Right now you intentionally set:
+
+attachments: [],
+
+
+…but you still set:
+
+hasAttachments: !!(reminder.attachments?.length),
+
+
+That tells the popup code “attachments exist” even though the notification has none. It can cause confusion later (and it’s what we saw in logs before).
+
+✅ Change it to false for notifications (since you’re not attaching them):
+
+hasAttachments: false,
+
+
+Or if you want it to mean “this reminder has attachments in the app” (not in notification), rename it to hasRemoteAttachments to avoid confusion.
+
+2) Cold-start safety: wait for token init before dispatching popup fetch
+
+When the app is opened by tapping a notification, your NotificationProvider immediately fetches:
+
+apiRequest(`/api/reminders/${reminderId}`)
+
+
+If the app is still booting and initAuthToken() hasn’t finished, getAuthToken() can be null for a moment and the fetch can fail.
+
+✅ Add a short delay or “wait for token” before dispatching the event on tap.
+Simplest safe version:
+
+setTimeout(() => {
+  dispatchNotificationReceivedEvent({ ... });
+}, 300);
+
+
+Even better is awaiting token init, but this is a low-effort fix that usually removes flaky “could not load reminder” on cold start.
+
+Recommended patch (copy/paste)
+
+Inside both listeners where you call dispatchNotificationReceivedEvent, wrap it:
+
+if (extra?.reminderId) {
+  console.log('📱 Dispatching notification event for full-screen popup');
+
+  setTimeout(() => {
+    dispatchNotificationReceivedEvent({
+      reminderId: extra.reminderId,
+      title: notification.notification.title || '',
+      body: notification.notification.body || ''
+    });
+  }, 300);
+}
+
+
+And update extra.hasAttachments to false:
+
+hasAttachments: false,
+
+
+Full edited section in scheduleReminder:
+
+attachments: [],
+extra: {
+  reminderId: reminder.id,
+  hasMotivation: !!reminder.motivationalQuote,
+  hasAttachments: false, // since we do not attach files to native notifications
+  shouldPlayVoice: reminder.voiceNotification,
+  voiceCharacter: reminder.voiceCharacter || 'default'
+}
+
+One more note about voice errors you saw
+
+Your speech synthesis is plain text (not SSML) here, so any SSML error is coming from another voice system (maybe a TTS API). You can ignore it for now.
+
+If you want, I can also show you the best “proper” cold-start solution (a promise that waits for initAuthToken() before fetching the reminder), but the 300ms delay is a good practical fix first.
+
+the app opens up fine when i make a reminder and close it then wait and click the banner so do i still need to do the above
+
+If the popup reliably works when you close the app → wait → tap the banner, then you don’t need the 300ms delay right now. That delay is mainly to fix flaky cases where the app is still booting and the token isn’t loaded yet.
+
+But you should still do one small change in this file:
+
+✅ Change hasAttachments to false
+
+Because you’re deliberately setting:
+
+attachments: []
+
+
+…but you’re still sending:
+
+hasAttachments: !!(reminder.attachments?.length)
+
+
+That’s inconsistent and can trigger attachment-related UI paths later.
+
+Do this:
+
+In scheduleReminder, change:
+
+hasAttachments: !!(reminder.attachments?.length),
+
+
+to:
+
+hasAttachments: false,
+
+
+That’s it.

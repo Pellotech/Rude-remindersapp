@@ -206,7 +206,7 @@ export function useMobileNotifications(): MobileNotificationService {
             extra: {
               reminderId: reminder.id,
               hasMotivation: !!reminder.motivationalQuote,
-              hasAttachments: !!(reminder.attachments?.length),
+              hasAttachments: false,
               shouldPlayVoice: reminder.voiceNotification,
               voiceCharacter: reminder.voiceCharacter || 'default'
             }
