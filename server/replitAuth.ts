@@ -260,8 +260,9 @@ export async function setupAuth(app: Express) {
       const passwordHash = await bcrypt.hash(password, saltRounds);
 
       // Create user
+      const userId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const newUser = await storage.upsertUser({
-        id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: userId,
         email,
         firstName: firstName || null,
         lastName: lastName || null,
@@ -269,7 +270,21 @@ export async function setupAuth(app: Express) {
         passwordHash,
       });
 
-      res.json({ success: true, message: "Account created successfully" });
+      // Generate auth token for mobile apps
+      const authToken = await createAuthToken(userId);
+
+      res.json({
+        success: true,
+        authToken,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          subscriptionStatus: newUser.subscriptionStatus || 'free',
+          subscriptionPlan: newUser.subscriptionPlan || 'free',
+        }
+      });
     } catch (error) {
       console.error("Registration error:", error);
       res.status(500).json({ message: "Failed to create account" });

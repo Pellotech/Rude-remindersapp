@@ -104,31 +104,13 @@ export default function LoginPage() {
       });
       const data = await response.json().catch(() => ({}));
       if (response.ok) {
-        toast({ title: "Success!", description: "Account created. Logging you in..." });
-
-        // Auto-login right after successful registration
-        const loginResponse = await fetch(getFullApiUrl("/api/auth/login"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            email: registerForm.email,
-            password: registerForm.password,
-          }),
-        });
-
-        const loginData = await loginResponse.json().catch(() => ({}));
-
-        if (loginResponse.ok) {
-          const token = loginData.authToken ?? loginData.token ?? loginData.accessToken;
-          if (token) await setAuthToken(token);
-          await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-          await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
-          setLocation(getRedirectUrl());
-        } else {
-          // Registration succeeded, but auto-login failed - redirect to login
-          setLocation("/login");
-        }
+        // Backend now returns authToken directly from register
+        const token = data.authToken ?? data.token ?? data.accessToken;
+        if (token) await setAuthToken(token);
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+        toast({ title: "Success!", description: "Account created successfully!" });
+        setLocation(getRedirectUrl());
       } else {
         toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
       }
