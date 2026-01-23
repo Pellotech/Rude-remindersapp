@@ -6,6 +6,7 @@ import { Loader2, Crown, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { BackNavigation } from "@/components/BackNavigation";
+import { revenueCatService } from "@/services/revenueCatService";
 
 interface PremiumScreenProps {
   isPremium: boolean;
@@ -15,6 +16,9 @@ interface PremiumScreenProps {
 
 async function loadOfferingsSafe() {
   try {
+    // Ensure RevenueCat is configured before any Purchases calls
+    await revenueCatService.initialize();
+    
     const { Purchases } = await import('@revenuecat/purchases-capacitor');
     
     try {
