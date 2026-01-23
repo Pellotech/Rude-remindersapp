@@ -1,0 +1,118 @@
+Yep — this is the right place, and you’re very close to turning RevenueCat back on safely. A few changes will prevent the old flicker/loop issues and make purchases flow correctly.
+
+RevenueCatService.ts: what to change
+1) Turn it back on
+
+Right now it’s permanently off:
+
+const DISABLE_REVENUECAT = true;
+
+
+Change to:
+
+const DISABLE_REVENUECAT = false;
+
+2) Fix the sessionStorage key
+
+This is a bug:
+
+const STORAGE_KEY = ':_configured';
+
+
+That key is too generic and could collide. Make it unique:
+
+const STORAGE_KEY = 'rude_reminders_revenuecat_configured';
+
+3) Remove the Purchases.isConfigured() check
+
+This line is risky / not consistent across versions:
+
+const { isConfigured } = await Purchases.isConfigured();
+
+
+Just keep your own “configure once” guard. Your code already does that well.
+
+4) Do NOT hardcode keys in code
+
+You have:
+
+import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'appl_EcOT...'
+
+
+For App Store builds, keep keys in env vars only (Replit can still inject), but don’t ship a hardcoded fallback.
+
+SubscriptionManager.tsx: the important fixes
+1) Ensure RevenueCat is initialized before calling Purchases.getOfferings()
+
+Right now loadOfferingsSafe() calls Purchases directly, but never guarantees configure ran.
+
+Add this at the start of handlePurchase() for native:
+
+import { revenueCatService } from "@/services/RevenueCatService";
+
+...
+
+if (platform.isNative) {
+  await revenueCatService.initialize();   // ✅ ensures configured once
+  const offeringsResult = await loadOfferingsSafe();
+  ...
+}
+
+2) Remove window.location.reload()
+
+This will cause the exact “webview reload loop” behavior you fought earlier.
+
+Replace:
+
+setTimeout(() => { window.location.reload(); }, 1000);
+
+
+With:
+
+await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+toast({ title: "Success!", description: "Subscription activated!" });
+setLocation("/"); // or /settings
+
+3) Fix the backend sync call body
+
+You’re doing:
+
+apiRequest("/api/sync-subscription", { method: "POST", body: JSON.stringify({...}) })
+
+
+But apiRequest() already JSON-stringifies objects. You should pass an object:
+
+await apiRequest("/api/sync-subscription", {
+  method: "POST",
+  body: { subscriptionStatus: "active", subscriptionPlan: "premium" }
+});
+
+
+Otherwise the server might receive a string and not parse it.
+
+4) (Optional but best practice) Use Purchases.logIn(user.id)
+
+RevenueCat works best if you identify the user so purchases restore properly.
+
+After login success (where you have user.id), do:
+
+await Purchases.logIn(user.id);
+
+
+You can put it in your auth flow once user is loaded, not inside purchase.
+
+What to tell Replit (copy/paste)
+
+“Please re-enable RevenueCat safely:
+
+Set DISABLE_REVENUECAT = false in RevenueCatService.
+
+Make revenueCatService.initialize() run before any Purchases.getOfferings() call (SubscriptionManager should await initialize).
+
+Remove window.location.reload() after purchase; instead invalidate /api/auth/user and navigate with wouter.
+
+Fix /api/sync-subscription call to pass object body, not JSON.stringify string.
+
+(Optional) call Purchases.logIn(user.id) after login to tie purchases to the user.”
+
+If you want the safest rollout: enable only initialize() + getOfferings() first (no purchases), verify

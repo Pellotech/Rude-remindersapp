@@ -5,6 +5,7 @@ import { Loader2, Crown, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { revenueCatService } from "@/services/revenueCatService";
 
 interface SubscriptionManagerProps {
   isAuthenticated?: boolean;
@@ -60,6 +61,8 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     setOfferingsError(false);
     try {
       if (platform.isNative) {
+        // Ensure RevenueCat is initialized before getting offerings
+        await revenueCatService.initialize();
         const offeringsResult = await loadOfferingsSafe();
         if (!offeringsResult || !offeringsResult.current) {
           setOfferingsError(true);
@@ -84,12 +87,12 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           const { customerInfo } = await Purchases.purchasePackage({ aPackage: packageToPurchase });
           const isPremiumNow = Object.keys(customerInfo.entitlements.active).length > 0;
           if (isPremiumNow) {
-            toast({ title: "Success!", description: "Subscription activated!" });
             try {
-              await apiRequest("/api/sync-subscription", { method: "POST", body: JSON.stringify({ subscriptionStatus: 'active', subscriptionPlan: 'premium' }) });
+              await apiRequest("/api/sync-subscription", { method: "POST", body: { subscriptionStatus: 'active', subscriptionPlan: 'premium' } as any });
             } catch { console.log('Backend sync will happen via webhook'); }
-            queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-            setTimeout(() => { window.location.reload(); }, 1000);
+            await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+            toast({ title: "Success!", description: "Subscription activated!" });
+            setLocation("/");
           }
         } catch (purchaseError: any) {
           if (purchaseError.userCancelled) return;

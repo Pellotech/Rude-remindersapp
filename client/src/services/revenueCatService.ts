@@ -2,8 +2,8 @@
 import { Capacitor } from '@capacitor/core';
 import { getFullApiUrl } from '@/lib/queryClient';
 
-// TEMPORARY: Disable RevenueCat to prevent reload loop issues
-const DISABLE_REVENUECAT = true;
+// RevenueCat enabled for production
+const DISABLE_REVENUECAT = false;
 
 // Use sessionStorage to persist configuration state across WebView reloads
 const STORAGE_KEY = 'revenuecat_configured';
@@ -72,23 +72,18 @@ export class RevenueCatService {
     try {
       const { Purchases } = await import('@revenuecat/purchases-capacitor');
       
-      // Check if RevenueCat is already configured at native level
-      try {
-        const { isConfigured } = await Purchases.isConfigured();
-        if (isConfigured) {
-          console.log('RevenueCat already configured at native level');
-          revenueCatConfigured = true;
-          markConfigured();
-          return;
-        }
-      } catch {
-        // isConfigured not available in older versions, continue with configure
-      }
+      // Skip isConfigured() check as it's inconsistent across versions
+      // We rely on our own module-level + sessionStorage guards
       
       const platform = Capacitor.getPlatform();
       const apiKey = platform === 'ios' 
-        ? (import.meta.env.VITE_REVENUECAT_IOS_API_KEY || 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP')
-        : (import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY || 'YOUR_PRODUCTION_ANDROID_API_KEY_HERE');
+        ? import.meta.env.VITE_REVENUECAT_IOS_API_KEY
+        : import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY;
+      
+      if (!apiKey) {
+        console.error('RevenueCat API key not configured for platform:', platform);
+        return;
+      }
       
       await Purchases.configure({ apiKey });
       console.log('RevenueCat configured for platform:', platform);
