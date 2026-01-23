@@ -64,8 +64,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     setOfferingsError(false);
     try {
       if (platform.isNative) {
-        // Ensure RevenueCat is initialized before getting offerings
-        await revenueCatService.initialize();
+        // loadOfferingsSafe() already ensures RevenueCat is initialized
         const offeringsResult = await loadOfferingsSafe();
         if (!offeringsResult || !offeringsResult.current) {
           setOfferingsError(true);

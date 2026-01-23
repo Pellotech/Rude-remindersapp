@@ -38,27 +38,21 @@ export class RevenueCatService {
   }
 
   async initialize(): Promise<void> {
-    console.log('🔵 RevenueCat initialize() called, platform:', Capacitor.getPlatform());
-    
     if (DISABLE_REVENUECAT) {
-      console.log('RevenueCat DISABLED for debugging');
       return;
     }
     
     if (!Capacitor.isNativePlatform()) {
-      console.log('🔵 RevenueCat skipped - not native platform');
       return;
     }
     
-    // Check module-level flag first
+    // Check module-level flag first (already configured this session)
     if (revenueCatConfigured) {
-      console.log('RevenueCat already configured (module flag)');
       return;
     }
     
     // Check session storage (survives WebView reloads within same app session)
     if (wasConfiguredThisSession()) {
-      console.log('RevenueCat already configured (session storage)');
       revenueCatConfigured = true;
       return;
     }
@@ -86,8 +80,6 @@ export class RevenueCatService {
       // Use env var, or fallback to hardcoded key for iOS builds where env may not be available
       const apiKey = envKey || (platform === 'ios' ? 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP' : null);
       
-      console.log('RC apiKey present?', !!apiKey, 'platform:', platform);
-      
       if (!apiKey) {
         console.error('RevenueCat API key not configured for platform:', platform);
         return;
@@ -98,7 +90,6 @@ export class RevenueCatService {
       
       revenueCatConfigured = true;
       markConfigured();
-      console.log('RevenueCat initialized successfully');
     } catch (error) {
       console.error('Failed to initialize RevenueCat:', error);
       initializationPromise = null;
