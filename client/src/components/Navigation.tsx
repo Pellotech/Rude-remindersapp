@@ -15,17 +15,13 @@ export default function Navigation() {
   
   const handleLogout = async () => {
     try {
-      // Call logout API (POST, returns JSON - no redirect)
       await apiRequest('/api/auth/logout', { method: 'POST' });
-    } catch (e) {
+    } catch {
       // Ignore errors - we're logging out anyway
     }
-    // Clear auth token
     await clearAuthToken();
-    // Invalidate auth queries
-    queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
-    queryClient.invalidateQueries({ queryKey: ['/api/user/premium-status'] });
-    // Navigate to login page (stays in app, no Safari)
+    await queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+    await queryClient.invalidateQueries({ queryKey: ['/api/user/premium-status'] });
     navigate('/login');
   };
 

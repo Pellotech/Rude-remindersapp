@@ -1,0 +1,71 @@
+✅ Quick frontend fix (works even if backend doesn’t return token)
+
+In your LoginPage.handleRegister (the first file), copy the “auto-login after registration” approach from EmailAuthForm.
+
+Replace the if (response.ok) { ... } block with this:
+
+if (response.ok) {
+  toast({ title: "Success!", description: "Account created. Logging you in..." });
+
+  // Auto-login right after successful registration
+  const loginResponse = await fetch(getFullApiUrl("/api/auth/login"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      email: registerForm.email,
+      password: registerForm.password,
+    }),
+  });
+
+  const loginData = await loginResponse.json().catch(() => ({}));
+
+  if (loginResponse.ok) {
+    const token = loginData.authToken ?? loginData.token ?? loginData.accessToken;
+    if (token) await setAuthToken(token);
+    await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+    setLocation(getRedirectUrl());
+  } else {
+    // Registration succeeded, but auto-login failed
+    setLocation("/login");
+  }
+} else {
+  toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
+}
+
+
+This makes registration behave correctly every time.
+
+✅ Backend “best” fix (cleaner long term)
+
+Tell Replit:
+
+Update POST /api/auth/register to return the same payload as login:
+{ success: true, authToken, user: {...} }
+so the client doesn’t need a second login call.
+
+Logout “hesitates and stays red”
+
+That’s likely because the UI is waiting for /api/auth/user refetch to finish and then navigate, but you’re not navigating after logout.
+
+Your screenshot shows:
+
+token cleared ✅
+
+/api/auth/user returns 401 ✅ (expected)
+
+So the only thing missing is a guaranteed navigation after logout:
+
+✅ After logout completes, always do:
+
+setLocation("/login");
+
+
+(or /)
+
+and invalidate the auth query.
+
+One more important cleanup
+
+Both of your login/register forms are duplicated (LoginPage + EmailAuthForm). Make sure the app is actually using only one version, or you’ll keep fixing one while clicking the other.

@@ -102,22 +102,33 @@ export default function LoginPage() {
           lastName: registerForm.lastName
         })
       });
-      const data = await response.json();
-      console.log("REGISTER response.ok:", response.ok);
-      console.log("REGISTER data:", JSON.stringify(data));
+      const data = await response.json().catch(() => ({}));
       if (response.ok) {
-        // Store auth token for mobile apps (async for native storage)
-        // Support multiple possible token field names
-        const token = data.authToken ?? data.token ?? data.accessToken;
-        console.log("SAVING authToken to Preferences:", token ? "exists" : "missing");
-        if (token) {
-          await setAuthToken(token);
-        }
-        // Force refresh auth query (staleTime: Infinity requires invalidation + refetch)
-        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
         toast({ title: "Success!", description: "Account created. Logging you in..." });
-        setLocation(getRedirectUrl());
+
+        // Auto-login right after successful registration
+        const loginResponse = await fetch(getFullApiUrl("/api/auth/login"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            email: registerForm.email,
+            password: registerForm.password,
+          }),
+        });
+
+        const loginData = await loginResponse.json().catch(() => ({}));
+
+        if (loginResponse.ok) {
+          const token = loginData.authToken ?? loginData.token ?? loginData.accessToken;
+          if (token) await setAuthToken(token);
+          await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+          await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+          setLocation(getRedirectUrl());
+        } else {
+          // Registration succeeded, but auto-login failed - redirect to login
+          setLocation("/login");
+        }
       } else {
         toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
       }
