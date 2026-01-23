@@ -38,12 +38,15 @@ export class RevenueCatService {
   }
 
   async initialize(): Promise<void> {
+    console.log('🔵 RevenueCat initialize() called, platform:', Capacitor.getPlatform());
+    
     if (DISABLE_REVENUECAT) {
       console.log('RevenueCat DISABLED for debugging');
       return;
     }
     
     if (!Capacitor.isNativePlatform()) {
+      console.log('🔵 RevenueCat skipped - not native platform');
       return;
     }
     
