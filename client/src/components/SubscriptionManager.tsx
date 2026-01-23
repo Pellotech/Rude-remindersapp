@@ -14,6 +14,9 @@ interface SubscriptionManagerProps {
 
 async function loadOfferingsSafe() {
   try {
+    // Ensure RevenueCat is configured before any Purchases calls
+    await revenueCatService.initialize();
+    
     const { Purchases } = await import('@revenuecat/purchases-capacitor');
     try {
       const offeringsResult: any = await Purchases.getOfferings();
