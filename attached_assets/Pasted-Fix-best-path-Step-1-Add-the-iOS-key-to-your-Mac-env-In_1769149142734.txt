@@ -1,0 +1,112 @@
+Fix (best path)
+Step 1) Add the iOS key to your Mac .env
+
+In your Mac project root (same folder as package.json), create/edit .env:
+
+VITE_REVENUECAT_IOS_API_KEY=appl_...
+
+
+(Use the same value as your Replit secret VITE_REVENUECAT_IOS_API_KEY.)
+
+Step 2) Rebuild and sync iOS
+npm run build
+npx cap sync ios
+
+
+Then run again.
+
+✅ After that, your logs should stop showing:
+
+“RevenueCat API key not configured for platform: ios”
+
+and you should see:
+
+“RevenueCat configured for platform: ios”
+
+Quick sanity check (to avoid wasting a build)
+
+Ask Replit to temporarily log the key presence:
+
+console.log("RC env key present?", !!import.meta.env.VITE_REVENUECAT_IOS_API_KEY);
+
+
+But remember: that log on the phone reflects your Mac-built bundle, not Replit secrets.
+
+One more thing: “test mode”
+
+RevenueCat doesn’t use a separate “sandbox API key” for iOS vs production. The same public SDK key works; sandbox vs production is controlled by:
+
+App Store sandbox account
+
+StoreKit environment
+
+test build
+
+So you should keep using VITE_REVENUECAT_IOS_API_KEY for iOS.
+
+Bottom line
+
+✅ Your Replit secrets are fine.
+❌ Your iOS app build doesn’t have the key because it’s built on your Mac.
+✅ Put the key in your Mac .env, rebuild, sync.
+
+If you want, tell me whether you’re building iOS from Mac GitHub folder or directly from Replit, and I’ll tailor exactly where the .env should live.
+
+is this temporary or the best fit because earlier you questioned replits fix because you said it was moe of a temporary fix
+
+Good distinction — there are two separate things we talked about:
+
+1) Putting the RevenueCat iOS key in your Mac .env
+
+That’s not a temporary hack. It’s the normal/best fit way to get import.meta.env.VITE_… values into a Vite build that you run locally and then sync into Capacitor.
+
+Vite reads VITE_* variables at build time
+
+Your iOS app uses the files created by npm run build
+
+So your Mac build must have the env var available
+
+✅ This is the correct long-term setup.
+
+2) Hardcoding the key directly in the code as a fallback
+
+That’s what I called temporary earlier.
+
+Hardcoding looks like:
+
+const apiKey = import.meta.env.VITE_REVENUECAT_IOS_API_KEY || "appl_..."
+
+
+That’s okay to prove wiring, but long term it’s not ideal because:
+
+it can leak into git/history
+
+harder to rotate keys cleanly
+
+So:
+
+✅ Best fit: .env on Mac + VITE vars
+⚠️ Temporary/debug: hardcoded fallback key in code
+
+What I recommend as your final setup
+
+Mac .env contains:
+
+VITE_REVENUECAT_IOS_API_KEY=appl_...
+
+
+In code, no hardcoded fallback:
+
+const apiKey = import.meta.env.VITE_REVENUECAT_IOS_API_KEY;
+if (!apiKey) { console.error("missing key"); return; }
+
+
+Replit Secrets can still have the same key for their builds, but your iOS build depends on Mac .env.
+
+Why this matters for App Store submission
+
+When you archive in Xcode, it uses the bundled web assets you built. If the key isn’t present at build time, the shipped app won’t configure RevenueCat.
+
+So yes — .env is the “real” fix, not a hack.
+
+If you want, I can give you the exact “safe” .env + .gitignore setup so you don’t accidentally commit your key.
