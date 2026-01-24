@@ -1,5 +1,5 @@
 PODS:
-  - Capacitor (7.4.4):
+  - Capacitor (7.4.2):
     - CapacitorCordova
   - CapacitorApp (7.1.0):
     - Capacitor
@@ -15,7 +15,7 @@ PODS:
     - GoogleUserMessagingPlatform (< 3.0.0, >= 2.7.0)
   - CapacitorCommunityAppleSignIn (7.1.0):
     - Capacitor
-  - CapacitorCordova (7.4.4)
+  - CapacitorCordova (7.4.2)
   - CapacitorDevice (7.0.2):
     - Capacitor
   - CapacitorFilesystem (7.1.4):
@@ -26,6 +26,8 @@ PODS:
   - CapacitorNetwork (7.0.2):
     - Capacitor
   - CapacitorPluginSafeArea (4.0.3):
+    - Capacitor
+  - CapacitorPreferences (7.0.3):
     - Capacitor
   - CapacitorShare (7.0.3):
     - Capacitor
@@ -60,6 +62,7 @@ DEPENDENCIES:
   - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - "CapacitorNetwork (from `../../node_modules/@capacitor/network`)"
   - CapacitorPluginSafeArea (from `../../node_modules/capacitor-plugin-safe-area`)
+  - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
   - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
@@ -101,6 +104,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/network"
   CapacitorPluginSafeArea:
     :path: "../../node_modules/capacitor-plugin-safe-area"
+  CapacitorPreferences:
+    :path: "../../node_modules/@capacitor/preferences"
   CapacitorShare:
     :path: "../../node_modules/@capacitor/share"
   CapacitorSplashScreen:
@@ -113,19 +118,20 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@revenuecat/purchases-capacitor"
 
 SPEC CHECKSUMS:
-  Capacitor: 09d9ff8e9618e8c4b3cab2bbee34a17215dd2fef
+  Capacitor: 156d98aba46ec01dde72c4bbb92fa626837cad29
   CapacitorApp: 846d4b4a1dbb19dd1e9029c08ba6f028aa7be862
   CapacitorAppLauncher: 96930b89740f1deabc737df750dbc3e9a0430f34
   CapacitorBrowser: 45c681e7abc3b4384e54eb52bafeef1347d98fa8
   CapacitorCamera: 6e18d54c8ab30d7dc7b8cd93d96f9b4f57e9202a
   CapacitorCommunityAdmob: 9267ae3b473314fa65765ce4bead9a9175902ab2
   CapacitorCommunityAppleSignIn: 59bc8ade5677e6ea60a14bdca8d3f4bdc91069e2
-  CapacitorCordova: bf648a636f3c153f652d312ae145fb508b6ffced
+  CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
   CapacitorDevice: a50a45f0d075e55e2392c7a4be5404d4f69515de
   CapacitorFilesystem: ac0a386949ed6c295a3dffa129ecd26b881ae5be
   CapacitorLocalNotifications: 0964df8c14ec51aadf2bb4fd6d55fdb1ccfd6721
   CapacitorNetwork: 9b9eaeb417ec0ffa22e2bc33a4c71df10e1d6f06
   CapacitorPluginSafeArea: 0b05430642c0da92b5f174e900ccecf39a71e2c3
+  CapacitorPreferences: 688a15748e6fb91d52c7563e5f2df3be503dd694
   CapacitorShare: eac8c1e192dbbb0737a84a50552ffe12398cb11f
   CapacitorSplashScreen: 8d6c8cb0542a8e81585c593815db8785ed8ce454
   CapacitorStatusBar: 5526833b87fa9c96a2a90c1322bb1f663c04505f
@@ -137,6 +143,6 @@ SPEC CHECKSUMS:
   RevenueCat: f6b7c7e55f548a2bf304a3abbed0cc2447364427
   RevenuecatPurchasesCapacitor: 8e063564e6c44a23642d6080dde6299180f94c07
 
-PODFILE CHECKSUM: 6863ed6af0d3d4a7fa307d9e690c1bac1cdbb728
+PODFILE CHECKSUM: b9a8dce42a88e09f8374f003429096ae6754cf4a
 
 COCOAPODS: 1.16.2
