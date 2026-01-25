@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Loader2, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Loader2, Crown, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { revenueCatService } from "@/services/revenueCatService";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 interface SubscriptionManagerProps {
   isAuthenticated?: boolean;
@@ -15,6 +14,7 @@ interface SubscriptionManagerProps {
 
 async function loadOfferingsSafe() {
   try {
+    // Ensure RevenueCat is configured before any Purchases calls
     await revenueCatService.initialize();
     
     const { Purchases } = await import('@revenuecat/purchases-capacitor');
@@ -50,7 +50,8 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const isSubscribed = user?.subscriptionStatus === 'active';
 
   const handleGuestSubscribe = () => {
-    setLocation('/login?redirect=/subscribe');
+    toast({ title: "Sign in Required", description: "Create an account to subscribe." });
+    setTimeout(() => { setLocation('/login'); }, 500);
   };
 
   const handleShowPlans = () => {
@@ -63,6 +64,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     setOfferingsError(false);
     try {
       if (platform.isNative) {
+        // loadOfferingsSafe() already ensures RevenueCat is initialized
         const offeringsResult = await loadOfferingsSafe();
         if (!offeringsResult || !offeringsResult.current) {
           setOfferingsError(true);
@@ -114,23 +116,23 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   };
 
   const renderHeader = () => (
-    <div className="sticky top-0 z-10 safe-area-header">
+    <div className="sticky top-0 z-10 bg-[#C9A063]/95 backdrop-blur-sm safe-area-header">
       <div className="flex items-center justify-between px-4 py-3">
         {isSubscribed ? (
           <Link href="/settings">
-            <div className="flex items-center text-white cursor-pointer" data-testid="button-back">
+            <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px] font-medium">Back</span>
+              <span className="text-[17px] font-medium">Settings</span>
             </div>
           </Link>
         ) : showPlans ? (
-          <button onClick={() => setShowPlans(false)} className="flex items-center text-white" data-testid="button-back-plans">
+          <button onClick={() => setShowPlans(false)} className="flex items-center text-[#111827]" data-testid="button-back-plans">
             <ChevronLeft className="h-5 w-5" />
             <span className="text-[17px] font-medium">Back</span>
           </button>
         ) : (
           <Link href="/">
-            <div className="flex items-center text-white cursor-pointer" data-testid="button-back">
+            <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
               <span className="text-[17px] font-medium">Back</span>
             </div>
@@ -141,32 +143,28 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   const renderUnlockPremium = () => (
-    <div className="bg-white rounded-[24px] p-8 shadow-xl">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
         <div className="w-24 h-24 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
-          <img src={logoImage} alt="Rude Reminders" className="h-14 w-auto" />
+          <Crown className="h-12 w-12 text-[#C53B3B]" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-[#111827] mb-3">Unlock Premium</h1>
-          <p className="text-[#C53B3B] font-medium">Please create an account before subscribing</p>
+          <h1 className="text-3xl font-bold text-[#111827] mb-2">Unlock Premium</h1>
+          <p className="font-bold text-[#4115ba]">Please create an account before subscribing</p>
         </div>
-        <Button 
-          onClick={handleGuestSubscribe} 
-          className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" 
-          size="lg" 
-          data-testid="button-create-account"
-        >
-          Create Account
+        <Button onClick={handleShowPlans} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-subscribe-now">
+          <Crown className="h-5 w-5 mr-2" />
+          Subscribe Now
         </Button>
       </div>
     </div>
   );
 
   const renderAvailablePlans = () => (
-    <div className="bg-white rounded-[24px] p-8 shadow-xl">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
-        <div className="w-20 h-20 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
-          <img src={logoImage} alt="Rude Reminders" className="h-12 w-auto" />
+        <div className="w-20 h-20 mx-auto bg-[#F9FAFB] rounded-[20px] flex items-center justify-center">
+          <Crown className="h-10 w-10 text-[#C53B3B]" />
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
         <div className="space-y-3">
@@ -205,24 +203,8 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             <p className="text-sm text-[#92400E]">Please sign into a Sandbox App Store account to test purchases.</p>
           </div>
         )}
-        <Button 
-          onClick={handlePurchase} 
-          disabled={loading} 
-          className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" 
-          size="lg" 
-          data-testid="button-continue-purchase"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              Continue
-              <ChevronRight className="h-5 w-5 ml-2" />
-            </>
-          )}
+        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-continue-purchase">
+          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
         <p className="text-xs text-[#6B7280]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
       </div>
@@ -230,11 +212,11 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   const renderPremiumDashboard = () => (
-    <div className="bg-white rounded-[24px] p-8 shadow-xl">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="space-y-6">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-full bg-[#F9FAFB] flex items-center justify-center">
-            <img src={logoImage} alt="Rude Reminders" className="h-10 w-auto" />
+          <div className="w-16 h-16 rounded-[16px] bg-[#F9FAFB] flex items-center justify-center">
+            <Crown className="h-8 w-8 text-[#C53B3B]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#111827]">Rude Reminders</h1>
@@ -255,11 +237,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             </div>
           )}
         </div>
-        <button 
-          onClick={handleCancelSubscription} 
-          className="w-full py-3 px-4 bg-white text-[#C53B3B] text-base font-medium rounded-[14px] border-2 border-[#C53B3B] hover:bg-[#FEF2F2] active:bg-[#C53B3B] active:text-white h-[48px]" 
-          data-testid="button-cancel-subscription"
-        >
+        <button onClick={handleCancelSubscription} className="w-full py-3 px-4 bg-white text-[#C53B3B] text-base font-medium rounded-[14px] border-2 border-[#C53B3B] hover:bg-[#FEF2F2] active:bg-[#C53B3B] active:text-white h-[48px]" data-testid="button-cancel-subscription">
           Cancel Subscription
         </button>
         <p className="text-sm text-[#6B7280] text-center">
@@ -270,10 +248,10 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   );
 
   return (
-    <div className="min-h-screen bg-[#1C1C1E]">
+    <div className="min-h-screen bg-[#C9A063]">
       <div className="max-w-lg mx-auto">
         {renderHeader()}
-        <div className="flex items-center justify-center p-4 pt-12">
+        <div className="flex items-center justify-center p-4 pt-8">
           <div className="w-full max-w-md">
             {isSubscribed ? renderPremiumDashboard() : showPlans ? renderAvailablePlans() : renderUnlockPremium()}
           </div>
