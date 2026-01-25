@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { revenueCatService } from "@/services/revenueCatService";
+import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 interface SubscriptionManagerProps {
   isAuthenticated?: boolean;
@@ -146,11 +147,11 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
         <div className="w-24 h-24 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
-          <Crown className="h-12 w-12 text-[#C53B3B]" />
+          <img src={logoImage} alt="Rude Reminders" className="h-16 w-auto" />
         </div>
         <div>
           <h1 className="text-3xl font-bold text-[#111827] mb-2">Unlock Premium</h1>
-          <p className="font-bold text-[#4115ba]">Please create an account before subscribing</p>
+          <p className="font-bold text-[#C53B3B]">Please create an account before subscribing</p>
         </div>
         <Button onClick={handleShowPlans} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-subscribe-now">
           <Crown className="h-5 w-5 mr-2" />
@@ -164,7 +165,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
         <div className="w-20 h-20 mx-auto bg-[#F9FAFB] rounded-[20px] flex items-center justify-center">
-          <Crown className="h-10 w-10 text-[#C53B3B]" />
+          <img src={logoImage} alt="Rude Reminders" className="h-14 w-auto" />
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
         <div className="space-y-3">
@@ -175,7 +176,6 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           >
             <div className="text-left">
               <div className="text-[#111827] font-semibold text-lg">Monthly</div>
-              <div className="text-[#6B7280] text-sm">$6.99 per month</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
@@ -191,7 +191,6 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                 <span className="text-[#111827] font-semibold text-lg">Yearly</span>
                 <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              <div className="text-[#6B7280] text-sm">$59.99 per year (Save 28%)</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}

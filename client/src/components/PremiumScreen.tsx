@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { BackNavigation } from "@/components/BackNavigation";
 import { revenueCatService } from "@/services/revenueCatService";
+import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 interface PremiumScreenProps {
   isPremium: boolean;
@@ -244,25 +245,24 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
       />
       <div className="flex items-center justify-center p-4 pt-8">
         <div className="w-full max-w-md">
-          <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden p-8">
-            <div className="text-center space-y-8">
-              <div className="relative inline-block">
-                <Crown className="h-24 w-24 mx-auto text-purple-500" />
-                <Sparkles className="h-8 w-8 absolute -top-2 -right-2 text-yellow-500 animate-pulse" />
+          <div className="bg-white rounded-[24px] overflow-hidden p-8">
+            <div className="text-center space-y-6">
+              <div className="w-24 h-24 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
+                <img src={logoImage} alt="Rude Reminders" className="h-16 w-auto" />
               </div>
             
               <div>
-                <h1 className="text-4xl font-bold text-white mb-3">
+                <h1 className="text-3xl font-bold text-[#111827] mb-2">
                   Unlock Premium
                 </h1>
-                <p className="font-bold text-[#4115ba] text-lg">
+                <p className="font-bold text-[#C53B3B]">
                   Please create an account before subscribing
                 </p>
               </div>
 
               {offeringsError && (
-                <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4">
-                  <p className="text-sm text-yellow-200">
+                <div className="bg-[#FEF3C7] border border-[#F59E0B] rounded-[14px] p-4">
+                  <p className="text-sm text-[#92400E]">
                     Please sign into a Sandbox App Store account to test purchases.
                   </p>
                 </div>
@@ -272,36 +272,22 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
                 <Button 
                   onClick={isAuthenticated ? handleSubscribe : handleGuestSubscribe}
                   disabled={loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white text-lg py-7"
+                  className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]"
                   size="lg"
                   data-testid="button-subscribe-now"
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="h-6 w-6 mr-3 animate-spin" />
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                       Loading...
                     </>
                   ) : (
                     <>
-                      <Crown className="h-6 w-6 mr-3" />
-                      {isAuthenticated ? 'Subscribe Now' : 'Sign in to Subscribe'}
+                      {isAuthenticated ? 'Subscribe Now' : 'Create Account'}
                     </>
                   )}
                 </Button>
-                
-                <button 
-                  onClick={isAuthenticated ? handleViewPlans : handleGuestSubscribe}
-                  disabled={loading}
-                  className="w-full py-3.5 bg-[#38383A] text-white text-lg rounded-lg font-semibold active:opacity-70 disabled:opacity-50"
-                  data-testid="button-view-plans"
-                >
-                  {isAuthenticated ? 'View All Plans' : 'Sign in'}
-                </button>
               </div>
-
-              <p className="text-sm text-[#8E8E93]">
-                {isAuthenticated ? 'No account required to subscribe' : 'Create an account to unlock premium'}
-              </p>
             </div>
           </div>
         </div>
