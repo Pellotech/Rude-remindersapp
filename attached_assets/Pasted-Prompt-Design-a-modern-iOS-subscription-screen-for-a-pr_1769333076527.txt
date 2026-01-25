@@ -1,0 +1,109 @@
+Prompt:
+
+Design a modern iOS subscription screen for a premium productivity app called Rude Reminders.
+
+Style & Layout
+
+Dark-themed background matching a settings screen (deep charcoal / near-black)
+
+A centered white rounded card (“content bubble”) for clarity and contrast
+
+Soft shadows, large corner radius (20–28px), calm spacing
+
+Clean, minimal, premium — not aggressive or salesy
+
+Branding
+
+Replace all generic crown icons with the Rude Reminders logo
+
+Logo should be subtle, centered at the top of the card
+
+No emoji or stock icons
+
+Typography
+
+Large, bold headline (e.g. “Unlock Premium” or “Choose Your Plan”)
+
+Short supportive subtext (friendly, calm, non-pushy)
+
+Modern SF-style typography
+
+Subscription Options
+
+Two selectable cards: “Monthly” and “Yearly”
+
+Do NOT show prices inside buttons
+
+Prices (if shown) appear as secondary text under the plan title
+
+Selection state uses outline + subtle accent color
+
+“Best Value” badge allowed on yearly plan
+
+Buttons
+
+Single primary action button at bottom
+
+Button text should be generic and future-proof, e.g.:
+
+“Continue”
+
+“Subscribe”
+
+“Unlock Premium”
+
+No prices, no currency symbols inside the button
+
+Color System
+
+Dark background: charcoal / near-black
+
+White card: pure white or slightly warm white
+
+Accent color: existing brand red
+
+Text hierarchy must be high contrast and accessible
+
+Mobile Constraints
+
+iPhone safe-area friendly
+
+Large tap targets
+
+One-handed usability
+
+Overall tone: confident, modern, trustworthy, calm premium
+
+🔁 OPTIONAL VARIANTS (use if you want multiple screens)
+
+You can generate 2 screens using the same style:
+
+Variant A – Logged-out user
+
+Headline: “Unlock Premium”
+
+Subtext: “Create an account before subscribing”
+
+Button: “Create Account”
+
+Variant B – Logged-in user
+
+Headline: “Choose Your Plan”
+
+Button: “Continue”
+
+Same layout, same card, same colors.
+
+🎯 Why this will NOT break anything later
+
+Works with RevenueCat
+
+Works with StoreKit
+
+Works with regional pricing
+
+Works with discounts & trials
+
+Apple review friendly
+
+Easy to reuse on Android
