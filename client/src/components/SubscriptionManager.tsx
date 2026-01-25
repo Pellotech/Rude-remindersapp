@@ -116,33 +116,6 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     toast({ title: "How to Cancel", description: "Go to Settings → Your Name → Subscriptions on your iOS device." });
   };
 
-  const renderHeader = () => (
-    <div className="sticky top-0 z-10 bg-[#C9A063]/95 backdrop-blur-sm safe-area-header">
-      <div className="flex items-center justify-between px-4 py-3">
-        {isSubscribed ? (
-          <Link href="/settings">
-            <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
-              <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px] font-medium">Settings</span>
-            </div>
-          </Link>
-        ) : showPlans ? (
-          <button onClick={() => setShowPlans(false)} className="flex items-center text-[#111827]" data-testid="button-back-plans">
-            <ChevronLeft className="h-5 w-5" />
-            <span className="text-[17px] font-medium">Back</span>
-          </button>
-        ) : (
-          <Link href="/">
-            <div className="flex items-center text-[#111827] cursor-pointer" data-testid="button-back">
-              <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px] font-medium">Back</span>
-            </div>
-          </Link>
-        )}
-      </div>
-    </div>
-  );
-
   const renderUnlockPremium = () => (
     <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
@@ -246,10 +219,37 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     </div>
   );
 
+  const bgColor = isSubscribed ? 'bg-[#C9A063]' : 'bg-black';
+  const headerBgColor = isSubscribed ? 'bg-[#C9A063]/95' : 'bg-black';
+  const textColor = isSubscribed ? 'text-[#111827]' : 'text-white';
+
   return (
-    <div className="min-h-screen bg-[#C9A063]">
+    <div className={`min-h-screen ${bgColor}`}>
       <div className="max-w-lg mx-auto">
-        {renderHeader()}
+        <div className={`sticky top-0 z-10 ${headerBgColor} backdrop-blur-sm safe-area-header`}>
+          <div className="flex items-center justify-between px-4 py-3">
+            {isSubscribed ? (
+              <Link href="/settings">
+                <div className={`flex items-center ${textColor} cursor-pointer`} data-testid="button-back">
+                  <ChevronLeft className="h-5 w-5" />
+                  <span className="text-[17px] font-medium">Settings</span>
+                </div>
+              </Link>
+            ) : showPlans ? (
+              <button onClick={() => setShowPlans(false)} className={`flex items-center ${textColor}`} data-testid="button-back-plans">
+                <ChevronLeft className="h-5 w-5" />
+                <span className="text-[17px] font-medium">Back</span>
+              </button>
+            ) : (
+              <Link href="/">
+                <div className={`flex items-center ${textColor} cursor-pointer`} data-testid="button-back">
+                  <ChevronLeft className="h-5 w-5" />
+                  <span className="text-[17px] font-medium">Back</span>
+                </div>
+              </Link>
+            )}
+          </div>
+        </div>
         <div className="flex items-center justify-center p-4 pt-8">
           <div className="w-full max-w-md">
             {isSubscribed ? renderPremiumDashboard() : showPlans ? renderAvailablePlans() : renderUnlockPremium()}
