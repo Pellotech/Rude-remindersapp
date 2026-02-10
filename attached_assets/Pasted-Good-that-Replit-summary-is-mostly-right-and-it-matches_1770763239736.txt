@@ -1,0 +1,70 @@
+Good — that Replit summary is mostly right, and it matches what Apple is flagging. The only tweak is this part:
+
+“you need to display pricing on the plan buttons”
+
+Apple’s requirement is that price + duration are clearly shown in the purchase flow — it does not have to be inside the button text. It can be in the plan rows (best), under each plan, or under the CTA — as long as it’s obvious.
+
+📍STATE (so we don’t lose our place)
+
+Issue: 3.1.2 Subscriptions
+We are still on Step 1A (clarify Monthly vs Yearly + show the difference is billing period/value)
+We’re going to complete Step 1A by adding two things to this same screen:
+
+✅ 1A-1: Explain Monthly vs Yearly (same features; billing differs)
+
+Add this text just under “Choose Your Plan” (or right above the plan boxes):
+
+Copy/paste option (short + Apple-safe):
+
+Both plans unlock the same Premium features.
+Monthly is billed every month. Yearly is billed once per year and offers better value over time.
+
+✅ 1A-2: Show price + length for each plan (dynamic/localized)
+
+You’re 100% correct about regional pricing — so the fix is:
+
+Show Monthly: “{localized price} / month”
+
+Show Yearly: “{localized price} / year”
+
+These must come from RevenueCat’s localized pricing (so Canada shows CAD, UK shows GBP, etc.)
+
+Where to show it (recommended):
+
+Inside each plan row, under the plan name:
+
+Monthly
+“{price} per month”
+
+Yearly (Best Value)
+“{price} per year”
+
+This satisfies Apple because:
+
+The user sees the billing period clearly
+
+They see the real local price
+
+No hardcoding
+
+What about your current “$6.99/month · Cancel anytime” line?
+
+That’s fine — but Apple likely wants Yearly pricing shown too, not just the selected plan.
+
+What to do next (Step 1A completion checklist)
+
+On that exact screen you showed:
+
+Add the “both plans same features…” explanation text
+
+Add Monthly price + period and Yearly price + period (dynamic) in the plan rows
+
+Keep your CTA button label price-free (“Continue” is perfect)
+
+When that’s done, reply:
+
+“Step 1A done”
+
+Then we move to Step 1B (subscription terms disclosure text) — still staying inside Guideline 3.1.2, and still not moving to other issues.
+
+If you want, paste the current text content of that paywall screen (everything visible), and I’ll rewrite it into the clean Apple-friendly version while keeping your style.

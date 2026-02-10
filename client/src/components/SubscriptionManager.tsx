@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Loader2, Crown, ChevronLeft, ChevronRight, Check } from "lucide-react";
@@ -44,11 +44,26 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const [offeringsError, setOfferingsError] = useState(false);
   const [showPlans, setShowPlans] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
+  const [monthlyPrice, setMonthlyPrice] = useState<string | null>(null);
+  const [yearlyPrice, setYearlyPrice] = useState<string | null>(null);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const platform = getPlatformInfo();
 
   const isSubscribed = user?.subscriptionStatus === 'active';
+
+  useEffect(() => {
+    if (showPlans && platform.isNative) {
+      loadOfferingsSafe().then((offeringsResult) => {
+        if (!offeringsResult?.current) return;
+        const packages = offeringsResult.current.availablePackages;
+        const monthly = packages.find((p: any) => p.identifier === '$rc_monthly' || p.packageType === 'MONTHLY' || p.identifier.includes('monthly'));
+        const yearly = packages.find((p: any) => p.identifier === '$rc_annual' || p.packageType === 'ANNUAL' || p.identifier.includes('annual') || p.identifier.includes('yearly'));
+        if (monthly?.product?.priceString) setMonthlyPrice(monthly.product.priceString);
+        if (yearly?.product?.priceString) setYearlyPrice(yearly.product.priceString);
+      });
+    }
+  }, [showPlans]);
 
   const handleGuestSubscribe = () => {
     toast({ title: "Sign in Required", description: "Create an account to subscribe." });
@@ -141,6 +156,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           <img src={logoImage} alt="Rude Reminders" className="h-14 w-auto" />
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
+        <p className="text-sm text-[#6B7280]">Both plans unlock the same Premium features. Monthly is billed every month. Yearly is billed once per year and offers better value.</p>
         <div className="space-y-3">
           <button
             onClick={() => setSelectedPlan('monthly')}
@@ -149,6 +165,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           >
             <div className="text-left">
               <div className="text-[#111827] font-semibold text-lg">Monthly</div>
+              <div className="text-sm text-[#6B7280]">{monthlyPrice ? `${monthlyPrice} per month` : '$6.99 per month'}</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
@@ -164,6 +181,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                 <span className="text-[#111827] font-semibold text-lg">Yearly</span>
                 <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
+              <div className="text-sm text-[#6B7280]">{yearlyPrice ? `${yearlyPrice} per year` : '$59.99 per year'}</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
@@ -178,7 +196,11 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
         <Button onClick={handlePurchase} disabled={loading} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-continue-purchase">
           {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
-        <p className="text-xs text-[#6B7280]">{selectedPlan === 'yearly' ? '$59.99/year' : '$6.99/month'} • Cancel anytime</p>
+        <p className="text-xs text-[#6B7280]">
+          {selectedPlan === 'yearly' 
+            ? `${yearlyPrice || '$59.99'}/year` 
+            : `${monthlyPrice || '$6.99'}/month`} · Auto-renewable · Cancel anytime
+        </p>
       </div>
     </div>
   );
