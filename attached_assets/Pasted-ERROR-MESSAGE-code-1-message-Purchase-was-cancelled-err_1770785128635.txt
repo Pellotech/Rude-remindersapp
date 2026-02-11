@@ -1,0 +1,27 @@
+ERROR MESSAGE:  {"code":"1","message":"Purchase was cancelled.","errorMessage":"Purchase was cancelled."}
+⚡️  [error] - {"code":"1","message":"Purchase was cancelled.","errorMessage":"Purchase was cancelled."}
+⚡️  To Native ->  Purchases getOfferings 48495579
+DEBUG: ℹ️ Vending Offerings from memory cache
+⚡️  TO JS {"current":{"identifier":"default","metadata":{},"annual":{"product":{"pricePerMonth":3.75,"pricePerWeekString":"$0.86","price":44.99,"pricePerWeek":0.86,"productCategory":"SUBSCRIPTION","currencyCode":"USD","pricePerYearString":"$44.99","priceString":"$44
+⚡️  To Native ->  Purchases purchasePackage 48495580
+DEBUG: ℹ️ Vending Offerings from memory cache
+INFO: 💰 Purchasing Product 'com.goosebumpsmw.rudereminders.monthly' from package in Offering 'default'
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+ERROR: 🍎‼️ Purchase was cancelled.
+ERROR MESSAGE:  {"errorMessage":"Purchase was cancelled.","message":"Purchase was cancelled.","code":"1"}
+⚡️  [error] - {"errorMessage":"Purchase was cancelled.","message":"Purchase was cancelled.","code":"1"}
+⚡️  To Native ->  Purchases getOfferings 48495581
+DEBUG: ℹ️ Vending Offerings from memory cache
+⚡️  TO JS {"all":{"default":{"serverDescription":"The standard set of packages","monthly":{"product":{"pricePerYearString":"$71.88","pricePerWeekString":"$1.38","pricePerMonth":5.99,"productType":"AUTO_RENEWABLE_SUBSCRIPTION","description":"Monthly subscription for 
+⚡️  To Native ->  Purchases purchasePackage 48495582
+DEBUG: ℹ️ Vending Offerings from memory cache
+INFO: 💰 Purchasing Product 'com.goosebumpsmw.rudereminders.yearly' from package in Offering 'default'
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+ERROR: 🍎‼️ Purchase was cancelled.
+ERROR MESSAGE:  {"code":"1","errorMessage":"Purchase was cancelled.","message":"Purchase was cancelled."}
+⚡️  [error] - {"code":"1","errorMessage":"Purchase was cancelled.","message":"Purchase was cancelled."}
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  [log] - AdMob initialization disabled for testing
+⚡️  To Native ->  LocalNotifications addListener 48495583
+⚡️  To Native ->  LocalNotifications addListener 48495584
+⚡️  [log] - Disconnected from WebSocket
