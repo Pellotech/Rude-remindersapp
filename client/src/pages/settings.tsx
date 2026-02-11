@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, clearAuthToken } from "@/lib/queryClient";
 import { User, Volume2, Bell, Shield, Palette, CreditCard, Calendar, Crown, ChevronRight, ArrowLeft, Trash2, AlertTriangle, ExternalLink } from "lucide-react";
 import { BackNavigation } from "@/components/BackNavigation";
 import { usePremium } from "@/hooks/usePremium";
@@ -60,6 +60,7 @@ export default function Settings() {
   const [, setLocation] = useLocation();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showDeleteScreen, setShowDeleteScreen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [activeSection, setActiveSection] = useState<SettingsSection>('personal');
 
   const { data: user, isLoading } = useQuery<any>({
@@ -87,11 +88,11 @@ export default function Settings() {
 
   const deleteAccountMutation = useMutation({
     mutationFn: () => apiRequest("/api/account", "DELETE"),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await clearAuthToken();
       queryClient.clear();
       toast({
-        title: "Account deleted",
-        description: "Your account and all data have been permanently deleted.",
+        title: "Account deleted.",
       });
       setLocation("/login");
     },
@@ -448,7 +449,7 @@ export default function Settings() {
           return (
             <div className="space-y-6">
               <div>
-                <button onClick={() => setShowDeleteScreen(false)} className="flex items-center text-gray-400 hover:text-white mb-4">
+                <button onClick={() => { setShowDeleteScreen(false); setDeleteConfirmText(""); }} className="flex items-center text-gray-400 hover:text-white mb-4">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   <span className="text-sm">Back to Account</span>
                 </button>
@@ -456,43 +457,39 @@ export default function Settings() {
                   <AlertTriangle className="h-6 w-6" />
                   Delete Account
                 </h2>
-                <p className="text-gray-400 text-sm">Permanently remove your account and all associated data</p>
               </div>
 
-              <div className="bg-gray-900 rounded-lg p-6 space-y-4 border border-red-900">
-                <div className="space-y-3">
-                  <p className="text-gray-300 text-sm font-medium">What will be deleted:</p>
-                  <ul className="text-gray-400 text-sm space-y-2">
-                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>Your profile and personal information</li>
-                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>All reminders and reminder history</li>
-                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>Uploaded photos and attachments</li>
-                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>Subscription and payment records</li>
-                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>All preferences and settings</li>
-                  </ul>
+              <div className="bg-gray-900 rounded-lg p-6 space-y-5 border border-red-900">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
+                </p>
+
+                <div className="space-y-2">
+                  <Label className="text-gray-400 text-sm">Type DELETE to confirm</Label>
+                  <Input
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                    className="bg-gray-800 border-gray-700 text-white"
+                  />
                 </div>
 
-                <Separator className="bg-gray-800" />
-
-                <div className="bg-red-950/50 rounded-lg p-4 border border-red-900">
-                  <p className="text-red-300 text-sm font-medium mb-1">This action is permanent</p>
-                  <p className="text-gray-400 text-xs">Once deleted, your account and data cannot be recovered. If you have an active subscription, please cancel it first through your device's subscription settings.</p>
-                </div>
-
-                <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <AlertDialog open={showDeleteConfirm} onOpenChange={(open) => { setShowDeleteConfirm(open); if (!open) setDeleteConfirmText(""); }}>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="w-full">
+                    <Button
+                      variant="destructive"
+                      className="w-full"
+                      disabled={deleteConfirmText !== "DELETE" || deleteAccountMutation.isPending}
+                    >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete My Account Permanently
+                      {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent className="bg-gray-900 border-gray-700">
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-red-400 flex items-center gap-2">
-                        <AlertTriangle className="h-5 w-5" />
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
+                      <AlertDialogTitle className="text-red-400">Delete Account</AlertDialogTitle>
                       <AlertDialogDescription className="text-gray-400">
-                        This will permanently delete your account and all associated data. This action cannot be undone.
+                        This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -501,7 +498,7 @@ export default function Settings() {
                         onClick={() => deleteAccountMutation.mutate()}
                         className="bg-red-600 hover:bg-red-700"
                       >
-                        Yes, Delete Everything
+                        Delete Account
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
