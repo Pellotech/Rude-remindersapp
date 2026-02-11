@@ -234,13 +234,13 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const renderPremiumDashboard = () => (
     <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="space-y-6">
-        <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-[16px] bg-[#F9FAFB] flex items-center justify-center">
-            <Crown className="h-8 w-8 text-[#C53B3B]" />
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="w-20 h-20 bg-[#F9FAFB] rounded-[20px] flex items-center justify-center">
+            <img src={logoImage} alt="Rude Reminders" className="h-14 w-auto" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#111827]">Rude Reminders</h1>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center justify-center gap-2 mt-1">
               <span className="bg-[#C53B3B] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
             </div>
           </div>
@@ -267,9 +267,9 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     </div>
   );
 
-  const bgColor = isSubscribed ? 'bg-[#C9A063]' : 'bg-black';
-  const headerBgColor = isSubscribed ? 'bg-[#C9A063]/95' : 'bg-black';
-  const textColor = isSubscribed ? 'text-[#111827]' : 'text-white';
+  const bgColor = 'bg-black';
+  const headerBgColor = 'bg-black';
+  const textColor = 'text-white';
 
   return (
     <div className={`min-h-screen ${bgColor}`}>
