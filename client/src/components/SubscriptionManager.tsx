@@ -165,7 +165,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           >
             <div className="text-left">
               <div className="text-[#111827] font-semibold text-lg">Monthly</div>
-              <div className="text-sm text-[#6B7280]">{monthlyPrice ? `${monthlyPrice} per month` : '$6.99 per month'}</div>
+              {monthlyPrice && <div className="text-sm text-[#6B7280]">{monthlyPrice} per month</div>}
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
@@ -181,7 +181,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                 <span className="text-[#111827] font-semibold text-lg">Yearly</span>
                 <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              <div className="text-sm text-[#6B7280]">{yearlyPrice ? `${yearlyPrice} per year` : '$59.99 per year'}</div>
+              {yearlyPrice && <div className="text-sm text-[#6B7280]">{yearlyPrice} per year</div>}
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
@@ -197,9 +197,11 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
         <p className="text-xs text-[#6B7280]">
-          {selectedPlan === 'yearly' 
-            ? `${yearlyPrice || '$59.99'}/year` 
-            : `${monthlyPrice || '$6.99'}/month`} · Auto-renewable · Cancel anytime
+          {selectedPlan === 'yearly' && yearlyPrice
+            ? `${yearlyPrice}/year · ` 
+            : selectedPlan === 'monthly' && monthlyPrice
+            ? `${monthlyPrice}/month · `
+            : ''}Auto-renewable · Cancel anytime
         </p>
       </div>
     </div>
