@@ -147,7 +147,72 @@ export default function Settings() {
     { id: 'account' as SettingsSection, label: 'Account', icon: Shield },
   ];
 
+  const renderDeleteScreen = () => (
+    <div className="space-y-6">
+      <div>
+        <button onClick={() => { setShowDeleteScreen(false); setDeleteConfirmText(""); }} className="flex items-center text-gray-400 hover:text-white mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          <span className="text-sm">Back</span>
+        </button>
+        <h2 className="text-2xl font-semibold text-red-400 mb-2 flex items-center gap-2">
+          <AlertTriangle className="h-6 w-6" />
+          Delete Account
+        </h2>
+      </div>
+
+      <div className="bg-gray-900 rounded-lg p-6 space-y-5 border border-red-900">
+        <p className="text-gray-300 text-sm leading-relaxed">
+          This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
+        </p>
+
+        <div className="space-y-2">
+          <Label className="text-gray-400 text-sm">Type DELETE to confirm</Label>
+          <Input
+            value={deleteConfirmText}
+            onChange={(e) => setDeleteConfirmText(e.target.value)}
+            placeholder="DELETE"
+            className="bg-gray-800 border-gray-700 text-white"
+          />
+        </div>
+
+        <AlertDialog open={showDeleteConfirm} onOpenChange={(open) => { setShowDeleteConfirm(open); if (!open) setDeleteConfirmText(""); }}>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              className="w-full"
+              disabled={deleteConfirmText !== "DELETE" || deleteAccountMutation.isPending}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-gray-900 border-gray-700">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-red-400">Delete Account</AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-400">
+                This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteAccountMutation.mutate()}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete Account
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
+    if (showDeleteScreen) {
+      return renderDeleteScreen();
+    }
+
     switch (activeSection) {
       case 'personal':
         return (
@@ -222,6 +287,32 @@ export default function Settings() {
                   />
                 </div>
               )}
+            </div>
+
+            <div className="bg-gray-900 rounded-lg p-6 space-y-4">
+              <h3 className="text-white font-medium">Account Management</h3>
+              <Separator className="bg-gray-800" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-300 text-sm font-medium">Email</p>
+                  <p className="text-gray-500 text-xs">{user?.email || 'Not set'}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-300 text-sm font-medium">Account Status</p>
+                  <p className="text-gray-500 text-xs">{user?.subscriptionPlan === 'premium' ? 'Premium' : 'Free'}</p>
+                </div>
+              </div>
+              <Separator className="bg-gray-800" />
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteScreen(true)}
+                className="w-full"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Account
+              </Button>
             </div>
           </div>
         );
@@ -445,68 +536,6 @@ export default function Settings() {
         );
 
       case 'account':
-        if (showDeleteScreen) {
-          return (
-            <div className="space-y-6">
-              <div>
-                <button onClick={() => { setShowDeleteScreen(false); setDeleteConfirmText(""); }} className="flex items-center text-gray-400 hover:text-white mb-4">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Back to Account</span>
-                </button>
-                <h2 className="text-2xl font-semibold text-red-400 mb-2 flex items-center gap-2">
-                  <AlertTriangle className="h-6 w-6" />
-                  Delete Account
-                </h2>
-              </div>
-
-              <div className="bg-gray-900 rounded-lg p-6 space-y-5 border border-red-900">
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
-                </p>
-
-                <div className="space-y-2">
-                  <Label className="text-gray-400 text-sm">Type DELETE to confirm</Label>
-                  <Input
-                    value={deleteConfirmText}
-                    onChange={(e) => setDeleteConfirmText(e.target.value)}
-                    placeholder="DELETE"
-                    className="bg-gray-800 border-gray-700 text-white"
-                  />
-                </div>
-
-                <AlertDialog open={showDeleteConfirm} onOpenChange={(open) => { setShowDeleteConfirm(open); if (!open) setDeleteConfirmText(""); }}>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      className="w-full"
-                      disabled={deleteConfirmText !== "DELETE" || deleteAccountMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="bg-gray-900 border-gray-700">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="text-red-400">Delete Account</AlertDialogTitle>
-                      <AlertDialogDescription className="text-gray-400">
-                        This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white">Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteAccountMutation.mutate()}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Delete Account
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </div>
-          );
-        }
         return (
           <div className="space-y-6">
             <div>
@@ -556,28 +585,28 @@ export default function Settings() {
     <div className="min-h-screen bg-black text-white">
       <BackNavigation customBackLabel="Back to Home" />
 
-      <div className="flex max-w-6xl mx-auto">
-        {/* Sidebar */}
-        <div className="w-64 border-r border-gray-800 min-h-screen p-4">
-          <h1 className="text-xl font-semibold mb-6 px-2">Settings</h1>
-          <nav className="space-y-1">
+      <div className="flex flex-col md:flex-row max-w-6xl mx-auto">
+        {/* Sidebar - horizontal scroll on mobile, vertical on desktop */}
+        <div className="md:w-64 md:border-r border-b md:border-b-0 border-gray-800 md:min-h-screen p-4">
+          <h1 className="text-xl font-semibold mb-4 md:mb-6 px-2">Settings</h1>
+          <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
+                  onClick={() => { setActiveSection(item.id); setShowDeleteScreen(false); }}
+                  className={`flex-shrink-0 flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
                     activeSection === item.id
                       ? 'bg-gray-800 text-white'
                       : 'text-gray-400 hover:bg-gray-900 hover:text-white'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 md:gap-3">
                     <Icon className="h-5 w-5" />
-                    <span className="text-sm">{item.label}</span>
+                    <span className="text-sm whitespace-nowrap">{item.label}</span>
                   </div>
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 hidden md:block" />
                 </button>
               );
             })}
@@ -585,7 +614,7 @@ export default function Settings() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-4 md:p-8">
           {renderContent()}
 
           {/* Save Button */}
