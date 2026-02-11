@@ -40,7 +40,7 @@ interface UserSettings {
   defaultVoiceCharacter?: string;
 }
 
-type SettingsSection = 'personal' | 'notifications' | 'appearance' | 'billing' | 'privacy' | 'history';
+type SettingsSection = 'personal' | 'notifications' | 'appearance' | 'billing' | 'privacy' | 'history' | 'account';
 
 const alarmSoundOptions = [
   { value: "gentle-chime", label: "🎵 Gentle Chime" },
@@ -59,6 +59,7 @@ export default function Settings() {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeleteScreen, setShowDeleteScreen] = useState(false);
   const [activeSection, setActiveSection] = useState<SettingsSection>('personal');
 
   const { data: user, isLoading } = useQuery<any>({
@@ -142,6 +143,7 @@ export default function Settings() {
     { id: 'billing' as SettingsSection, label: 'Billing', icon: CreditCard },
     { id: 'history' as SettingsSection, label: 'History', icon: Calendar },
     { id: 'privacy' as SettingsSection, label: 'Privacy', icon: Shield },
+    { id: 'account' as SettingsSection, label: 'Account', icon: Shield },
   ];
 
   const renderContent = () => {
@@ -438,37 +440,112 @@ export default function Settings() {
                 <ExternalLink className="h-4 w-4" />
               </Button>
             </div>
+          </div>
+        );
+
+      case 'account':
+        if (showDeleteScreen) {
+          return (
+            <div className="space-y-6">
+              <div>
+                <button onClick={() => setShowDeleteScreen(false)} className="flex items-center text-gray-400 hover:text-white mb-4">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Back to Account</span>
+                </button>
+                <h2 className="text-2xl font-semibold text-red-400 mb-2 flex items-center gap-2">
+                  <AlertTriangle className="h-6 w-6" />
+                  Delete Account
+                </h2>
+                <p className="text-gray-400 text-sm">Permanently remove your account and all associated data</p>
+              </div>
+
+              <div className="bg-gray-900 rounded-lg p-6 space-y-4 border border-red-900">
+                <div className="space-y-3">
+                  <p className="text-gray-300 text-sm font-medium">What will be deleted:</p>
+                  <ul className="text-gray-400 text-sm space-y-2">
+                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>Your profile and personal information</li>
+                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>All reminders and reminder history</li>
+                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>Uploaded photos and attachments</li>
+                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>Subscription and payment records</li>
+                    <li className="flex items-start gap-2"><span className="text-red-400 mt-0.5">•</span>All preferences and settings</li>
+                  </ul>
+                </div>
+
+                <Separator className="bg-gray-800" />
+
+                <div className="bg-red-950/50 rounded-lg p-4 border border-red-900">
+                  <p className="text-red-300 text-sm font-medium mb-1">This action is permanent</p>
+                  <p className="text-gray-400 text-xs">Once deleted, your account and data cannot be recovered. If you have an active subscription, please cancel it first through your device's subscription settings.</p>
+                </div>
+
+                <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete My Account Permanently
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-gray-900 border-gray-700">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-red-400 flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-gray-400">
+                        This will permanently delete your account and all associated data. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white">Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteAccountMutation.mutate()}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Yes, Delete Everything
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold text-white mb-2">Account</h2>
+              <p className="text-gray-400 text-sm">Manage your account settings</p>
+            </div>
+
+            <div className="bg-gray-900 rounded-lg p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-300 text-sm font-medium">Email</p>
+                  <p className="text-gray-500 text-xs">{user?.email || 'Not set'}</p>
+                </div>
+              </div>
+
+              <Separator className="bg-gray-800" />
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-300 text-sm font-medium">Account Status</p>
+                  <p className="text-gray-500 text-xs">{user?.subscriptionPlan === 'premium' ? 'Premium' : 'Free'}</p>
+                </div>
+              </div>
+            </div>
 
             <div className="bg-gray-900 rounded-lg p-6 border border-red-900">
-              <h3 className="text-red-400 font-medium mb-4">Danger Zone</h3>
-              <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="w-full">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Account
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="bg-gray-900 border-gray-700">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="text-red-400 flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5" />
-                      Delete Account?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription className="text-gray-400">
-                      This will permanently delete your account and all data. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white">Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => deleteAccountMutation.mutate()}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      Yes, Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <h3 className="text-red-400 font-medium mb-2">Danger Zone</h3>
+              <p className="text-gray-500 text-xs mb-4">Permanently delete your account and all data.</p>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteScreen(true)}
+                className="w-full"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Account
+              </Button>
             </div>
           </div>
         );
