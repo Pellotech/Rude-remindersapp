@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { revenueCatService } from "@/services/revenueCatService";
+import { Capacitor } from '@capacitor/core';
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 interface SubscriptionManagerProps {
@@ -51,6 +52,15 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const platform = getPlatformInfo();
 
   const isSubscribed = user?.subscriptionStatus === 'active';
+
+  const openLink = async (url: string) => {
+    if (Capacitor.isNativePlatform()) {
+      const { Browser } = await import('@capacitor/browser');
+      await Browser.open({ url, presentationStyle: 'popover' as any });
+    } else {
+      window.open(url, '_blank');
+    }
+  };
 
   useEffect(() => {
     if (showPlans && platform.isNative) {
@@ -203,6 +213,20 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             ? `${monthlyPrice}/month · `
             : ''}Auto-renewable · Cancel anytime
         </p>
+        <div className="mt-4 pt-4 border-t border-[#EAEAEA]">
+          <p className="text-[11px] font-semibold text-[#374151] mb-2">Subscription Terms</p>
+          <p className="text-[11px] text-[#6B7280] leading-relaxed">
+            Payment will be charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage or cancel your subscription in your Apple ID account settings.
+          </p>
+          <div className="flex gap-4 mt-3 justify-center">
+            <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=378d9c6b-c46e-44ed-83a2-d8770229969c')} className="text-[11px] text-[#2563EB] underline">
+              Privacy Policy
+            </button>
+            <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=34f340a5-79a7-4f66-b4f9-81f1e9693176')} className="text-[11px] text-[#2563EB] underline">
+              Terms of Use
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
