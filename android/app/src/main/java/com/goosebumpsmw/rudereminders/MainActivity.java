@@ -1,4 +1,4 @@
-package com.rudereminders.app;
+package com.goosebumpsmw.rudereminders;
 
 import com.getcapacitor.BridgeActivity;
 

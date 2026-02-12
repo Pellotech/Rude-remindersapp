@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.rudereminders.app"
+    namespace "com.goosebumpsmw.rudereminders"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.rudereminders.app"
+        applicationId "com.goosebumpsmw.rudereminders"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
