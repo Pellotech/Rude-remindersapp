@@ -1,0 +1,185 @@
+Awesome — since your iOS build is already working, setting up Android is mostly about (1) generating/syncing the Capacitor Android project, (2) making sure your env keys (especially RevenueCat) exist for Android, and (3) running it in Android Studio without accidentally pointing at a dev server.
+
+Everything below is consistent with what’s in your handoff PDFs (especially around Capacitor build/sync, RevenueCat keys, and “don’t ship with server.url”). 
+
+Rude_Reminders_matser handoff 1
+
+ 
+
+rude_reminders_master_handoff 2
+
+ 
+
+Rude_Reminders_Master_Handoff 3
+
+1) One-time prerequisites (Mac/Windows)
+
+Install / confirm:
+
+Android Studio
+
+JDK 17 (Android Studio usually bundles one, but external JDK 17 is safest if Gradle complains)
+
+Android Studio → SDK Manager:
+
+Android SDK Platform (latest stable)
+
+Android SDK Build-Tools
+
+Android SDK Platform-Tools
+
+Android Emulator (if you’ll use an emulator)
+
+2) Make sure your Capacitor config is “release-safe”
+
+In your iOS work, the big lesson was: do not ship with server.url or your app depends on Replit being open. Same applies to Android. 
+
+Rude_Reminders_matser handoff 1
+
+In capacitor.config.ts:
+
+✅ Keep: webDir: 'dist'
+
+✅ OK: server.androidScheme, cleartext (only if you truly need it)
+
+❌ Remove/comment: server.url for real Android builds
+
+3) Add Android env vars locally (RevenueCat)
+
+You already solved the “Vite env vars are build-time” issue on iOS by adding a local .env file and rebuilding. Android is the same idea. 
+
+rude_reminders_master_handoff 2
+
+In your project root .env (not committed):
+
+VITE_REVENUECAT_ANDROID_API_KEY=goog_...
+VITE_REVENUECAT_IOS_API_KEY=appl_...
+
+
+Rules (important, from your handoff):
+
+Must start with VITE_
+
+No quotes
+
+No spaces around = 
+
+rude_reminders_master_handoff 2
+
+4) Build web assets, then generate/sync Android
+
+From your project root:
+
+npm install
+npm run build
+npx cap add android   # only if android folder doesn't exist yet
+npx cap sync android
+
+
+If Android already exists, do:
+
+npm run build
+npx cap sync android
+
+
+Why this matters: it copies your dist into the Android project and updates native plugins (same pattern as iOS). 
+
+Rude_Reminders_matser handoff 1
+
+ 
+
+rude_reminders_master_handoff 2
+
+5) Open in Android Studio + run
+npx cap open android
+
+
+In Android Studio:
+
+Let Gradle sync fully
+
+Create an emulator (AVD Manager) or plug in a real Android device (USB debugging on)
+
+Press Run
+
+6) Android equivalents of the “gotchas” you already hit on iOS
+A) “UNIMPLEMENTED” plugin errors
+
+On iOS you fixed Share by installing the correct plugin version and running cap sync. Same rule on Android. 
+
+Rude_Reminders_matser handoff 1
+
+Example (Share):
+
+npm i @capacitor/share@7
+npx cap sync android
+
+B) Permissions (Camera / Photos / Notifications)
+
+You handled iOS Info.plist permissions; Android has its own permission system in the manifest + runtime prompts. 
+
+Rude_Reminders_matser handoff 1
+
+Practical approach:
+
+Run the app → test photo attach + notifications
+
+If something fails, check Logcat for missing permission errors
+
+Then add/update permissions as needed (Android 13+ notification permission is a common one)
+
+C) RevenueCat: make Android products mirror iOS structure
+
+Your key RevenueCat lesson was: IDs and Offerings must match and be wired correctly, otherwise Offerings are empty. 
+
+Rude_Reminders_matser handoff 1
+
+For Android, you’ll do the same conceptually:
+
+Google Play Console subscriptions/products created
+
+RevenueCat Product Catalog includes the Android products
+
+Your Offering (default) contains the packages (monthly/yearly)
+
+And in code, your revenueCatService.initialize() already chooses API key by platform (ios vs android). 
+
+rude_reminders_master_handoff 2
+
+7) First Android “smoke test” checklist (before Play Console)
+
+In Android Studio build, confirm:
+
+App launches without needing Replit open (proves no server.url) 
+
+Rude_Reminders_matser handoff 1
+
+Login/register/logout behaves (token stored via Capacitor Preferences) 
+
+rude_reminders_master_handoff 2
+
+Notifications schedule & fire
+
+Photo attach works (permissions + upload)
+
+Share sheet opens (no UNIMPLEMENTED)
+
+8) When you’re ready to publish (high-level)
+
+Create the app in Google Play Console
+
+Set up internal testing
+
+Generate a signed AAB from Android Studio (Build → Generate Signed Bundle/APK)
+
+Upload to Play Console internal test track
+
+(We can go step-by-step on this when you’re at that stage.)
+
+Tell me where you are right now (pick one), and I’ll give you the exact next clicks/commands:
+
+“I don’t have an /android folder yet”
+
+“I have it, but Android Studio won’t build (Gradle/JDK errors)”
+
+“It builds, but the app is blank / stuck / can’t login / RevenueCat empty”
