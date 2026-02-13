@@ -16,9 +16,11 @@ app.use((req, res, next) => {
   // Debug logging
   console.log("CORS HIT:", req.method, req.path, "origin=", origin);
 
-  // Allow Capacitor + production web domain
+  // Allow Capacitor (iOS + Android) + production web domain
   const isAllowed =
     origin === "capacitor://localhost" ||
+    origin === "https://localhost" ||
+    origin === "http://localhost" ||
     origin === "ionic://localhost" ||
     origin === "https://rudereminder.replit.app" ||
     (origin?.endsWith(".replit.app") ?? false) ||
