@@ -280,6 +280,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.post('/api/account/delete-with-password', async (req: any, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      const normalizedEmail = email.toLowerCase().trim();
+      const user = await storage.getUserByEmail(normalizedEmail);
+
+      if (!user || !user.passwordHash) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+      if (!passwordMatch) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      await revokeAllUserTokens(user.id);
+      await storage.deleteUser(user.id);
+
+      req.session.destroy((err: any) => {
+        if (err) {
+          console.error("Session destroy error after account deletion:", err);
+        }
+        res.json({ message: "Account deleted successfully" });
+      });
+    } catch (error) {
+      console.error("Error deleting account with password:", error);
+      res.status(500).json({ message: "Failed to delete account" });
+    }
+  });
+
   app.delete('/api/account', async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);
