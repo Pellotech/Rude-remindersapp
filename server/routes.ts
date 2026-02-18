@@ -5,7 +5,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, registerSchema, loginSchema, authTokens } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and, gt, sql } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
@@ -280,15 +280,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  const deleteAttempts = new Map<string, { count: number; resetAt: number }>();
+
   app.post('/api/account/delete-with-password', async (req: any, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, confirmText } = req.body;
 
       if (!email || !password) {
         return res.status(400).json({ message: "Email and password are required" });
       }
 
+      if (confirmText !== "DELETE") {
+        return res.status(400).json({ message: "You must type DELETE to confirm account deletion" });
+      }
+
+      const sessionUserId = getAuthUserId(req);
+      if (!sessionUserId) {
+        return res.status(401).json({ message: "You must be logged in to delete your account" });
+      }
+
       const normalizedEmail = email.toLowerCase().trim();
+      const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+      const rateLimitKey = `${normalizedEmail}:${clientIp}`;
+
+      const now = Date.now();
+      const attempt = deleteAttempts.get(rateLimitKey);
+      if (attempt) {
+        if (now < attempt.resetAt) {
+          if (attempt.count >= 5) {
+            return res.status(429).json({ message: "Too many attempts. Please try again later." });
+          }
+          attempt.count++;
+        } else {
+          deleteAttempts.set(rateLimitKey, { count: 1, resetAt: now + 15 * 60 * 1000 });
+        }
+      } else {
+        deleteAttempts.set(rateLimitKey, { count: 1, resetAt: now + 15 * 60 * 1000 });
+      }
+
       const user = await storage.getUserByEmail(normalizedEmail);
 
       if (!user || !user.passwordHash) {
@@ -300,8 +329,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid email or password" });
       }
 
+      if (user.id !== sessionUserId) {
+        return res.status(403).json({ message: "You can only delete your own account" });
+      }
+
+      console.log(`[AUDIT] Account deletion: userId=${user.id}, email=${normalizedEmail}, ip=${clientIp}, timestamp=${new Date().toISOString()}`);
+
       await revokeAllUserTokens(user.id);
+
+      try {
+        await db.execute(sql`DELETE FROM sessions WHERE sess::text LIKE ${'%"userId":"' + user.id + '"%'}`);
+      } catch (sessionErr) {
+        console.error("Error clearing user sessions from DB:", sessionErr);
+      }
+
       await storage.deleteUser(user.id);
+
+      res.clearCookie('connect.sid', { path: '/' });
 
       req.session.destroy((err: any) => {
         if (err) {
@@ -322,12 +366,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
+
+      const user = await storage.getUser(userId);
+      const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+      console.log(`[AUDIT] Account deletion (in-app): userId=${userId}, email=${user?.email || 'unknown'}, ip=${clientIp}, timestamp=${new Date().toISOString()}`);
       
-      // Revoke all tokens for this user
       await revokeAllUserTokens(userId);
+
+      try {
+        await db.execute(sql`DELETE FROM sessions WHERE sess::text LIKE ${'%"userId":"' + userId + '"%'}`);
+      } catch (sessionErr) {
+        console.error("Error clearing user sessions from DB:", sessionErr);
+      }
       
       await storage.deleteUser(userId);
       
+      res.clearCookie('connect.sid', { path: '/' });
+
       req.session.destroy((err: any) => {
         if (err) {
           console.error("Session destroy error after account deletion:", err);

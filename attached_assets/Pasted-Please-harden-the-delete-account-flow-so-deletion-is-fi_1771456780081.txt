@@ -1,0 +1,75 @@
+Please harden the /delete-account flow so deletion is final and cannot be bypassed via browser back/refresh, and ensure the user is fully logged out across devices.
+
+Goals
+
+After delete succeeds, force logout immediately
+
+Clear auth cookie/session/JWT on the server (set cookie expired; invalidate session).
+
+On the client, remove any stored auth token, cached user object, and app state.
+
+Invalidate ALL active sessions/tokens
+
+If using JWT: add a server-side invalidation strategy (ex: store tokenVersion on user, increment on delete; or store a revokedAt timestamp and reject tokens issued before it).
+
+If using sessions: destroy the session(s) for that user.
+
+If there’s a “remember me” token or refresh tokens, invalidate them too.
+
+Block “Back button” / cached pages
+After deletion:
+
+Redirect to a dedicated confirmation page: /delete-account/complete
+
+Use replace navigation (not push) so the previous route isn’t still in history.
+
+Add headers on the /delete-account route so browsers won’t cache it:
+
+Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+
+Pragma: no-cache
+
+Expires: 0
+If this is a SPA route, ensure the backend serves index.html with no-store for that path, or add a middleware for that path.
+
+Ensure login cannot succeed after deletion
+
+Deleting the user must remove/disable authentication:
+
+user record deleted OR deletedAt/isDeleted flag set and auth endpoints check it.
+
+All auth endpoints should return a clear error if user is deleted: "Account deleted".
+
+Confirmation UX
+On successful deletion, show:
+
+“Account deleted successfully”
+
+“You are now signed out”
+
+“You can no longer log in with this email”
+Provide a button: “Return to Home / Login”
+
+Safety checks
+
+The delete endpoint must require BOTH:
+
+valid login session
+
+correct password re-entry
+
+typing “DELETE”
+
+Rate limit delete attempts (basic throttle) to prevent brute force.
+
+Log an audit event (userId, timestamp, IP) for compliance.
+
+Acceptance tests (please verify)
+
+User deletes account → gets success screen → cannot go back to authenticated screens.
+
+Refresh on /delete-account/complete works.
+
+Try to login again with same email/password → fails with “Account deleted”.
+
+If user had the app open on another device/browser, next API request returns 401 and forces logout.

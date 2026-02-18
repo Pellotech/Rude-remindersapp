@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
 import { AlertTriangle, Trash2, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { clearAuthToken, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 export default function DeleteAccount() {
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const [step, setStep] = useState<"info" | "login" | "confirm">("info");
@@ -14,7 +12,6 @@ export default function DeleteAccount() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
-  const [authToken, setAuthToken] = useState("");
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -32,8 +29,7 @@ export default function DeleteAccount() {
       }
       return res.json();
     },
-    onSuccess: (data) => {
-      setAuthToken(data.authToken || "");
+    onSuccess: () => {
       setLoginError("");
       setStep("confirm");
     },
@@ -43,25 +39,32 @@ export default function DeleteAccount() {
   });
 
   const deleteAccountMutation = useMutation({
-    mutationFn: () =>
-      apiRequest("/api/account/delete-with-password", {
+    mutationFn: async () => {
+      const res = await fetch("/api/account/delete-with-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      }),
-    onSuccess: () => {
-      toast({ title: "Account deleted successfully." });
-      setStep("info");
+        body: JSON.stringify({ email, password, confirmText: deleteConfirmText }),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Deletion failed");
+      }
+      return res.json();
+    },
+    onSuccess: async () => {
+      await clearAuthToken();
+      queryClient.clear();
       setEmail("");
       setPassword("");
       setDeleteConfirmText("");
       setShowDeleteDialog(false);
-      setLocation("/login");
+      window.location.replace("/delete-account/complete");
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
-        description: "Failed to delete account. Please try again.",
+        description: error.message || "Failed to delete account. Please try again.",
         variant: "destructive",
       });
     },
