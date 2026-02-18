@@ -1,0 +1,62 @@
+I need to remove case sensitivity from login + account matching across the entire app (iOS + Android + web). Right now email/user identifiers are treated as different if the user typed uppercase vs lowercase (example: Mohammed@Email.com vs mohammed@email.com). I want logins to work no matter how the user capitalizes their email, and I want all previously-registered accounts to still work even if they were originally stored with capitals.
+
+Requirements
+
+Login should be case-insensitive
+
+When a user logs in (email/username), normalize the identifier before any lookup:
+
+emailNormalized = email.trim().toLowerCase()
+
+Authentication must succeed even if the user enters different capitalization than when they originally registered.
+
+Registration should be case-insensitive
+
+Prevent duplicate accounts that differ only by case.
+
+On signup, treat the email as unique in a case-insensitive way.
+
+Existing accounts must continue working (migration)
+
+Some existing users may have stored email values with uppercase letters.
+
+We must not “break” those accounts.
+
+Add a safe migration strategy:
+
+Add a new field like email_lower (or emailNormalized) and backfill it for all existing users: lower(trim(email))
+
+Add a unique index/constraint on email_lower (case-insensitive uniqueness)
+
+Update all queries (login, password reset, account lookup, subscription sync, etc.) to use email_lower instead of raw email
+
+Keep displaying the original email format if we want, but never use it for matching.
+
+Apply everywhere
+Please audit the codebase for any place where user identity is looked up by email/username and make it case-insensitive:
+
+login
+
+signup
+
+forgot/reset password
+
+“get current user”
+
+session/token issuance
+
+RevenueCat sync endpoints (if they match users by email)
+
+any admin/user search
+
+Testing
+
+Create a test account with uppercase letters in email.
+
+Confirm login works with different casing.
+
+Confirm no duplicate account can be created with same letters different casing.
+
+Confirm password reset works case-insensitively.
+
+If the backend uses a database that supports it, we can also enforce case-insensitive uniqueness at the DB level (ex: lower(email) index, or CI collation), but regardless we must normalize in application code.

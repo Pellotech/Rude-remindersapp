@@ -172,10 +172,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/register', async (req, res) => {
     try {
       const validatedData = registerSchema.parse(req.body);
+      const normalizedEmail = validatedData.email.toLowerCase().trim();
       
-      const existingUser = await db.query.users.findFirst({
-        where: eq(users.email, validatedData.email),
-      });
+      const existingUser = await storage.getUserByEmail(normalizedEmail);
       
       if (existingUser) {
         return res.status(400).json({ message: "Email already registered" });
@@ -186,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = crypto.randomUUID();
       const newUser = await storage.upsertUser({
         id: userId,
-        email: validatedData.email,
+        email: normalizedEmail,
         passwordHash: hashedPassword,
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
@@ -224,10 +223,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/login', async (req, res) => {
     try {
       const validatedData = loginSchema.parse(req.body);
+      const normalizedEmail = validatedData.email.toLowerCase().trim();
       
-      const user = await db.query.users.findFirst({
-        where: eq(users.email, validatedData.email),
-      });
+      const user = await storage.getUserByEmail(normalizedEmail);
       
       if (!user || !user.passwordHash) {
         return res.status(401).json({ message: "Invalid email or password" });

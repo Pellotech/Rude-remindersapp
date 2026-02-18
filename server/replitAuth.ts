@@ -126,7 +126,8 @@ export async function setupAuth(app: Express) {
       },
       async (email, password, done) => {
         try {
-          const user = await storage.getUserByEmail(email);
+          const normalizedEmail = email.toLowerCase().trim();
+          const user = await storage.getUserByEmail(normalizedEmail);
           if (!user) {
             return done(null, false, { message: "Invalid email or password" });
           }
@@ -247,8 +248,10 @@ export async function setupAuth(app: Express) {
           .json({ message: "Password must be at least 6 characters" });
       }
 
+      const normalizedEmail = email.toLowerCase().trim();
+
       // Check if user already exists
-      const existingUser = await storage.getUserByEmail(email);
+      const existingUser = await storage.getUserByEmail(normalizedEmail);
       if (existingUser) {
         return res
           .status(400)
@@ -263,7 +266,7 @@ export async function setupAuth(app: Express) {
       const userId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const newUser = await storage.upsertUser({
         id: userId,
-        email,
+        email: normalizedEmail,
         firstName: firstName || null,
         lastName: lastName || null,
         profileImageUrl: null,

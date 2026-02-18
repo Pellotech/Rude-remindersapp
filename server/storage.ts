@@ -14,7 +14,7 @@ import {
   type InsertPremiumWhitelist,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, gte, lte } from "drizzle-orm";
+import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -66,12 +66,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+    const normalizedEmail = email.toLowerCase().trim();
+    const [user] = await db.select().from(users).where(sql`lower(trim(${users.email})) = ${normalizedEmail}`);
     return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
     if (userData.email) {
+      userData = { ...userData, email: userData.email.toLowerCase().trim() };
       const existingUserByEmail = await this.getUserByEmail(userData.email);
       
       if (existingUserByEmail) {
@@ -455,8 +457,9 @@ class MemoryStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
+    const normalizedEmail = email.toLowerCase().trim();
     for (const user of Array.from(this.users.values())) {
-      if (user.email === email) {
+      if (user.email?.toLowerCase().trim() === normalizedEmail) {
         return user;
       }
     }
@@ -464,9 +467,10 @@ class MemoryStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    const normalizedEmail = userData.email ? userData.email.toLowerCase().trim() : null;
     const user: User = {
       id: userData.id || `user_${Date.now()}`,
-      email: userData.email || null,
+      email: normalizedEmail,
       firstName: userData.firstName || null,
       lastName: userData.lastName || null,
       profileImageUrl: userData.profileImageUrl || null,
