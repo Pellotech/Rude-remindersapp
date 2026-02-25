@@ -77,8 +77,8 @@ export class RevenueCatService {
         ? import.meta.env.VITE_REVENUECAT_IOS_API_KEY
         : import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY;
       
-      // Use env var, or fallback to hardcoded key for iOS builds where env may not be available
-      const apiKey = envKey || (platform === 'ios' ? 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP' : null);
+      // Use env var, or fallback to hardcoded key for builds where env may not be available
+      const apiKey = envKey || (platform === 'ios' ? 'appl_EcOTAAHXxtTgOjDXhasLTEmAbPP' : platform === 'android' ? 'goog_toKBkiOYlLLEWPbPmwtiOGzmTcN' : null);
       
       if (!apiKey) {
         console.error('RevenueCat API key not configured for platform:', platform);
