@@ -1,0 +1,60 @@
+Since the Google Play Console test was successful, your backend is ready. We just need to fix the logic in your app so it stops crashing and starts talking to RevenueCat.
+
+The error Purchases must be configured before calling this function happens because your code is trying to use the SDK (like fetching prices) before it has finished setting itself up.
+
+1. The Proper Configuration Pattern
+In a Capacitor app, you need to ensure configure is called as early as possible (usually in app.component.ts or your main entry file).
+
+Copy and adapt this block:
+
+TypeScript
+
+import { Purchases } from '@revenuecat/purchases-capacitor';
+import { Capacitor } from '@capacitor/core';
+
+const setupRevenueCat = async () => {
+  // 1. Identify the platform
+  const platform = Capacitor.getPlatform();
+  
+  // 2. Select the correct API Key
+  // Note: These are the "Public SDK Keys" from RevenueCat settings
+  let apiKey = '';
+  if (platform === 'android') {
+    apiKey = 'goog_YOUR_ANDROID_SDK_KEY'; 
+  } else if (platform === 'ios') {
+    apiKey = 'appl_YOUR_IOS_SDK_KEY';
+  }
+
+  try {
+    // 3. Configure the SDK and WAIT for it to finish
+    await Purchases.configure({ apiKey });
+    console.log("RevenueCat: Initialized successfully");
+
+    // 4. ONLY NOW can you call other methods
+    const offerings = await Purchases.getOfferings();
+    console.log("Offerings loaded:", offerings);
+    
+  } catch (error) {
+    console.error("RevenueCat Setup Error:", error);
+  }
+};
+2. Common Reasons it Fails
+If you have this code but it still fails, check these three things:
+
+The "goog_" Prefix: Your Android API key must start with goog_. If you are pasting the long JSON string from the Google Cloud file here, it will fail.
+
+The Initialization Timing: If you call getOfferings() in a different component (like your Store page) before the App component has finished the configure() call, the app will crash.
+
+Missing Billing Permission: In your AndroidManifest.xml, make sure this line exists:
+<uses-permission android:name="com.android.vending.BILLING" />
+
+3. Verification
+Once you deploy this code change to your device:
+
+Open Logcat in Android Studio.
+
+Filter for the word [Purchases].
+
+You should see a log that says "Purchases instance created and configured."
+
+Would you like me to help you find the exact "Public SDK Key" in your RevenueCat dashboard to ensure you're using the right one?
