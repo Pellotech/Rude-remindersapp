@@ -1349,7 +1349,7 @@ export default function ReminderForm({
                       <div className="flex items-center">
                         <Camera className="mr-2 h-4 w-4 text-rude-red-600" />
                         Media Attachments
-                        {!hasProAccess && <Lock className="ml-2 h-3 w-3 text-[#C9A063]" />}
+                        {!hasProAccess && <span className="ml-2 inline-flex items-center gap-1 bg-[#C9A063]/15 text-[#C9A063] text-[10px] font-semibold px-2 py-0.5 rounded-full"><Lock className="h-3 w-3" />Premium</span>}
                       </div>
                       <ChevronDown className={`h-4 w-4 transition-transform ${attachmentsOpen ? 'rotate-180' : ''}`} />
                     </Button>
@@ -1431,7 +1431,7 @@ export default function ReminderForm({
                       <div className="flex items-center">
                         <Quote className="mr-2 h-4 w-4 text-rude-red-600" />
                         Motivational Quotes
-                        {!hasProAccess && <Lock className="ml-2 h-3 w-3 text-[#C9A063]" />}
+                        {!hasProAccess && <span className="ml-2 inline-flex items-center gap-1 bg-[#C9A063]/15 text-[#C9A063] text-[10px] font-semibold px-2 py-0.5 rounded-full"><Lock className="h-3 w-3" />Premium</span>}
                       </div>
                       <ChevronDown className={`h-4 w-4 transition-transform ${motivationalOpen ? 'rotate-180' : ''}`} />
                     </Button>
