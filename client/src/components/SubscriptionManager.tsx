@@ -62,18 +62,32 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     }
   };
 
+  const [pricesLoading, setPricesLoading] = useState(false);
+
   useEffect(() => {
-    if (showPlans && platform.isNative) {
+    if (platform.isNative) {
+      setPricesLoading(true);
+      console.log('RevenueCat: Loading offerings...');
       loadOfferingsSafe().then((offeringsResult) => {
-        if (!offeringsResult?.current) return;
+        console.log('RevenueCat: Offerings result:', JSON.stringify(offeringsResult?.current?.availablePackages?.map((p: any) => ({
+          id: p.identifier,
+          type: p.packageType,
+          price: p.product?.priceString
+        }))));
+        if (!offeringsResult?.current) {
+          console.warn('RevenueCat: No current offering found');
+          setPricesLoading(false);
+          return;
+        }
         const packages = offeringsResult.current.availablePackages;
         const monthly = packages.find((p: any) => p.identifier === '$rc_monthly' || p.packageType === 'MONTHLY' || p.identifier.includes('monthly'));
         const yearly = packages.find((p: any) => p.identifier === '$rc_annual' || p.packageType === 'ANNUAL' || p.identifier.includes('annual') || p.identifier.includes('yearly'));
         if (monthly?.product?.priceString) setMonthlyPrice(monthly.product.priceString);
         if (yearly?.product?.priceString) setYearlyPrice(yearly.product.priceString);
-      });
+        setPricesLoading(false);
+      }).catch(() => setPricesLoading(false));
     }
-  }, [showPlans]);
+  }, []);
 
   const handleGuestSubscribe = () => {
     toast({ title: "Sign in Required", description: "Create an account to subscribe." });
@@ -138,7 +152,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   };
 
   const handleCancelSubscription = () => {
-    toast({ title: "How to Cancel", description: "Go to Settings → Your Name → Subscriptions on your iOS device." });
+    toast({ title: "How to Cancel", description: platform.isIOS ? "Go to Settings → Your Name → Subscriptions on your iOS device." : "Go to Google Play Store → Menu → Subscriptions to manage your plan." });
   };
 
   const renderUnlockPremium = () => (
@@ -175,7 +189,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           >
             <div className="text-left">
               <div className="text-[#111827] font-semibold text-lg">Monthly</div>
-              {monthlyPrice && <div className="text-sm text-[#6B7280]">{monthlyPrice} per month</div>}
+              <div className="text-sm text-[#6B7280]">{monthlyPrice ? `${monthlyPrice} per month` : pricesLoading ? 'Loading price...' : ''}</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
@@ -191,7 +205,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
                 <span className="text-[#111827] font-semibold text-lg">Yearly</span>
                 <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              {yearlyPrice && <div className="text-sm text-[#6B7280]">{yearlyPrice} per year</div>}
+              <div className="text-sm text-[#6B7280]">{yearlyPrice ? `${yearlyPrice} per year` : pricesLoading ? 'Loading price...' : ''}</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
@@ -216,7 +230,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
         <div className="mt-4 pt-4 border-t border-[#EAEAEA]">
           <p className="text-[11px] font-semibold text-[#374151] mb-2">Subscription Terms</p>
           <p className="text-[11px] text-[#6B7280] leading-relaxed">
-            Payment will be charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage or cancel your subscription in your Apple ID account settings.
+            Payment will be charged to your {platform.isIOS ? 'Apple ID' : 'Google Play'} account at confirmation of purchase. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage or cancel your subscription in your {platform.isIOS ? 'Apple ID account settings' : 'Google Play subscriptions'}.
           </p>
           <div className="flex gap-4 mt-3 justify-center">
             <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=378d9c6b-c46e-44ed-83a2-d8770229969c')} className="text-[11px] text-[#2563EB] underline">

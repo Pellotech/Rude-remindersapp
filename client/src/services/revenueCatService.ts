@@ -85,8 +85,9 @@ export class RevenueCatService {
         return;
       }
       
+      console.log('RevenueCat: Calling configure for platform:', platform, 'with key prefix:', apiKey.substring(0, 5) + '...');
       await Purchases.configure({ apiKey });
-      console.log('RevenueCat configured for platform:', platform);
+      console.log('RevenueCat: Successfully configured for platform:', platform);
       
       revenueCatConfigured = true;
       markConfigured();
