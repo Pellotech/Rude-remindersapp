@@ -23,7 +23,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2 } from "lucide-react";
+import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -34,6 +34,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { useMobileNotifications } from "./MobileNotifications";
+import { usePaywallGate } from "@/components/PaywallGate";
+import { isFeatureDisabled } from "@/config/featureFlags";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -182,6 +184,10 @@ export default function ReminderForm({
   const { user, isGuest } = useAuth();
   const [, setLocation] = useLocation();
   const { scheduleReminder: scheduleNativeNotification, requestPermissions } = useMobileNotifications();
+
+  const hasProAccess = !isFreePlan;
+  const { gate: gateAttachments, modal: attachmentsModal } = usePaywallGate('MEDIA_ATTACHMENTS', 'Media Attachments', hasProAccess);
+  const { gate: gateQuotes, modal: quotesModal } = usePaywallGate('MOTIVATIONAL_QUOTES', 'Motivational Quotes', hasProAccess);
 
   // Get user settings for simplified interface
   const { data: userSettings } = useQuery({
@@ -1329,7 +1335,11 @@ export default function ReminderForm({
                 </Collapsible>
 
                 {/* Media Attachments */}
-                <Collapsible open={attachmentsOpen} onOpenChange={setAttachmentsOpen}>
+                {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
+                <Collapsible open={attachmentsOpen} onOpenChange={(open) => {
+                  if (open) { gateAttachments(() => setAttachmentsOpen(true)); }
+                  else { setAttachmentsOpen(false); }
+                }}>
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="outline"
@@ -1339,6 +1349,7 @@ export default function ReminderForm({
                       <div className="flex items-center">
                         <Camera className="mr-2 h-4 w-4 text-rude-red-600" />
                         Media Attachments
+                        {!hasProAccess && <Lock className="ml-2 h-3 w-3 text-[#C9A063]" />}
                       </div>
                       <ChevronDown className={`h-4 w-4 transition-transform ${attachmentsOpen ? 'rotate-180' : ''}`} />
                     </Button>
@@ -1403,9 +1414,14 @@ export default function ReminderForm({
                     )}
                   </CollapsibleContent>
                 </Collapsible>
+                )}
 
                 {/* Motivational Quotes */}
-                <Collapsible open={motivationalOpen} onOpenChange={setMotivationalOpen}>
+                {!isFeatureDisabled('MOTIVATIONAL_QUOTES') && (
+                <Collapsible open={motivationalOpen} onOpenChange={(open) => {
+                  if (open) { gateQuotes(() => setMotivationalOpen(true)); }
+                  else { setMotivationalOpen(false); }
+                }}>
                   <CollapsibleTrigger asChild>
                     <Button
                       variant="outline"
@@ -1415,6 +1431,7 @@ export default function ReminderForm({
                       <div className="flex items-center">
                         <Quote className="mr-2 h-4 w-4 text-rude-red-600" />
                         Motivational Quotes
+                        {!hasProAccess && <Lock className="ml-2 h-3 w-3 text-[#C9A063]" />}
                       </div>
                       <ChevronDown className={`h-4 w-4 transition-transform ${motivationalOpen ? 'rotate-180' : ''}`} />
                     </Button>
@@ -1460,8 +1477,12 @@ export default function ReminderForm({
 
                   </CollapsibleContent>
                 </Collapsible>
+                )}
               </>
             )}
+
+            {attachmentsModal}
+            {quotesModal}
 
             {/* Quick Reminder Settings - Show only when today is selected */}
             {!isMultiDay && scheduledForValue && (
