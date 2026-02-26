@@ -185,7 +185,8 @@ export default function ReminderForm({
   const [, setLocation] = useLocation();
   const { scheduleReminder: scheduleNativeNotification, requestPermissions } = useMobileNotifications();
 
-  const hasProAccess = !isFreePlan;
+  const hasProAccess = !isFreePlan && user?.subscriptionPlan === 'premium';
+  console.log('[FeatureGate] hasProAccess:', hasProAccess, 'isFreePlan:', isFreePlan, 'subscriptionPlan:', user?.subscriptionPlan);
   const { gate: gateAttachments, modal: attachmentsModal } = usePaywallGate('MEDIA_ATTACHMENTS', 'Media Attachments', hasProAccess);
   const { gate: gateQuotes, modal: quotesModal } = usePaywallGate('MOTIVATIONAL_QUOTES', 'Motivational Quotes', hasProAccess);
 
@@ -245,9 +246,13 @@ export default function ReminderForm({
   const platformInfo = getPlatformInfo();
   const isMobileWithCamera = platformInfo.isNative && supportsCamera();
 
-  // File upload handlers
+  // File upload handlers - gated behind premium
   const handlePhotoAttachment = () => {
-    fileInputRef.current?.click();
+    console.log('[FeatureGate] handlePhotoAttachment tapped, hasProAccess:', hasProAccess);
+    gateAttachments(() => {
+      console.log('[FeatureGate] Attachment gate PASSED, opening file picker');
+      fileInputRef.current?.click();
+    });
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -754,9 +759,13 @@ export default function ReminderForm({
     }
   };
 
-  // Handle category selection without auto-generating quotes
+  // Handle category selection - gated behind premium
   const handleCategorySelection = (categoryId: string) => {
-    setSelectedCategory(categoryId);
+    console.log('[FeatureGate] handleCategorySelection tapped, hasProAccess:', hasProAccess);
+    gateQuotes(() => {
+      console.log('[FeatureGate] Quote gate PASSED, selecting category:', categoryId);
+      setSelectedCategory(categoryId);
+    });
   };
 
   // Multi-day selection helper functions
@@ -1365,6 +1374,10 @@ export default function ReminderForm({
                         }}
                         maxFiles={isFreePlan ? 1 : 5}
                         currentCount={selectedAttachments.length}
+                        onGatedAction={(action) => {
+                          console.log('[FeatureGate] MobileCamera action gated, hasProAccess:', hasProAccess);
+                          gateAttachments(action);
+                        }}
                       />
                     ) : (
                       <>

@@ -23,9 +23,10 @@ interface MobileCameraProps {
   onPhotoCaptured: (photoUrl: string) => void;
   maxFiles?: number;
   currentCount?: number;
+  onGatedAction?: (action: () => void) => void;
 }
 
-export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }: MobileCameraProps) {
+export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0, onGatedAction }: MobileCameraProps) {
   const { toast } = useToast();
   const [isCapturing, setIsCapturing] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
@@ -405,7 +406,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         <Button
           type="button"
           variant="outline"
-          onClick={takePhoto}
+          onClick={() => {
+            console.log('[FeatureGate] Camera button tapped');
+            if (onGatedAction) {
+              onGatedAction(() => takePhoto());
+            } else {
+              takePhoto();
+            }
+          }}
           disabled={isCapturing || currentCount >= maxFiles}
           className="flex-1"
           data-testid="button-camera"
@@ -417,7 +425,14 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0 }
         <Button
           type="button"
           variant="outline"
-          onClick={pickFromGallery}
+          onClick={() => {
+            console.log('[FeatureGate] Gallery button tapped');
+            if (onGatedAction) {
+              onGatedAction(() => pickFromGallery());
+            } else {
+              pickFromGallery();
+            }
+          }}
           disabled={isCapturing || currentCount >= maxFiles}
           className="flex-1"
           data-testid="button-gallery"
