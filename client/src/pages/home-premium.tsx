@@ -459,8 +459,8 @@ export default function HomePremium() {
         <HelpMenu />
       </div>
 
-      {/* Test Notification Button (temporary for debugging) */}
-      <NotificationTest />
+      {/* Test Notification Button - dev only */}
+      {import.meta.env.DEV && <NotificationTest />}
     </div>
   );
 }

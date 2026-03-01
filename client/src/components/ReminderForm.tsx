@@ -1507,12 +1507,12 @@ export default function ReminderForm({
                 // Show ONLY if it's today
                 if (isToday) {
                   return (
-                    <div className="p-4 bg-gray-100 rounded-lg border border-gray-200">
-                      <h3 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <div className="p-4 bg-[#9334EA] rounded-lg border border-[#7C2BD4]">
+                      <h3 className="font-medium text-white mb-3 flex items-center">
                         <Clock className="mr-2 h-4 w-4" />
                         Quick Reminder Settings
                       </h3>
-                      <p className="text-sm text-gray-700 mb-3">
+                      <p className="text-sm text-purple-100 mb-3">
                         Set a reminder for later today:
                       </p>
                       <div className="grid grid-cols-4 gap-2">
@@ -1527,7 +1527,7 @@ export default function ReminderForm({
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="flex flex-col items-center p-2 h-12 bg-white hover:bg-gray-50 border-gray-300 hover:border-gray-400"
+                            className="flex flex-col items-center p-2 h-12 bg-white/20 hover:bg-white/30 border-white/30 hover:border-white/50 text-white"
                             onClick={async () => {
                               const currentMessage = form.watch("originalMessage");
                               if (!currentMessage || currentMessage.trim() === "") {
@@ -1574,10 +1574,10 @@ export default function ReminderForm({
                               });
                             }}
                           >
-                            <span className="text-sm font-semibold text-gray-700">
+                            <span className="text-sm font-semibold text-white">
                               {seconds ? '+10s' : `+${minutes}m`}
                             </span>
-                            <span className="text-xs text-gray-600">{label}</span>
+                            <span className="text-xs text-purple-100">{label}</span>
                           </Button>
                         ))}
                       </div>
