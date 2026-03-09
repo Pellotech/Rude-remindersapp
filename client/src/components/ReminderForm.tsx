@@ -234,6 +234,7 @@ export default function ReminderForm({
   const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [motivationalOpen, setMotivationalOpen] = useState(false);
+  const [quickReminderOpen, setQuickReminderOpen] = useState(false);
 
 
   // Multi-day selection state
@@ -1504,84 +1505,89 @@ export default function ReminderForm({
                 const now = new Date();
                 const isToday = scheduledDate.toDateString() === now.toDateString();
 
-                // Show ONLY if it's today
                 if (isToday) {
                   return (
-                    <div className="p-4 bg-[#9334EA] rounded-lg border border-[#7C2BD4]">
-                      <h3 className="font-medium text-white mb-3 flex items-center">
-                        <Clock className="mr-2 h-4 w-4" />
-                        Quick Reminder Settings
-                      </h3>
-                      <p className="text-sm text-purple-100 mb-3">
-                        Set a reminder for later today:
-                      </p>
-                      <div className="grid grid-cols-4 gap-2">
-                        {[
-                          { seconds: 10, label: "10 seconds" },
-                          { minutes: 5, label: "5 minutes" },
-                          { minutes: 15, label: "15 minutes" },
-                          { minutes: 30, label: "30 minutes" }
-                        ].map(({ seconds, minutes, label }) => (
-                          <Button
-                            key={seconds ? '10s' : `${minutes}m`}
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="flex flex-col items-center p-2 h-12 bg-white/20 hover:bg-white/30 border-white/30 hover:border-white/50 text-white"
-                            onClick={async () => {
-                              const currentMessage = form.watch("originalMessage");
-                              if (!currentMessage || currentMessage.trim() === "") {
+                    <Collapsible open={quickReminderOpen} onOpenChange={setQuickReminderOpen}>
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={`w-full justify-between font-medium rounded-lg px-4 py-3 ${
+                            quickReminderOpen
+                              ? "bg-[#9334EA] text-white border-[#7C2BD4] hover:bg-[#8429D6] hover:text-white"
+                              : "bg-[#C9A063] text-white border-[#B8904F] hover:bg-[#BF944F] hover:text-white"
+                          }`}
+                        >
+                          <span className="flex items-center">
+                            <Clock className="mr-2 h-4 w-4" />
+                            Quick Reminder
+                          </span>
+                          <ChevronDown className={`h-4 w-4 transition-transform ${quickReminderOpen ? "rotate-180" : ""}`} />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 p-4 bg-[#9334EA] rounded-lg border border-[#7C2BD4]">
+                        <div className="grid grid-cols-4 gap-2">
+                          {[
+                            { seconds: 10, shortLabel: "10s" },
+                            { minutes: 5, shortLabel: "5m" },
+                            { minutes: 15, shortLabel: "15m" },
+                            { minutes: 30, shortLabel: "30m" }
+                          ].map(({ seconds, minutes, shortLabel }) => (
+                            <Button
+                              key={shortLabel}
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="flex items-center justify-center p-2 h-10 bg-[#C9A063] hover:bg-[#BF944F] border-[#B8904F] hover:border-[#A8803F] text-white font-semibold text-sm rounded-lg"
+                              onClick={async () => {
+                                const currentMessage = form.watch("originalMessage");
+                                if (!currentMessage || currentMessage.trim() === "") {
+                                  toast({
+                                    title: "Message Required",
+                                    description: "Please enter what you need to be reminded about first",
+                                    variant: "destructive",
+                                  });
+                                  return;
+                                }
+
+                                const newTime = new Date();
+                                if (seconds) {
+                                  newTime.setSeconds(newTime.getSeconds() + seconds);
+                                } else if (minutes) {
+                                  newTime.setMinutes(newTime.getMinutes() + minutes);
+                                }
+                                const formattedDateTime = newTime.toISOString();
+                                form.setValue("scheduledFor", formattedDateTime);
+
+                                const quickReminderData = {
+                                  originalMessage: currentMessage,
+                                  context: form.watch("context") || "",
+                                  scheduledFor: formattedDateTime,
+                                  rudenessLevel: form.watch("rudenessLevel"),
+                                  voiceCharacter: selectedVoice,
+                                  attachments: selectedAttachments,
+                                  motivationalQuote: selectedCategory ? (await generateQuoteForSubmission(selectedCategory)) || undefined : undefined,
+                                  selectedDays: [],
+                                  isMultiDay: false,
+                                  browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
+                                  voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
+                                  emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+                                };
+
+                                createReminderMutation.mutate(quickReminderData);
+
                                 toast({
-                                  title: "Message Required",
-                                  description: "Please enter what you need to be reminded about first",
-                                  variant: "destructive",
+                                  title: "Quick Reminder Created",
+                                  description: `Reminder set for ${format(newTime, "h:mm a")} (${shortLabel} from now)`,
                                 });
-                                return;
-                              }
-
-                              const newTime = new Date();
-                              if (seconds) {
-                                newTime.setSeconds(newTime.getSeconds() + seconds);
-                              } else if (minutes) {
-                                newTime.setMinutes(newTime.getMinutes() + minutes);
-                              }
-                              // Use full ISO string for precise timing (includes seconds)
-                              const formattedDateTime = newTime.toISOString();
-                              form.setValue("scheduledFor", formattedDateTime);
-
-                              // Create quick reminder with current form data
-                              const quickReminderData = {
-                                originalMessage: currentMessage,
-                                context: form.watch("context") || "",
-                                scheduledFor: formattedDateTime,
-                                rudenessLevel: form.watch("rudenessLevel"),
-                                voiceCharacter: selectedVoice,
-                                attachments: selectedAttachments,
-                                motivationalQuote: selectedCategory ? (await generateQuoteForSubmission(selectedCategory)) || undefined : undefined,
-                                selectedDays: [],
-                                isMultiDay: false,
-                                browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
-                                voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
-                                emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
-                              };
-
-                              // Submit the reminder
-                              createReminderMutation.mutate(quickReminderData);
-
-                              toast({
-                                title: "Quick Reminder Created",
-                                description: `Reminder set for ${format(newTime, "h:mm a")} (${label} from now)`,
-                              });
-                            }}
-                          >
-                            <span className="text-sm font-semibold text-white">
-                              {seconds ? '+10s' : `+${minutes}m`}
-                            </span>
-                            <span className="text-xs text-purple-100">{label}</span>
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
+                              }}
+                            >
+                              {shortLabel}
+                            </Button>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
                   );
                 }
                 return null;
