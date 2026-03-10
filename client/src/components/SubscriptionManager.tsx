@@ -155,6 +155,14 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     toast({ title: "How to Cancel", description: platform.isIOS ? "Go to Settings → Your Name → Subscriptions on your iOS device." : "Go to Google Play Store → Menu → Subscriptions to manage your plan." });
   };
 
+  const premiumFeatures = [
+    { icon: "🎙️", text: "AI voice characters for your reminders" },
+    { icon: "📸", text: "Attach photos & videos to reminders" },
+    { icon: "💬", text: "Motivational quotes from history's greats" },
+    { icon: "🔥", text: "Adjustable rudeness levels (Gentle to Savage)" },
+    { icon: "🔔", text: "Unlimited reminders with rich notifications" },
+  ];
+
   const renderUnlockPremium = () => (
     <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border border-[#EAEAEA]">
       <div className="text-center space-y-6">
@@ -163,12 +171,34 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
         </div>
         <div>
           <h1 className="text-3xl font-bold text-[#111827] mb-2">Unlock Premium</h1>
-          <p className="font-bold text-[#C53B3B]">Please create an account before subscribing</p>
+          <p className="text-sm text-[#6B7280]">Get the full Rude Reminders experience</p>
         </div>
+        <div className="text-left space-y-3 bg-[#F9FAFB] rounded-[16px] p-4 border border-[#EAEAEA]">
+          {premiumFeatures.map((feature, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <span className="text-lg">{feature.icon}</span>
+              <span className="text-sm text-[#374151]">{feature.text}</span>
+            </div>
+          ))}
+        </div>
+        {!isAuthenticated && (
+          <p className="font-bold text-[#C53B3B] text-sm">Please create an account before subscribing</p>
+        )}
         <Button onClick={handleShowPlans} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-subscribe-now">
           <Crown className="h-5 w-5 mr-2" />
           Subscribe Now
         </Button>
+        <div className="flex gap-4 justify-center">
+          <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=378d9c6b-c46e-44ed-83a2-d8770229969c')} className="text-[11px] text-[#2563EB] underline">
+            Privacy Policy
+          </button>
+          <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=34f340a5-79a7-4f66-b4f9-81f1e9693176')} className="text-[11px] text-[#2563EB] underline">
+            Terms of Use
+          </button>
+          <button onClick={() => openLink('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')} className="text-[11px] text-[#2563EB] underline">
+            EULA
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -180,7 +210,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           <img src={logoImage} alt="Rude Reminders" className="h-14 w-auto" />
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
-        <p className="text-sm text-[#6B7280]">Both plans unlock the same Premium features. Monthly is billed every month. Yearly is billed once per year and offers better value.</p>
+        <p className="text-sm text-[#6B7280]">Unlock all premium features including AI voice characters, photo & video attachments, motivational quotes, and adjustable rudeness levels.</p>
         <div className="space-y-3">
           <button
             onClick={() => setSelectedPlan('monthly')}
@@ -217,27 +247,30 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             <p className="text-sm text-[#92400E]">Please sign into a Sandbox App Store account to test purchases.</p>
           </div>
         )}
-        <Button onClick={handlePurchase} disabled={loading} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-continue-purchase">
-          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
+        <Button onClick={handlePurchase} disabled={loading || (platform.isNative && pricesLoading)} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-continue-purchase">
+          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : pricesLoading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Loading prices...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
         <p className="text-xs text-[#6B7280]">
           {selectedPlan === 'yearly' && yearlyPrice
-            ? `${yearlyPrice}/year · ` 
+            ? `Rude Reminders Premium · ${yearlyPrice}/year · ` 
             : selectedPlan === 'monthly' && monthlyPrice
-            ? `${monthlyPrice}/month · `
-            : ''}Auto-renewable · Cancel anytime
+            ? `Rude Reminders Premium · ${monthlyPrice}/month · `
+            : 'Rude Reminders Premium · '}Auto-renewable subscription · Cancel anytime
         </p>
         <div className="mt-4 pt-4 border-t border-[#EAEAEA]">
           <p className="text-[11px] font-semibold text-[#374151] mb-2">Subscription Terms</p>
           <p className="text-[11px] text-[#6B7280] leading-relaxed">
-            Payment will be charged to your {platform.isIOS ? 'Apple ID' : 'Google Play'} account at confirmation of purchase. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage or cancel your subscription in your {platform.isIOS ? 'Apple ID account settings' : 'Google Play subscriptions'}.
+            Rude Reminders Premium is an auto-renewable subscription. Payment will be charged to your {platform.isIOS ? 'Apple ID' : 'Google Play'} account at confirmation of purchase. {selectedPlan === 'monthly' ? 'Your subscription renews monthly.' : 'Your subscription renews yearly.'} Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage or cancel your subscription at any time in your {platform.isIOS ? 'device Settings → Apple ID → Subscriptions' : 'Google Play Store → Menu → Subscriptions'}.
           </p>
-          <div className="flex gap-4 mt-3 justify-center">
+          <div className="flex gap-4 mt-3 justify-center flex-wrap">
             <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=378d9c6b-c46e-44ed-83a2-d8770229969c')} className="text-[11px] text-[#2563EB] underline">
               Privacy Policy
             </button>
             <button onClick={() => openLink('https://app.termly.io/policy-viewer/policy.html?policyUUID=34f340a5-79a7-4f66-b4f9-81f1e9693176')} className="text-[11px] text-[#2563EB] underline">
               Terms of Use
+            </button>
+            <button onClick={() => openLink('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')} className="text-[11px] text-[#2563EB] underline">
+              EULA
             </button>
           </div>
         </div>
