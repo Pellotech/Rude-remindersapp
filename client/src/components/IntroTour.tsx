@@ -38,7 +38,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   const features = [
     {
       icon: <Crown className="h-6 w-6 text-yellow-600" />,
-      title: "Unlimited Responses with Premium",
+      title: "Premium Responses for Every Situation",
       description: "Get culturally-aware, contextually relevant rude reminders. From gentle nudges to hilariously rude wake-up calls - choose your perfect motivation level!",
       badge: "Premium Feature",
       badgeColor: "bg-yellow-100 text-yellow-800"

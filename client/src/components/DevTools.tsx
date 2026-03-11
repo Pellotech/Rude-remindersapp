@@ -125,7 +125,7 @@ export function DevTools({ isVisible, onToggle }: DevToolsProps) {
                     <span>{isPremium ? '✓' : '✗'}</span>
                   </div>
                   <div className={`flex justify-between ${isPremium ? 'text-green-600' : 'text-gray-400'}`}>
-                    <span>Unlimited Reminders</span>
+                    <span>Premium Reminders</span>
                     <span>{isPremium ? '✓' : '✗'}</span>
                   </div>
                 </div>

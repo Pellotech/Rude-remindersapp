@@ -157,10 +157,10 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
 
   const premiumFeatures = [
     { icon: "🎙️", text: "AI voice characters for your reminders" },
-    { icon: "📸", text: "Attach photos & videos to reminders" },
+    { icon: "📸", text: "Attach up to 5 photos per reminder" },
     { icon: "💬", text: "Motivational quotes from history's greats" },
     { icon: "🔥", text: "Adjustable rudeness levels (Gentle to Savage)" },
-    { icon: "🔔", text: "Unlimited reminders with rich notifications" },
+    { icon: "✨", text: "A charismatic array of reminders for every life situation" },
   ];
 
   const renderUnlockPremium = () => (
@@ -210,7 +210,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           <img src={logoImage} alt="Rude Reminders" className="h-14 w-auto" />
         </div>
         <h1 className="text-2xl font-bold text-[#111827]">Choose Your Plan</h1>
-        <p className="text-sm text-[#6B7280]">Unlock all premium features including AI voice characters, photo & video attachments, motivational quotes, and adjustable rudeness levels.</p>
+        <p className="text-sm text-[#6B7280]">Unlock all premium features including AI voice characters, photo attachments, motivational quotes, and adjustable rudeness levels.</p>
         <div className="space-y-3">
           <button
             onClick={() => setSelectedPlan('monthly')}

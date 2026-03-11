@@ -363,7 +363,7 @@ export default function HomeFree() {
                     <ul className="space-y-2 text-sm text-[#6B7280]">
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Unlimited unique reminders
+                        Reminders for every life situation
                       </li>
                       <li className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-[#C53B3B]" />

@@ -318,7 +318,7 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["free", "premium", "difference", "features", "upgrade"],
         steps: [
           "Free: 5 reminders per month, basic responses, standard quotes",
-          "Premium: Unlimited reminders, AI-powered responses, personalized quotes",
+          "Premium: AI-powered responses, personalized quotes, photo attachments",
           "Premium: Multiple response variations to choose from",
           "Premium: Priority support and early access to new features"
         ],

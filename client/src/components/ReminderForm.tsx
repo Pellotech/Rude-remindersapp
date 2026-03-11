@@ -1365,7 +1365,7 @@ export default function ReminderForm({
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Add photos or videos to make your reminder more memorable</p>
+                    <p className="text-sm text-muted-foreground">Add photos to make your reminder more memorable</p>
 
                     {isMobileWithCamera ? (
                       <MobileCamera
@@ -1385,7 +1385,7 @@ export default function ReminderForm({
                         <input
                           type="file"
                           ref={fileInputRef}
-                          accept="image/*,video/*"
+                          accept="image/*"
                           multiple
                           onChange={handleFileSelect}
                           className="hidden"
@@ -1398,7 +1398,7 @@ export default function ReminderForm({
                           disabled={isFreePlan && selectedAttachments.length >= 1}
                         >
                           <Camera className="mr-2 h-4 w-4" />
-                          Add Photos/Videos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
+                          Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
                           {isFreePlan && selectedAttachments.length >= 1 && (
                             <span className="ml-2 text-xs text-amber-600">(Upgrade for more)</span>
                           )}
