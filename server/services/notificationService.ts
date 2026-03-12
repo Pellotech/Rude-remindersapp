@@ -51,9 +51,9 @@ class NotificationService {
     return { text, character };
   }
 
-  getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voice?: string } {
+  getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voiceType: string, voice?: string } {
     const settings = this.voiceCharacterMap[character] || this.voiceCharacterMap.default;
-    return { rate: settings.rate, pitch: settings.pitch };
+    return { rate: settings.rate, pitch: settings.pitch, voiceType: settings.voiceType };
   }
 
   getUnrealVoiceId(character: string): string {

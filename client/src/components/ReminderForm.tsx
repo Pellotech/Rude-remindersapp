@@ -619,7 +619,7 @@ export default function ReminderForm({
     }
   };
 
-  const useFallbackSpeech = (message: string, characterName?: string, voiceSettings?: { rate: number, pitch: number }) => {
+  const useFallbackSpeech = (message: string, characterName?: string, voiceSettings?: { rate: number, pitch: number, voiceType?: string }) => {
     if ('speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
@@ -627,6 +627,23 @@ export default function ReminderForm({
         utterance.rate = voiceSettings?.rate ?? 0.9;
         utterance.pitch = voiceSettings?.pitch ?? 1.0;
         utterance.volume = 0.8;
+
+        const selectedVoiceId = form.watch("voiceCharacter");
+        const voiceTypeMap: Record<string, string> = {
+          'default': 'female',
+          'confident-leader': 'male',
+          'british-butler': 'male'
+        };
+        const voiceType = voiceSettings?.voiceType || voiceTypeMap[selectedVoiceId] || 'female';
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(voice =>
+          voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
+          voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
+          voice.name.toLowerCase().includes('en')
+        );
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
 
         utterance.onstart = () => {
           toast({
