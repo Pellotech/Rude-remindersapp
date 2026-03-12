@@ -642,28 +642,24 @@ export default function ReminderForm({
           });
         };
 
-        utterance.onerror = (event) => {
-          console.error("Speech synthesis error:", event);
+        utterance.onerror = () => {
           toast({
-            title: "Voice Test Failed",
-            description: "Unable to play voice sample. Please try again.",
-            variant: "destructive",
+            title: `${characterName || 'Voice'} Selected`,
+            description: "Voice preview isn't available on this device, but your reminders will use this voice.",
           });
         };
 
         speechSynthesis.speak(utterance);
-      } catch (speechError) {
-        console.error("Speech synthesis error:", speechError);
+      } catch {
         toast({
-          title: "Voice Test Failed",
-          description: "Voice playback is not available right now.",
-          variant: "destructive",
+          title: `${characterName || 'Voice'} Selected`,
+          description: "Voice preview isn't available on this device, but your reminders will use this voice.",
         });
       }
     } else {
       toast({
-        title: "Voice Test",
-        description: "Voice preview is not available on this device. Your reminders will still play voice when they fire.",
+        title: `${characterName || 'Voice'} Selected`,
+        description: "Voice preview isn't available on this device, but your reminders will use this voice.",
       });
     }
   };
