@@ -41,24 +41,61 @@ class NotificationService {
     this.wss = wss;
   }
 
-  // Generate speech using browser's built-in speech synthesis (more robotic)
+  private voiceCharacterMap: Record<string, { unrealId: string, rate: number, pitch: number, voiceType: string }> = {
+    'default': { unrealId: 'Scarlett', rate: 1.0, pitch: 1.2, voiceType: 'female' },
+    'confident-leader': { unrealId: 'Will', rate: 1.1, pitch: 0.8, voiceType: 'male' },
+    'british-butler': { unrealId: 'Amy', rate: 0.85, pitch: 0.8, voiceType: 'british-male' },
+  };
+
   generateBrowserSpeech(text: string, character: string = "default"): { text: string, character: string } {
-    // Return data for client-side speech synthesis
-    return {
-      text: text,
-      character: character
-    };
+    return { text, character };
   }
 
-  // Map character names to browser speech synthesis settings
   getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voice?: string } {
-    const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
-      'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' }, // Scarlett - professional
-      'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }, // Will - executive style
-      'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'british-male' } // Gerald - British man
-    };
+    const settings = this.voiceCharacterMap[character] || this.voiceCharacterMap.default;
+    return { rate: settings.rate, pitch: settings.pitch };
+  }
 
-    return voiceSettings[character] || voiceSettings.default;
+  getUnrealVoiceId(character: string): string {
+    return (this.voiceCharacterMap[character] || this.voiceCharacterMap.default).unrealId;
+  }
+
+  async generateSpeechAudio(text: string, character: string = "default"): Promise<string | null> {
+    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
+    if (!apiKey) {
+      console.warn("UNREAL_SPEECH_API_KEY not set, cannot generate speech audio");
+      return null;
+    }
+
+    const voiceId = this.getUnrealVoiceId(character);
+    try {
+      const response = await fetch('https://api.v7.unrealspeech.com/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Text: text.substring(0, 1000),
+          VoiceId: voiceId,
+          Bitrate: '192k',
+          Speed: '0',
+          Pitch: '1',
+          TimestampType: 'sentence',
+        }),
+      });
+
+      if (!response.ok) {
+        console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      const data = await response.json();
+      return data.OutputUri || null;
+    } catch (error) {
+      console.error("Unreal Speech API call failed:", error);
+      return null;
+    }
   }
 
   async sendBrowserNotification(reminder: Reminder, user: User) {
@@ -108,6 +145,10 @@ class NotificationService {
 
       const voiceSettings = this.getBrowserVoiceSettings(reminder.voiceCharacter);
       const speechData = this.generateBrowserSpeech(reminder.rudeMessage, reminder.voiceCharacter);
+      const audioUrl = await this.generateSpeechAudio(
+        reminder.rudeMessage,
+        reminder.voiceCharacter
+      );
 
       if (this.wss) {
         this.wss.clients.forEach((client) => {
@@ -117,7 +158,8 @@ class NotificationService {
               reminder,
               speechData,
               voiceSettings,
-              voiceCharacter: reminder.voiceCharacter
+              voiceCharacter: reminder.voiceCharacter,
+              audioUrl
             }));
           }
         });

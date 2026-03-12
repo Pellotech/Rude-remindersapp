@@ -86,48 +86,67 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     };
   }, [isGuest, showNotification, queryClient, toast]);
 
-  const handleVoicePlay = () => {
+  const handleVoicePlay = async () => {
     if (!currentReminder?.rudeMessage) return;
 
     setIsPlayingVoice(true);
 
     try {
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(currentReminder.rudeMessage);
+      const { getAuthToken, getFullApiUrl } = await import('@/lib/queryClient');
+      const token = getAuthToken();
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const voices = window.speechSynthesis.getVoices();
-        const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
-          'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
-          'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
-          'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' }
-        };
-
-        const settings = voiceSettings[currentReminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
-        utterance.rate = settings.rate;
-        utterance.pitch = settings.pitch;
-
-        const preferredVoice = voices.find(voice => 
-          settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
-          settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
-          voice.name.toLowerCase().includes('en')
-        );
-
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
-        }
-
-        utterance.onend = () => setIsPlayingVoice(false);
-        utterance.onerror = () => setIsPlayingVoice(false);
-
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch (error) {
-      setIsPlayingVoice(false);
-      toast({
-        title: "Voice Error",
-        description: "Failed to play voice notification",
-        variant: "destructive",
+      const response = await fetch(getFullApiUrl('/api/voices/test'), {
+        method: 'POST',
+        headers,
+        credentials: 'include',
+        body: JSON.stringify({
+          voiceCharacter: currentReminder.voiceCharacter || 'default',
+          testMessage: currentReminder.rudeMessage,
+        }),
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.audioUrl) {
+          const audio = new Audio(data.audioUrl);
+          audio.onended = () => setIsPlayingVoice(false);
+          audio.onerror = () => {
+            setIsPlayingVoice(false);
+            playFallbackSpeech(currentReminder.rudeMessage, currentReminder.voiceCharacter || 'default');
+          };
+          await audio.play();
+          return;
+        }
+      }
+      playFallbackSpeech(currentReminder.rudeMessage, currentReminder.voiceCharacter || 'default');
+    } catch {
+      setIsPlayingVoice(false);
+      playFallbackSpeech(currentReminder.rudeMessage, currentReminder.voiceCharacter || 'default');
+    }
+  };
+
+  const playFallbackSpeech = (text: string, voiceCharacter: string) => {
+    try {
+      if (!('speechSynthesis' in window)) {
+        setIsPlayingVoice(false);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voiceSettings: Record<string, { rate: number, pitch: number }> = {
+        'default': { rate: 1.0, pitch: 1.2 },
+        'confident-leader': { rate: 1.1, pitch: 0.8 },
+        'british-butler': { rate: 0.85, pitch: 0.8 }
+      };
+      const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
+      utterance.rate = settings.rate;
+      utterance.pitch = settings.pitch;
+      utterance.onend = () => setIsPlayingVoice(false);
+      utterance.onerror = () => setIsPlayingVoice(false);
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      setIsPlayingVoice(false);
     }
   };
 

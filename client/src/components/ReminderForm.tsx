@@ -591,9 +591,9 @@ export default function ReminderForm({
       });
 
       if (response.ok) {
-        const { audioUrl } = await response.json();
-        if (audioUrl) {
-          const audio = new Audio(audioUrl);
+        const data = await response.json();
+        if (data.audioUrl) {
+          const audio = new Audio(data.audioUrl);
 
           audio.addEventListener('canplaythrough', () => {
             audio.play().then(() => {
@@ -601,23 +601,22 @@ export default function ReminderForm({
                 title: "Voice Test",
                 description: `Playing ${character.name} voice sample`,
               });
-            }).catch((playError) => {
-              console.error("Audio play error:", playError);
-              useFallbackSpeech(message, character.name);
+            }).catch(() => {
+              useFallbackSpeech(message, character.name, data.voiceSettings);
             });
           });
 
-          audio.addEventListener('error', (audioError) => {
-            console.error("Audio loading error:", audioError);
-            useFallbackSpeech(message, character.name);
+          audio.addEventListener('error', () => {
+            useFallbackSpeech(message, character.name, data.voiceSettings);
           });
 
           audio.load();
+        } else if (data.voiceSettings) {
+          useFallbackSpeech(message, character.name, data.voiceSettings);
         } else {
           useFallbackSpeech(message, character.name);
         }
       } else {
-        console.warn("Voice API failed with status:", response.status);
         useFallbackSpeech(message, character.name);
       }
     } catch (error) {
@@ -626,13 +625,13 @@ export default function ReminderForm({
     }
   };
 
-  const useFallbackSpeech = (message: string, characterName?: string) => {
+  const useFallbackSpeech = (message: string, characterName?: string, voiceSettings?: { rate: number, pitch: number }) => {
     if ('speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(message);
-        utterance.rate = 0.9;
-        utterance.pitch = 1.0;
+        utterance.rate = voiceSettings?.rate ?? 0.9;
+        utterance.pitch = voiceSettings?.pitch ?? 1.0;
         utterance.volume = 0.8;
 
         utterance.onstart = () => {

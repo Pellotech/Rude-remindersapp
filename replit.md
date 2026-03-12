@@ -100,6 +100,6 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Authentication**: OpenID Client, Passport.js, `@capacitor-community/apple-sign-in`, `jsonwebtoken`, `jwks-rsa`, `google-auth-library`
 - **Session Management**: Express Session, connect-pg-simple
 - **AI Integration**: DeepSeek API
-- **Voice Synthesis**: Unreal Speech API
+- **Voice Synthesis**: Unreal Speech API (3 voices: Scarlett/free, Will/premium, Amy/premium — generates real audio via API, falls back to browser speechSynthesis)
 - **Mobile Development**: Capacitor
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard)

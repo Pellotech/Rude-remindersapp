@@ -85,34 +85,24 @@ export default function HomePremium() {
               }
             }
 
-            // Play voice notification if enabled (premium gets all voice features)
-            if (reminder.voiceNotification && window.speechSynthesis) {
-              const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
-
-              // Apply voice character settings (premium has more options)
-              const voices = window.speechSynthesis.getVoices();
-              const voiceSettings = {
-                'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
-                'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
-                'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
-              };
-
-              const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
-              utterance.rate = settings.rate;
-              utterance.pitch = settings.pitch;
-
-              // Try to find appropriate voice
-              const preferredVoice = voices.find(voice => 
-                settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
-                settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
-                voice.name.toLowerCase().includes('en')
-              );
-
-              if (preferredVoice) {
-                utterance.voice = preferredVoice;
+            // Play voice notification if enabled
+            if (reminder.voiceNotification) {
+              const wsData = JSON.parse(event.data);
+              if (wsData.audioUrl) {
+                const audio = new Audio(wsData.audioUrl);
+                audio.play().catch(() => {});
+              } else if (window.speechSynthesis) {
+                const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+                const voiceSettings: Record<string, { rate: number, pitch: number }> = {
+                  'default': { rate: 1.0, pitch: 1.2 },
+                  'confident-leader': { rate: 1.1, pitch: 0.8 },
+                  'british-butler': { rate: 0.85, pitch: 0.8 },
+                };
+                const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
+                utterance.rate = settings.rate;
+                utterance.pitch = settings.pitch;
+                window.speechSynthesis.speak(utterance);
               }
-
-              window.speechSynthesis.speak(utterance);
             }
           }
         } catch (error) {

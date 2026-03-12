@@ -111,38 +111,53 @@ export function useMobileNotifications(): MobileNotificationService {
     };
   }, [toast]);
 
-  // Play voice using browser's speech synthesis (works when app is open)
-  const playVoiceNotification = (text: string, voiceCharacter: string) => {
+  const playVoiceNotification = async (text: string, voiceCharacter: string) => {
     try {
+      const { getAuthToken, getFullApiUrl } = await import('@/lib/queryClient');
+      const token = getAuthToken();
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(getFullApiUrl('/api/voices/test'), {
+        method: 'POST',
+        headers,
+        credentials: 'include',
+        body: JSON.stringify({ voiceCharacter, testMessage: text }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.audioUrl) {
+          const audio = new Audio(data.audioUrl);
+          audio.play().catch(() => {
+            fallbackSpeechSynthesis(text, voiceCharacter);
+          });
+          console.log(`🔊 Playing Unreal Speech audio for: ${voiceCharacter}`);
+          return;
+        }
+      }
+      fallbackSpeechSynthesis(text, voiceCharacter);
+    } catch (error) {
+      console.error('Error playing voice notification:', error);
+      fallbackSpeechSynthesis(text, voiceCharacter);
+    }
+  };
+
+  const fallbackSpeechSynthesis = (text: string, voiceCharacter: string) => {
+    try {
+      if (!('speechSynthesis' in window)) return;
       const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Voice character settings (matches backend settings)
       const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
         'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
         'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
         'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' }
       };
-
       const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
       utterance.rate = settings.rate;
       utterance.pitch = settings.pitch;
-
-      // Try to find appropriate voice
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice => 
-        settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
-        settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
-        voice.name.toLowerCase().includes('en')
-      );
-
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-
       window.speechSynthesis.speak(utterance);
-      console.log(`🔊 Playing voice notification with character: ${voiceCharacter}`);
     } catch (error) {
-      console.error('Error playing voice notification:', error);
+      console.error('Fallback speech synthesis error:', error);
     }
   };
 
