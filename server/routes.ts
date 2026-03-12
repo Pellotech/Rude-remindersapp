@@ -1051,42 +1051,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           name: "Scarlett",
           unrealId: "Scarlett",
           personality: "Professional and clear",
-          testMessage: "This is Scarlett, your professional reminder voice."
+          testMessage: "This is Scarlett, your professional reminder voice.",
+          premium: false
         },
         {
-          id: "drill-sergeant", 
-          name: "Dan (Drill Sergeant)",
-          unrealId: "Dan",
-          personality: "Tough, no-nonsense military style",
-          testMessage: "Listen up! Time to get moving and complete your mission!"
-        },
-        {
-          id: "robot",
-          name: "Will (AI Assistant)", 
+          id: "confident-leader",
+          name: "Will (Confident Leader)", 
           unrealId: "Will",
-          personality: "Robotic, systematic approach",
-          testMessage: "System notification: Your productivity levels require immediate attention."
+          personality: "Bold, executive leadership style",
+          testMessage: "Let's execute this plan efficiently and deliver results.",
+          premium: true
         },
         {
           id: "british-butler",
           name: "Gerald (British Butler)",
           unrealId: "Amy", 
           personality: "Polite but passive-aggressive",
-          testMessage: "I do beg your Pardon, but perhaps it's time you attended to your responsibilities."
-        },
-        {
-          id: "mom",
-          name: "Jane (Disappointed Mom)",
-          unrealId: "Scarlett",
-          personality: "Guilt-inducing maternal energy", 
-          testMessage: "I'm not angry, I'm just disappointed. You know how much this means to me."
-        },
-        {
-          id: "confident-leader",
-          name: "Will (Confident Leader)", 
-          unrealId: "Will",
-          personality: "Executive leadership style",
-          testMessage: "Let's execute this plan efficiently and deliver results."
+          testMessage: "I do beg your Pardon, but perhaps it's time you attended to your responsibilities.",
+          premium: true
         }
       ];
 

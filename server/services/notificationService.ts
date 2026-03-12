@@ -54,11 +54,8 @@ class NotificationService {
   getBrowserVoiceSettings(character: string): { rate: number, pitch: number, voice?: string } {
     const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
       'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' }, // Scarlett - professional
-      'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' }, // Dan - tough man
-      'robot': { rate: 0.8, pitch: 0.6, voiceType: 'robotic' }, // Will - more robotic
-      'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'british-male' }, // Gerald - British man
-      'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' }, // Jane - disappointed mom
-      'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' } // Will - executive style
+      'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }, // Will - executive style
+      'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'british-male' } // Gerald - British man
     };
 
     return voiceSettings[character] || voiceSettings.default;

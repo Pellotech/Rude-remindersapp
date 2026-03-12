@@ -52,8 +52,8 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
     },
     {
       icon: <Volume2 className="h-6 w-6 text-green-600" />,
-      title: "5 Premium Voice Characters",
-      description: "Drill Sergeant, Life Coach, Sarcastic Friend, Motivational Speaker, and more! Each voice has unique personality traits to match your mood.",
+      title: "3 Voice Characters",
+      description: "Scarlett (free), Will the Confident Leader, and Gerald the British Butler. Each voice has a unique personality to match your mood!",
       badge: "Voice Features",
       badgeColor: "bg-green-100 text-green-800"
     },

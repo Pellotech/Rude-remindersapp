@@ -138,12 +138,12 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["voice", "character", "sound", "speak", "audio"],
         steps: [
           "Tap 'Voice Character' to see options",
-          "Choose from: Default, Drill Sergeant, Robot, British Butler, Mom, or Confident Leader",
+          "Choose from: Scarlett (free), Will the Confident Leader (premium), or Gerald the British Butler (premium)",
           "Enable voice notifications in Settings",
           "When the reminder fires, it will be read aloud in that voice style"
         ],
         faqs: [
-          { question: "Do I need premium for voice characters?", answer: "All voice characters are available to all users. Premium unlocks additional AI-powered features." },
+          { question: "Do I need premium for voice characters?", answer: "Scarlett is free for all users. Will (Confident Leader) and Gerald (British Butler) require a premium subscription." },
           { question: "Why isn't the voice playing?", answer: "Check that 'Voice Notifications' is enabled in Settings and your device volume is up." }
         ]
       },

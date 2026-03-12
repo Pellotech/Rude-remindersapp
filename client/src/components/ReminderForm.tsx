@@ -97,11 +97,8 @@ const contextCategories = [
 const getVoiceIcon = (id: string) => {
   const iconMap: Record<string, any> = {
     "default": User,
-    "drill-sergeant": Zap,
-    "robot": Bot,
+    "confident-leader": Crown,
     "british-butler": Crown,
-    "mom": Heart,
-    "confident-leader": Crown
   };
   return iconMap[id] || User;
 };
@@ -1208,40 +1205,56 @@ export default function ReminderForm({
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
                     <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
-                    <FormField
-                      control={form.control}
-                      name="voiceCharacter"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a voice character" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {voiceCharacters.slice(0, isFreePlan ? 3 : 10).map((character: any) => {
-                                const IconComponent = getVoiceIcon(character.id);
-                                return (
-                                  <SelectItem key={character.id} value={character.id}>
-                                    <div className="flex items-center space-x-2">
-                                      <IconComponent className="h-4 w-4 text-rude-red-600" />
-                                      <div>
-                                        <div className="font-medium">{character.name}</div>
-                                        <div className="text-xs text-muted-foreground">{character.personality}</div>
-                                      </div>
-                                    </div>
-                                  </SelectItem>
-                                );
-                              })}
-                              {isFreePlan && voiceCharacters.length > 3 && (
-                                <div className="px-2 py-1 text-xs text-amber-600 bg-amber-50 rounded">
-                                  {voiceCharacters.length - 3} more voices available with Premium
+                    <div className="space-y-2">
+                      {voiceCharacters.map((character: any) => {
+                        const IconComponent = getVoiceIcon(character.id);
+                        const isLocked = character.premium && !hasProAccess;
+                        const isSelected = form.watch("voiceCharacter") === character.id;
+                        return (
+                          <button
+                            key={character.id}
+                            type="button"
+                            className={`w-full p-3 rounded-lg border-2 transition-all flex items-center justify-between text-left ${
+                              isSelected && !isLocked
+                                ? 'border-[#C9A063] bg-[#FDF8F0]'
+                                : isLocked
+                                ? 'border-gray-200 bg-gray-50 opacity-75'
+                                : 'border-gray-200 bg-white hover:border-gray-300'
+                            }`}
+                            onClick={() => {
+                              if (isLocked) {
+                                setLocation('/subscribe');
+                              } else {
+                                form.setValue("voiceCharacter", character.id);
+                                setSelectedVoice(character.id);
+                              }
+                            }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <IconComponent className={`h-5 w-5 ${isLocked ? 'text-gray-400' : 'text-[#C9A063]'}`} />
+                              <div>
+                                <div className={`font-medium text-sm ${isLocked ? 'text-gray-400' : 'text-gray-900'}`}>
+                                  {character.name}
                                 </div>
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
+                                <div className={`text-xs ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>
+                                  {character.personality}
+                                </div>
+                              </div>
+                            </div>
+                            {isLocked ? (
+                              <div className="flex items-center gap-1 text-xs text-amber-600">
+                                <Lock className="h-3.5 w-3.5" />
+                                <span>Premium</span>
+                              </div>
+                            ) : isSelected ? (
+                              <div className="w-5 h-5 rounded-full bg-[#C9A063] flex items-center justify-center">
+                                <span className="text-white text-xs">✓</span>
+                              </div>
+                            ) : null}
+                          </button>
+                        );
+                      })}
+                    </div>
 
                     <Button
                       type="button"

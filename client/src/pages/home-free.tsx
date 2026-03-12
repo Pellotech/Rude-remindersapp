@@ -120,11 +120,8 @@ export default function HomeFree() {
               const voices = window.speechSynthesis.getVoices();
               const voiceSettings = {
                 'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
-                'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' },
-                'robot': { rate: 0.8, pitch: 0.6, voiceType: 'male' },
-                'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
-                'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' },
-                'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }
+                'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
+                'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' }
               };
 
               const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
@@ -175,11 +172,8 @@ export default function HomeFree() {
         const voices = window.speechSynthesis.getVoices();
         const voiceSettings = {
           'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
-          'drill-sergeant': { rate: 1.3, pitch: 0.7, voiceType: 'male' },
-          'robot': { rate: 0.8, pitch: 0.6, voiceType: 'male' },
-          'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' },
-          'mom': { rate: 1.0, pitch: 1.3, voiceType: 'female' },
-          'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' }
+          'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
+          'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' }
         };
 
         const settings = voiceSettings[currentReminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
