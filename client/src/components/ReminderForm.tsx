@@ -23,7 +23,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Pencil, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
+import { PlusCircle, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -844,27 +844,13 @@ export default function ReminderForm({
 
 
   return (
-    <Card className="mt-4 bg-white border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+    <Card className="mt-4 bg-white border-2 border-[#C9A063] rounded-[24px] shadow-[var(--rr-card-shadow)] ring-2 ring-[#C53B3B] ring-offset-2">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <Button
-            type="button"
-            variant="ghost"
-            className="flex items-center text-lg font-semibold p-0 h-auto hover:bg-transparent hover:text-[#C53B3B]"
-            onClick={() => {
-              const submitButton = document.querySelector('button[type="submit"]');
-              if (submitButton) {
-                submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                submitButton.classList.add('ring-2', 'ring-[#C53B3B]', 'ring-offset-2');
-                setTimeout(() => {
-                  submitButton.classList.remove('ring-2', 'ring-[#C53B3B]', 'ring-offset-2');
-                }, 2000);
-              }
-            }}
-          >
+          <div className="flex items-center text-lg font-semibold">
             <PlusCircle className="text-[#C53B3B] mr-3" />
             Create New Reminder
-          </Button>
+          </div>
           {isSimplifiedInterface && (
             <span className="text-sm text-[#6B7280] bg-[#F9FAFB] px-2 py-1 rounded-[8px] border border-[#EAEAEA]">
               Simplified Mode
@@ -883,14 +869,10 @@ export default function ReminderForm({
                 <FormItem>
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="e.g., Finish that report, Call mom, Go to the gym"
-                        className="bg-white border-2 border-[#EAEAEA] focus:border-[#C53B3B] focus:ring-0 rounded-[14px] py-3 text-[#111827] placeholder:text-[#9CA3AF]"
-                        {...field}
-                      />
-                      <Pencil className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6B7280] h-4 w-4" />
-                    </div>
+                    <Input
+                      className="bg-white border-2 border-[#2563EB] focus:border-[#C53B3B] focus:ring-0 rounded-[14px] py-3 text-[#111827]"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

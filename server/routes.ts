@@ -562,22 +562,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const finalVoiceNotification = voiceNotification !== undefined ? voiceNotification : (user.voiceNotifications || false);
       const finalEmailNotification = emailNotification !== undefined ? emailNotification : (user.emailNotifications || false);
 
-      const { checkMonthlyReminderLimit, incrementMonthlyReminderCount } = await import('./utils/premiumCheck');
-
-      const reminderCount = (isMultiDay && selectedDays && selectedDays.length > 0) ? selectedDays.length : 1;
-      const limitCheck = await checkMonthlyReminderLimit(user.id);
-
-      if (limitCheck.currentCount + reminderCount > limitCheck.limit) {
-        return res.status(403).json({
-          error: `You've reached your ${limitCheck.limit} reminder limit for this month. Your limit resets on ${limitCheck.resetDate}.`,
-          code: 'REMINDER_LIMIT_EXCEEDED',
-          currentCount: limitCheck.currentCount,
-          limit: limitCheck.limit,
-          resetDate: limitCheck.resetDate
-        });
-      }
+      const { checkMonthlyReminderLimit, atomicIncrementAndCheck, getMonthlyResetDate } = await import('./utils/premiumCheck');
 
       if (isMultiDay && selectedDays && selectedDays.length > 0) {
+        const limitCheck = await checkMonthlyReminderLimit(user.id);
+        if (limitCheck.currentCount + selectedDays.length > limitCheck.limit) {
+          return res.status(403).json({
+            error: `You've reached your ${limitCheck.limit} reminder limit for this month. Your limit resets on ${limitCheck.resetDate}.`,
+            code: 'REMINDER_LIMIT_EXCEEDED',
+            currentCount: limitCheck.currentCount,
+            limit: limitCheck.limit,
+            resetDate: limitCheck.resetDate
+          });
+        }
+
         const createdReminders = [];
 
         for (const day of selectedDays) {
@@ -697,12 +695,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             responses: reminder.responses
           });
 
+          const dayLimitResult = await atomicIncrementAndCheck(user.id, 1);
+          if (!dayLimitResult.allowed) {
+            break;
+          }
+
           await storage.createReminder(userId, reminder);
           reminderService.scheduleReminder(reminder);
           createdReminders.push(reminder);
         }
 
-        await incrementMonthlyReminderCount(user.id, createdReminders.length);
+        if (createdReminders.length === 0) {
+          return res.status(403).json({
+            error: `You've reached your reminder limit for this month. Your limit resets on ${getMonthlyResetDate()}.`,
+            code: 'REMINDER_LIMIT_EXCEEDED'
+          });
+        }
 
         res.json({
           success: true,
@@ -825,9 +833,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           responses: reminder.responses
         });
 
-        await storage.createReminder(userId, reminder);
+        const limitResult = await atomicIncrementAndCheck(user.id, 1);
+        if (!limitResult.allowed) {
+          return res.status(403).json({
+            error: `You've reached your ${limitResult.limit} reminder limit for this month. Your limit resets on ${limitResult.resetDate}.`,
+            code: 'REMINDER_LIMIT_EXCEEDED',
+            currentCount: limitResult.newCount,
+            limit: limitResult.limit,
+            resetDate: limitResult.resetDate
+          });
+        }
 
-        await incrementMonthlyReminderCount(user.id);
+        await storage.createReminder(userId, reminder);
 
         reminderService.scheduleReminder(reminder);
 

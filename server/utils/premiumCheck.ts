@@ -1,9 +1,6 @@
 import { storage } from "../storage";
+import { pool } from "../db";
 
-/**
- * Get the current month key for tracking monthly usage
- * @returns string - Format: "YYYY-MM"
- */
 function getCurrentMonthKey(): string {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -20,27 +17,19 @@ export function getMonthlyResetDate(): string {
 
 export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExceeded: boolean, currentCount: number, limit: number, resetDate: string}> {
   try {
-    const { storage } = await import("../storage");
-    const user = await storage.getUser(userId);
-    const resetDate = getMonthlyResetDate();
-
-    if (!user) {
-      return { hasExceeded: false, currentCount: 0, limit: FREE_MONTHLY_LIMIT, resetDate };
-    }
-
     const isPremium = await isUserPremium(userId);
     const limit = isPremium ? PREMIUM_MONTHLY_LIMIT : FREE_MONTHLY_LIMIT;
-
+    const resetDate = getMonthlyResetDate();
     const currentMonth = getCurrentMonthKey();
-    const monthlyUsage: Record<string, number> = (user.monthlyReminderUsage as Record<string, number>) || {};
-    const currentMonthUsage = monthlyUsage[currentMonth] || 0;
 
-    return {
-      hasExceeded: currentMonthUsage >= limit,
-      currentCount: currentMonthUsage,
-      limit,
-      resetDate
-    };
+    const result = await pool.query(
+      `SELECT COALESCE((monthly_reminder_usage->$1)::int, 0) AS count FROM users WHERE id = $2`,
+      [currentMonth, userId]
+    );
+
+    const currentCount = result.rows.length > 0 ? result.rows[0].count : 0;
+
+    return { hasExceeded: currentCount >= limit, currentCount, limit, resetDate };
   } catch (error) {
     console.error('Error checking monthly limit:', error);
     return { hasExceeded: false, currentCount: 0, limit: FREE_MONTHLY_LIMIT, resetDate: getMonthlyResetDate() };
@@ -49,16 +38,35 @@ export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExc
 
 export { checkMonthlyReminderLimit as checkFreeUserMonthlyLimit };
 
-export async function incrementMonthlyReminderCount(userId: string, count: number = 1): Promise<void> {
+export async function atomicIncrementAndCheck(userId: string, count: number = 1): Promise<{allowed: boolean, newCount: number, limit: number, resetDate: string}> {
+  const client = await pool.connect();
   try {
-    const { storage } = await import("../storage");
-    const user = await storage.getUser(userId);
+    await client.query('BEGIN');
 
-    if (!user) return;
+    const lockResult = await client.query(
+      `SELECT monthly_reminder_usage FROM users WHERE id = $1 FOR UPDATE`,
+      [userId]
+    );
 
+    if (lockResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return { allowed: false, newCount: 0, limit: FREE_MONTHLY_LIMIT, resetDate: getMonthlyResetDate() };
+    }
+
+    const isPremium = await isUserPremium(userId);
+    const limit = isPremium ? PREMIUM_MONTHLY_LIMIT : FREE_MONTHLY_LIMIT;
+    const resetDate = getMonthlyResetDate();
     const currentMonth = getCurrentMonthKey();
-    const monthlyUsage: Record<string, number> = (user.monthlyReminderUsage as Record<string, number>) || {};
-    monthlyUsage[currentMonth] = (monthlyUsage[currentMonth] || 0) + count;
+
+    const monthlyUsage: Record<string, number> = (lockResult.rows[0].monthly_reminder_usage as Record<string, number>) || {};
+    const currentCount = monthlyUsage[currentMonth] || 0;
+
+    if (currentCount + count > limit) {
+      await client.query('ROLLBACK');
+      return { allowed: false, newCount: currentCount, limit, resetDate };
+    }
+
+    monthlyUsage[currentMonth] = currentCount + count;
 
     const now = new Date();
     const cutoffDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
@@ -70,10 +78,24 @@ export async function incrementMonthlyReminderCount(userId: string, count: numbe
       }
     });
 
-    await storage.updateUser(userId, { monthlyReminderUsage: monthlyUsage });
+    await client.query(
+      `UPDATE users SET monthly_reminder_usage = $1 WHERE id = $2`,
+      [JSON.stringify(monthlyUsage), userId]
+    );
+
+    await client.query('COMMIT');
+    return { allowed: true, newCount: currentCount + count, limit, resetDate };
   } catch (error) {
-    console.error('Error incrementing monthly reminder count:', error);
+    await client.query('ROLLBACK');
+    console.error('Error in atomicIncrementAndCheck:', error);
+    return { allowed: true, newCount: 0, limit: FREE_MONTHLY_LIMIT, resetDate: getMonthlyResetDate() };
+  } finally {
+    client.release();
   }
+}
+
+export async function incrementMonthlyReminderCount(userId: string, count: number = 1): Promise<void> {
+  await atomicIncrementAndCheck(userId, count);
 }
 
 /**
