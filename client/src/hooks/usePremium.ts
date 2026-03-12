@@ -5,7 +5,7 @@ interface PremiumStatus {
   features: {
     aiGeneratedResponses: boolean;
     aiGeneratedQuotes: boolean;
-    unlimitedReminders: boolean;
+    monthlyReminderLimit: number;
     advancedVoiceCharacters: boolean;
   };
 }
@@ -21,7 +21,7 @@ export function usePremium() {
     features: data?.features || {
       aiGeneratedResponses: false,
       aiGeneratedQuotes: false,
-      unlimitedReminders: false,
+      monthlyReminderLimit: 15,
       advancedVoiceCharacters: false
     },
     isLoading,

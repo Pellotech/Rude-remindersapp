@@ -562,7 +562,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const finalVoiceNotification = voiceNotification !== undefined ? voiceNotification : (user.voiceNotifications || false);
       const finalEmailNotification = emailNotification !== undefined ? emailNotification : (user.emailNotifications || false);
 
-      // Handle multi-day reminders
+      const { checkMonthlyReminderLimit, incrementMonthlyReminderCount } = await import('./utils/premiumCheck');
+
+      const reminderCount = (isMultiDay && selectedDays && selectedDays.length > 0) ? selectedDays.length : 1;
+      const limitCheck = await checkMonthlyReminderLimit(user.id);
+
+      if (limitCheck.currentCount + reminderCount > limitCheck.limit) {
+        return res.status(403).json({
+          error: `You've reached your ${limitCheck.limit} reminder limit for this month. Your limit resets on ${limitCheck.resetDate}.`,
+          code: 'REMINDER_LIMIT_EXCEEDED',
+          currentCount: limitCheck.currentCount,
+          limit: limitCheck.limit,
+          resetDate: limitCheck.resetDate
+        });
+      }
+
       if (isMultiDay && selectedDays && selectedDays.length > 0) {
         const createdReminders = [];
 
@@ -688,6 +702,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           createdReminders.push(reminder);
         }
 
+        await incrementMonthlyReminderCount(user.id, createdReminders.length);
+
         res.json({
           success: true,
           count: createdReminders.length,
@@ -809,22 +825,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           responses: reminder.responses
         });
 
-        // Check monthly limit for free users
-        const { checkFreeUserMonthlyLimit, incrementMonthlyReminderCount } = await import('./utils/premiumCheck');
-        const limitCheck = await checkFreeUserMonthlyLimit(user.id);
-
-        if (limitCheck.hasExceeded) {
-          return res.status(403).json({ 
-            error: `Monthly reminder limit reached. Free users can create up to ${limitCheck.limit} reminders per month. Your limit will reset next month.`,
-            code: 'MONTHLY_LIMIT_EXCEEDED',
-            currentCount: limitCheck.currentCount,
-            limit: limitCheck.limit
-          });
-        }
-
         await storage.createReminder(userId, reminder);
 
-        // Increment monthly count for free users
         await incrementMonthlyReminderCount(user.id);
 
         reminderService.scheduleReminder(reminder);
@@ -1368,7 +1370,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         features: {
           aiGeneratedResponses: isPremium,
           aiGeneratedQuotes: isPremium,
-          unlimitedReminders: isPremium,
+          monthlyReminderLimit: isPremium ? 120 : 15,
           advancedVoiceCharacters: isPremium
         }
       });

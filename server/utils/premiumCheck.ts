@@ -9,63 +9,57 @@ function getCurrentMonthKey(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
-/**
- * Check if a free user has exceeded their monthly reminder limit
- * @param userId - User ID to check
- * @returns Promise<{hasExceeded: boolean, currentCount: number, limit: number}>
- */
-export async function checkFreeUserMonthlyLimit(userId: string): Promise<{hasExceeded: boolean, currentCount: number, limit: number}> {
+const FREE_MONTHLY_LIMIT = 15;
+const PREMIUM_MONTHLY_LIMIT = 120;
+
+export function getMonthlyResetDate(): string {
+  const now = new Date();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return nextMonth.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExceeded: boolean, currentCount: number, limit: number, resetDate: string}> {
   try {
     const { storage } = await import("../storage");
     const user = await storage.getUser(userId);
-    
+    const resetDate = getMonthlyResetDate();
+
     if (!user) {
-      return { hasExceeded: false, currentCount: 0, limit: 12 };
+      return { hasExceeded: false, currentCount: 0, limit: FREE_MONTHLY_LIMIT, resetDate };
     }
 
-    // Check if user is premium (no limits for premium users)
     const isPremium = await isUserPremium(userId);
-    if (isPremium) {
-      return { hasExceeded: false, currentCount: 0, limit: -1 }; // -1 indicates unlimited
-    }
+    const limit = isPremium ? PREMIUM_MONTHLY_LIMIT : FREE_MONTHLY_LIMIT;
 
     const currentMonth = getCurrentMonthKey();
     const monthlyUsage: Record<string, number> = (user.monthlyReminderUsage as Record<string, number>) || {};
     const currentMonthUsage = monthlyUsage[currentMonth] || 0;
-    const limit = 12;
 
     return {
       hasExceeded: currentMonthUsage >= limit,
       currentCount: currentMonthUsage,
-      limit
+      limit,
+      resetDate
     };
   } catch (error) {
     console.error('Error checking monthly limit:', error);
-    return { hasExceeded: false, currentCount: 0, limit: 12 };
+    return { hasExceeded: false, currentCount: 0, limit: FREE_MONTHLY_LIMIT, resetDate: getMonthlyResetDate() };
   }
 }
 
-/**
- * Increment the monthly reminder count for a free user
- * @param userId - User ID
- * @returns Promise<void>
- */
-export async function incrementMonthlyReminderCount(userId: string): Promise<void> {
+export { checkMonthlyReminderLimit as checkFreeUserMonthlyLimit };
+
+export async function incrementMonthlyReminderCount(userId: string, count: number = 1): Promise<void> {
   try {
     const { storage } = await import("../storage");
     const user = await storage.getUser(userId);
-    
-    if (!user) return;
 
-    // Don't track for premium users
-    const isPremium = await isUserPremium(userId);
-    if (isPremium) return;
+    if (!user) return;
 
     const currentMonth = getCurrentMonthKey();
     const monthlyUsage: Record<string, number> = (user.monthlyReminderUsage as Record<string, number>) || {};
-    monthlyUsage[currentMonth] = (monthlyUsage[currentMonth] || 0) + 1;
+    monthlyUsage[currentMonth] = (monthlyUsage[currentMonth] || 0) + count;
 
-    // Clean up old months (keep only last 3 months)
     const now = new Date();
     const cutoffDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
     Object.keys(monthlyUsage).forEach(monthKey => {

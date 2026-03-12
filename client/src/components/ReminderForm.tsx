@@ -537,13 +537,7 @@ export default function ReminderForm({
         if (errorData?.code === 'REMINDER_LIMIT_EXCEEDED') {
           toast({
             title: "Reminder Limit Reached",
-            description: errorData.message,
-            variant: "destructive",
-          });
-        } else if (errorData?.code === 'MONTHLY_LIMIT_EXCEEDED') {
-          toast({
-            title: "Monthly Limit Reached",
-            description: errorData.message,
+            description: errorData.error || `You've reached your reminder limit for this month. Your limit resets on ${errorData.resetDate || 'the 1st of next month'}.`,
             variant: "destructive",
           });
         } else {

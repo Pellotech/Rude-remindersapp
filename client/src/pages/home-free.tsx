@@ -37,7 +37,7 @@ import { guestStorage } from "@/services/guestStorage";
 
 // Free plan limits
 const FREE_LIMITS = {
-  reminders: 12, // 12 reminders per month
+  reminders: 15, // 15 reminders per month
   voiceCharacters: 3,
   attachments: 1,
 };

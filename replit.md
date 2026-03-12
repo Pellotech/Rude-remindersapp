@@ -33,6 +33,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Component Architecture**: Utilizes Shadcn/ui components built on Radix UI.
 - **Dynamic AI Responses**: Integration with DeepSeek AI for personalized, context-aware motivational messages with adjustable humor levels.
 - **Subscription System**: Differentiates features for free and premium users, including AI-generated content.
+  - **Monthly Reminder Limits**: Free users: 15/month, Premium users: 120/month. Tracked in `monthlyReminderUsage` JSON field on users table. Resets automatically on the 1st of each month. Limit check runs before creation for both single and multi-day reminders (`server/utils/premiumCheck.ts`).
   - **Automatic Expiration Handling**: Daily cleanup task (runs at 2 AM) automatically downgrades expired subscriptions to free tier
   - **Premium Whitelist**: Test accounts (testuserzzwai_@rudereminders.com, appstoreuser@rudereminders.com) always receive premium features
   - **Admin Access**: Only ruderemindersinfo@gmail.com has access to the admin panel to manage whitelist
