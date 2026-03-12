@@ -205,6 +205,10 @@ export function RichReminderNotification({
             </CollapsibleContent>
           </Collapsible>
 
+          <p className="text-[11px] text-gray-400 text-right">
+            {new Date(reminder.scheduledFor).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} {' • '} {new Date(reminder.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+          </p>
+
           <div className="flex flex-col gap-2 pt-2 border-t">
             {onComplete && (
               <Button onClick={onComplete} className="w-full h-9 text-sm" data-testid="button-complete">

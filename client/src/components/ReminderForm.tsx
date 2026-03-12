@@ -574,14 +574,18 @@ export default function ReminderForm({
 
     const message = previewMessage || character.testMessage;
 
-    // Audio playback doesn't require microphone permissions
-
     try {
+      const token = await getAuthToken();
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(getFullApiUrl("/api/voices/test"), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         credentials: "include",
         body: JSON.stringify({
           voiceCharacter: selectedVoiceId,
@@ -594,7 +598,6 @@ export default function ReminderForm({
         if (audioUrl) {
           const audio = new Audio(audioUrl);
 
-          // Enhanced error handling for audio playback
           audio.addEventListener('canplaythrough', () => {
             audio.play().then(() => {
               toast({
@@ -603,159 +606,67 @@ export default function ReminderForm({
               });
             }).catch((playError) => {
               console.error("Audio play error:", playError);
-              // Try fallback
-              useFallbackSpeech(message);
+              useFallbackSpeech(message, character.name);
             });
           });
 
           audio.addEventListener('error', (audioError) => {
             console.error("Audio loading error:", audioError);
-            useFallbackSpeech(message);
+            useFallbackSpeech(message, character.name);
           });
 
-          // Load the audio
           audio.load();
         } else {
-          useFallbackSpeech(message);
+          useFallbackSpeech(message, character.name);
         }
       } else {
-        console.warn("Voice API failed, using fallback speech");
-        useFallbackSpeech(message);
+        console.warn("Voice API failed with status:", response.status);
+        useFallbackSpeech(message, character.name);
       }
     } catch (error) {
       console.error("Voice test error:", error);
-      useFallbackSpeech(message);
+      useFallbackSpeech(message, character.name);
     }
   };
 
-  const useFallbackSpeech = (message: string) => {
-    // Use browser speech with backend voice settings
+  const useFallbackSpeech = (message: string, characterName?: string) => {
     if ('speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.8;
 
-        // Fetch voice settings from backend for the selected character
-        fetch(getFullApiUrl('/api/voices/test'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            voiceCharacter: form.watch("voiceCharacter"), // Use form.watch here
-            testMessage: message
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          const utterance = new SpeechSynthesisUtterance(message);
-          const currentVoiceId = form.watch("voiceCharacter"); // Define currentVoiceId here
+        utterance.onstart = () => {
+          toast({
+            title: "Voice Test",
+            description: `Playing ${characterName || 'voice'} sample`,
+          });
+        };
 
-          if (data.voiceSettings) {
-            utterance.rate = data.voiceSettings.rate;
-            utterance.pitch = data.voiceSettings.pitch;
-            utterance.volume = 0.8;
+        utterance.onerror = (event) => {
+          console.error("Speech synthesis error:", event);
+          toast({
+            title: "Voice Test Failed",
+            description: "Unable to play voice sample. Please try again.",
+            variant: "destructive",
+          });
+        };
 
-            const voices = speechSynthesis.getVoices();
-            let selectedVoice = null;
-
-            // Map voice types from backend to browser voices
-            switch (data.voiceSettings.voiceType) {
-              case 'male':
-              case 'upbeat-male':
-                selectedVoice = voices.find(voice =>
-                  voice.name.includes('Male') ||
-                  voice.name.includes('David') ||
-                  voice.name.includes('Daniel')
-                );
-                break;
-              case 'british-male':
-                selectedVoice = voices.find(voice =>
-                  voice.lang.includes('en-GB') ||
-                  voice.name.includes('British') ||
-                  voice.name.includes('Oliver')
-                );
-                break;
-              case 'female':
-                selectedVoice = voices.find(voice =>
-                  voice.name.includes('Female') ||
-                  voice.name.includes('Samantha') ||
-                  voice.name.includes('Victoria')
-                );
-                break;
-              case 'robotic':
-                selectedVoice = voices.find(voice =>
-                  voice.name.includes('Microsoft') ||
-                  voice.name.includes('Computer')
-                );
-                break;
-            }
-
-            if (selectedVoice) {
-              utterance.voice = selectedVoice;
-            }
-          } else {
-            utterance.rate = 0.9;
-            utterance.pitch = 1.0;
-            utterance.volume = 0.8;
-          }
-
-          utterance.onstart = () => {
-            toast({
-              title: "Voice Test",
-              description: `Playing ${voiceCharacters.find((v: any) => v.id === currentVoiceId)?.name || 'voice'} sample`,
-            });
-          };
-
-          utterance.onerror = (event) => {
-            console.error("Speech synthesis error:", event);
-            toast({
-              title: "Voice Test Failed",
-              description: "Unable to play voice. Check your browser's audio settings.",
-              variant: "destructive",
-            });
-          };
-
-          speechSynthesis.speak(utterance);
-        })
-        .catch(error => {
-          console.error("Backend voice settings error:", error);
-          // Pure fallback
-          const utterance = new SpeechSynthesisUtterance(message);
-          utterance.rate = 0.9;
-          utterance.pitch = 1.0;
-          utterance.volume = 0.8;
-
-          utterance.onstart = () => {
-            toast({
-              title: "Voice Test",
-              description: "Playing voice sample",
-            });
-          };
-
-          utterance.onerror = (event) => {
-            console.error("Speech synthesis error:", event);
-            toast({
-              title: "Voice Test Failed",
-              description: "Unable to play voice. Check your browser's audio settings.",
-              variant: "destructive",
-            });
-          };
-
-          speechSynthesis.speak(utterance);
-        });
-
+        speechSynthesis.speak(utterance);
       } catch (speechError) {
         console.error("Speech synthesis error:", speechError);
         toast({
           title: "Voice Test Failed",
-          description: "Voice playback is not available in your browser.",
+          description: "Voice playback is not available right now.",
           variant: "destructive",
         });
       }
     } else {
       toast({
-        title: "Voice Test Not Available",
-        description: "Voice playback is not supported in your browser.",
-        variant: "destructive",
+        title: "Voice Test",
+        description: "Voice preview is not available on this device. Your reminders will still play voice when they fire.",
       });
     }
   };
