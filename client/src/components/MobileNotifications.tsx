@@ -79,28 +79,21 @@ export function useMobileNotifications(): MobileNotificationService {
     // Listen for notification actions when user taps notification
     LocalNotifications.addListener('localNotificationActionPerformed', 
       (notification: ActionPerformed) => {
-        console.log('Notification action performed:', notification);
+        console.log('🎙️ [TTS-DIAG] localNotificationActionPerformed fired | actionId:', notification.actionId);
+        console.log('🎙️ [TTS-DIAG] notification extra:', JSON.stringify(notification.notification.extra));
         
         // Handle notification tap - app just opened
         if (notification.actionId === 'tap') {
           const extra = notification.notification.extra;
           
-          // Dispatch event to show full-screen popup
+          // Dispatch event to show full-screen popup (NotificationProvider will auto-play voice)
           if (extra?.reminderId) {
-            console.log('📱 Dispatching notification event for full-screen popup');
+            console.log('🎙️ [TTS-DIAG] 📱 Dispatching NOTIFICATION_RECEIVED_EVENT for reminder:', extra.reminderId);
             dispatchNotificationReceivedEvent({
               reminderId: extra.reminderId,
               title: notification.notification.title || '',
               body: notification.notification.body || ''
             });
-          }
-          
-          // Play voice when user taps notification and app opens
-          if (extra?.shouldPlayVoice && extra?.voiceCharacter && window.speechSynthesis) {
-            // Small delay to ensure app is fully in foreground
-            setTimeout(() => {
-              playVoiceNotification(notification.notification.body, extra.voiceCharacter);
-            }, 500);
           }
         }
       }
@@ -109,23 +102,19 @@ export function useMobileNotifications(): MobileNotificationService {
     // Listen for notifications that are received while app is open
     LocalNotifications.addListener('localNotificationReceived', 
       (notification: LocalNotificationSchema) => {
-        console.log('Notification received while app is open:', notification);
+        console.log('🎙️ [TTS-DIAG] localNotificationReceived fired (app is open)');
+        console.log('🎙️ [TTS-DIAG] notification extra:', JSON.stringify(notification.extra));
         
         const extra = notification.extra;
         
-        // Dispatch event to show full-screen popup immediately
+        // Dispatch event to show full-screen popup (NotificationProvider will auto-play voice)
         if (extra?.reminderId) {
-          console.log('📱 Dispatching notification event for full-screen popup (app open)');
+          console.log('🎙️ [TTS-DIAG] 📱 Dispatching NOTIFICATION_RECEIVED_EVENT (app open) for reminder:', extra.reminderId);
           dispatchNotificationReceivedEvent({
             reminderId: extra.reminderId,
             title: notification.title || '',
             body: notification.body || ''
           });
-        }
-        
-        // Play voice if enabled (when app is open and notification fires)
-        if (extra?.shouldPlayVoice && extra?.voiceCharacter && window.speechSynthesis) {
-          playVoiceNotification(notification.body, extra.voiceCharacter);
         }
       }
     );

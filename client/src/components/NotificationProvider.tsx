@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import { useState, useEffect, useRef, createContext, useContext, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { NOTIFICATION_RECEIVED_EVENT, NotificationReceivedDetail } from "@/components/MobileNotifications";
@@ -50,6 +50,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const { isGuest, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const autoPlayedRef = useRef<string | null>(null);
 
   const showNotification = useCallback((reminder: Reminder) => {
     console.log('📱 Global: Showing full-screen popup for reminder:', reminder.title);
@@ -110,8 +111,30 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     };
   }, [isGuest, showNotification, queryClient, toast]);
 
+  useEffect(() => {
+    if (showRichNotification && currentReminder && currentReminder.voiceNotification && currentReminder.rudeMessage) {
+      if (autoPlayedRef.current === currentReminder.id) {
+        console.log(`🎙️ [TTS-DIAG] Auto-play skipped — already played for reminder ${currentReminder.id}`);
+        return;
+      }
+      console.log(`🎙️ [TTS-DIAG] Auto-play triggered for reminder "${currentReminder.title}" | character="${currentReminder.voiceCharacter}" | id=${currentReminder.id}`);
+      autoPlayedRef.current = currentReminder.id;
+      const timer = setTimeout(() => {
+        handleVoicePlay();
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+    if (!showRichNotification) {
+      autoPlayedRef.current = null;
+    }
+  }, [showRichNotification, currentReminder]);
+
   const handleVoicePlay = async () => {
-    if (!currentReminder?.rudeMessage) return;
+    console.log(`🎙️ [TTS-DIAG] NotificationProvider.handleVoicePlay called | reminder="${currentReminder?.title}" | character="${currentReminder?.voiceCharacter}" | hasMessage=${!!currentReminder?.rudeMessage}`);
+    if (!currentReminder?.rudeMessage) {
+      console.warn(`🎙️ [TTS-DIAG] handleVoicePlay aborted — no rudeMessage`);
+      return;
+    }
 
     setIsPlayingVoice(true);
 
