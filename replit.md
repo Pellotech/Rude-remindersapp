@@ -101,6 +101,6 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
 - **Authentication**: OpenID Client, Passport.js, `@capacitor-community/apple-sign-in`, `jsonwebtoken`, `jwks-rsa`, `google-auth-library`
 - **Session Management**: Express Session, connect-pg-simple
 - **AI Integration**: DeepSeek API
-- **Voice Synthesis**: Unreal Speech API (4 voices: Scarlett/free, Will/premium, Gerald-Dan/premium, Karen-Liv/premium — generates real audio via API, falls back to browser speechSynthesis with male/female voice selection). Gerald uses Dan (deep male) with robotic settings (rate=0.7, pitch=0.2, british-male). Karen uses nagging settings (rate=1.2, pitch=1.3, female). Voice text reads from reminder.responses (variation lines) joined with " ... ", falling back to rudeMessage.
+- **Voice Synthesis**: Browser speechSynthesis (primary — Unreal Speech API commented out but preserved for future re-enable). 4 voice characters with rate/pitch settings: Scarlett(0.85/0.9 female, free), Will(0.9/0.6 male, premium), Gerald(0.7/0.2 british-male, premium), Karen(1.2/1.3 female, premium). Voice text reads max 2 items from reminder.responses via `.slice(0, 2).join(' ... ')`, falling back to rudeMessage.
 - **Mobile Development**: Capacitor
 - **Subscription Management**: RevenueCat SDK (mobile), RevenueCat Web SDK (web dashboard)

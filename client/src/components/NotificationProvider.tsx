@@ -138,48 +138,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     setIsPlayingVoice(true);
 
-    try {
-      const { getAuthToken, getFullApiUrl } = await import('@/lib/queryClient');
-      const token = getAuthToken();
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+    const variations = currentReminder.responses && currentReminder.responses.length > 0
+      ? currentReminder.responses.slice(0, 2)
+      : [currentReminder.rudeMessage];
+    const fullText = variations.join(' ... ');
 
-      const variations = currentReminder.responses && currentReminder.responses.length > 0
-        ? currentReminder.responses
-        : [currentReminder.rudeMessage];
-      const fullText = variations.join(' ... ');
-
-      const response = await fetch(getFullApiUrl('/api/voices/test'), {
-        method: 'POST',
-        headers,
-        credentials: 'include',
-        body: JSON.stringify({
-          voiceCharacter: currentReminder.voiceCharacter || 'default',
-          testMessage: fullText,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.audioUrl) {
-          const audio = new Audio(data.audioUrl);
-          audio.onended = () => setIsPlayingVoice(false);
-          audio.onerror = () => {
-            setIsPlayingVoice(false);
-            playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
-          };
-          await audio.play();
-          return;
-        }
-      }
-      playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
-    } catch {
-      setIsPlayingVoice(false);
-      const fallbackVariations = currentReminder.responses && currentReminder.responses.length > 0
-        ? currentReminder.responses
-        : [currentReminder.rudeMessage];
-      playFallbackSpeech(fallbackVariations.join(' ... '), currentReminder.voiceCharacter || 'default');
-    }
+    playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
   };
 
   const playFallbackSpeech = (text: string, voiceCharacter: string) => {

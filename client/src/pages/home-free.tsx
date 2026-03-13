@@ -131,14 +131,9 @@ export default function HomeFree() {
             // Play voice notification if enabled
             if (reminder.voiceNotification) {
               console.log(`🎙️ [TTS-DIAG] home-free WS voice triggered | character="${reminder.voiceCharacter}" | speechSynthesis available: ${'speechSynthesis' in window}`);
-              const wsData = JSON.parse(event.data);
-              if (wsData.audioUrl) {
-                console.log(`🎙️ [TTS-DIAG] home-free WS: Playing Unreal Speech audio URL`);
-                const audio = new Audio(wsData.audioUrl);
-                audio.play().catch((err) => { console.error(`🎙️ [TTS-DIAG] ❌ home-free WS audio.play() failed:`, err); });
-              } else if (window.speechSynthesis) {
+              if (window.speechSynthesis) {
                 const voiceText = reminder.responses && reminder.responses.length > 0
-                  ? reminder.responses.join(' ... ')
+                  ? reminder.responses.slice(0, 2).join(' ... ')
                   : reminder.rudeMessage;
                 const utterance = new SpeechSynthesisUtterance(voiceText);
                 const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
@@ -162,7 +157,7 @@ export default function HomeFree() {
                 window.speechSynthesis.speak(utterance);
                 console.log(`🎙️ [TTS-DIAG] home-free WS: speechSynthesis.speak() called`);
               } else {
-                console.error(`🎙️ [TTS-DIAG] ❌ home-free WS: speechSynthesis NOT available, no audio URL either`);
+                console.error(`🎙️ [TTS-DIAG] ❌ home-free WS: speechSynthesis NOT available`);
               }
             }
           }

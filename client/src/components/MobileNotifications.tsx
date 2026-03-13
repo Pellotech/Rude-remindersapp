@@ -125,35 +125,8 @@ export function useMobileNotifications(): MobileNotificationService {
   }, [toast]);
 
   const playVoiceNotification = async (text: string, voiceCharacter: string) => {
-    try {
-      const { getAuthToken, getFullApiUrl } = await import('@/lib/queryClient');
-      const token = getAuthToken();
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-
-      const response = await fetch(getFullApiUrl('/api/voices/test'), {
-        method: 'POST',
-        headers,
-        credentials: 'include',
-        body: JSON.stringify({ voiceCharacter, testMessage: text }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.audioUrl) {
-          const audio = new Audio(data.audioUrl);
-          audio.play().catch(() => {
-            fallbackSpeechSynthesis(text, voiceCharacter);
-          });
-          console.log(`🔊 Playing Unreal Speech audio for: ${voiceCharacter}`);
-          return;
-        }
-      }
-      fallbackSpeechSynthesis(text, voiceCharacter);
-    } catch (error) {
-      console.error('Error playing voice notification:', error);
-      fallbackSpeechSynthesis(text, voiceCharacter);
-    }
+    console.log(`🔊 Playing browser speechSynthesis for: ${voiceCharacter}`);
+    fallbackSpeechSynthesis(text, voiceCharacter);
   };
 
   const fallbackSpeechSynthesis = (text: string, voiceCharacter: string) => {

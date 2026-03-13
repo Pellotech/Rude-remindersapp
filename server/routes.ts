@@ -1116,15 +1116,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const message = testMessage || "This is a test of your selected voice character.";
-      const audioUrl = await notificationService.generateSpeechAudio(message, voiceCharacter);
-
-      if (audioUrl) {
-        res.json({ audioUrl });
-      } else {
-        const voiceSettings = notificationService.getBrowserVoiceSettings(voiceCharacter);
-        const speechData = notificationService.generateBrowserSpeech(message, voiceCharacter);
-        res.json({ speechData, voiceSettings, message, useBrowserSpeech: true });
-      }
+      const voiceSettings = notificationService.getBrowserVoiceSettings(voiceCharacter);
+      const speechData = notificationService.generateBrowserSpeech(message, voiceCharacter);
+      res.json({ speechData, voiceSettings, message, useBrowserSpeech: true });
     } catch (error) {
       console.error("Error testing voice:", error);
       res.status(500).json({ message: "Failed to test voice" });

@@ -61,42 +61,46 @@ class NotificationService {
     return (this.voiceCharacterMap[character] || this.voiceCharacterMap.default).unrealId;
   }
 
-  async generateSpeechAudio(text: string, character: string = "default"): Promise<string | null> {
-    const apiKey = process.env.UNREAL_SPEECH_API_KEY;
-    if (!apiKey) {
-      console.warn("UNREAL_SPEECH_API_KEY not set, cannot generate speech audio");
-      return null;
-    }
-
-    const voiceId = this.getUnrealVoiceId(character);
-    try {
-      const response = await fetch('https://api.v7.unrealspeech.com/speech', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Text: text.substring(0, 1000),
-          VoiceId: voiceId,
-          Bitrate: '192k',
-          Speed: '0',
-          Pitch: '1',
-          TimestampType: 'sentence',
-        }),
-      });
-
-      if (!response.ok) {
-        console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
-        return null;
-      }
-
-      const data = await response.json();
-      return data.OutputUri || null;
-    } catch (error) {
-      console.error("Unreal Speech API call failed:", error);
-      return null;
-    }
+  // COMMENTED OUT: Unreal Speech API — switched to browser speechSynthesis to save API costs
+  // async generateSpeechAudio(text: string, character: string = "default"): Promise<string | null> {
+  //   const apiKey = process.env.UNREAL_SPEECH_API_KEY;
+  //   if (!apiKey) {
+  //     console.warn("UNREAL_SPEECH_API_KEY not set, cannot generate speech audio");
+  //     return null;
+  //   }
+  //
+  //   const voiceId = this.getUnrealVoiceId(character);
+  //   try {
+  //     const response = await fetch('https://api.v7.unrealspeech.com/speech', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Authorization': `Bearer ${apiKey}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         Text: text.substring(0, 1000),
+  //         VoiceId: voiceId,
+  //         Bitrate: '192k',
+  //         Speed: '0',
+  //         Pitch: '1',
+  //         TimestampType: 'sentence',
+  //       }),
+  //     });
+  //
+  //     if (!response.ok) {
+  //       console.error(`Unreal Speech API error: ${response.status} ${response.statusText}`);
+  //       return null;
+  //     }
+  //
+  //     const data = await response.json();
+  //     return data.OutputUri || null;
+  //   } catch (error) {
+  //     console.error("Unreal Speech API call failed:", error);
+  //     return null;
+  //   }
+  // }
+  async generateSpeechAudio(_text: string, _character: string = "default"): Promise<string | null> {
+    return null;
   }
 
   async sendBrowserNotification(reminder: Reminder, user: User) {
@@ -146,13 +150,9 @@ class NotificationService {
 
       const voiceSettings = this.getBrowserVoiceSettings(reminder.voiceCharacter);
       const voiceText = reminder.responses && reminder.responses.length > 0
-        ? reminder.responses.join(' ... ')
+        ? reminder.responses.slice(0, 2).join(' ... ')
         : reminder.rudeMessage;
       const speechData = this.generateBrowserSpeech(voiceText, reminder.voiceCharacter);
-      const audioUrl = await this.generateSpeechAudio(
-        voiceText,
-        reminder.voiceCharacter
-      );
 
       if (this.wss) {
         this.wss.clients.forEach((client) => {
@@ -162,8 +162,7 @@ class NotificationService {
               reminder,
               speechData,
               voiceSettings,
-              voiceCharacter: reminder.voiceCharacter,
-              audioUrl
+              voiceCharacter: reminder.voiceCharacter
             }));
           }
         });
