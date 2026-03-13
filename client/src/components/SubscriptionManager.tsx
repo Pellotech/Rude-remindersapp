@@ -295,7 +295,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
         <div className="bg-[#F9FAFB] rounded-[16px] p-4 space-y-3 border border-[#EAEAEA]">
           <div className="flex items-center gap-3">
             <span className="text-lg">💳</span>
-            <span className="text-[#111827]">{user?.subscriptionPlan === 'yearly' ? '$59.99 per year' : '$6.99 per month'}</span>
+            <span className="text-[#111827]">{user?.subscriptionPlan === 'yearly' ? 'Yearly Plan' : 'Monthly Plan'}</span>
           </div>
           {user?.subscriptionEndsAt && (
             <div className="flex items-center gap-3">
