@@ -218,8 +218,8 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             data-testid="plan-monthly"
           >
             <div className="text-left">
-              <div className="text-[#111827] font-semibold text-lg">Monthly</div>
-              <div className="text-sm text-[#6B7280]">{monthlyPrice ? `${monthlyPrice} per month` : pricesLoading ? 'Loading price...' : ''}</div>
+              <div className="text-[#111827] font-semibold text-lg">Rude Reminders Pro — Monthly</div>
+              <div className="text-sm text-[#6B7280]">{monthlyPrice ? `${monthlyPrice} · Billed monthly, cancel anytime` : pricesLoading ? 'Loading price...' : 'Billed monthly, cancel anytime'}</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'monthly' && <Check className="h-4 w-4 text-white" />}
@@ -232,10 +232,10 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           >
             <div className="text-left">
               <div className="flex items-center gap-2">
-                <span className="text-[#111827] font-semibold text-lg">Yearly</span>
+                <span className="text-[#111827] font-semibold text-lg">Rude Reminders Pro — Yearly</span>
                 <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">Best Value</span>
               </div>
-              <div className="text-sm text-[#6B7280]">{yearlyPrice ? `${yearlyPrice} per year` : pricesLoading ? 'Loading price...' : ''}</div>
+              <div className="text-sm text-[#6B7280]">{yearlyPrice ? `${yearlyPrice} · Billed yearly, cancel anytime` : pricesLoading ? 'Loading price...' : 'Billed yearly, cancel anytime'}</div>
             </div>
             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
               {selectedPlan === 'yearly' && <Check className="h-4 w-4 text-white" />}
