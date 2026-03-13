@@ -110,7 +110,10 @@ export default function HomePremium() {
                 const audio = new Audio(wsData.audioUrl);
                 audio.play().catch((err) => { console.error(`🎙️ [TTS-DIAG] ❌ home-premium WS audio.play() failed:`, err); });
               } else if (window.speechSynthesis) {
-                const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
+                const voiceText = reminder.responses && reminder.responses.length > 0
+                  ? reminder.responses.join(' ... ')
+                  : reminder.rudeMessage;
+                const utterance = new SpeechSynthesisUtterance(voiceText);
                 const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
                   'default': { rate: 0.85, pitch: 0.9, voiceType: 'female' },
                   'confident-leader': { rate: 0.9, pitch: 0.6, voiceType: 'male' },
@@ -162,7 +165,10 @@ export default function HomePremium() {
     try {
       if ('speechSynthesis' in window) {
         console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
-        const utterance = new SpeechSynthesisUtterance(currentReminder.rudeMessage);
+        const voiceText = currentReminder.responses && currentReminder.responses.length > 0
+          ? currentReminder.responses.join(' ... ')
+          : currentReminder.rudeMessage;
+        const utterance = new SpeechSynthesisUtterance(voiceText);
 
         // Apply voice character settings (premium has more options)
         const voices = window.speechSynthesis.getVoices();

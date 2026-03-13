@@ -1084,7 +1084,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         {
           id: "british-butler",
           name: "Gerald (British Butler)",
-          unrealId: "Amy", 
+          unrealId: "Dan", 
           personality: "Polite but passive-aggressive",
           testMessage: "I do beg your Pardon, but perhaps it's time you attended to your responsibilities.",
           premium: true

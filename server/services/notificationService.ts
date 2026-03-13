@@ -44,7 +44,7 @@ class NotificationService {
   private voiceCharacterMap: Record<string, { unrealId: string, rate: number, pitch: number, voiceType: string }> = {
     'default': { unrealId: 'Scarlett', rate: 0.85, pitch: 0.9, voiceType: 'female' },
     'confident-leader': { unrealId: 'Will', rate: 0.9, pitch: 0.6, voiceType: 'male' },
-    'british-butler': { unrealId: 'Amy', rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
+    'british-butler': { unrealId: 'Dan', rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
     'karen-nag': { unrealId: 'Liv', rate: 1.2, pitch: 1.3, voiceType: 'female' },
   };
 
@@ -145,9 +145,12 @@ class NotificationService {
       if (!reminder.voiceCharacter) return;
 
       const voiceSettings = this.getBrowserVoiceSettings(reminder.voiceCharacter);
-      const speechData = this.generateBrowserSpeech(reminder.rudeMessage, reminder.voiceCharacter);
+      const voiceText = reminder.responses && reminder.responses.length > 0
+        ? reminder.responses.join(' ... ')
+        : reminder.rudeMessage;
+      const speechData = this.generateBrowserSpeech(voiceText, reminder.voiceCharacter);
       const audioUrl = await this.generateSpeechAudio(
-        reminder.rudeMessage,
+        voiceText,
         reminder.voiceCharacter
       );
 
