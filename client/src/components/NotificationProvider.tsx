@@ -9,19 +9,27 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
+  console.log(`🎙️ [TTS-DIAG] findPreferredVoice called | voiceType="${voiceType}" | available voices: ${voices.length}`);
+  if (voices.length > 0) {
+    console.log(`🎙️ [TTS-DIAG] Voice list:`, voices.map(v => `${v.name} (${v.lang})`).join(', '));
+  } else {
+    console.warn(`🎙️ [TTS-DIAG] ⚠️ NO VOICES available from getVoices()`);
+  }
+  let result: SpeechSynthesisVoice | undefined;
   if (voiceType === 'british-male') {
-    return voices.find(v => v.name.includes('Google UK English Male')) ||
+    result = voices.find(v => v.name.includes('Google UK English Male')) ||
       voices.find(v => v.lang.includes('en-GB') && (v.name.toLowerCase().includes('male') || v.name.includes('Oliver') || v.name.includes('Arthur'))) ||
       voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man'));
-  }
-  if (voiceType === 'male') {
-    return voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
-  }
-  if (voiceType === 'female') {
-    return voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
+  } else if (voiceType === 'male') {
+    result = voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
+  } else if (voiceType === 'female') {
+    result = voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
       voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('Samantha') || v.name.includes('Victoria'));
+  } else {
+    result = voices.find(v => v.lang.includes('en'));
   }
-  return voices.find(v => v.lang.includes('en'));
+  console.log(`🎙️ [TTS-DIAG] Selected voice: ${result ? `${result.name} (${result.lang})` : 'NONE - using default'}`);
+  return result;
 }
 
 interface NotificationContextType {
@@ -144,11 +152,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   };
 
   const playFallbackSpeech = (text: string, voiceCharacter: string) => {
+    console.log(`🎙️ [TTS-DIAG] NotificationProvider.playFallbackSpeech called | character="${voiceCharacter}" | speechSynthesis in window: ${'speechSynthesis' in window}`);
     try {
       if (!('speechSynthesis' in window)) {
+        console.error(`🎙️ [TTS-DIAG] ❌ speechSynthesis NOT available in this WebView/browser`);
         setIsPlayingVoice(false);
         return;
       }
+      console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
       const utterance = new SpeechSynthesisUtterance(text);
       const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
         'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
@@ -159,14 +170,17 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
       utterance.rate = settings.rate;
       utterance.pitch = settings.pitch;
+      console.log(`🎙️ [TTS-DIAG] NotificationProvider settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
       const voices = window.speechSynthesis.getVoices();
       const preferredVoice = findPreferredVoice(voices, settings.voiceType);
       if (preferredVoice) {
         utterance.voice = preferredVoice;
       }
-      utterance.onend = () => setIsPlayingVoice(false);
-      utterance.onerror = () => setIsPlayingVoice(false);
+      utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ NotificationProvider utterance STARTED speaking`);
+      utterance.onend = () => { console.log(`🎙️ [TTS-DIAG] ✅ NotificationProvider utterance ENDED`); setIsPlayingVoice(false); };
+      utterance.onerror = (e) => { console.error(`🎙️ [TTS-DIAG] ❌ NotificationProvider utterance ERROR:`, e.error, e); setIsPlayingVoice(false); };
       window.speechSynthesis.speak(utterance);
+      console.log(`🎙️ [TTS-DIAG] NotificationProvider: speechSynthesis.speak() called`);
     } catch {
       setIsPlayingVoice(false);
     }

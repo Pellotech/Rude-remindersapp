@@ -94,19 +94,27 @@ const contextCategories = [
 ];
 
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
+  console.log(`🎙️ [TTS-DIAG] findPreferredVoice called | voiceType="${voiceType}" | available voices: ${voices.length}`);
+  if (voices.length > 0) {
+    console.log(`🎙️ [TTS-DIAG] Voice list:`, voices.map(v => `${v.name} (${v.lang})`).join(', '));
+  } else {
+    console.warn(`🎙️ [TTS-DIAG] ⚠️ NO VOICES available from getVoices()`);
+  }
+  let result: SpeechSynthesisVoice | undefined;
   if (voiceType === 'british-male') {
-    return voices.find(v => v.name.includes('Google UK English Male')) ||
+    result = voices.find(v => v.name.includes('Google UK English Male')) ||
       voices.find(v => v.lang.includes('en-GB') && (v.name.toLowerCase().includes('male') || v.name.includes('Oliver') || v.name.includes('Arthur'))) ||
       voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man'));
-  }
-  if (voiceType === 'male') {
-    return voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
-  }
-  if (voiceType === 'female') {
-    return voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
+  } else if (voiceType === 'male') {
+    result = voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
+  } else if (voiceType === 'female') {
+    result = voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
       voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('Samantha') || v.name.includes('Victoria'));
+  } else {
+    result = voices.find(v => v.lang.includes('en'));
   }
-  return voices.find(v => v.lang.includes('en'));
+  console.log(`🎙️ [TTS-DIAG] Selected voice: ${result ? `${result.name} (${result.lang})` : 'NONE - using default'}`);
+  return result;
 }
 
 // Voice character icon mapping
@@ -637,6 +645,7 @@ export default function ReminderForm({
   };
 
   const useFallbackSpeech = (message: string, characterName?: string, voiceSettings?: { rate: number, pitch: number, voiceType?: string }) => {
+    console.log(`🎙️ [TTS-DIAG] ReminderForm.useFallbackSpeech called | character="${characterName}" | speechSynthesis in window: ${'speechSynthesis' in window}`);
     if ('speechSynthesis' in window) {
       try {
         speechSynthesis.cancel();
@@ -653,6 +662,7 @@ export default function ReminderForm({
           'karen-nag': 'female'
         };
         const voiceType = voiceSettings?.voiceType || voiceTypeMap[selectedVoiceId] || 'female';
+        console.log(`🎙️ [TTS-DIAG] ReminderForm settings: rate=${utterance.rate}, pitch=${utterance.pitch}, voiceType="${voiceType}", selectedVoiceId="${selectedVoiceId}"`);
         const voices = window.speechSynthesis.getVoices();
         const preferredVoice = findPreferredVoice(voices, voiceType);
         if (preferredVoice) {
@@ -666,7 +676,10 @@ export default function ReminderForm({
           });
         };
 
-        utterance.onerror = () => {
+        utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ ReminderForm utterance STARTED speaking`);
+        utterance.onend = () => console.log(`🎙️ [TTS-DIAG] ✅ ReminderForm utterance ENDED`);
+        utterance.onerror = (e) => {
+          console.error(`🎙️ [TTS-DIAG] ❌ ReminderForm utterance ERROR:`, e.error, e);
           toast({
             title: `${characterName || 'Voice'} Selected`,
             description: "Voice preview isn't available on this device, but your reminders will use this voice.",
@@ -674,6 +687,7 @@ export default function ReminderForm({
         };
 
         speechSynthesis.speak(utterance);
+        console.log(`🎙️ [TTS-DIAG] ReminderForm: speechSynthesis.speak() called`);
       } catch {
         toast({
           title: `${characterName || 'Voice'} Selected`,

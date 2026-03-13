@@ -130,10 +130,12 @@ export default function HomeFree() {
 
             // Play voice notification if enabled
             if (reminder.voiceNotification) {
+              console.log(`🎙️ [TTS-DIAG] home-free WS voice triggered | character="${reminder.voiceCharacter}" | speechSynthesis available: ${'speechSynthesis' in window}`);
               const wsData = JSON.parse(event.data);
               if (wsData.audioUrl) {
+                console.log(`🎙️ [TTS-DIAG] home-free WS: Playing Unreal Speech audio URL`);
                 const audio = new Audio(wsData.audioUrl);
-                audio.play().catch(() => {});
+                audio.play().catch((err) => { console.error(`🎙️ [TTS-DIAG] ❌ home-free WS audio.play() failed:`, err); });
               } else if (window.speechSynthesis) {
                 const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage);
                 const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
@@ -145,12 +147,19 @@ export default function HomeFree() {
                 const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
                 utterance.rate = settings.rate;
                 utterance.pitch = settings.pitch;
+                console.log(`🎙️ [TTS-DIAG] home-free WS settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
                 const voices = window.speechSynthesis.getVoices();
                 const preferredVoice = findPreferredVoice(voices, settings.voiceType);
                 if (preferredVoice) {
                   utterance.voice = preferredVoice;
                 }
+                utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ home-free WS utterance STARTED`);
+                utterance.onend = () => console.log(`🎙️ [TTS-DIAG] ✅ home-free WS utterance ENDED`);
+                utterance.onerror = (e) => console.error(`🎙️ [TTS-DIAG] ❌ home-free WS utterance ERROR:`, e.error, e);
                 window.speechSynthesis.speak(utterance);
+                console.log(`🎙️ [TTS-DIAG] home-free WS: speechSynthesis.speak() called`);
+              } else {
+                console.error(`🎙️ [TTS-DIAG] ❌ home-free WS: speechSynthesis NOT available, no audio URL either`);
               }
             }
           }
@@ -175,9 +184,11 @@ export default function HomeFree() {
     if (!currentReminder?.rudeMessage) return;
 
     setIsPlayingVoice(true);
+    console.log(`🎙️ [TTS-DIAG] home-free.handleVoicePlay called | character="${currentReminder.voiceCharacter}" | speechSynthesis in window: ${'speechSynthesis' in window}`);
 
     try {
       if ('speechSynthesis' in window) {
+        console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
         const utterance = new SpeechSynthesisUtterance(currentReminder.rudeMessage);
 
         // Apply voice character settings
@@ -192,6 +203,7 @@ export default function HomeFree() {
         const settings = voiceSettings[currentReminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
         utterance.rate = settings.rate;
         utterance.pitch = settings.pitch;
+        console.log(`🎙️ [TTS-DIAG] home-free.handleVoicePlay settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
 
         const preferredVoice = findPreferredVoice(voices, settings.voiceType);
 
@@ -199,10 +211,12 @@ export default function HomeFree() {
           utterance.voice = preferredVoice;
         }
 
-        utterance.onend = () => setIsPlayingVoice(false);
-        utterance.onerror = () => setIsPlayingVoice(false);
+        utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ home-free.handleVoicePlay utterance STARTED`);
+        utterance.onend = () => { console.log(`🎙️ [TTS-DIAG] ✅ home-free.handleVoicePlay utterance ENDED`); setIsPlayingVoice(false); };
+        utterance.onerror = (e) => { console.error(`🎙️ [TTS-DIAG] ❌ home-free.handleVoicePlay utterance ERROR:`, e.error, e); setIsPlayingVoice(false); };
 
         window.speechSynthesis.speak(utterance);
+        console.log(`🎙️ [TTS-DIAG] home-free.handleVoicePlay: speechSynthesis.speak() called`);
       }
     } catch (error) {
       setIsPlayingVoice(false);
