@@ -93,12 +93,29 @@ const contextCategories = [
   { id: "entertainment", label: "Fun & Hobbies", description: "Recreation, entertainment, personal time", icon: Gamepad2 },
 ];
 
+function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
+  if (voiceType === 'british-male') {
+    return voices.find(v => v.name.includes('Google UK English Male')) ||
+      voices.find(v => v.lang.includes('en-GB') && (v.name.toLowerCase().includes('male') || v.name.includes('Oliver') || v.name.includes('Arthur'))) ||
+      voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man'));
+  }
+  if (voiceType === 'male') {
+    return voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
+  }
+  if (voiceType === 'female') {
+    return voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
+      voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('Samantha') || v.name.includes('Victoria'));
+  }
+  return voices.find(v => v.lang.includes('en'));
+}
+
 // Voice character icon mapping
 const getVoiceIcon = (id: string) => {
   const iconMap: Record<string, any> = {
     "default": User,
     "confident-leader": Crown,
     "british-butler": Crown,
+    "karen-nag": Heart,
   };
   return iconMap[id] || User;
 };
@@ -632,15 +649,12 @@ export default function ReminderForm({
         const voiceTypeMap: Record<string, string> = {
           'default': 'female',
           'confident-leader': 'male',
-          'british-butler': 'male'
+          'british-butler': 'british-male',
+          'karen-nag': 'female'
         };
         const voiceType = voiceSettings?.voiceType || voiceTypeMap[selectedVoiceId] || 'female';
         const voices = window.speechSynthesis.getVoices();
-        const preferredVoice = voices.find(voice =>
-          voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
-          voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
-          voice.name.toLowerCase().includes('en')
-        );
+        const preferredVoice = findPreferredVoice(voices, voiceType);
         if (preferredVoice) {
           utterance.voice = preferredVoice;
         }

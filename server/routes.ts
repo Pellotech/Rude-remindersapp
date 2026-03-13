@@ -1088,6 +1088,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           personality: "Polite but passive-aggressive",
           testMessage: "I do beg your Pardon, but perhaps it's time you attended to your responsibilities.",
           premium: true
+        },
+        {
+          id: "karen-nag",
+          name: "Karen (The Disappointed Mother)",
+          unrealId: "Liv",
+          personality: "Nagging, impatient, impossible to ignore",
+          testMessage: "I'm not angry, I'm just disappointed. Again. Are you even listening to me?",
+          premium: true
         }
       ];
 

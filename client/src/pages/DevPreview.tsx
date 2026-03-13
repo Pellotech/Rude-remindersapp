@@ -152,12 +152,22 @@ export default function DevPreview() {
                 break;
 
               case 'british-butler':
-                selectedVoice = voices.find(voice =>
-                  voice.lang.includes('en-GB') ||
-                  voice.name.includes('British') ||
-                  voice.name.includes('Oliver') ||
-                  voice.name.includes('Arthur')
-                );
+                selectedVoice = voices.find(voice => voice.name.includes('Google UK English Male')) ||
+                  voices.find(voice =>
+                    voice.lang.includes('en-GB') &&
+                    (voice.name.toLowerCase().includes('male') || voice.name.includes('Oliver') || voice.name.includes('Arthur'))
+                  ) ||
+                  voices.find(voice => voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man'));
+                break;
+
+              case 'karen-nag':
+                selectedVoice = voices.find(voice => voice.name.includes('Google US English') && voice.name.includes('Female')) ||
+                  voices.find(voice =>
+                    voice.name.toLowerCase().includes('female') ||
+                    voice.name.toLowerCase().includes('woman') ||
+                    voice.name.includes('Samantha') ||
+                    voice.name.includes('Victoria')
+                  );
                 break;
             }
 

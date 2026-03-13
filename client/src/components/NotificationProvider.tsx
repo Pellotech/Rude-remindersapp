@@ -8,6 +8,22 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
+  if (voiceType === 'british-male') {
+    return voices.find(v => v.name.includes('Google UK English Male')) ||
+      voices.find(v => v.lang.includes('en-GB') && (v.name.toLowerCase().includes('male') || v.name.includes('Oliver') || v.name.includes('Arthur'))) ||
+      voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man'));
+  }
+  if (voiceType === 'male') {
+    return voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
+  }
+  if (voiceType === 'female') {
+    return voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
+      voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('Samantha') || v.name.includes('Victoria'));
+  }
+  return voices.find(v => v.lang.includes('en'));
+}
+
 interface NotificationContextType {
   showNotification: (reminder: Reminder) => void;
   closeNotification: () => void;
@@ -137,17 +153,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
         'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
         'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
-        'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' }
+        'british-butler': { rate: 0.9, pitch: 0.6, voiceType: 'british-male' },
+        'karen-nag': { rate: 1.25, pitch: 1.5, voiceType: 'female' }
       };
       const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
       utterance.rate = settings.rate;
       utterance.pitch = settings.pitch;
       const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(voice =>
-        settings.voiceType === 'female' ? voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') :
-        settings.voiceType === 'male' ? voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man') :
-        voice.name.toLowerCase().includes('en')
-      );
+      const preferredVoice = findPreferredVoice(voices, settings.voiceType);
       if (preferredVoice) {
         utterance.voice = preferredVoice;
       }

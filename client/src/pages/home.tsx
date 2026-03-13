@@ -104,11 +104,12 @@ export default function Home() {
                       );
                       break;
                     case 'british-male':
-                      selectedVoice = voices.find(voice => 
-                        voice.lang.includes('en-GB') || 
-                        voice.name.includes('British') ||
-                        voice.name.includes('Oliver')
-                      );
+                      selectedVoice = voices.find(voice => voice.name.includes('Google UK English Male')) ||
+                        voices.find(voice => 
+                          voice.lang.includes('en-GB') && 
+                          (voice.name.toLowerCase().includes('male') || voice.name.includes('Oliver'))
+                        ) ||
+                        voices.find(voice => voice.name.toLowerCase().includes('male') || voice.name.toLowerCase().includes('man'));
                       break;
                     case 'female':
                       selectedVoice = voices.find(voice => 

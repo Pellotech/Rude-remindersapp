@@ -8,6 +8,22 @@ import {
 import { Capacitor } from "@capacitor/core";
 import { useToast } from "@/hooks/use-toast";
 
+function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
+  if (voiceType === 'british-male') {
+    return voices.find(v => v.name.includes('Google UK English Male')) ||
+      voices.find(v => v.lang.includes('en-GB') && (v.name.toLowerCase().includes('male') || v.name.includes('Oliver') || v.name.includes('Arthur'))) ||
+      voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man'));
+  }
+  if (voiceType === 'male') {
+    return voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
+  }
+  if (voiceType === 'female') {
+    return voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
+      voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('Samantha') || v.name.includes('Victoria'));
+  }
+  return voices.find(v => v.lang.includes('en'));
+}
+
 // Convert UUID string to numeric ID for LocalNotifications
 // Uses a simple hash function to generate consistent numeric IDs from UUID strings
 function uuidToNumericId(uuid: string): number {
@@ -150,11 +166,17 @@ export function useMobileNotifications(): MobileNotificationService {
       const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
         'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
         'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
-        'british-butler': { rate: 0.85, pitch: 0.8, voiceType: 'male' }
+        'british-butler': { rate: 0.9, pitch: 0.6, voiceType: 'british-male' },
+        'karen-nag': { rate: 1.25, pitch: 1.5, voiceType: 'female' }
       };
       const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
       utterance.rate = settings.rate;
       utterance.pitch = settings.pitch;
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = findPreferredVoice(voices, settings.voiceType);
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
       window.speechSynthesis.speak(utterance);
     } catch (error) {
       console.error('Fallback speech synthesis error:', error);
