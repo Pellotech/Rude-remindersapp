@@ -144,7 +144,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const fullText = `${currentReminder.title} — ${currentReminder.rudeMessage}`;
+      const variations = currentReminder.responses && currentReminder.responses.length > 0
+        ? currentReminder.responses
+        : [currentReminder.rudeMessage];
+      const fullText = variations.join(' ... ');
 
       const response = await fetch(getFullApiUrl('/api/voices/test'), {
         method: 'POST',
@@ -172,7 +175,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
     } catch {
       setIsPlayingVoice(false);
-      playFallbackSpeech(`${currentReminder.title} — ${currentReminder.rudeMessage}`, currentReminder.voiceCharacter || 'default');
+      const fallbackVariations = currentReminder.responses && currentReminder.responses.length > 0
+        ? currentReminder.responses
+        : [currentReminder.rudeMessage];
+      playFallbackSpeech(fallbackVariations.join(' ... '), currentReminder.voiceCharacter || 'default');
     }
   };
 
@@ -187,10 +193,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
       const utterance = new SpeechSynthesisUtterance(text);
       const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
-        'default': { rate: 1.0, pitch: 1.2, voiceType: 'female' },
-        'confident-leader': { rate: 1.1, pitch: 0.8, voiceType: 'male' },
-        'british-butler': { rate: 0.9, pitch: 0.6, voiceType: 'british-male' },
-        'karen-nag': { rate: 1.25, pitch: 1.5, voiceType: 'female' }
+        'default': { rate: 0.85, pitch: 0.9, voiceType: 'female' },
+        'confident-leader': { rate: 0.9, pitch: 0.6, voiceType: 'male' },
+        'british-butler': { rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
+        'karen-nag': { rate: 1.2, pitch: 1.3, voiceType: 'female' }
       };
       const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
       utterance.rate = settings.rate;

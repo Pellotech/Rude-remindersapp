@@ -42,10 +42,10 @@ class NotificationService {
   }
 
   private voiceCharacterMap: Record<string, { unrealId: string, rate: number, pitch: number, voiceType: string }> = {
-    'default': { unrealId: 'Scarlett', rate: 1.0, pitch: 1.2, voiceType: 'female' },
-    'confident-leader': { unrealId: 'Will', rate: 1.1, pitch: 0.8, voiceType: 'male' },
-    'british-butler': { unrealId: 'Amy', rate: 0.9, pitch: 0.6, voiceType: 'british-male' },
-    'karen-nag': { unrealId: 'Liv', rate: 1.25, pitch: 1.5, voiceType: 'female' },
+    'default': { unrealId: 'Scarlett', rate: 0.85, pitch: 0.9, voiceType: 'female' },
+    'confident-leader': { unrealId: 'Will', rate: 0.9, pitch: 0.6, voiceType: 'male' },
+    'british-butler': { unrealId: 'Amy', rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
+    'karen-nag': { unrealId: 'Liv', rate: 1.2, pitch: 1.3, voiceType: 'female' },
   };
 
   generateBrowserSpeech(text: string, character: string = "default"): { text: string, character: string } {
