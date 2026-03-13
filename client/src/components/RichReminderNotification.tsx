@@ -187,7 +187,12 @@ export function RichReminderNotification({
                 <div className="flex items-center gap-1">
                   <Volume2 className="h-3 w-3 text-gray-400" />
                   <span className="text-xs text-gray-600">
-                    {reminder.voiceCharacter?.replace('-', ' ') || "Default"}
+                    {({
+                      'default': 'Scarlett',
+                      'confident-leader': 'Will',
+                      'british-butler': 'Gerald',
+                      'karen-nag': 'Karen'
+                    } as Record<string, string>)[reminder.voiceCharacter || 'default'] || reminder.voiceCharacter?.replace('-', ' ') || 'Scarlett'}
                   </span>
                 </div>
                 {onPlayVoice && (

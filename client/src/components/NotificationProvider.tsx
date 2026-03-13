@@ -112,7 +112,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, [isGuest, showNotification, queryClient, toast]);
 
   useEffect(() => {
-    if (showRichNotification && currentReminder && currentReminder.voiceNotification && currentReminder.rudeMessage) {
+    if (showRichNotification && currentReminder && currentReminder.rudeMessage) {
       if (autoPlayedRef.current === currentReminder.id) {
         console.log(`🎙️ [TTS-DIAG] Auto-play skipped — already played for reminder ${currentReminder.id}`);
         return;
@@ -144,13 +144,15 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
+      const fullText = `${currentReminder.title} — ${currentReminder.rudeMessage}`;
+
       const response = await fetch(getFullApiUrl('/api/voices/test'), {
         method: 'POST',
         headers,
         credentials: 'include',
         body: JSON.stringify({
           voiceCharacter: currentReminder.voiceCharacter || 'default',
-          testMessage: currentReminder.rudeMessage,
+          testMessage: fullText,
         }),
       });
 
@@ -161,16 +163,16 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           audio.onended = () => setIsPlayingVoice(false);
           audio.onerror = () => {
             setIsPlayingVoice(false);
-            playFallbackSpeech(currentReminder.rudeMessage, currentReminder.voiceCharacter || 'default');
+            playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
           };
           await audio.play();
           return;
         }
       }
-      playFallbackSpeech(currentReminder.rudeMessage, currentReminder.voiceCharacter || 'default');
+      playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
     } catch {
       setIsPlayingVoice(false);
-      playFallbackSpeech(currentReminder.rudeMessage, currentReminder.voiceCharacter || 'default');
+      playFallbackSpeech(`${currentReminder.title} — ${currentReminder.rudeMessage}`, currentReminder.voiceCharacter || 'default');
     }
   };
 
