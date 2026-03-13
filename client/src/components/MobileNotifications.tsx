@@ -125,42 +125,9 @@ export function useMobileNotifications(): MobileNotificationService {
   }, [toast]);
 
   const playVoiceNotification = async (text: string, voiceCharacter: string) => {
-    console.log(`🔊 Playing browser speechSynthesis for: ${voiceCharacter}`);
-    fallbackSpeechSynthesis(text, voiceCharacter);
-  };
-
-  const fallbackSpeechSynthesis = (text: string, voiceCharacter: string) => {
-    console.log(`🎙️ [TTS-DIAG] MobileNotifications.fallbackSpeechSynthesis called | character="${voiceCharacter}" | speechSynthesis in window: ${'speechSynthesis' in window}`);
-    try {
-      if (!('speechSynthesis' in window)) {
-        console.error(`🎙️ [TTS-DIAG] ❌ speechSynthesis NOT available in Android WebView`);
-        return;
-      }
-      console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
-        'default': { rate: 0.85, pitch: 0.9, voiceType: 'female' },
-        'confident-leader': { rate: 0.9, pitch: 0.6, voiceType: 'male' },
-        'british-butler': { rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
-        'karen-nag': { rate: 1.2, pitch: 1.3, voiceType: 'female' }
-      };
-      const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
-      utterance.rate = settings.rate;
-      utterance.pitch = settings.pitch;
-      console.log(`🎙️ [TTS-DIAG] MobileNotifications settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = findPreferredVoice(voices, settings.voiceType);
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ MobileNotifications utterance STARTED speaking`);
-      utterance.onend = () => console.log(`🎙️ [TTS-DIAG] ✅ MobileNotifications utterance ENDED`);
-      utterance.onerror = (e) => console.error(`🎙️ [TTS-DIAG] ❌ MobileNotifications utterance ERROR:`, e.error, e);
-      window.speechSynthesis.speak(utterance);
-      console.log(`🎙️ [TTS-DIAG] MobileNotifications: speechSynthesis.speak() called`);
-    } catch (error) {
-      console.error('🎙️ [TTS-DIAG] ❌ Fallback speech synthesis EXCEPTION:', error);
-    }
+    console.log(`🔊 Playing TTS for: ${voiceCharacter}`);
+    const { speak } = await import('@/services/ttsService');
+    await speak(text, voiceCharacter);
   };
 
   const requestPermissions = async (): Promise<boolean> => {

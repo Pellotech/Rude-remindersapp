@@ -103,35 +103,12 @@ export default function HomePremium() {
 
             // Play voice notification if enabled
             if (reminder.voiceNotification) {
-              console.log(`🎙️ [TTS-DIAG] home-premium WS voice triggered | character="${reminder.voiceCharacter}" | speechSynthesis available: ${'speechSynthesis' in window}`);
-              if (window.speechSynthesis) {
-                const voiceText = reminder.responses && reminder.responses.length > 0
-                  ? reminder.responses.slice(0, 2).join(' ... ')
-                  : reminder.rudeMessage;
-                const utterance = new SpeechSynthesisUtterance(voiceText);
-                const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
-                  'default': { rate: 0.85, pitch: 0.9, voiceType: 'female' },
-                  'confident-leader': { rate: 0.9, pitch: 0.6, voiceType: 'male' },
-                  'british-butler': { rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
-                  'karen-nag': { rate: 1.2, pitch: 1.3, voiceType: 'female' },
-                };
-                const settings = voiceSettings[reminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
-                utterance.rate = settings.rate;
-                utterance.pitch = settings.pitch;
-                console.log(`🎙️ [TTS-DIAG] home-premium WS settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
-                const voices = window.speechSynthesis.getVoices();
-                const preferredVoice = findPreferredVoice(voices, settings.voiceType);
-                if (preferredVoice) {
-                  utterance.voice = preferredVoice;
-                }
-                utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ home-premium WS utterance STARTED`);
-                utterance.onend = () => console.log(`🎙️ [TTS-DIAG] ✅ home-premium WS utterance ENDED`);
-                utterance.onerror = (e) => console.error(`🎙️ [TTS-DIAG] ❌ home-premium WS utterance ERROR:`, e.error, e);
-                window.speechSynthesis.speak(utterance);
-                console.log(`🎙️ [TTS-DIAG] home-premium WS: speechSynthesis.speak() called`);
-              } else {
-                console.error(`🎙️ [TTS-DIAG] ❌ home-premium WS: speechSynthesis NOT available`);
-              }
+              const voiceText = reminder.responses && reminder.responses.length > 0
+                ? reminder.responses.slice(0, 2).join(' ... ')
+                : reminder.rudeMessage;
+              import('@/services/ttsService').then(({ speak }) => {
+                speak(voiceText, reminder.voiceCharacter || 'default');
+              });
             }
           }
         } catch (error) {
@@ -155,49 +132,16 @@ export default function HomePremium() {
     if (!currentReminder?.rudeMessage) return;
 
     setIsPlayingVoice(true);
-    console.log(`🎙️ [TTS-DIAG] home-premium.handleVoicePlay called | character="${currentReminder.voiceCharacter}" | speechSynthesis in window: ${'speechSynthesis' in window}`);
 
-    try {
-      if ('speechSynthesis' in window) {
-        console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
-        const voiceText = currentReminder.responses && currentReminder.responses.length > 0
-          ? currentReminder.responses.slice(0, 2).join(' ... ')
-          : currentReminder.rudeMessage;
-        const utterance = new SpeechSynthesisUtterance(voiceText);
+    const voiceText = currentReminder.responses && currentReminder.responses.length > 0
+      ? currentReminder.responses.slice(0, 2).join(' ... ')
+      : currentReminder.rudeMessage;
 
-        // Apply voice character settings (premium has more options)
-        const voices = window.speechSynthesis.getVoices();
-        const voiceSettings = {
-          'default': { rate: 0.85, pitch: 0.9, voiceType: 'female' },
-          'confident-leader': { rate: 0.9, pitch: 0.6, voiceType: 'male' },
-          'british-butler': { rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
-          'karen-nag': { rate: 1.2, pitch: 1.3, voiceType: 'female' },
-        };
-
-        const settings = voiceSettings[currentReminder.voiceCharacter as keyof typeof voiceSettings] || voiceSettings.default;
-        utterance.rate = settings.rate;
-        utterance.pitch = settings.pitch;
-        console.log(`🎙️ [TTS-DIAG] home-premium.handleVoicePlay settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
-
-        const preferredVoice = findPreferredVoice(voices, settings.voiceType);
-
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
-        }
-
-        utterance.onend = () => setIsPlayingVoice(false);
-        utterance.onerror = () => setIsPlayingVoice(false);
-
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch (error) {
+    import('@/services/ttsService').then(({ speakWithCallback }) => {
+      speakWithCallback(voiceText, currentReminder.voiceCharacter || 'default', () => setIsPlayingVoice(false), () => setIsPlayingVoice(false));
+    }).catch(() => {
       setIsPlayingVoice(false);
-      toast({
-        title: "Voice Error",
-        description: "Failed to play voice notification",
-        variant: "destructive",
-      });
-    }
+    });
   };
 
   // Complete reminder handler

@@ -7,6 +7,7 @@ import { guestStorage } from "@/services/guestStorage";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { speakWithCallback } from "@/services/ttsService";
 
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
   console.log(`🎙️ [TTS-DIAG] findPreferredVoice called | voiceType="${voiceType}" | available voices: ${voices.length}`);
@@ -142,43 +143,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       ? currentReminder.responses.slice(0, 2)
       : [currentReminder.rudeMessage];
     const fullText = variations.join(' ... ');
+    const character = currentReminder.voiceCharacter || 'default';
 
-    playFallbackSpeech(fullText, currentReminder.voiceCharacter || 'default');
-  };
-
-  const playFallbackSpeech = (text: string, voiceCharacter: string) => {
-    console.log(`🎙️ [TTS-DIAG] NotificationProvider.playFallbackSpeech called | character="${voiceCharacter}" | speechSynthesis in window: ${'speechSynthesis' in window}`);
-    try {
-      if (!('speechSynthesis' in window)) {
-        console.error(`🎙️ [TTS-DIAG] ❌ speechSynthesis NOT available in this WebView/browser`);
-        setIsPlayingVoice(false);
-        return;
-      }
-      console.log(`🎙️ [TTS-DIAG] speechSynthesis.speaking=${window.speechSynthesis.speaking}, pending=${window.speechSynthesis.pending}, paused=${window.speechSynthesis.paused}`);
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voiceSettings: Record<string, { rate: number, pitch: number, voiceType: string }> = {
-        'default': { rate: 0.85, pitch: 0.9, voiceType: 'female' },
-        'confident-leader': { rate: 0.9, pitch: 0.6, voiceType: 'male' },
-        'british-butler': { rate: 0.7, pitch: 0.2, voiceType: 'british-male' },
-        'karen-nag': { rate: 1.2, pitch: 1.3, voiceType: 'female' }
-      };
-      const settings = voiceSettings[voiceCharacter] || voiceSettings.default;
-      utterance.rate = settings.rate;
-      utterance.pitch = settings.pitch;
-      console.log(`🎙️ [TTS-DIAG] NotificationProvider settings: rate=${settings.rate}, pitch=${settings.pitch}, voiceType="${settings.voiceType}"`);
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = findPreferredVoice(voices, settings.voiceType);
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
-      utterance.onstart = () => console.log(`🎙️ [TTS-DIAG] ✅ NotificationProvider utterance STARTED speaking`);
-      utterance.onend = () => { console.log(`🎙️ [TTS-DIAG] ✅ NotificationProvider utterance ENDED`); setIsPlayingVoice(false); };
-      utterance.onerror = (e) => { console.error(`🎙️ [TTS-DIAG] ❌ NotificationProvider utterance ERROR:`, e.error, e); setIsPlayingVoice(false); };
-      window.speechSynthesis.speak(utterance);
-      console.log(`🎙️ [TTS-DIAG] NotificationProvider: speechSynthesis.speak() called`);
-    } catch {
-      setIsPlayingVoice(false);
-    }
+    speakWithCallback(fullText, character, () => setIsPlayingVoice(false), () => setIsPlayingVoice(false));
   };
 
   const handleCompleteReminder = async () => {
