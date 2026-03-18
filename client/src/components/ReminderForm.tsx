@@ -20,10 +20,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
+import { Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
 import { format, isSameDay } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
@@ -890,22 +889,9 @@ export default function ReminderForm({
 
   return (
     <Card className="mt-4 bg-white border-2 border-[#C9A063] rounded-[24px] shadow-[var(--rr-card-shadow)] ring-2 ring-[#C53B3B] ring-offset-2">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center text-lg font-semibold">
-            <PlusCircle className="text-[#C53B3B] mr-3" />
-            Create New Reminder
-          </div>
-          {isSimplifiedInterface && (
-            <span className="text-sm text-[#6B7280] bg-[#F9FAFB] px-2 py-1 rounded-[8px] border border-[#EAEAEA]">
-              Simplified Mode
-            </span>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="pt-5">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             {/* Message Field */}
             <FormField
               control={form.control}
@@ -945,20 +931,17 @@ export default function ReminderForm({
 
                   <FormControl>
                     {isMultiDay ? (
-                      /* Multi-Day Selection - Card Layout like Single Day */
-                      <div className="space-y-4">
+                      /* Multi-Day Selection */
+                      <div className="space-y-3">
                         {/* Days Selection Card */}
                         <Card>
-                          <CardHeader>
-                            <CardTitle className="text-lg">Select Days</CardTitle>
-                            <p className="text-sm text-muted-foreground">Choose which days of the week to repeat</p>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                          <CardContent className="pt-3 pb-3">
+                            <p className="text-xs text-muted-foreground mb-2">Choose which days to repeat</p>
+                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                               {daysOfWeek.map((day) => {
                                 const isSelected = selectedDays.includes(day.id);
                                 return (
-                                  <div key={day.id} className="text-center flex-shrink-0 min-w-[70px]">
+                                  <div key={day.id} className="text-center flex-shrink-0 min-w-[56px]">
                                     <div className="text-xs font-medium text-muted-foreground mb-1">
                                       {day.label}
                                     </div>
@@ -968,14 +951,14 @@ export default function ReminderForm({
                                       size="sm"
                                       onClick={() => handleDayToggle(day.id)}
                                       className={cn(
-                                        "w-full h-12 flex flex-col items-center justify-center p-1",
+                                        "w-full h-10 flex flex-col items-center justify-center p-1",
                                         day.isToday && !isSelected && "border-primary text-primary",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
-                                      <span className="text-lg font-semibold">{day.short}</span>
+                                      <span className="text-base font-semibold">{day.short}</span>
                                       {day.isToday && (
-                                        <span className="text-xs">Today</span>
+                                        <span className="text-[10px] leading-tight">Today</span>
                                       )}
                                     </Button>
                                   </div>
@@ -988,29 +971,21 @@ export default function ReminderForm({
                         {/* Time Selection Card */}
                         {selectedDays.length > 0 && (
                           <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg">Select Time</CardTitle>
-                              <p className="text-sm text-muted-foreground">
-                                Choose a time for your recurring reminders
-                              </p>
-                            </CardHeader>
-                            <CardContent>
-                              {/* Hour Selection */}
-                              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            <CardContent className="pt-3 pb-3">
+                              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {Array.from({ length: 24 }, (_, i) => {
-                                  const hour = i; // Start from 0 (12 AM) and go to 23 (11 PM)
+                                  const hour = i;
                                   const isSelected = multiDayHour === hour;
                                   const display = hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
-
                                   return (
                                     <Button
                                       key={hour}
                                       type="button"
                                       variant={isSelected ? "default" : "outline"}
-                                      size="lg"
+                                      size="sm"
                                       onClick={() => setMultiDayHour(hour)}
                                       className={cn(
-                                        "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
+                                        "h-9 text-sm whitespace-nowrap flex-shrink-0 min-w-[72px]",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
@@ -1026,18 +1001,8 @@ export default function ReminderForm({
                         {/* Minutes Selection Card */}
                         {selectedDays.length > 0 && (
                           <Card>
-                            <CardHeader>
-                              <CardTitle className="text-lg">Select Minutes</CardTitle>
-                              <p className="text-sm text-muted-foreground">
-                                Choose exact time for {
-                                  multiDayHour === 0 ? "12 AM" :
-                                  multiDayHour === 12 ? "12 PM" :
-                                  multiDayHour > 12 ? `${multiDayHour - 12} PM` : `${multiDayHour} AM`
-                                }
-                              </p>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            <CardContent className="pt-3 pb-3">
+                              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {[
                                   { value: 0, label: ":00", displayLabel: "On the hour" },
                                   { value: 15, label: ":15", displayLabel: "Quarter past" },
@@ -1045,16 +1010,15 @@ export default function ReminderForm({
                                   { value: 45, label: ":45", displayLabel: "Quarter to" }
                                 ].map((slot) => {
                                   const isSelected = multiDayMinute === slot.value;
-
                                   return (
                                     <Button
                                       key={slot.value}
                                       type="button"
                                       variant={isSelected ? "default" : "outline"}
-                                      size="lg"
+                                      size="sm"
                                       onClick={() => setMultiDayMinute(slot.value)}
                                       className={cn(
-                                        "h-16 text-sm whitespace-nowrap flex-shrink-0 min-w-[120px]",
+                                        "h-14 text-sm whitespace-nowrap flex-shrink-0 min-w-[90px]",
                                         isSelected && "bg-primary text-primary-foreground"
                                       )}
                                     >
@@ -1144,83 +1108,59 @@ export default function ReminderForm({
               )}
             />
 
-            {/* Context Categories */}
-            <FormField
-              control={form.control}
-              name="context"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <span>What type of reminder is this?</span>
-                    <span className="text-xs text-muted-foreground ml-2">(Optional)</span>
-                  </FormLabel>
+            {/* Hidden context field — value set programmatically if needed */}
+            <input type="hidden" {...form.register("context")} />
 
-                  {/* Quick Context Categories - Horizontal Scrolling */}
-                  <div className="space-y-2">
-                    <div className="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
-                      {contextCategories.map((category) => {
-                        const IconComponent = category.icon;
-                        const isSelected = selectedContextCategory === category.id;
-                        return (
-                          <Button
-                            key={category.id}
-                            type="button"
-                            variant={isSelected ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handleContextCategorySelect(category)}
-                            className={cn(
-                              "flex-shrink-0 h-auto py-2 px-3 text-xs font-medium transition-all",
-                              isSelected
-                                ? "bg-blue-600 text-white hover:bg-blue-700"
-                                : "hover:bg-blue-50 hover:border-blue-300"
-                            )}
-                          >
-                            <IconComponent className="w-4 h-4 mr-2" />
-                            <span className="whitespace-nowrap">{category.label}</span>
-                          </Button>
-                        );
-                      })}
-                    </div>
-                    {selectedContextCategory && (
-                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                        Selected: {contextCategories.find(c => c.id === selectedContextCategory)?.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Hidden input to store the selected context */}
-                  <FormControl>
-                    <input type="hidden" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Show advanced sections only if not simplified interface */}
+            {/* Compact icon-button row for Voice / Photo / Quotes */}
             {!isSimplifiedInterface && (
               <>
+                <div className="flex gap-2">
+                  {/* Voice */}
+                  <button
+                    type="button"
+                    onClick={() => setVoiceCharacterOpen(v => !v)}
+                    className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#FDF8F0] text-[#C9A063]' : 'border-[#EAEAEA] bg-white text-[#6B7280] hover:border-[#C9A063]'}`}
+                  >
+                    <Volume2 className="h-5 w-5" />
+                    <span>Voice</span>
+                  </button>
 
-
-
-
-                {/* Voice Characters */}
-                <Collapsible open={voiceCharacterOpen} onOpenChange={setVoiceCharacterOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
+                  {/* Photo */}
+                  {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
+                    <button
                       type="button"
+                      onClick={() => {
+                        if (attachmentsOpen) { setAttachmentsOpen(false); }
+                        else { gateAttachments(() => setAttachmentsOpen(true)); }
+                      }}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#FDF8F0] text-[#C9A063]' : 'border-[#EAEAEA] bg-white text-[#6B7280] hover:border-[#C9A063]'}`}
                     >
-                      <div className="flex items-center">
-                        <Volume2 className="mr-2 h-4 w-4 text-rude-red-600" />
-                        Voice Characters
-                      </div>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${voiceCharacterOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Choose who will deliver your rude reminders</p>
+                      <Camera className="h-5 w-5" />
+                      <span>Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}</span>
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-amber-500" />}
+                    </button>
+                  )}
+
+                  {/* Quotes */}
+                  {!isFeatureDisabled('MOTIVATIONAL_QUOTES') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (motivationalOpen) { setMotivationalOpen(false); }
+                        else { gateQuotes(() => setMotivationalOpen(true)); }
+                      }}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#FDF8F0] text-[#C9A063]' : 'border-[#EAEAEA] bg-white text-[#6B7280] hover:border-[#C9A063]'}`}
+                    >
+                      <Quote className="h-5 w-5" />
+                      <span>Quotes{selectedCategory ? ' ✓' : ''}</span>
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-amber-500" />}
+                    </button>
+                  )}
+                </div>
+
+                {/* Voice panel */}
+                {voiceCharacterOpen && (
+                  <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
                     <div className="space-y-2">
                       {voiceCharacters.map((character: any) => {
                         const IconComponent = getVoiceIcon(character.id);
@@ -1230,83 +1170,42 @@ export default function ReminderForm({
                           <button
                             key={character.id}
                             type="button"
-                            className={`w-full p-3 rounded-lg border-2 transition-all flex items-center justify-between text-left ${
-                              isSelected && !isLocked
-                                ? 'border-[#C9A063] bg-[#FDF8F0]'
-                                : isLocked
-                                ? 'border-gray-200 bg-gray-50 opacity-75'
-                                : 'border-gray-200 bg-white hover:border-gray-300'
+                            className={`w-full p-2.5 rounded-lg border-2 transition-all flex items-center justify-between text-left ${
+                              isSelected && !isLocked ? 'border-[#C9A063] bg-[#FDF8F0]'
+                              : isLocked ? 'border-gray-200 bg-gray-50 opacity-75'
+                              : 'border-gray-200 bg-white hover:border-gray-300'
                             }`}
                             onClick={() => {
-                              if (isLocked) {
-                                setLocation('/subscribe');
-                              } else {
-                                form.setValue("voiceCharacter", character.id);
-                                setSelectedVoice(character.id);
-                              }
+                              if (isLocked) { setLocation('/subscribe'); }
+                              else { form.setValue("voiceCharacter", character.id); setSelectedVoice(character.id); }
                             }}
                           >
-                            <div className="flex items-center gap-3">
-                              <IconComponent className={`h-5 w-5 ${isLocked ? 'text-gray-400' : 'text-[#C9A063]'}`} />
+                            <div className="flex items-center gap-2">
+                              <IconComponent className={`h-4 w-4 ${isLocked ? 'text-gray-400' : 'text-[#C9A063]'}`} />
                               <div>
-                                <div className={`font-medium text-sm ${isLocked ? 'text-gray-400' : 'text-gray-900'}`}>
-                                  {character.name}
-                                </div>
-                                <div className={`text-xs ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>
-                                  {character.personality}
-                                </div>
+                                <div className={`font-medium text-sm ${isLocked ? 'text-gray-400' : 'text-gray-900'}`}>{character.name}</div>
+                                <div className={`text-xs ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>{character.personality}</div>
                               </div>
                             </div>
                             {isLocked ? (
-                              <div className="flex items-center gap-1 text-xs text-amber-600">
-                                <Lock className="h-3.5 w-3.5" />
-                                <span>Premium</span>
-                              </div>
+                              <div className="flex items-center gap-1 text-xs text-amber-600"><Lock className="h-3 w-3" /><span>Premium</span></div>
                             ) : isSelected ? (
-                              <div className="w-5 h-5 rounded-full bg-[#C9A063] flex items-center justify-center">
-                                <span className="text-white text-xs">✓</span>
-                              </div>
+                              <div className="w-5 h-5 rounded-full bg-[#C9A063] flex items-center justify-center"><span className="text-white text-xs">✓</span></div>
                             ) : null}
                           </button>
                         );
                       })}
                     </div>
-
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={testVoice}
-                    >
-                      <TestTube className="mr-2 h-4 w-4" />
+                    <Button type="button" variant="outline" className="w-full text-xs h-8" onClick={testVoice}>
+                      <TestTube className="mr-2 h-3.5 w-3.5" />
                       Test {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Voice"}
                     </Button>
-                  </CollapsibleContent>
-                </Collapsible>
+                  </div>
+                )}
 
-                {/* Media Attachments */}
-                {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
-                <Collapsible open={attachmentsOpen} onOpenChange={(open) => {
-                  if (open) { gateAttachments(() => setAttachmentsOpen(true)); }
-                  else { setAttachmentsOpen(false); }
-                }}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                      type="button"
-                    >
-                      <div className="flex items-center">
-                        <Camera className="mr-2 h-4 w-4 text-rude-red-600" />
-                        Media Attachments
-                        {!hasProAccess && <span className="ml-2 inline-flex items-center gap-1 bg-[#C9A063]/15 text-[#C9A063] text-[10px] font-semibold px-2 py-0.5 rounded-full"><Lock className="h-3 w-3" />Premium</span>}
-                      </div>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${attachmentsOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Add photos to make your reminder more memorable</p>
-
+                {/* Photo panel */}
+                {attachmentsOpen && (
+                  <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
                     {isMobileWithCamera ? (
                       <MobileCamera
                         onPhotoCaptured={(photoUrl) => {
@@ -1315,87 +1214,36 @@ export default function ReminderForm({
                         }}
                         maxFiles={isFreePlan ? 1 : 5}
                         currentCount={selectedAttachments.length}
-                        onGatedAction={(action) => {
-                          console.log('[FeatureGate] MobileCamera action gated, hasProAccess:', hasProAccess);
-                          gateAttachments(action);
-                        }}
+                        onGatedAction={(action) => { gateAttachments(action); }}
                       />
                     ) : (
                       <>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          accept="image/*"
-                          multiple
-                          onChange={handleFileSelect}
-                          className="hidden"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full"
-                          onClick={handlePhotoAttachment}
-                          disabled={isFreePlan && selectedAttachments.length >= 1}
-                        >
-                          <Camera className="mr-2 h-4 w-4" />
+                        <input type="file" ref={fileInputRef} accept="image/*" multiple onChange={handleFileSelect} className="hidden" />
+                        <Button type="button" variant="outline" className="w-full text-xs h-8" onClick={handlePhotoAttachment} disabled={isFreePlan && selectedAttachments.length >= 1}>
+                          <Camera className="mr-2 h-3.5 w-3.5" />
                           Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
-                          {isFreePlan && selectedAttachments.length >= 1 && (
-                            <span className="ml-2 text-xs text-amber-600">(Upgrade for more)</span>
-                          )}
                         </Button>
                       </>
                     )}
-
                     {selectedAttachments.length > 0 && (
                       <div className="grid grid-cols-3 gap-2">
                         {selectedAttachments.map((attachment, index) => (
                           <div key={index} className="relative">
-                            <img
-                              src={attachment}
-                              alt={`Attachment ${index + 1}`}
-                              className="w-full h-20 object-cover rounded-md"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeAttachment(index)}
-                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
-                            >
-                              ×
-                            </button>
+                            <img src={attachment} alt={`Attachment ${index + 1}`} className="w-full h-20 object-cover rounded-md" />
+                            <button type="button" onClick={() => removeAttachment(index)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">×</button>
                           </div>
                         ))}
                       </div>
                     )}
-                  </CollapsibleContent>
-                </Collapsible>
+                  </div>
                 )}
 
-                {/* Motivational Quotes */}
-                {!isFeatureDisabled('MOTIVATIONAL_QUOTES') && (
-                <Collapsible open={motivationalOpen} onOpenChange={(open) => {
-                  if (open) { gateQuotes(() => setMotivationalOpen(true)); }
-                  else { setMotivationalOpen(false); }
-                }}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                      type="button"
-                    >
-                      <div className="flex items-center">
-                        <Quote className="mr-2 h-4 w-4 text-rude-red-600" />
-                        Motivational Quotes
-                        {!hasProAccess && <span className="ml-2 inline-flex items-center gap-1 bg-[#C9A063]/15 text-[#C9A063] text-[10px] font-semibold px-2 py-0.5 rounded-full"><Lock className="h-3 w-3" />Premium</span>}
-                      </div>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${motivationalOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="mt-3 space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <p className="text-sm text-muted-foreground">Get inspired by quotes from historical figures and champions (Auto-generated if category selected)</p>
-
+                {/* Quotes panel */}
+                {motivationalOpen && (
+                  <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
                     <Select value={selectedCategory} onValueChange={handleCategorySelection}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose motivation category (optional - generated on submit)" />
+                      <SelectTrigger className="w-full text-xs h-9">
+                        <SelectValue placeholder="Choose motivation category (optional)" />
                       </SelectTrigger>
                       <SelectContent>
                         {motivationCategories.map((category) => {
@@ -1414,23 +1262,12 @@ export default function ReminderForm({
                         })}
                       </SelectContent>
                     </Select>
-
-
-
                     {selectedCategory && (
-                      <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                        <p className="text-sm text-blue-700">
-                          📝 <strong>{motivationCategories.find(c => c.id === selectedCategory)?.name}</strong> category selected
-                        </p>
-                        <p className="text-xs text-blue-600 mt-1">
-                          A motivational quote will be generated when you submit the reminder
-                        </p>
-                      </div>
+                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        📝 {motivationCategories.find(c => c.id === selectedCategory)?.name} — quote generated on submit
+                      </p>
                     )}
-
-
-                  </CollapsibleContent>
-                </Collapsible>
+                  </div>
                 )}
               </>
             )}

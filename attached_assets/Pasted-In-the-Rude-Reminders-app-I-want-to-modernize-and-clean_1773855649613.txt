@@ -1,0 +1,119 @@
+In the Rude Reminders app I want to modernize and clean up the Create Reminder form in both home-free.tsx and home-premium.tsx and ReminderForm.tsx. Here are the specific changes:
+
+1. FREE PAGE HEADER:
+
+
+
+
+
+Remove the grey "Register and Subscribe" section from its current position
+
+
+
+Replace it with a slim banner (grey background) placed directly under the logo area
+
+
+
+Banner text: "Upgrade to Premium for full access" with a small button "Subscribe"
+
+
+
+First thing user sees after logo should be "Hey [name]" or "Hey Guest"
+
+2. REMOVE UNNECESSARY WORDING:
+
+
+
+
+
+Remove the "Create New Reminder" title and the + icon completely — the form itself makes it obvious
+
+
+
+Remove "What type of reminder is this?" section entirely including all category buttons (Work, Family etc)
+
+
+
+In the Select Date card: remove the "Select Date" heading but keep "Choose a day within the next week"
+
+3. TIME SELECTION CLEANUP:
+
+
+
+
+
+In the Select Time card: remove the card title "Select Time" and the subtitle "Choose a time for [date]" — keep only the time buttons
+
+
+
+In the Select Minutes card: remove the title "Select Minutes" and subtitle — keep only the :00 :15 :30 :45 buttons
+
+
+
+People understand date/time selection without labels
+
+4. CONDENSE ALL CARDS:
+
+
+
+
+
+Reduce padding inside all cards from current size to a more compact size
+
+
+
+Reduce gap/spacing between cards
+
+
+
+Make the date buttons slightly smaller and more compact
+
+
+
+Make the time buttons slightly smaller — single row, compact
+
+
+
+The three collapsible sections (Voice Characters, Media Attachments, Motivational Quotes) should be condensed into a single row of small icon buttons instead of full width bars
+
+5. CATEGORY CONTEXT BUTTONS:
+
+
+
+
+
+Remove the "What type of reminder is this?" label
+
+
+
+If keeping categories at all, show them as small emoji-only circular buttons in one compact row — no text labels
+
+6. GENERAL CLEANUP:
+
+
+
+
+
+Remove any grey helper text that states the obvious
+
+
+
+Keep the color scheme exactly the same — gold/tan, red accents, white cards
+
+
+
+Keep the rudeness level slider exactly as is
+
+
+
+Keep the Multiple Days toggle exactly as is
+
+
+
+Keep the Quick Reminder section exactly as is
+
+
+
+Keep the Create Reminder button exactly as is
+
+7. Show me every file being changed before making any edits 8. Make changes incrementally — do not rewrite entire files

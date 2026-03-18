@@ -219,29 +219,28 @@ export default function HomeFree() {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Guest Mode Banner */}
-        {isGuest && (
-          <Card className="mb-6 bg-gray-100 border-gray-300">
-            <CardContent className="pt-6">
-              <p className="text-sm text-gray-700">
-                Register and subscribe for premium, just press Sign In above.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Welcome Header - Mobile Optimized */}
-        <div className="mb-4 sm:mb-6">
+        <div className="mb-3 sm:mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
-                <span className="truncate">{isGuest ? "Welcome Guest" : `Hey ${(user as any)?.firstName || (user as any)?.username || 'there'}`}</span>
+                <span className="truncate">{isGuest ? "Hey Guest" : `Hey ${(user as any)?.firstName || (user as any)?.username || 'there'}`}</span>
                 <Badge className="bg-blue-600 text-white text-xs flex-shrink-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free
                 </Badge>
               </h1>
             </div>
+          </div>
+          {/* Slim upgrade banner */}
+          <div className="flex items-center justify-between bg-[#F9FAFB] border border-[#EAEAEA] rounded-[12px] px-3 py-2 mt-2">
+            <p className="text-xs text-[#6B7280]">Upgrade to Premium for full access</p>
+            <button
+              onClick={() => setLocation('/subscribe')}
+              className="text-xs font-semibold text-white bg-[#C53B3B] px-3 py-1 rounded-full hover:bg-[#A83232] transition-colors"
+            >
+              Subscribe
+            </button>
           </div>
         </div>
 

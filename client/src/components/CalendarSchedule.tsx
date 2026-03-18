@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { format, addDays, startOfWeek, isSameDay, isBefore, isPast } from "date-fns";
@@ -140,23 +140,20 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Calendar Section */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Select Date</CardTitle>
-          <p className="text-sm text-muted-foreground">Choose a day within the next week</p>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <CardContent className="pt-3 pb-3">
+          <p className="text-xs text-muted-foreground mb-2">Choose a day within the next week</p>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {weekDays.map((date, index) => {
-              const dayName = format(date, 'EEE'); // Mon, Tue, Wed, etc.
+              const dayName = format(date, 'EEE');
               const dayNumber = format(date, 'd');
               const isToday = isSameDay(date, today);
               const isSelected = isDateSelected(date);
 
               return (
-                <div key={index} className="text-center flex-shrink-0 min-w-[70px]">
+                <div key={index} className="text-center flex-shrink-0 min-w-[56px]">
                   <div className="text-xs font-medium text-muted-foreground mb-1">
                     {dayName}
                   </div>
@@ -168,14 +165,14 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     onClick={() => handleDateSelect(date)}
                     disabled={isPast(date)}
                     className={cn(
-                      "w-full h-12 flex flex-col items-center justify-center p-1",
+                      "w-full h-10 flex flex-col items-center justify-center p-1",
                       isToday && !isSelected && "border-primary text-primary",
                       isSelected && "bg-primary text-primary-foreground"
                     )}
                   >
-                    <span className="text-lg font-semibold">{dayNumber}</span>
+                    <span className="text-base font-semibold">{dayNumber}</span>
                     {isToday && (
-                      <span className="text-xs">Today</span>
+                      <span className="text-[10px] leading-tight">Today</span>
                     )}
                   </Button>
                 </div>
@@ -188,14 +185,8 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {/* Time Slots Section */}
       {selectedDate && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Time</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Choose a time for {format(selectedDate, 'EEEE, MMMM d')}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <CardContent className="pt-3 pb-3">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {timeSlots.map((slot) => {
                 const isSelected = isTimeSelected(slot.value);
                 const isPastTime = isTimeInPast(slot.value);
@@ -209,7 +200,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     onClick={() => handleTimeSelect(slot.value)}
                     disabled={isPastTime}
                     className={cn(
-                      "h-10 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
+                      "h-9 text-sm whitespace-nowrap flex-shrink-0 min-w-[72px]",
                       isSelected && "bg-primary text-primary-foreground",
                       isPastTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
                     )}
@@ -226,14 +217,8 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {/* Quarter Hour Selection */}
       {selectedDate && quarterState.hour !== null && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Minutes</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Choose exact time for {quarterState.hour !== null ? timeSlots[quarterState.hour]?.label : ''} 
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <CardContent className="pt-3 pb-3">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {quarterSlots.map((slot) => {
                 const isSelected = isQuarterSelected(slot.value);
                 const isPastQuarterTime = quarterState.hour !== null && isTimeInPast(quarterState.hour, slot.value);
@@ -247,7 +232,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     onClick={() => handleQuarterSelect(slot.value)}
                     disabled={isPastQuarterTime}
                     className={cn(
-                      "h-16 text-sm whitespace-nowrap flex-shrink-0 min-w-[100px]",
+                      "h-14 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
                       isSelected && "bg-primary text-primary-foreground",
                       isPastQuarterTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
                     )}
