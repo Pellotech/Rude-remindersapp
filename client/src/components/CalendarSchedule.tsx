@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { format, addDays, startOfWeek, isSameDay, isBefore, isPast } from "date-fns";
+import { format, addDays, startOfDay, isSameDay, isBefore, isPast } from "date-fns";
 
 interface CalendarScheduleProps {
   selectedDateTime: Date | null;
@@ -163,7 +163,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleDateSelect(date)}
-                    disabled={isPast(date)}
+                    disabled={isBefore(date, startOfDay(today))}
                     className={cn(
                       "w-full h-10 flex flex-col items-center justify-center p-1",
                       isToday && !isSelected && "border-primary text-primary",

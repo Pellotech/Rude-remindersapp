@@ -21,10 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
 import { CalendarSchedule } from "./CalendarSchedule";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, startOfDay, isBefore } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
 import { CulturalQuotesService } from "@/services/culturalQuotesService";
 import { MobileCamera } from "./MobileCamera";
@@ -1119,7 +1120,7 @@ export default function ReminderForm({
                   <button
                     type="button"
                     onClick={() => setVoiceCharacterOpen(v => !v)}
-                    className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#FDF8F0] text-[#C9A063]' : 'border-[#EAEAEA] bg-white text-[#6B7280] hover:border-[#C9A063]'}`}
+                    className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
                   >
                     <Volume2 className="h-5 w-5" />
                     <span>Voice</span>
@@ -1133,7 +1134,7 @@ export default function ReminderForm({
                         if (attachmentsOpen) { setAttachmentsOpen(false); }
                         else { gateAttachments(() => setAttachmentsOpen(true)); }
                       }}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#FDF8F0] text-[#C9A063]' : 'border-[#EAEAEA] bg-white text-[#6B7280] hover:border-[#C9A063]'}`}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
                     >
                       <Camera className="h-5 w-5" />
                       <span>Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}</span>
@@ -1149,7 +1150,7 @@ export default function ReminderForm({
                         if (motivationalOpen) { setMotivationalOpen(false); }
                         else { gateQuotes(() => setMotivationalOpen(true)); }
                       }}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#FDF8F0] text-[#C9A063]' : 'border-[#EAEAEA] bg-white text-[#6B7280] hover:border-[#C9A063]'}`}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
                     >
                       <Quote className="h-5 w-5" />
                       <span>Quotes{selectedCategory ? ' ✓' : ''}</span>
