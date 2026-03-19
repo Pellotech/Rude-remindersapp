@@ -902,7 +902,7 @@ export default function ReminderForm({
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-white border-2 border-[#2563EB] focus:border-[#C53B3B] focus:ring-0 rounded-[14px] py-3 text-[#111827]"
+                      className="bg-white border-2 border-[#C53B3B] focus:border-[#C53B3B] focus:ring-0 rounded-[14px] py-3 text-[#111827]"
                       {...field}
                     />
                   </FormControl>
@@ -1247,7 +1247,7 @@ export default function ReminderForm({
                 {motivationalOpen && (
                   <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
                     <Select value={selectedCategory} onValueChange={handleCategorySelection}>
-                      <SelectTrigger className="w-full text-xs h-9">
+                      <SelectTrigger className="w-full text-xs h-9 text-[#111827]">
                         <SelectValue placeholder="Choose motivation category (optional)" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1289,11 +1289,7 @@ export default function ReminderForm({
                         <Button
                           type="button"
                           variant="outline"
-                          className={`w-full justify-between font-medium rounded-lg px-4 py-3 ${
-                            quickReminderOpen
-                              ? "bg-[#9334EA] text-white border-[#7C2BD4] hover:bg-[#8429D6] hover:text-white"
-                              : "bg-[#C9A063] text-white border-[#B8904F] hover:bg-[#BF944F] hover:text-white"
-                          }`}
+                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-[#E5E7EB] text-[#374151] border-[#D1D5DB] hover:bg-[#D1D5DB] hover:text-[#374151]"
                         >
                           <span className="flex items-center">
                             <Clock className="mr-2 h-4 w-4" />
@@ -1302,7 +1298,7 @@ export default function ReminderForm({
                           <ChevronDown className={`h-4 w-4 transition-transform ${quickReminderOpen ? "rotate-180" : ""}`} />
                         </Button>
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-2 p-4 bg-[#9334EA] rounded-lg border border-[#7C2BD4]">
+                      <CollapsibleContent className="mt-2 p-4 bg-[#E5E7EB] rounded-lg border border-[#D1D5DB]">
                         <div className="grid grid-cols-4 gap-2">
                           {[
                             { seconds: 10, shortLabel: "10s" },
@@ -1315,7 +1311,7 @@ export default function ReminderForm({
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="flex items-center justify-center p-2 h-10 bg-[#C9A063] hover:bg-[#BF944F] border-[#B8904F] hover:border-[#A8803F] text-white font-semibold text-sm rounded-lg"
+                              className="flex items-center justify-center p-2 h-10 bg-[#D1D5DB] hover:bg-[#C5C9D0] border-[#C5C9D0] hover:border-[#B8BCC5] text-[#374151] font-semibold text-sm rounded-lg"
                               onClick={async () => {
                                 const currentMessage = form.watch("originalMessage");
                                 if (!currentMessage || currentMessage.trim() === "") {

@@ -254,8 +254,8 @@ export default function HomePremium() {
                 </div>
                 {/* Graph tab switcher */}
                 <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden">
-                  {(["week", "year", "tenWeeks"] as const).map((t, i) => {
-                    const labels = ["This Week", "This Year", "10 Weeks"];
+                  {(["week", "tenWeeks", "year"] as const).map((t, i) => {
+                    const labels = ["This Week", "10 Weeks", "This Year"];
                     return (
                       <button
                         key={t}
@@ -263,8 +263,8 @@ export default function HomePremium() {
                         onClick={() => setGraphTab(t)}
                         className={`flex-1 py-1 text-[11px] font-semibold transition-all ${
                           graphTab === t
-                            ? "bg-[#C9A063] text-white"
-                            : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
+                            ? "bg-[#C9A063] text-[#111827]"
+                            : "bg-white text-[#111827] hover:bg-[#FDF8F0]"
                         } ${i !== 0 ? "border-l border-[#C9A063]" : ""}`}
                       >
                         {labels[i]}

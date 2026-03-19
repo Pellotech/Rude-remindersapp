@@ -188,8 +188,8 @@ export default function RemindersList() {
             onClick={() => setTab("past")}
             className={`flex-1 py-1.5 text-xs font-semibold transition-all ${
               tab === "past"
-                ? "bg-[#C9A063] text-white"
-                : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
+                ? "bg-[#C9A063] text-[#111827]"
+                : "bg-white text-[#111827] hover:bg-[#FDF8F0]"
             }`}
           >
             Past ({past.length})
@@ -199,8 +199,8 @@ export default function RemindersList() {
             onClick={() => setTab("upcoming")}
             className={`flex-1 py-1.5 text-xs font-semibold transition-all border-l border-[#C9A063] ${
               tab === "upcoming"
-                ? "bg-[#C9A063] text-white"
-                : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
+                ? "bg-[#C9A063] text-[#111827]"
+                : "bg-white text-[#111827] hover:bg-[#FDF8F0]"
             }`}
           >
             Upcoming ({upcoming.length})
