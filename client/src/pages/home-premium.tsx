@@ -26,6 +26,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
@@ -267,41 +268,64 @@ export default function HomePremium() {
                 </div>
               </CardHeader>
               <CardContent className="px-2 pb-3">
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={200}>
                   <LineChart
                     data={(graphData as any)?.[graphTab] ?? []}
-                    margin={{ top: 8, right: 12, left: -20, bottom: 0 }}
+                    margin={{ top: 8, right: 12, left: -16, bottom: 0 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
                     <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#9CA3AF" }} />
-                    <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: "#9CA3AF" }} />
+                    <YAxis
+                      domain={[-6, 6]}
+                      ticks={[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]}
+                      allowDecimals={false}
+                      tick={{ fontSize: 9, fill: "#9CA3AF" }}
+                    />
+                    <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
                     <Tooltip
                       contentStyle={{ borderColor: "#C9A063", borderRadius: 8, fontSize: 12 }}
-                      formatter={(v: any) => [v, "Completed"]}
+                      formatter={(v: any, name: string) => {
+                        if (name === "completed") return [v, "Completed ✓"];
+                        if (name === "incomplete") return [Math.abs(v), "Missed ✗"];
+                        return [v, name];
+                      }}
                     />
                     <Line
                       type="monotone"
-                      dataKey="value"
+                      dataKey="completed"
                       stroke="#C53B3B"
                       strokeWidth={2}
                       dot={{ fill: "#C53B3B", r: 3 }}
                       activeDot={{ r: 5 }}
+                      name="completed"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="incomplete"
+                      stroke="#9CA3AF"
+                      strokeWidth={2}
+                      dot={{ fill: "#9CA3AF", r: 3 }}
+                      activeDot={{ r: 5 }}
+                      name="incomplete"
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            {/* ── ENCOURAGEMENT ── */}
+            {/* ── ENCOURAGEMENT based on net score ── */}
             {(() => {
-              const total = (reminders as any[]).length;
-              const done = (reminders as any[]).filter((r: any) => r.completed).length;
-              const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+              const currentData: any[] = (graphData as any)?.[graphTab] ?? [];
+              const totalNet = currentData.reduce((sum: number, pt: any) => sum + (pt.completed ?? 0) + (pt.incomplete ?? 0), 0);
+              const hasData = currentData.some((pt: any) => (pt.completed ?? 0) !== 0 || (pt.incomplete ?? 0) !== 0);
               let msg = "Every expert was once a beginner. Set your first reminder! 💪";
-              if (pct >= 76) msg = "Absolute legend. Nothing stops you 👑";
-              else if (pct >= 51) msg = "Over halfway there — you're crushing it! ⚡";
-              else if (pct >= 26) msg = "Solid progress! You're building a great habit 🎯";
-              else if (pct >= 1) msg = "You're getting started — keep that momentum going! 🔥";
+              if (hasData) {
+                const allPositive = currentData.every((pt: any) => (pt.incomplete ?? 0) === 0);
+                if (allPositive && totalNet > 0) msg = "Absolutely killing it. Nothing stops you 👑";
+                else if (totalNet > 2) msg = "You're crushing it — keep that line climbing! 🔥";
+                else if (totalNet >= -1) msg = "You're balancing it out — push for more greens! 🎯";
+                else msg = "Rough patch — tomorrow is a fresh start 💪";
+              }
               return (
                 <Card className="border border-[#C9A063] bg-[#FDF8F0]">
                   <CardContent className="py-3 px-4 text-center">

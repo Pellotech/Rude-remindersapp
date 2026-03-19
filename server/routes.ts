@@ -1051,14 +1051,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = getAuthUserId(req);
       const reminders = await storage.getReminders(userId);
-      const completed = reminders.filter(r => r.completed && r.completedAt);
+      const completedReminders = reminders.filter(r => r.completed && r.completedAt);
 
       const now = new Date();
+
+      const clamp = (n: number) => Math.max(-6, Math.min(6, n));
+
+      // Helper: count reminders scheduled in [start, end] that are NOT completed (and past due)
+      const countIncomplete = (start: Date, end: Date) =>
+        reminders.filter(r => {
+          const d = new Date(r.scheduledFor);
+          return d >= start && d <= end && !r.completed && d <= now;
+        }).length;
+
+      // Helper: count completed reminders whose completedAt falls in [start, end]
+      const countCompleted = (start: Date, end: Date) =>
+        completedReminders.filter(r => {
+          const d = new Date(r.completedAt!);
+          return d >= start && d <= end;
+        }).length;
+
+      const makePoint = (name: string, start: Date, end: Date) => {
+        const done = clamp(countCompleted(start, end));
+        const missed = clamp(countIncomplete(start, end));
+        return { name, completed: done, incomplete: -missed };
+      };
 
       // --- This Week: Mon–Sun of the current ISO week ---
       const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       const weekStart = new Date(now);
-      const dow = now.getDay(); // 0=Sun
+      const dow = now.getDay();
       const diffToMon = (dow === 0 ? -6 : 1 - dow);
       weekStart.setDate(now.getDate() + diffToMon);
       weekStart.setHours(0, 0, 0, 0);
@@ -1068,39 +1090,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dayStart.setDate(weekStart.getDate() + i);
         const dayEnd = new Date(dayStart);
         dayEnd.setHours(23, 59, 59, 999);
-        const count = completed.filter(r => {
-          const d = new Date(r.completedAt!);
-          return d >= dayStart && d <= dayEnd;
-        }).length;
-        return { name, value: count };
+        return makePoint(name, dayStart, dayEnd);
       });
 
       // --- This Year: Jan–current month ---
       const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const currentMonth = now.getMonth(); // 0-indexed
+      const currentMonthIdx = now.getMonth();
       const currentYear = now.getFullYear();
-      const yearData = monthNames.slice(0, currentMonth + 1).map((name, i) => {
-        const count = completed.filter(r => {
-          const d = new Date(r.completedAt!);
-          return d.getFullYear() === currentYear && d.getMonth() === i;
-        }).length;
-        return { name, value: count };
+      const yearData = monthNames.slice(0, currentMonthIdx + 1).map((name, i) => {
+        const start = new Date(currentYear, i, 1, 0, 0, 0, 0);
+        const end = new Date(currentYear, i + 1, 0, 23, 59, 59, 999);
+        return makePoint(name, start, end);
       });
 
-      // --- Past 10 Weeks: week ending Sunday ---
+      // --- Past 10 Weeks ---
       const tenWeeksData = Array.from({ length: 10 }, (_, i) => {
         const weekEnd = new Date(now);
         weekEnd.setDate(now.getDate() - (9 - i) * 7);
         weekEnd.setHours(23, 59, 59, 999);
-        const weekStart2 = new Date(weekEnd);
-        weekStart2.setDate(weekEnd.getDate() - 6);
-        weekStart2.setHours(0, 0, 0, 0);
-        const count = completed.filter(r => {
-          const d = new Date(r.completedAt!);
-          return d >= weekStart2 && d <= weekEnd;
-        }).length;
+        const wStart = new Date(weekEnd);
+        wStart.setDate(weekEnd.getDate() - 6);
+        wStart.setHours(0, 0, 0, 0);
         const label = `${weekEnd.getMonth() + 1}/${weekEnd.getDate()}`;
-        return { name: label, value: count };
+        return makePoint(label, wStart, weekEnd);
       });
 
       res.json({ week: weekData, year: yearData, tenWeeks: tenWeeksData });
