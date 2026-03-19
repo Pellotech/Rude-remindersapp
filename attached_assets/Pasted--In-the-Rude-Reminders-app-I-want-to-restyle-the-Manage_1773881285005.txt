@@ -1,0 +1,47 @@
+
+In the Rude Reminders app I want to restyle the Manage/reminders page to match the same theme as the main Create Reminder page. Please update the manage reminders component with these changes:
+1. THEME — match the ReminderForm style:
+
+Background: same light grey/white as main page
+Card borders: muted gold #C9A063
+Action buttons: red #C53B3B for delete/X, green for complete/tick
+Section headers: black bold text
+Tags like "Sarcastic": keep the yellow/gold pill style
+Remove any blue colors that dont match the main page theme
+
+2. REMOVE UNNECESSARY TEXT:
+
+Remove the grey explanation box "Your active reminders that are scheduled for today and beyond. Manage, edit, or complete them here." — delete it entirely
+Remove the grey explanation box "Mark these reminders as accomplished or not accomplished to track your progress." — delete it entirely
+Remove "Current & Upcoming Reminders (0)" label — just show the reminders directly
+Keep "Overdue (7)" style count labels but make them smaller and inline
+
+3. CONDENSE REMINDER CARDS:
+
+Make each reminder card more compact — reduce padding
+Show only: title, rudeness tag, date/time, and the 3 action buttons (share, complete, delete)
+Remove the quoted text like "Call doctor" in quotes below the title — its redundant, the title already shows it
+Remove the bell and speaker icons from the card — not needed here
+Date format: shorter — "Mar 18 • Overdue" instead of full timestamp
+
+4. SECTION HEADERS:
+
+"Overdue (7)" — make this a slim red banner instead of a large heading
+"Current & Upcoming (0)" — make this a slim gold banner
+No paragraph text under these banners
+
+5. SEARCH AND FILTER:
+
+Keep the "All Active" dropdown and search bar
+Make them more compact and styled to match gold theme
+Search bar border: gold #C9A063
+
+6. "No upcoming reminders" empty state:
+
+Keep the clock icon but make it smaller
+Shorter text: "Nothing scheduled yet"
+Remove "All caught up! Create a new reminder to get started."
+
+7. Do not change any functionality — only styling and text cleanup
+8. Show me which files are being changed before making edits
+9. Make changes incrementally

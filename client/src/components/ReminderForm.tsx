@@ -1153,7 +1153,11 @@ export default function ReminderForm({
                       className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
                     >
                       <Quote className="h-5 w-5" />
-                      <span>Quotes{selectedCategory ? ' ✓' : ''}</span>
+                      <span className="truncate max-w-full px-1 text-center leading-tight">
+                        {selectedCategory
+                          ? (motivationCategories.find(c => c.id === selectedCategory)?.name ?? 'Quotes').split(' ')[0]
+                          : 'Quotes'}
+                      </span>
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-amber-500" />}
                     </button>
                   )}
@@ -1263,11 +1267,6 @@ export default function ReminderForm({
                         })}
                       </SelectContent>
                     </Select>
-                    {selectedCategory && (
-                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                        📝 {motivationCategories.find(c => c.id === selectedCategory)?.name} — quote generated on submit
-                      </p>
-                    )}
                   </div>
                 )}
               </>
