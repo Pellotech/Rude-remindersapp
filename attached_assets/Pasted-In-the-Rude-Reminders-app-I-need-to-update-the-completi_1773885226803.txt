@@ -1,0 +1,49 @@
+In the Rude Reminders app I need to update the completion line graph on the Analytics page to show both completions AND incomplete/dismissed reminders on a dual axis. Please do the following:
+1. CHANGE THE GRAPH AXIS:
+
+The Y axis should have 0 in the CENTER of the graph — not at the bottom
+Above 0 (positive): completed reminders go UP
+Below 0 (negative): incomplete/dismissed/failed reminders go DOWN
+Example scale: -4, -3, -2, -1, 0, 1, 2, 3, 4
+The 0 line should be a visible horizontal reference line across the middle of the graph
+The 0 axis line should be solid and slightly thicker than the grid lines
+
+2. UPDATE THE DATA:
+
+For each time period (day/week/month) calculate TWO values:
+
+Positive value: number of reminders marked as COMPLETE
+Negative value: number of reminders marked as INCOMPLETE or DISMISSED (shown as negative number)
+
+
+Plot a SINGLE line that goes above 0 for good days and below 0 for bad days
+OR plot TWO lines — one red for completions, one grey for incompletes — whichever looks cleaner
+
+3. UPDATE THE API ENDPOINT /api/stats/completion-graph:
+
+Return both completed count AND incomplete/dismissed count for each period
+Calculate net score per period: completions minus incompletes
+Example: 3 completed, 1 incomplete = net +2 (line goes to +2)
+Example: 1 completed, 3 incomplete = net -2 (line goes to -2)
+
+4. VISUAL STYLE:
+
+Above 0 line: color the area or line in red #C53B3B
+Below 0 line: color the area or line in grey #9CA3AF
+The 0 center line: solid dark line #374151 slightly thicker
+Keep all existing gold border card styling
+Keep the 3 tabs: This Week, This Year, 10 Weeks
+
+5. ENCOURAGEMENT MESSAGE:
+
+Update the logic based on NET score not just completion rate:
+
+Mostly below 0: "Rough patch — tomorrow is a fresh start 💪"
+Around 0: "You're balancing it out — push for more greens! 🎯"
+Mostly above 0: "You're crushing it — keep that line climbing! 🔥"
+All above 0: "Absolutely killing it. Nothing stops you 👑"
+
+
+
+6. Do not change anything else on the analytics page
+7. Show me every file being changed before making edits
