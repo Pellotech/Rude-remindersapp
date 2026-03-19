@@ -299,14 +299,14 @@ export default function HomePremium() {
                     <Line
                       type="monotone"
                       dataKey="net"
-                      stroke="#C9A063"
+                      stroke="#C53B3B"
                       strokeWidth={2.5}
                       dot={(props: any) => {
                         const { cx, cy, payload } = props;
-                        const color = payload.net >= 0 ? "#C9A063" : "#C53B3B";
+                        const color = payload.net >= 0 ? "#C53B3B" : "#9CA3AF";
                         return <circle key={`dot-${cx}-${cy}`} cx={cx} cy={cy} r={3} fill={color} stroke={color} />;
                       }}
-                      activeDot={{ r: 5, fill: "#C9A063" }}
+                      activeDot={{ r: 5, fill: "#C53B3B" }}
                       name="net"
                     />
                   </LineChart>
