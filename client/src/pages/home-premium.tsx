@@ -65,10 +65,14 @@ export default function HomePremium() {
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const { data: stats } = useQuery({
     queryKey: ["/api/stats"],
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   const { data: voices = [] } = useQuery({
@@ -77,6 +81,8 @@ export default function HomePremium() {
 
   const { data: graphData } = useQuery({
     queryKey: ["/api/stats/completion-graph"],
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   useEffect(() => {

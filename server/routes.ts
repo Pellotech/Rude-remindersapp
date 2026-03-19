@@ -1027,6 +1027,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);
+      res.set('Cache-Control', 'no-store');
       const reminders = await storage.getReminders(userId);
       const user = await storage.getUser(userId);
 
@@ -1052,6 +1053,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/stats/completion-graph', isAuthenticated, async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);
+      res.set('Cache-Control', 'no-store');
       const reminders = await storage.getReminders(userId);
       const completedReminders = reminders.filter(r => r.completed && r.completedAt);
 
