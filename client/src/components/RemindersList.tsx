@@ -6,28 +6,11 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { useAuth } from "@/hooks/useAuth";
 import { guestStorage } from "@/services/guestStorage";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Check, 
-  Trash2, 
-  Search, 
-  Clock,
-  Play
-} from "lucide-react";
+import { Trash2, Search, Clock } from "lucide-react";
 import type { Reminder } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { ShareButton } from "./ShareButton";
@@ -67,9 +50,8 @@ export default function RemindersList() {
   const queryClient = useQueryClient();
   const { isGuest } = useAuth();
   const [, setLocation] = useLocation();
-  const [filter, setFilter] = useState("all");
+  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const [searchTerm, setSearchTerm] = useState("");
-  const [previewReminder, setPreviewReminder] = useState<Reminder | null>(null);
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
   const { data: reminders = [], isLoading } = useQuery({
@@ -80,9 +62,7 @@ export default function RemindersList() {
 
   const completeReminderMutation = useMutation({
     mutationFn: async (id: string) => {
-      if (isGuest) {
-        return guestStorage.completeReminder(id);
-      }
+      if (isGuest) return guestStorage.completeReminder(id);
       return apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" });
     },
     onSuccess: async (_, id) => {
@@ -148,7 +128,7 @@ export default function RemindersList() {
       if (supportsNotifications()) {
         try { await cancelNativeNotification(id); } catch {}
       }
-      toast({ title: "Added to disappointments", description: "Tracking what didn't get done builds awareness too." });
+      toast({ title: "Noted", description: "Tracking what didn't get done builds awareness too." });
       if (isGuest) {
         await queryClient.refetchQueries({ queryKey: ["guest-reminders"] });
         await queryClient.refetchQueries({ queryKey: ["guest-stats"] });
@@ -167,44 +147,23 @@ export default function RemindersList() {
     },
   });
 
-  const filteredReminders = (reminders as Reminder[]).filter((reminder: Reminder) => {
-    const matchesSearch = reminder.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         reminder.originalMessage.toLowerCase().includes(searchTerm.toLowerCase());
-    if (!matchesSearch) return false;
+  const now = new Date();
+  const all = reminders as Reminder[];
 
-    const now = new Date();
-    const reminderDate = new Date(reminder.scheduledFor);
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const reminderDay = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
+  const upcoming = all.filter((r: Reminder) =>
+    !r.completed && new Date(r.scheduledFor) >= now &&
+    (r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     r.originalMessage.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
-    switch (filter) {
-      case "today": return reminderDay.getTime() === today.getTime();
-      case "week": {
-        const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        return reminderDay >= today && reminderDay <= weekFromNow;
-      }
-      case "completed": return reminder.completed;
-      case "active": return !reminder.completed && reminderDate >= now;
-      default: return true;
-    }
-  });
+  const past = all.filter((r: Reminder) =>
+    (!r.completed && new Date(r.scheduledFor) < now) || r.completed
+  ).filter((r: Reminder) =>
+    r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    r.originalMessage.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const previewNotification = (reminder: Reminder) => {
-    setPreviewReminder(reminder);
-    if (reminder.browserNotification) {
-      toast({
-        title: `Preview: ${reminder.title}`,
-        description: reminder.rudeMessage || reminder.originalMessage,
-        duration: 5000,
-      });
-    }
-    if (reminder.voiceNotification && "speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(reminder.rudeMessage || reminder.originalMessage);
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      speechSynthesis.speak(utterance);
-    }
-  };
+  const displayed = tab === "upcoming" ? upcoming : past;
 
   if (isLoading) {
     return (
@@ -217,216 +176,150 @@ export default function RemindersList() {
     );
   }
 
-  const renderReminderCard = (reminder: Reminder, showNotAccomplished = false) => (
-    <SwipeableReminderCard
-      key={reminder.id}
-      onDelete={() => deleteReminderMutation.mutate(reminder.id)}
-      disabled={deleteReminderMutation.isPending}
-    >
-      <Card className={cn(
-        "border border-[#C9A063] transition-all duration-200 w-full max-w-full",
-        reminder.completed && "opacity-60"
-      )}>
-        <CardContent className="p-3 w-full overflow-x-hidden">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-1.5 mb-1">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 break-words">
-                  {reminder.title}
-                </h3>
-                <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-xs flex-shrink-0 font-medium`}>
-                  {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                </Badge>
-                {reminder.completed && (
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs flex-shrink-0">
-                    Done
-                  </Badge>
-                )}
-              </div>
-              <div className="flex items-center gap-1 text-xs text-gray-400">
-                <Clock className="h-3 w-3 flex-shrink-0" />
-                <span>{formatShortDate(reminder.scheduledFor)}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-0.5 flex-shrink-0">
-              <ShareButton reminder={reminder} className="h-8 w-8 p-0" iconOnly={true} />
-
-              {!reminder.completed && showNotAccomplished && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 text-[#C53B3B] hover:text-[#C53B3B] hover:bg-red-50"
-                  onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
-                  disabled={markNotAccomplishedMutation.isPending}
-                  title="Mark as not accomplished"
-                  data-testid={`button-not-accomplish-${reminder.id}`}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-
-              {!reminder.completed && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 text-green-500 hover:text-green-600 hover:bg-green-50"
-                  onClick={() => completeReminderMutation.mutate(reminder.id)}
-                  disabled={completeReminderMutation.isPending}
-                  title="Mark as accomplished"
-                  data-testid={`button-accomplish-${reminder.id}`}
-                >
-                  <Check className="h-3.5 w-3.5" />
-                </Button>
-              )}
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 text-[#C53B3B] hover:text-[#C53B3B] hover:bg-red-50"
-                onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                disabled={deleteReminderMutation.isPending}
-                title="Delete reminder"
-                data-testid={`button-delete-${reminder.id}`}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </SwipeableReminderCard>
-  );
-
   return (
     <Card className="border border-[#C9A063]">
-      <CardHeader className="pb-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-full sm:w-36 flex-shrink-0 border-2 border-[#C9A063] bg-white text-sm h-9">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Active</SelectItem>
-              <SelectItem value="active">Current</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="week">This Week</SelectItem>
-            </SelectContent>
-          </Select>
+      <CardHeader className="pb-2 pt-3 px-3">
+        {/* Tab switcher */}
+        <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden mb-2">
+          <button
+            type="button"
+            onClick={() => setTab("upcoming")}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-all ${
+              tab === "upcoming"
+                ? "bg-[#C9A063] text-white"
+                : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
+            }`}
+          >
+            Upcoming ({upcoming.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("past")}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-all ${
+              tab === "past"
+                ? "bg-[#C9A063] text-white"
+                : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
+            }`}
+          >
+            Past ({past.length})
+          </button>
+        </div>
 
-          <div className="relative flex-1 min-w-0">
-            <Input
-              placeholder="Search reminders..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 w-full bg-white border-2 border-[#C9A063] focus-visible:border-[#C9A063] h-9 text-sm"
-            />
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#C9A063] h-3.5 w-3.5" />
-          </div>
+        {/* Search */}
+        <div className="relative">
+          <Input
+            placeholder="Search reminders..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-8 w-full bg-white border-2 border-[#C9A063] focus-visible:border-[#C9A063] h-8 text-xs"
+          />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#C9A063] h-3.5 w-3.5" />
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0">
-        {filteredReminders.length === 0 ? (
-          <div className="text-center py-10">
-            <Clock className="h-10 w-10 text-[#C9A063] opacity-40 mx-auto mb-3" />
-            <p className="text-sm font-medium text-gray-700">
-              {searchTerm || filter !== "all" ? "No matching reminders" : "Nothing scheduled yet"}
+      <CardContent className="px-3 pb-3 pt-0">
+        {displayed.length === 0 ? (
+          <div className="text-center py-8">
+            <Clock className="h-8 w-8 text-[#C9A063] opacity-40 mx-auto mb-2" />
+            <p className="text-xs font-medium text-gray-500">
+              {searchTerm
+                ? "No matching reminders"
+                : tab === "upcoming"
+                ? "Nothing scheduled yet"
+                : "No past reminders"}
             </p>
           </div>
         ) : (
-          (() => {
-            const now = new Date();
-            const overdueReminders = filteredReminders.filter((r: Reminder) =>
-              !r.completed && new Date(r.scheduledFor) < now
-            );
-            const upcomingReminders = filteredReminders.filter((r: Reminder) =>
-              !r.completed && new Date(r.scheduledFor) >= now
-            );
+          <div
+            className="space-y-2 overflow-y-auto pr-0.5"
+            style={{ maxHeight: "calc(4 * 64px + 3 * 8px)" }}
+          >
+            {displayed.map((reminder: Reminder) => (
+              <SwipeableReminderCard
+                key={reminder.id}
+                onDelete={() => deleteReminderMutation.mutate(reminder.id)}
+                disabled={deleteReminderMutation.isPending}
+              >
+                <Card className={cn(
+                  "border border-[#C9A063] w-full",
+                  reminder.completed && "opacity-60"
+                )}>
+                  <CardContent className="p-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      {/* Left: title + tag + date */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
+                            {reminder.title}
+                          </span>
+                          <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-[10px] px-1.5 py-0 font-medium flex-shrink-0`}>
+                            {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
+                          </Badge>
+                          {reminder.completed && (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-[10px] px-1.5 py-0 flex-shrink-0">
+                              Done
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 text-[11px] text-gray-400">
+                          <Clock className="h-2.5 w-2.5 flex-shrink-0" />
+                          <span>{formatShortDate(reminder.scheduledFor)}</span>
+                        </div>
+                      </div>
 
-            return (
-              <div className="space-y-4 w-full">
-                {overdueReminders.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-2 px-2 py-1 bg-[#C53B3B] rounded-md">
-                      <span className="text-xs font-semibold text-white">
-                        Overdue ({overdueReminders.length})
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {overdueReminders.map((r: Reminder) => renderReminderCard(r, true))}
-                    </div>
-                  </div>
-                )}
+                      {/* Right: action buttons */}
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />
 
-                {upcomingReminders.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-2 px-2 py-1 bg-[#FDF8F0] border border-[#C9A063] rounded-md">
-                      <span className="text-xs font-semibold text-[#C9A063]">
-                        Upcoming ({upcomingReminders.length})
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {upcomingReminders.map((r: Reminder) => renderReminderCard(r, false))}
-                    </div>
-                  </div>
-                )}
+                        {!reminder.completed && (
+                          <>
+                            {/* Smiley = accomplished */}
+                            <button
+                              type="button"
+                              className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-base leading-none"
+                              onClick={() => completeReminderMutation.mutate(reminder.id)}
+                              disabled={completeReminderMutation.isPending}
+                              title="Mark as accomplished"
+                              data-testid={`button-accomplish-${reminder.id}`}
+                            >
+                              😊
+                            </button>
 
-                {overdueReminders.length === 0 && upcomingReminders.length === 0 && (
-                  <div className="text-center py-10">
-                    <Clock className="h-10 w-10 text-[#C9A063] opacity-40 mx-auto mb-3" />
-                    <p className="text-sm font-medium text-gray-700">Nothing scheduled yet</p>
-                  </div>
-                )}
-              </div>
-            );
-          })()
+                            {/* Frown = not accomplished */}
+                            <button
+                              type="button"
+                              className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-base leading-none"
+                              onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
+                              disabled={markNotAccomplishedMutation.isPending}
+                              title="Mark as not accomplished"
+                              data-testid={`button-not-accomplish-${reminder.id}`}
+                            >
+                              😞
+                            </button>
+                          </>
+                        )}
+
+                        {/* Single trash = delete */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0 text-[#C53B3B] hover:text-[#C53B3B] hover:bg-red-50"
+                          onClick={() => deleteReminderMutation.mutate(reminder.id)}
+                          disabled={deleteReminderMutation.isPending}
+                          title="Delete reminder"
+                          data-testid={`button-delete-${reminder.id}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </SwipeableReminderCard>
+            ))}
+          </div>
         )}
       </CardContent>
-
-      {previewReminder && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto border border-[#C9A063]">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Reminder Preview</h3>
-              <Button variant="ghost" size="sm" onClick={() => setPreviewReminder(null)} className="text-gray-400 hover:text-gray-600">
-                ✕
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-medium text-sm text-gray-600 mb-1">Title</h4>
-                <p className="font-semibold text-gray-900">{previewReminder.title}</p>
-              </div>
-
-              <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                <h4 className="font-medium text-sm text-[#C53B3B] mb-1">What you'll see/hear</h4>
-                <p className="text-[#C53B3B] font-medium">
-                  {previewReminder.rudeMessage || previewReminder.originalMessage}
-                </p>
-              </div>
-
-              <div className="p-3 bg-[#FDF8F0] rounded-lg border border-[#C9A063]">
-                <h4 className="font-medium text-sm text-[#C9A063] mb-1">Rudeness Level</h4>
-                <Badge className={rudenessLevelColors[previewReminder.rudenessLevel as keyof typeof rudenessLevelColors]}>
-                  {rudenessLevelLabels[previewReminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                </Badge>
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <Button onClick={() => previewNotification(previewReminder)} className="flex items-center gap-2" variant="outline">
-                  <Play className="h-4 w-4" />
-                  Preview Again
-                </Button>
-                <Button onClick={() => setPreviewReminder(null)} variant="secondary" className="flex-1">
-                  Close
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </Card>
   );
 }
