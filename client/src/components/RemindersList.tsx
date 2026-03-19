@@ -230,10 +230,7 @@ export default function RemindersList() {
             </p>
           </div>
         ) : (
-          <div
-            className="space-y-2 overflow-y-auto pr-0.5"
-            style={{ maxHeight: "calc(4 * 64px + 3 * 8px)" }}
-          >
+          <div className="space-y-2">
             {displayed.map((reminder: Reminder) => (
               <SwipeableReminderCard
                 key={reminder.id}
