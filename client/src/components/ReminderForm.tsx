@@ -1120,7 +1120,7 @@ export default function ReminderForm({
                   <button
                     type="button"
                     onClick={() => setVoiceCharacterOpen(v => !v)}
-                    className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
+                    className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
                   >
                     <Volume2 className="h-5 w-5" />
                     <span>Voice</span>
@@ -1134,7 +1134,7 @@ export default function ReminderForm({
                         if (attachmentsOpen) { setAttachmentsOpen(false); }
                         else { gateAttachments(() => setAttachmentsOpen(true)); }
                       }}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
                     >
                       <Camera className="h-5 w-5" />
                       <span>Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}</span>
@@ -1150,7 +1150,7 @@ export default function ReminderForm({
                         if (motivationalOpen) { setMotivationalOpen(false); }
                         else { gateQuotes(() => setMotivationalOpen(true)); }
                       }}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#C9A063] hover:bg-[#FDF8F0]'}`}
+                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
                     >
                       <Quote className="h-5 w-5" />
                       <span className="truncate max-w-full px-1 text-center leading-tight">
