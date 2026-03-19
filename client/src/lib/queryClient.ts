@@ -3,7 +3,7 @@ import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 
 // Production API URL for native apps (when UI is bundled locally)
-const PRODUCTION_API_URL = "https://rude-reminders.replit.app";
+const PRODUCTION_API_URL = "https://rudereminder.replit.app";
 
 // Token storage key
 const AUTH_TOKEN_KEY = "rude_reminders_auth_token";
