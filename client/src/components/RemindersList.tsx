@@ -58,6 +58,8 @@ export default function RemindersList() {
     queryKey: isGuest ? ["guest-reminders"] : ["/api/reminders"],
     queryFn: isGuest ? async () => guestStorage.getReminders() : undefined,
     refetchInterval: isGuest ? 1000 : undefined,
+    staleTime: 0,          // Always treat cached data as stale so a fresh fetch runs on every mount
+    refetchOnMount: true,  // Always re-fetch when the component mounts
   });
 
   const completeReminderMutation = useMutation({

@@ -147,6 +147,7 @@ export const getQueryFn: <T>(options: {
     const fullUrl = path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path;
     const res = await fetch(fullUrl, {
       credentials: "include",
+      cache: "no-store", // Prevent Android WebView from serving stale cached responses
       headers: getAuthHeaders(),
     });
 
