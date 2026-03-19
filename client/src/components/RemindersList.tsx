@@ -50,7 +50,7 @@ export default function RemindersList() {
   const queryClient = useQueryClient();
   const { isGuest } = useAuth();
   const [, setLocation] = useLocation();
-  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
+  const [tab, setTab] = useState<"upcoming" | "past">("past");
   const [searchTerm, setSearchTerm] = useState("");
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
@@ -183,17 +183,6 @@ export default function RemindersList() {
         <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden mb-2">
           <button
             type="button"
-            onClick={() => setTab("upcoming")}
-            className={`flex-1 py-1.5 text-xs font-semibold transition-all ${
-              tab === "upcoming"
-                ? "bg-[#C9A063] text-white"
-                : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
-            }`}
-          >
-            Upcoming ({upcoming.length})
-          </button>
-          <button
-            type="button"
             onClick={() => setTab("past")}
             className={`flex-1 py-1.5 text-xs font-semibold transition-all ${
               tab === "past"
@@ -202,6 +191,17 @@ export default function RemindersList() {
             }`}
           >
             Past ({past.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("upcoming")}
+            className={`flex-1 py-1.5 text-xs font-semibold transition-all border-l border-[#C9A063] ${
+              tab === "upcoming"
+                ? "bg-[#C9A063] text-white"
+                : "bg-white text-[#C9A063] hover:bg-[#FDF8F0]"
+            }`}
+          >
+            Upcoming ({upcoming.length})
           </button>
         </div>
 
