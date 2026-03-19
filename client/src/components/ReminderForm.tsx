@@ -1248,7 +1248,7 @@ export default function ReminderForm({
                   <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
                     <Select value={selectedCategory} onValueChange={handleCategorySelection}>
                       <SelectTrigger className="w-full text-xs h-9 text-[#111827]">
-                        <SelectValue placeholder="Choose motivation category (optional)" />
+                        <SelectValue placeholder="Choose your motivation" />
                       </SelectTrigger>
                       <SelectContent>
                         {motivationCategories.map((category) => {
