@@ -1289,7 +1289,7 @@ export default function ReminderForm({
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-[#E5E7EB] text-[#374151] border-[#D1D5DB] hover:bg-[#D1D5DB] hover:text-[#374151]"
+                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-[#C9A063] text-white border-[#B8904F] hover:bg-[#BF944F] hover:text-white"
                         >
                           <span className="flex items-center">
                             <Clock className="mr-2 h-4 w-4" />
@@ -1311,7 +1311,7 @@ export default function ReminderForm({
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="flex items-center justify-center p-2 h-10 bg-[#D1D5DB] hover:bg-[#C5C9D0] border-[#C5C9D0] hover:border-[#B8BCC5] text-[#374151] font-semibold text-sm rounded-lg"
+                              className="flex items-center justify-center p-2 h-10 bg-[#B8904F] hover:bg-[#A8803F] border-[#A8803F] hover:border-[#98703F] text-[#111827] font-semibold text-sm rounded-lg"
                               onClick={async () => {
                                 const currentMessage = form.watch("originalMessage");
                                 if (!currentMessage || currentMessage.trim() === "") {
