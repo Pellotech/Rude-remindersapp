@@ -1046,6 +1046,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Completion graph data endpoint
+  app.get('/api/stats/completion-graph', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getAuthUserId(req);
+      const reminders = await storage.getReminders(userId);
+      const completed = reminders.filter(r => r.completed && r.completedAt);
+
+      const now = new Date();
+
+      // --- This Week: Mon–Sun of the current ISO week ---
+      const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const weekStart = new Date(now);
+      const dow = now.getDay(); // 0=Sun
+      const diffToMon = (dow === 0 ? -6 : 1 - dow);
+      weekStart.setDate(now.getDate() + diffToMon);
+      weekStart.setHours(0, 0, 0, 0);
+
+      const weekData = dayNames.map((name, i) => {
+        const dayStart = new Date(weekStart);
+        dayStart.setDate(weekStart.getDate() + i);
+        const dayEnd = new Date(dayStart);
+        dayEnd.setHours(23, 59, 59, 999);
+        const count = completed.filter(r => {
+          const d = new Date(r.completedAt!);
+          return d >= dayStart && d <= dayEnd;
+        }).length;
+        return { name, value: count };
+      });
+
+      // --- This Year: Jan–current month ---
+      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const currentMonth = now.getMonth(); // 0-indexed
+      const currentYear = now.getFullYear();
+      const yearData = monthNames.slice(0, currentMonth + 1).map((name, i) => {
+        const count = completed.filter(r => {
+          const d = new Date(r.completedAt!);
+          return d.getFullYear() === currentYear && d.getMonth() === i;
+        }).length;
+        return { name, value: count };
+      });
+
+      // --- Past 10 Weeks: week ending Sunday ---
+      const tenWeeksData = Array.from({ length: 10 }, (_, i) => {
+        const weekEnd = new Date(now);
+        weekEnd.setDate(now.getDate() - (9 - i) * 7);
+        weekEnd.setHours(23, 59, 59, 999);
+        const weekStart2 = new Date(weekEnd);
+        weekStart2.setDate(weekEnd.getDate() - 6);
+        weekStart2.setHours(0, 0, 0, 0);
+        const count = completed.filter(r => {
+          const d = new Date(r.completedAt!);
+          return d >= weekStart2 && d <= weekEnd;
+        }).length;
+        const label = `${weekEnd.getMonth() + 1}/${weekEnd.getDate()}`;
+        return { name: label, value: count };
+      });
+
+      res.json({ week: weekData, year: yearData, tenWeeks: tenWeeksData });
+    } catch (error) {
+      console.error("Error fetching completion graph:", error);
+      res.status(500).json({ message: "Failed to fetch completion graph" });
+    }
+  });
+
   // Rude phrases routes
   app.get('/api/phrases/:level', async (req, res) => {
     try {

@@ -1,0 +1,76 @@
+In the Rude Reminders app I want to completely restyle and upgrade the Analytics page. Please do the following:
+1. THEME — match the main app style:
+
+Background: light grey/white
+Card borders: muted gold #C9A063
+Accent color: red #C53B3B for highlights
+Text: black for headers, grey for subtext
+Remove all purple/blue colors
+Same card style as ReminderForm with gold border and rounded corners
+
+2. REPLACE CATEGORY BREAKDOWN WITH A COMPLETION GRAPH:
+
+Install and use recharts library for the line graph (check if already installed first)
+Create a tabbed graph with 3 views the user can swipe or tap between:
+
+Tab 1 — "This Week":
+
+Line graph showing completions for each of the 7 days (Mon-Sun)
+X axis: day names, Y axis: number of reminders completed
+Line color: red #C53B3B
+
+Tab 2 — "This Year":
+
+Line graph showing completions for each of the 12 months (Jan-Dec)
+Current month highlighted
+Shows up to whatever the current month is
+
+Tab 3 — "Past 10 Weeks":
+
+Line graph showing total completions per week for the last 10 weeks
+Week ending date shown on X axis
+
+3. DATA — make sure the graph uses REAL data:
+
+Query the existing reminders database to count completed reminders grouped by:
+
+Day of week for weekly view
+Month for yearly view
+Week number for 10 week view
+
+
+Add a new API endpoint /api/stats/completion-graph that returns this grouped data
+If no data exists yet show empty graph with 0 values — not an error
+
+4. ENCOURAGEMENT SECTION:
+
+Below the graph add a small card with a dynamic message based on stats:
+
+0% completion: "Every expert was once a beginner. Set your first reminder! 💪"
+1-25% completion: "You're getting started — keep that momentum going! 🔥"
+26-50% completion: "Solid progress! You're building a great habit 🎯"
+51-75% completion: "Over halfway there — you're crushing it! ⚡"
+76-100% completion: "Absolute legend. Nothing stops you 👑"
+
+
+Card style: gold border, small text, centered
+
+5. KEEP THESE EXISTING STATS but restyle them to match theme:
+
+Completion Rate percentage
+Current Streak (days)
+Most Productive Day
+Total Completed
+Active Reminders count
+Average Rudeness level
+Display them as a clean 2-column grid of small stat cards with gold borders
+
+6. REMOVE:
+
+"Category Breakdown" section entirely
+The progress bar style display
+"Test Notification" floating button if it appears on this page
+
+7. Show me every file being changed before making edits
+8. Check if recharts is already installed before trying to install it
+9. Make changes incrementally — do not rewrite entire files at once
