@@ -244,7 +244,7 @@ export default function RemindersList() {
               >
                 <Card className={cn(
                   "border border-[#C9A063] w-full",
-                  reminder.completed && "opacity-60"
+                  (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
                 )}>
                   <CardContent className="p-2.5">
                     <div className="flex items-center justify-between gap-2">
@@ -262,6 +262,11 @@ export default function RemindersList() {
                               Done
                             </Badge>
                           )}
+                          {(reminder as any).notAccomplished && !reminder.completed && (
+                            <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-300 text-[10px] px-1.5 py-0 flex-shrink-0">
+                              Missed
+                            </Badge>
+                          )}
                         </div>
                         <div className="flex items-center gap-1 text-[11px] text-gray-400">
                           <Clock className="h-2.5 w-2.5 flex-shrink-0" />
@@ -273,7 +278,7 @@ export default function RemindersList() {
                       <div className="flex items-center gap-0.5 flex-shrink-0">
                         <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />
 
-                        {!reminder.completed && (
+                        {!reminder.completed && !(reminder as any).notAccomplished && (
                           <>
                             {/* Smiley = accomplished */}
                             <button

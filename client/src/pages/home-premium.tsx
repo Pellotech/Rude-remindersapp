@@ -273,46 +273,41 @@ export default function HomePremium() {
                   })}
                 </div>
               </CardHeader>
-              <CardContent className="px-2 pb-3">
-                <ResponsiveContainer width="100%" height={200}>
+              <CardContent className="px-2 pb-1">
+                <p className="text-[10px] text-gray-400 text-center mb-1">Line rises when you complete, drops when you miss</p>
+                <ResponsiveContainer width="100%" height={190}>
                   <LineChart
-                    data={(graphData as any)?.[graphTab] ?? []}
+                    data={((graphData as any)?.[graphTab] ?? []).map((pt: any) => ({
+                      ...pt,
+                      net: (pt.completed ?? 0) + (pt.incomplete ?? 0),
+                    }))}
                     margin={{ top: 8, right: 12, left: -16, bottom: 0 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
                     <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#9CA3AF" }} />
                     <YAxis
                       domain={[-6, 6]}
-                      ticks={[-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]}
+                      ticks={[-6, -4, -2, 0, 2, 4, 6]}
                       allowDecimals={false}
                       tick={{ fontSize: 9, fill: "#9CA3AF" }}
                     />
                     <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
                     <Tooltip
                       contentStyle={{ borderColor: "#C9A063", borderRadius: 8, fontSize: 12 }}
-                      formatter={(v: any, name: string) => {
-                        if (name === "completed") return [v, "Completed ✓"];
-                        if (name === "incomplete") return [Math.abs(v), "Missed ✗"];
-                        return [v, name];
+                      formatter={(v: any) => [v > 0 ? `+${v} net` : `${v} net`, "Score"]}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="net"
+                      stroke="#C9A063"
+                      strokeWidth={2.5}
+                      dot={(props: any) => {
+                        const { cx, cy, payload } = props;
+                        const color = payload.net >= 0 ? "#C9A063" : "#C53B3B";
+                        return <circle key={`dot-${cx}-${cy}`} cx={cx} cy={cy} r={3} fill={color} stroke={color} />;
                       }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="completed"
-                      stroke="#C53B3B"
-                      strokeWidth={2}
-                      dot={{ fill: "#C53B3B", r: 3 }}
-                      activeDot={{ r: 5 }}
-                      name="completed"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="incomplete"
-                      stroke="#9CA3AF"
-                      strokeWidth={2}
-                      dot={{ fill: "#9CA3AF", r: 3 }}
-                      activeDot={{ r: 5 }}
-                      name="incomplete"
+                      activeDot={{ r: 5, fill: "#C9A063" }}
+                      name="net"
                     />
                   </LineChart>
                 </ResponsiveContainer>
