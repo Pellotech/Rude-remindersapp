@@ -130,18 +130,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize storage (will auto-detect database availability)
   await storage.seedRudePhrases();
   
-  // Auto-delete reminders older than 90 days
+  // Auto-delete reminders older than 365 days
   const cleanupOldReminders = async () => {
     try {
       const cutoff = new Date();
-      cutoff.setDate(cutoff.getDate() - 90);
+      cutoff.setDate(cutoff.getDate() - 365);
       const deleted = await db.delete(reminders).where(lt(reminders.scheduledFor, cutoff));
       const count = (deleted as any).rowCount ?? 0;
       if (count > 0) {
-        console.log(`🗑️  Auto-deleted ${count} reminder(s) older than 90 days`);
+        console.log(`🗑️  Auto-deleted ${count} reminder(s) older than 365 days`);
       }
     } catch (err) {
-      console.warn('90-day reminder cleanup failed:', err instanceof Error ? err.message : err);
+      console.warn('365-day reminder cleanup failed:', err instanceof Error ? err.message : err);
     }
   };
 
@@ -153,7 +153,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (result.cleaned > 0 || result.errors > 0) {
         console.log(`Cleanup results: ${result.cleaned} users downgraded, ${result.errors} errors`);
       }
-      // Also purge reminders older than 90 days
+      // Also purge reminders older than 365 days
       await cleanupOldReminders();
     };
     
