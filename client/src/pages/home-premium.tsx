@@ -293,8 +293,21 @@ export default function HomePremium() {
                     />
                     <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
                     <Tooltip
-                      contentStyle={{ borderColor: "#C9A063", borderRadius: 8, fontSize: 12 }}
-                      formatter={(v: any) => [v > 0 ? `+${v} net` : `${v} net`, "Score"]}
+                      content={({ active, payload, label }: any) => {
+                        if (!active || !payload?.[0]) return null;
+                        const pt = payload[0].payload;
+                        const completed = pt.completed ?? 0;
+                        const missed = Math.abs(pt.incomplete ?? 0);
+                        const net = pt.net ?? 0;
+                        return (
+                          <div style={{ border: '1.5px solid #C9A063', borderRadius: 8, background: 'white', padding: '8px 12px', fontSize: 12 }}>
+                            <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
+                            <p>Completed: {completed} ✅</p>
+                            <p>Missed: {missed} ❌</p>
+                            <p>Net: {net > 0 ? `+${net}` : `${net}`}</p>
+                          </div>
+                        );
+                      }}
                     />
                     <Line
                       type="monotone"

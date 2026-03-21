@@ -1122,7 +1122,7 @@ export default function ReminderForm({
                     onClick={() => setVoiceCharacterOpen(v => !v)}
                     className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
                   >
-                    <Volume2 className="h-5 w-5" />
+                    <Volume2 className={`h-5 w-5 ${voiceCharacterOpen ? 'text-white' : 'text-[#B8900A]'}`} />
                     <span>Voice</span>
                   </button>
 
@@ -1136,7 +1136,7 @@ export default function ReminderForm({
                       }}
                       className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
                     >
-                      <Camera className="h-5 w-5" />
+                      <Camera className={`h-5 w-5 ${attachmentsOpen ? 'text-white' : 'text-[#B8900A]'}`} />
                       <span>Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}</span>
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-amber-500" />}
                     </button>
@@ -1152,7 +1152,7 @@ export default function ReminderForm({
                       }}
                       className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
                     >
-                      <Quote className="h-5 w-5" />
+                      <Quote className={`h-5 w-5 ${motivationalOpen ? 'text-white' : 'text-[#B8900A]'}`} />
                       <span className="truncate max-w-full px-1 text-center leading-tight">
                         {selectedCategory
                           ? (motivationCategories.find(c => c.id === selectedCategory)?.name ?? 'Quotes').split(' ')[0]
@@ -1166,41 +1166,40 @@ export default function ReminderForm({
                 {/* Voice panel */}
                 {voiceCharacterOpen && (
                   <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
-                    <div className="space-y-2">
-                      {voiceCharacters.map((character: any) => {
-                        const IconComponent = getVoiceIcon(character.id);
-                        const isLocked = character.premium && !hasProAccess;
-                        const isSelected = form.watch("voiceCharacter") === character.id;
-                        return (
-                          <button
-                            key={character.id}
-                            type="button"
-                            className={`w-full p-2.5 rounded-lg border-2 transition-all flex items-center justify-between text-left ${
-                              isSelected && !isLocked ? 'border-[#C9A063] bg-[#FDF8F0]'
-                              : isLocked ? 'border-gray-200 bg-gray-50 opacity-75'
-                              : 'border-gray-200 bg-white hover:border-gray-300'
-                            }`}
-                            onClick={() => {
-                              if (isLocked) { setLocation('/subscribe'); }
-                              else { form.setValue("voiceCharacter", character.id); setSelectedVoice(character.id); }
-                            }}
-                          >
-                            <div className="flex items-center gap-2">
-                              <IconComponent className={`h-4 w-4 ${isLocked ? 'text-gray-400' : 'text-[#C9A063]'}`} />
-                              <div>
-                                <div className={`font-medium text-sm ${isLocked ? 'text-gray-400' : 'text-gray-900'}`}>{character.name}</div>
-                                <div className={`text-xs ${isLocked ? 'text-gray-400' : 'text-gray-500'}`}>{character.personality}</div>
-                              </div>
-                            </div>
-                            {isLocked ? (
-                              <div className="flex items-center gap-1 text-xs text-amber-600"><Lock className="h-3 w-3" /><span>Premium</span></div>
-                            ) : isSelected ? (
-                              <div className="w-5 h-5 rounded-full bg-[#C9A063] flex items-center justify-center"><span className="text-white text-xs">✓</span></div>
-                            ) : null}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <Select
+                      value={form.watch("voiceCharacter")}
+                      onValueChange={(value) => {
+                        const character = voiceCharacters.find((v: any) => v.id === value);
+                        if (character?.premium && !hasProAccess) {
+                          setLocation('/subscribe');
+                        } else {
+                          form.setValue("voiceCharacter", value);
+                          setSelectedVoice(value);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-full text-sm h-9 border-[#C9A063] text-[#111827]">
+                        <SelectValue placeholder="Select voice">
+                          {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Select voice"}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {voiceCharacters.map((character: any) => {
+                          const isLocked = character.premium && !hasProAccess;
+                          const isSelected = form.watch("voiceCharacter") === character.id;
+                          return (
+                            <SelectItem key={character.id} value={character.id}>
+                              <span className="flex items-center gap-2">
+                                <span className="w-4 text-center text-xs">
+                                  {isLocked ? '🔒' : isSelected ? '✓' : ''}
+                                </span>
+                                <span>{character.name}</span>
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                     <Button type="button" variant="outline" className="w-full text-xs h-8" onClick={testVoice}>
                       <TestTube className="mr-2 h-3.5 w-3.5" />
                       Test {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Voice"}

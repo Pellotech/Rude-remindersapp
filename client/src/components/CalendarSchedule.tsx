@@ -170,9 +170,9 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                       isSelected && "bg-primary text-primary-foreground"
                     )}
                   >
-                    <span className="text-base font-semibold">{dayNumber}</span>
+                    <span className={`font-semibold ${isToday ? 'text-sm' : 'text-base'}`}>{dayNumber}</span>
                     {isToday && (
-                      <span className="text-[10px] leading-tight">Today</span>
+                      <span className="text-[10px] leading-tight text-center">Today</span>
                     )}
                   </Button>
                 </div>
@@ -251,10 +251,10 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
       {/* Selected DateTime Display */}
       {selectedDateTime && (
-        <div className="text-center p-3 bg-muted rounded-lg">
+        <div className="text-center p-3 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
           <p className="text-sm text-muted-foreground">Selected reminder time:</p>
-          <p className="font-medium">
-            {format(selectedDateTime, 'EEEE, MMMM d, yyyy \'at\' h:mm a')}
+          <p className="font-medium text-center">
+            {format(selectedDateTime, "EEE, MMM d • h:mm a")}
           </p>
         </div>
       )}

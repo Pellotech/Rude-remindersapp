@@ -1,0 +1,54 @@
+PROMPT 1 — Voice/Photo/Quotes button icons darker flat gold:
+
+In the Rude Reminders app in ReminderForm.tsx find the Voice, Photo and Quotes icon buttons. Change ONLY the icon/symbol color inside those three buttons to a darker flat gold #B8900A. Do not change the button border, background or text — only the icon symbol color. Show me the exact lines before editing.
+
+PROMPT 2 — Reminder time display restyled and moved:
+
+In the Rude Reminders app in ReminderForm.tsx find the "Selected reminder time" display box. Make these changes:
+
+Change background from light grey to light gold #FDF3E3
+Change border to muted gold #C9A063
+Abbreviate the format from "Saturday, March 21, 2026 at 3:00 PM" to "Sat, Mar 21 • 3:00 PM"
+Move it to sit directly underneath the time/minutes selection row, before the Rudeness Level section
+Center the text
+Do not change anything else. Show files before editing.
+
+
+PROMPT 3 — Fix "Today" label on calendar date button:
+
+In the Rude Reminders app find the calendar date buttons in ReminderForm.tsx or CalendarSchedule.tsx. For the "Today" button specifically:
+
+Center the date number at the top of the button
+Place "Today" label centered underneath the number
+Shrink the number slightly if needed so both fit neatly
+Keep the red background color on the Today button
+Do not change any other date buttons
+Show files before editing
+
+
+PROMPT 4 — Change voice selection from list to dropdown menu:
+
+In the Rude Reminders app find the Voice Characters section in ReminderForm.tsx. Currently it shows all 4 voice options as an expanded list when opened. Change it to a dropdown/select menu style like the Quotes category dropdown:
+
+Show a single dropdown button that displays the currently selected voice name
+When tapped opens a dropdown list showing all 4 voices: Scarlett, Will, Gerald, Karen
+Locked premium voices show a 🔒 icon next to the name
+Selected voice shows a ✓ checkmark
+Closes after selection
+Keep the Test Voice button below the dropdown
+Do not change any voice logic — only the UI presentation
+Show files before editing
+
+
+PROMPT 5 — Graph floating tooltip shows completed, missed and net:
+
+In the Rude Reminders app find the line graph tooltip/floating display on the Analytics page. Currently it shows only "Score: 0 net". Update the tooltip to show all three values:
+
+Completed: X ✅
+Missed: X ❌
+Net: X
+Style the tooltip with gold border #C9A063 and white background
+Keep the day label at the top of the tooltip
+Make sure the data being shown is accurate from the API response
+Do not change the graph line or axis
+Show files before editing
