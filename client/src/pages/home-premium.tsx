@@ -285,7 +285,7 @@ export default function HomePremium() {
                   const chartWidth = Math.max(320, pts.length * 48);
                   const margin = { top: 8, right: 12, left: -16, bottom: 0 };
                   const chartInternals = (w: number | undefined) => (
-                    <LineChart width={w} height={190} data={pts} margin={margin}>
+                    <LineChart width={w} height={290} data={pts} margin={margin}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
                       <XAxis
                         dataKey="name"
@@ -300,8 +300,8 @@ export default function HomePremium() {
                         }}
                       />
                       <YAxis
-                        domain={[-6, 6]}
-                        ticks={[-6, -4, -2, 0, 2, 4, 6]}
+                        domain={[-4, 6]}
+                        ticks={[-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]}
                         allowDecimals={false}
                         tick={{ fontSize: 9, fill: "#9CA3AF" }}
                       />
@@ -346,7 +346,7 @@ export default function HomePremium() {
                     );
                   }
                   return (
-                    <ResponsiveContainer width="100%" height={190}>
+                    <ResponsiveContainer width="100%" height={290}>
                       {chartInternals(undefined) as any}
                     </ResponsiveContainer>
                   );
