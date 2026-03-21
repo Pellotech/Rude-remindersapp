@@ -284,7 +284,7 @@ export default function RemindersList() {
 
                         {/* Right: action buttons */}
                         <div className="flex items-center gap-0.5 flex-shrink-0">
-                          <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />
+                          {isPast && <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />}
 
                           {/* Complete/missed buttons — only for past/overdue reminders not yet logged */}
                           {isPast && !reminder.completed && !(reminder as any).notAccomplished && (
