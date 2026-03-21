@@ -159,7 +159,7 @@ export default function RemindersList() {
   );
 
   const past = all.filter((r: Reminder) =>
-    (!r.completed && new Date(r.scheduledFor) < now) || r.completed
+    !r.completed && !(r as any).notAccomplished && new Date(r.scheduledFor) < now
   ).filter((r: Reminder) =>
     r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.originalMessage.toLowerCase().includes(searchTerm.toLowerCase())
