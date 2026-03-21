@@ -3,9 +3,9 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, registerSchema, loginSchema, authTokens } from "@shared/schema";
+import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, reminders, registerSchema, loginSchema, authTokens } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, gt, sql } from "drizzle-orm";
+import { eq, and, gt, lt, sql } from "drizzle-orm";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { premiumQuotesService } from "./services/premiumQuotesService";
@@ -130,6 +130,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize storage (will auto-detect database availability)
   await storage.seedRudePhrases();
   
+  // Auto-delete reminders older than 90 days
+  const cleanupOldReminders = async () => {
+    try {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 90);
+      const deleted = await db.delete(reminders).where(lt(reminders.scheduledFor, cutoff));
+      const count = (deleted as any).rowCount ?? 0;
+      if (count > 0) {
+        console.log(`🗑️  Auto-deleted ${count} reminder(s) older than 90 days`);
+      }
+    } catch (err) {
+      console.warn('90-day reminder cleanup failed:', err instanceof Error ? err.message : err);
+    }
+  };
+
   // Start subscription cleanup task (runs daily at 2 AM)
   const startCleanupScheduler = () => {
     const runCleanup = async () => {
@@ -138,6 +153,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (result.cleaned > 0 || result.errors > 0) {
         console.log(`Cleanup results: ${result.cleaned} users downgraded, ${result.errors} errors`);
       }
+      // Also purge reminders older than 90 days
+      await cleanupOldReminders();
     };
     
     // Run once on startup

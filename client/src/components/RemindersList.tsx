@@ -236,94 +236,117 @@ export default function RemindersList() {
             className="space-y-2 overflow-y-auto pr-0.5"
             style={{ maxHeight: "calc(100svh - 260px)", minHeight: "420px" }}
           >
-            {displayed.map((reminder: Reminder) => (
-              <SwipeableReminderCard
-                key={reminder.id}
-                onDelete={() => deleteReminderMutation.mutate(reminder.id)}
-                disabled={deleteReminderMutation.isPending}
-              >
-                <Card className={cn(
-                  "border border-[#C9A063] w-full",
-                  (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
-                )}>
-                  <CardContent className="p-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      {/* Left: title + tag + date */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
-                            {reminder.title}
-                          </span>
-                          <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-[10px] px-1.5 py-0 font-medium flex-shrink-0`}>
-                            {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
-                          </Badge>
-                          {reminder.completed && (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-[10px] px-1.5 py-0 flex-shrink-0">
-                              Done
+            {displayed.map((reminder: Reminder) => {
+              const isPast = new Date(reminder.scheduledFor) < now;
+              return (
+                <SwipeableReminderCard
+                  key={reminder.id}
+                  onDelete={() => {
+                    if (isPast) {
+                      toast({ title: "Past reminders are kept for your records", duration: 2500 });
+                      return;
+                    }
+                    deleteReminderMutation.mutate(reminder.id);
+                  }}
+                  disabled={isPast || deleteReminderMutation.isPending}
+                >
+                  <Card className={cn(
+                    "border border-[#C9A063] w-full",
+                    (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
+                  )}>
+                    <CardContent className="p-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        {/* Left: title + tag + date */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
+                              {reminder.title}
+                            </span>
+                            <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-[10px] px-1.5 py-0 font-medium flex-shrink-0`}>
+                              {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
                             </Badge>
+                            {reminder.completed && (
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-[10px] px-1.5 py-0 flex-shrink-0">
+                                Done
+                              </Badge>
+                            )}
+                            {(reminder as any).notAccomplished && !reminder.completed && (
+                              <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-300 text-[10px] px-1.5 py-0 flex-shrink-0">
+                                Missed
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 text-[11px] text-gray-400">
+                            <Clock className="h-2.5 w-2.5 flex-shrink-0" />
+                            <span>{formatShortDate(reminder.scheduledFor)}</span>
+                          </div>
+                        </div>
+
+                        {/* Right: action buttons */}
+                        <div className="flex items-center gap-0.5 flex-shrink-0">
+                          <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />
+
+                          {/* Complete/missed buttons — only for past/overdue reminders not yet logged */}
+                          {isPast && !reminder.completed && !(reminder as any).notAccomplished && (
+                            <>
+                              {/* Smiley = accomplished */}
+                              <button
+                                type="button"
+                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-base leading-none"
+                                onClick={() => completeReminderMutation.mutate(reminder.id)}
+                                disabled={completeReminderMutation.isPending}
+                                title="Mark as accomplished"
+                                data-testid={`button-accomplish-${reminder.id}`}
+                              >
+                                😊
+                              </button>
+
+                              {/* Frown = not accomplished */}
+                              <button
+                                type="button"
+                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-base leading-none"
+                                onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
+                                disabled={markNotAccomplishedMutation.isPending}
+                                title="Mark as not accomplished"
+                                data-testid={`button-not-accomplish-${reminder.id}`}
+                              >
+                                😞
+                              </button>
+                            </>
                           )}
-                          {(reminder as any).notAccomplished && !reminder.completed && (
-                            <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-300 text-[10px] px-1.5 py-0 flex-shrink-0">
-                              Missed
-                            </Badge>
+
+                          {/* Delete button — active for future reminders, locked for past */}
+                          {isPast ? (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-gray-300 hover:text-gray-400 hover:bg-gray-50"
+                              onClick={() => toast({ title: "Past reminders are kept for your records", duration: 2500 })}
+                              title="Past reminders are kept for your records"
+                              data-testid={`button-delete-${reminder.id}`}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-[#C53B3B] hover:text-[#C53B3B] hover:bg-red-50"
+                              onClick={() => deleteReminderMutation.mutate(reminder.id)}
+                              disabled={deleteReminderMutation.isPending}
+                              title="Delete reminder"
+                              data-testid={`button-delete-${reminder.id}`}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
                           )}
                         </div>
-                        <div className="flex items-center gap-1 text-[11px] text-gray-400">
-                          <Clock className="h-2.5 w-2.5 flex-shrink-0" />
-                          <span>{formatShortDate(reminder.scheduledFor)}</span>
-                        </div>
                       </div>
-
-                      {/* Right: action buttons */}
-                      <div className="flex items-center gap-0.5 flex-shrink-0">
-                        <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />
-
-                        {!reminder.completed && !(reminder as any).notAccomplished && (
-                          <>
-                            {/* Smiley = accomplished */}
-                            <button
-                              type="button"
-                              className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-base leading-none"
-                              onClick={() => completeReminderMutation.mutate(reminder.id)}
-                              disabled={completeReminderMutation.isPending}
-                              title="Mark as accomplished"
-                              data-testid={`button-accomplish-${reminder.id}`}
-                            >
-                              😊
-                            </button>
-
-                            {/* Frown = not accomplished */}
-                            <button
-                              type="button"
-                              className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-base leading-none"
-                              onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
-                              disabled={markNotAccomplishedMutation.isPending}
-                              title="Mark as not accomplished"
-                              data-testid={`button-not-accomplish-${reminder.id}`}
-                            >
-                              😞
-                            </button>
-                          </>
-                        )}
-
-                        {/* Single trash = delete */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0 text-[#C53B3B] hover:text-[#C53B3B] hover:bg-red-50"
-                          onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                          disabled={deleteReminderMutation.isPending}
-                          title="Delete reminder"
-                          data-testid={`button-delete-${reminder.id}`}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </SwipeableReminderCard>
-            ))}
+                    </CardContent>
+                  </Card>
+                </SwipeableReminderCard>
+              );
+            })}
           </div>
         )}
       </CardContent>
