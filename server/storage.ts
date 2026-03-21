@@ -1,6 +1,7 @@
 import {
   users,
   reminders,
+  reminderEvents,
   rudePhrasesData,
   premiumWhitelist,
   type User,
@@ -12,6 +13,8 @@ import {
   type InsertRudePhrase,
   type PremiumWhitelist,
   type InsertPremiumWhitelist,
+  type ReminderEvent,
+  type InsertReminderEvent,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
@@ -48,6 +51,10 @@ export interface IStorage {
     completedToday: number;
     avgRudeness: number;
   }>;
+
+  // Reminder event log operations
+  logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent>;
+  getReminderEvents(userId: string): Promise<ReminderEvent[]>;
 
   // Premium whitelist operations
   getWhitelistEmails(): Promise<string[]>;
@@ -259,6 +266,13 @@ export class DatabaseStorage implements IStorage {
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
       .returning();
+    // Log the event so it survives future reminder deletion
+    await db.insert(reminderEvents).values({
+      userId,
+      reminderId: id,
+      action: 'completed',
+      scheduledFor: reminder.scheduledFor,
+    });
     return reminder;
   }
 
@@ -272,7 +286,26 @@ export class DatabaseStorage implements IStorage {
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
       .returning();
+    // Log the event so it survives future reminder deletion
+    await db.insert(reminderEvents).values({
+      userId,
+      reminderId: id,
+      action: 'missed',
+      scheduledFor: reminder.scheduledFor,
+    });
     return reminder;
+  }
+
+  async logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent> {
+    const [row] = await db.insert(reminderEvents).values(event).returning();
+    return row;
+  }
+
+  async getReminderEvents(userId: string): Promise<ReminderEvent[]> {
+    return await db
+      .select()
+      .from(reminderEvents)
+      .where(eq(reminderEvents.userId, userId));
   }
 
   // Rude phrases operations
@@ -786,6 +819,22 @@ class MemoryStorage implements IStorage {
     const normalizedEmail = email.toLowerCase().trim();
     return this.whitelistEmails.has(normalizedEmail);
   }
+
+  async logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent> {
+    const row: ReminderEvent = {
+      id: crypto.randomUUID(),
+      userId: event.userId,
+      reminderId: event.reminderId ?? null,
+      action: event.action,
+      scheduledFor: event.scheduledFor instanceof Date ? event.scheduledFor : new Date(event.scheduledFor),
+      createdAt: new Date(),
+    };
+    return row;
+  }
+
+  async getReminderEvents(_userId: string): Promise<ReminderEvent[]> {
+    return [];
+  }
 }
 
 // Production-ready storage with fallback to memory when database unavailable
@@ -878,5 +927,11 @@ export const storage = {
   },
   async isEmailWhitelisted(email: string) {
     return (await getStorage()).isEmailWhitelisted(email);
-  }
+  },
+  async logReminderEvent(event: InsertReminderEvent) {
+    return (await getStorage()).logReminderEvent(event);
+  },
+  async getReminderEvents(userId: string) {
+    return (await getStorage()).getReminderEvents(userId);
+  },
 };

@@ -1054,24 +1054,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = getAuthUserId(req);
       res.set('Cache-Control', 'no-store');
-      const reminders = await storage.getReminders(userId);
-      const completedReminders = reminders.filter(r => r.completed && r.completedAt);
+
+      // Read from the persistent event log so data survives reminder deletion
+      const events = await storage.getReminderEvents(userId);
+      const completedEvents = events.filter(e => e.action === 'completed');
+      const missedEvents = events.filter(e => e.action === 'missed');
 
       const now = new Date();
 
       const clamp = (n: number) => Math.max(-6, Math.min(6, n));
 
-      // Helper: count reminders scheduled in [start, end] that are NOT completed (and past due)
+      // Count 'missed' events whose scheduledFor falls in [start, end]
       const countIncomplete = (start: Date, end: Date) =>
-        reminders.filter(r => {
-          const d = new Date(r.scheduledFor);
-          return d >= start && d <= end && !r.completed && d <= now;
+        missedEvents.filter(e => {
+          const d = new Date(e.scheduledFor);
+          return d >= start && d <= end && d <= now;
         }).length;
 
-      // Helper: count completed reminders whose completedAt falls in [start, end]
+      // Count 'completed' events whose createdAt (when marked done) falls in [start, end]
       const countCompleted = (start: Date, end: Date) =>
-        completedReminders.filter(r => {
-          const d = new Date(r.completedAt!);
+        completedEvents.filter(e => {
+          const d = new Date(e.createdAt);
           return d >= start && d <= end;
         }).length;
 

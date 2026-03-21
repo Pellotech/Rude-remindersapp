@@ -106,6 +106,19 @@ export const premiumWhitelist = pgTable("premium_whitelist", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Reminder event log — persists completion/missed history even after reminders are deleted
+export const reminderEvents = pgTable("reminder_events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  reminderId: varchar("reminder_id"), // nullable: reminder may have been deleted
+  action: varchar("action").notNull(), // 'completed' | 'missed'
+  scheduledFor: timestamp("scheduled_for").notNull(), // original reminder time
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => [
+  index("IDX_reminder_events_user").on(table.userId),
+  index("IDX_reminder_events_reminder").on(table.reminderId),
+]);
+
 // Auth tokens for mobile authentication (cross-origin cookie workaround)
 export const authTokens = pgTable("auth_tokens", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -180,3 +193,10 @@ export type PremiumWhitelist = typeof premiumWhitelist.$inferSelect;
 export type InsertPremiumWhitelist = z.infer<typeof insertPremiumWhitelistSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const insertReminderEventSchema = createInsertSchema(reminderEvents).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertReminderEvent = z.infer<typeof insertReminderEventSchema>;
+export type ReminderEvent = typeof reminderEvents.$inferSelect;

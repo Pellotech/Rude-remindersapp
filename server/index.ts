@@ -3,6 +3,9 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { db } from "./db";
+import { reminders, reminderEvents } from "@shared/schema";
+import { eq, and, isNotNull } from "drizzle-orm";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,8 +87,71 @@ app.use((req, res, next) => {
   next();
 });
 
+/**
+ * One-time backfill: migrate all existing completed/missed reminders into the
+ * reminder_events table so historical data isn't lost.
+ * This is safe to run on every startup — it skips reminders already logged.
+ */
+async function backfillReminderEvents() {
+  try {
+    // Get all reminderId values already in the event log
+    const existingEvents = await db.select({ reminderId: reminderEvents.reminderId }).from(reminderEvents);
+    const alreadyLogged = new Set(existingEvents.map(e => e.reminderId).filter(Boolean));
+
+    // Find completed reminders not yet in the event log
+    const completedRows = await db
+      .select()
+      .from(reminders)
+      .where(and(eq(reminders.completed, true), isNotNull(reminders.completedAt)));
+
+    const missedRows = await db
+      .select()
+      .from(reminders)
+      .where(and(eq(reminders.notAccomplished, true), isNotNull(reminders.notAccomplishedAt)));
+
+    let inserted = 0;
+
+    for (const r of completedRows) {
+      const key = `${r.id}:completed`;
+      if (!alreadyLogged.has(key)) {
+        await db.insert(reminderEvents).values({
+          userId: r.userId,
+          reminderId: r.id,
+          action: 'completed',
+          scheduledFor: r.scheduledFor,
+          createdAt: r.completedAt ?? r.updatedAt ?? new Date(),
+        });
+        inserted++;
+      }
+    }
+
+    for (const r of missedRows) {
+      const key = `${r.id}:missed`;
+      if (!alreadyLogged.has(key)) {
+        await db.insert(reminderEvents).values({
+          userId: r.userId,
+          reminderId: r.id,
+          action: 'missed',
+          scheduledFor: r.scheduledFor,
+          createdAt: r.notAccomplishedAt ?? r.updatedAt ?? new Date(),
+        });
+        inserted++;
+      }
+    }
+
+    if (inserted > 0) {
+      console.log(`📊 Backfilled ${inserted} reminder event(s) into reminder_events table`);
+    }
+  } catch (err) {
+    console.warn('⚠️  reminder_events backfill skipped:', err instanceof Error ? err.message : err);
+  }
+}
+
 (async () => {
   const server = await registerRoutes(app);
+
+  // Backfill existing completed/missed reminders into the event log
+  await backfillReminderEvents();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

@@ -39,6 +39,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
   - **Admin Access**: Only ruderemindersinfo@gmail.com has access to the admin panel to manage whitelist
   - **RevenueCat Webhooks**: Real-time subscription updates via webhooks for instant premium status changes
   - **Graceful Degradation**: Users retain login access and data when subscription expires; only premium features are restricted
+- **Analytics Event Log**: A separate `reminder_events` table persists completion/missed history independently from reminders. Graph data survives reminder deletion. Events are written atomically when marking complete or missed. A one-time backfill at server startup migrates all existing completed/missed reminders to the event log (idempotent). The `/api/stats/completion-graph` endpoint reads exclusively from this table.
 - **Comprehensive User Personalization**: Allows gender and cultural background selection for tailored content.
 - **Mobile-Native Architecture**: Full native iOS/Android support via Capacitor with AdMob integration, local notifications, and camera access.
   - **Photo Picker (iPad Air M3 / iPadOS 26.1+ Compatible)**: Production-ready photo capture and gallery selection optimized for iPad
