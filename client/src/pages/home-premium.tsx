@@ -248,9 +248,9 @@ export default function HomePremium() {
             {/* ── COMPLETION GRAPH ── */}
             <Card className="border border-[#C9A063]">
               <CardHeader className="pb-2 pt-3 px-4">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-[#C9A063]" />
-                  <CardTitle className="text-sm font-semibold text-gray-900">Completions</CardTitle>
+                  <CardTitle className="text-sm font-semibold text-[#C9A063]">My Journey</CardTitle>
                 </div>
                 {/* Graph tab switcher */}
                 <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden">
@@ -275,71 +275,144 @@ export default function HomePremium() {
               </CardHeader>
               <CardContent className="px-2 pb-1">
                 <p className="text-[10px] text-gray-400 text-center mb-1">Line rises when you complete, drops when you miss</p>
-                <ResponsiveContainer width="100%" height={190}>
-                  <LineChart
-                    data={((graphData as any)?.[graphTab] ?? []).map((pt: any) => ({
-                      ...pt,
-                      net: (pt.completed ?? 0) + (pt.incomplete ?? 0),
-                    }))}
-                    margin={{ top: 8, right: 12, left: -16, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#9CA3AF" }} />
-                    <YAxis
-                      domain={[-6, 6]}
-                      ticks={[-6, -4, -2, 0, 2, 4, 6]}
-                      allowDecimals={false}
-                      tick={{ fontSize: 9, fill: "#9CA3AF" }}
-                    />
-                    <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
-                    <Tooltip
-                      content={({ active, payload, label }: any) => {
-                        if (!active || !payload?.[0]) return null;
-                        const pt = payload[0].payload;
-                        const completed = pt.completed ?? 0;
-                        const missed = Math.abs(pt.incomplete ?? 0);
-                        const net = pt.net ?? 0;
-                        return (
-                          <div style={{ border: '1.5px solid #C9A063', borderRadius: 8, background: 'white', padding: '8px 12px', fontSize: 12 }}>
-                            <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
-                            <p>Completed: {completed} ✅</p>
-                            <p>Missed: {missed} ❌</p>
-                            <p>Net: {net > 0 ? `+${net}` : `${net}`}</p>
-                          </div>
-                        );
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="net"
-                      stroke="#C53B3B"
-                      strokeWidth={2.5}
-                      dot={(props: any) => {
-                        const { cx, cy, payload } = props;
-                        const color = payload.net >= 0 ? "#C53B3B" : "#9CA3AF";
-                        return <circle key={`dot-${cx}-${cy}`} cx={cx} cy={cy} r={3} fill={color} stroke={color} />;
-                      }}
-                      activeDot={{ r: 5, fill: "#C53B3B" }}
-                      name="net"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                {(() => {
+                  const pts = ((graphData as any)?.[graphTab] ?? []).map((pt: any) => ({
+                    ...pt,
+                    net: (pt.completed ?? 0) + (pt.incomplete ?? 0),
+                  }));
+                  const currentMonthAbbrev = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][new Date().getMonth()];
+                  const needsScroll = graphTab !== "week";
+                  const chartWidth = Math.max(320, pts.length * 48);
+                  const margin = { top: 8, right: 12, left: -16, bottom: 0 };
+                  const chartInternals = (w: number | undefined) => (
+                    <LineChart width={w} height={190} data={pts} margin={margin}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
+                      <XAxis
+                        dataKey="name"
+                        tick={(props: any) => {
+                          const { x, y, payload } = props;
+                          const isHighlight = graphTab === "year" && payload.value === currentMonthAbbrev;
+                          return (
+                            <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isHighlight ? "#C9A063" : "#9CA3AF"} fontWeight={isHighlight ? 700 : 400}>
+                              {payload.value}
+                            </text>
+                          );
+                        }}
+                      />
+                      <YAxis
+                        domain={[-6, 6]}
+                        ticks={[-6, -4, -2, 0, 2, 4, 6]}
+                        allowDecimals={false}
+                        tick={{ fontSize: 9, fill: "#9CA3AF" }}
+                      />
+                      <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
+                      <Tooltip
+                        content={({ active, payload, label }: any) => {
+                          if (!active || !payload?.[0]) return null;
+                          const pt = payload[0].payload;
+                          const completed = pt.completed ?? 0;
+                          const missed = Math.abs(pt.incomplete ?? 0);
+                          const net = pt.net ?? 0;
+                          return (
+                            <div style={{ border: '1.5px solid #C9A063', borderRadius: 8, background: 'white', padding: '8px 12px', fontSize: 12 }}>
+                              <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
+                              <p>Completed: {completed} ✅</p>
+                              <p>Missed: {missed} ❌</p>
+                              <p>Net: {net > 0 ? `+${net}` : `${net}`}</p>
+                            </div>
+                          );
+                        }}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="net"
+                        stroke="#C53B3B"
+                        strokeWidth={2.5}
+                        dot={(props: any) => {
+                          const { cx, cy, payload } = props;
+                          const color = payload.net >= 0 ? "#C53B3B" : "#9CA3AF";
+                          return <circle key={`dot-${cx}-${cy}`} cx={cx} cy={cy} r={3} fill={color} stroke={color} />;
+                        }}
+                        activeDot={{ r: 5, fill: "#C53B3B" }}
+                        name="net"
+                      />
+                    </LineChart>
+                  );
+                  if (needsScroll) {
+                    return (
+                      <div style={{ overflowX: "auto", width: "100%", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+                        {chartInternals(chartWidth)}
+                      </div>
+                    );
+                  }
+                  return (
+                    <ResponsiveContainer width="100%" height={190}>
+                      {chartInternals(undefined) as any}
+                    </ResponsiveContainer>
+                  );
+                })()}
               </CardContent>
             </Card>
 
-            {/* ── ENCOURAGEMENT based on net score ── */}
+            {/* ── DYNAMIC MOTIVATION based on tab + data ── */}
             {(() => {
               const currentData: any[] = (graphData as any)?.[graphTab] ?? [];
               const totalNet = currentData.reduce((sum: number, pt: any) => sum + (pt.completed ?? 0) + (pt.incomplete ?? 0), 0);
               const hasData = currentData.some((pt: any) => (pt.completed ?? 0) !== 0 || (pt.incomplete ?? 0) !== 0);
+
               let msg = "Every expert was once a beginner. Set your first reminder! 💪";
-              if (hasData) {
-                const allPositive = currentData.every((pt: any) => (pt.incomplete ?? 0) === 0);
-                if (allPositive && totalNet > 0) msg = "Absolutely killing it. Nothing stops you 👑";
-                else if (totalNet > 2) msg = "You're crushing it — keep that line climbing! 🔥";
-                else if (totalNet >= -1) msg = "You're balancing it out — push for more greens! 🎯";
-                else msg = "Rough patch — tomorrow is a fresh start 💪";
+
+              if (graphTab === "week") {
+                if (!hasData) {
+                  msg = "Every expert was once a beginner. Set your first reminder! 💪";
+                } else if (totalNet > 0) {
+                  msg = "Strong week! You're above the line 🔥";
+                } else if (totalNet === 0) {
+                  msg = "Balanced week — push for more completions 🎯";
+                } else {
+                  msg = "Tough week — tomorrow is a fresh start 💪";
+                }
+              } else if (graphTab === "tenWeeks") {
+                const allReminders = reminders as any[];
+                const firstDate = allReminders.length > 0
+                  ? new Date(Math.min(...allReminders.map((r: any) => new Date(r.scheduledFor || r.createdAt).getTime())))
+                  : null;
+                const weeksActive = firstDate
+                  ? Math.floor((Date.now() - firstDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
+                  : 0;
+                if (!hasData || weeksActive < 1) {
+                  msg = "Every expert was once a beginner. Set your first reminder! 💪";
+                } else if (weeksActive < 5) {
+                  msg = "You're in the early stages — consistency is everything right now 🌱";
+                } else if (weeksActive < 10) {
+                  msg = "You're approaching the habit formation zone — science says day 66 is where it clicks! 🔥";
+                } else {
+                  msg = "You've hit the 10 week mark — your habits are starting to form automatically ⚡";
+                }
+              } else {
+                // year tab
+                const allReminders = reminders as any[];
+                const firstDate = allReminders.length > 0
+                  ? new Date(Math.min(...allReminders.map((r: any) => new Date(r.scheduledFor || r.createdAt).getTime())))
+                  : null;
+                const monthsActive = firstDate
+                  ? Math.floor((Date.now() - firstDate.getTime()) / (30 * 24 * 60 * 60 * 1000))
+                  : 0;
+                if (!hasData || monthsActive < 1) {
+                  msg = "Every journey starts with a single step. You're building something real 🌱";
+                } else if (monthsActive < 3) {
+                  msg = "Every journey starts with a single step. You're building something real 🌱";
+                } else if (monthsActive < 6) {
+                  msg = "3+ months of accountability. You're in the top 20% of people who stick with it 💪";
+                } else if (monthsActive < 9) {
+                  msg = "Half a year of showing up. Your habits are genuinely changing who you are 👑";
+                } else if (monthsActive < 12) {
+                  msg = "Almost a full year. You've built something most people only dream about 🏆";
+                } else {
+                  msg = "One full year. You ARE the habit 🎯";
+                }
               }
+
               return (
                 <Card className="border border-[#C9A063] bg-[#FDF8F0]">
                   <CardContent className="py-3 px-4 text-center">

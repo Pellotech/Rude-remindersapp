@@ -1,0 +1,65 @@
+
+In the Rude Reminders app I want to update the Analytics graph section. Please do the following:
+1. RENAME THE GRAPH:
+
+Change the graph title from "Completions" to "My Journey"
+Center the title
+Keep the same font style and gold color
+
+2. SCROLLABLE X-AXIS with more data points for 10 Weeks and This Year tabs:
+For the "10 Weeks" tab:
+
+Keep the existing date format as is (e.g. 1/17, 1/24 etc) — do NOT change to W1 W2 etc
+Double the number of data points — instead of one point per week show one point every 3-4 days
+This gives approximately 20-25 data points across 10 weeks instead of 10
+Make the X axis horizontally scrollable so all points are visible without crowding
+The graph window stays fixed height — only the bottom scrolls left and right
+Keep the existing line, axis values and tooltip style
+
+For the "This Year" tab:
+
+Keep existing month labels as is (Jan, Feb, Mar etc)
+Double the data points — instead of one point per month show one point every 2 weeks
+This gives approximately 24 data points across the year instead of 12
+Make the X axis horizontally scrollable
+Highlight the current month label
+Keep existing line, axis values and tooltip style
+
+For the "This Week" tab:
+
+Leave completely unchanged — 7 days is fine as is
+
+3. DYNAMIC MOTIVATION MESSAGE below graph — changes per tab:
+For "This Week" tab:
+
+Net score above 0: "Strong week! You're above the line 🔥"
+Net score at 0: "Balanced week — push for more completions 🎯"
+Net score below 0: "Tough week — tomorrow is a fresh start 💪"
+
+For "10 Weeks" tab — habit formation science based:
+
+Calculate how many weeks the user has been active based on their first reminder date
+Week 1-4: "You're in the early stages — consistency is everything right now 🌱"
+Week 5-9: "You're approaching the habit formation zone — science says day 66 is where it clicks! 🔥"
+Week 10+: "You've hit the 10 week mark — your habits are starting to form automatically ⚡"
+
+For "This Year" tab — long term transformation:
+
+Calculate months active based on first reminder date
+Month 1-2: "Every journey starts with a single step. You're building something real 🌱"
+Month 3-5: "3+ months of accountability. You're in the top 20% of people who stick with it 💪"
+Month 6-8: "Half a year of showing up. Your habits are genuinely changing who you are 👑"
+Month 9-11: "Almost a full year. You've built something most people only dream about 🏆"
+Month 12+: "One full year. You ARE the habit 🎯"
+
+4. Keep the motivation message simple — one card one message at a time. Calculate everything from data already loaded — do not make extra API calls just for the message
+5. Do not change:
+
+Graph line style
+Tooltip/floating display
+Axis values
+Tab order or styling
+Any other analytics functionality
+
+6. Show every file being changed before making edits
+7. Make changes incrementally — do not rewrite the entire analytics file at once

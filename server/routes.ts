@@ -1117,26 +1117,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return makePoint(name, dayStart, dayEnd);
       });
 
-      // --- This Year: Jan–current month ---
+      // --- This Year: bi-weekly, month-aligned (2 points per month) ---
       const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       const currentMonthIdx = now.getMonth();
       const currentYear = now.getFullYear();
-      const yearData = monthNames.slice(0, currentMonthIdx + 1).map((name, i) => {
-        const start = new Date(currentYear, i, 1, 0, 0, 0, 0);
-        const end = new Date(currentYear, i + 1, 0, 23, 59, 59, 999);
-        return makePoint(name, start, end);
-      });
+      const yearData: ReturnType<typeof makePoint>[] = [];
+      for (let mi = 0; mi <= currentMonthIdx; mi++) {
+        // First half: 1st–14th
+        const h1Start = new Date(currentYear, mi, 1, 0, 0, 0, 0);
+        const h1End = new Date(currentYear, mi, 14, 23, 59, 59, 999);
+        if (h1Start <= now) {
+          yearData.push(makePoint(monthNames[mi], h1Start, h1End > now ? now : h1End));
+        }
+        // Second half: 15th–end of month
+        const h2Start = new Date(currentYear, mi, 15, 0, 0, 0, 0);
+        const h2End = new Date(currentYear, mi + 1, 0, 23, 59, 59, 999);
+        if (h2Start <= now) {
+          yearData.push(makePoint('·', h2Start, h2End > now ? now : h2End));
+        }
+      }
 
-      // --- Past 10 Weeks ---
-      const tenWeeksData = Array.from({ length: 10 }, (_, i) => {
-        const weekEnd = new Date(now);
-        weekEnd.setDate(now.getDate() - (9 - i) * 7);
-        weekEnd.setHours(23, 59, 59, 999);
-        const wStart = new Date(weekEnd);
-        wStart.setDate(weekEnd.getDate() - 6);
-        wStart.setHours(0, 0, 0, 0);
-        const label = `${weekEnd.getMonth() + 1}/${weekEnd.getDate()}`;
-        return makePoint(label, wStart, weekEnd);
+      // --- Past 10 Weeks (dense: one point per 3 days = ~23 points) ---
+      const tenWeeksData = Array.from({ length: 23 }, (_, i) => {
+        const dayEnd = new Date(now);
+        dayEnd.setDate(now.getDate() - (22 - i) * 3);
+        dayEnd.setHours(23, 59, 59, 999);
+        const dStart = new Date(dayEnd);
+        dStart.setDate(dayEnd.getDate() - 2);
+        dStart.setHours(0, 0, 0, 0);
+        const label = `${dayEnd.getMonth() + 1}/${dayEnd.getDate()}`;
+        return makePoint(label, dStart, dayEnd);
       });
 
       res.json({ week: weekData, year: yearData, tenWeeks: tenWeeksData });
