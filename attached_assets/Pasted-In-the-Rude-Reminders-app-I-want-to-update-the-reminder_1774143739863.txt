@@ -1,0 +1,70 @@
+In the Rude Reminders app I want to update the reminder popup card (RichReminderNotification) and the manage page past list behaviour. Please do the following:
+1. UPDATE THE REMINDER POPUP BUTTONS:
+
+Find the RichReminderNotification component
+Replace the current "Mark as Complete" and "Dismiss" buttons with THREE buttons:
+
+Button 1 — "Did it! ✅"
+
+Red background #C53B3B white text
+Logs completion to reminder_events as 'completed'
+Closes the popup
+Reminder moves to Past list with 24 hour timer
+Shows toast: "Nice work! Your progress is logged. This reminder will clear in 24 hours 🔥"
+
+Button 2 — "Didn't do it ❌"
+
+Muted gold background #C9A063 dark text
+Logs to reminder_events as 'missed'
+Closes the popup
+Reminder moves to Past list with 24 hour timer
+Shows toast: "Logged. Tomorrow is a new chance 💪 This reminder clears in 24 hours"
+
+Button 3 — "Let me know later 🔔"
+
+Outlined button no fill gold border #C9A063
+This is dismiss — does NOT log anything
+Closes the popup
+Reminder stays in Past list as unactioned
+No toast
+
+2. UPDATE THE PAST LIST — 24 HOUR DISPLAY AFTER LOGGING:
+
+When a reminder is logged via "Did it!" or "Didn't do it":
+
+Set a loggedAt timestamp on the reminder
+Keep it visible in Past list for exactly 24 hours after logging
+During those 24 hours show ONLY a share button on that card
+Show a small subtle text under the reminder: "Clears in Xh Xm ⏱"
+After 24 hours automatically remove it from the list
+
+
+
+3. ADD loggedAt FIELD:
+
+Add loggedAt timestamp field to the reminders table
+Set it when either "Did it!" or "Didn't do it" is tapped
+Use this to calculate the 24 hour countdown
+Server cleanup job should delete reminders where loggedAt is older than 24 hours — run every hour
+
+4. SHARE BUTTON on 24 hour logged reminders:
+
+Show the share button so user can share their result
+Share text for completed: "I just crushed it! ✅ [reminder title] — tracked with Rude Reminders 🔥"
+Share text for missed: "Keeping it real — missed [reminder title] today. Tomorrow I'll do better 💪 — Rude Reminders"
+
+5. UNACTIONED past reminders (dismissed with "Let me know later"):
+
+Stay in Past list as before
+Show "Did it!" and "Didn't do it" buttons so user can still log them later
+No 24 hour timer — these stay until actioned or 365 day cleanup
+
+6. Do not change:
+
+The voice auto-play on popup open
+The response variations display
+The graph or analytics
+Any other popup content
+
+7. Show every file being changed before making edits
+8. This involves a schema change — show the migration plan before executing
