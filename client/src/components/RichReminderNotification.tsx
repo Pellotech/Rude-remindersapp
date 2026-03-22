@@ -230,8 +230,7 @@ export function RichReminderNotification({
             </Button>
             <Button
               onClick={onClose}
-              variant="outline"
-              className="w-full h-9 text-sm border-[#C9A063] text-[#C9A063] hover:bg-[#C9A063]/10"
+              className="w-full h-9 text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 text-gray-900"
               data-testid="button-dismiss"
             >
               Let me know later 🔔

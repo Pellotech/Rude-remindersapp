@@ -302,38 +302,38 @@ export default function RemindersList() {
 
                         {/* Right: action buttons */}
                         <div className="flex items-center gap-0.5 flex-shrink-0">
-                          {/* Share — only for logged past reminders, with status-specific text */}
-                          {isPast && isLogged && (
+                          {/* Share — all past reminders, status-specific text for logged ones */}
+                          {isPast && (
                             <ShareButton
                               reminder={reminder}
-                              message={shareMessage}
+                              message={isLogged ? shareMessage : undefined}
                               className="h-7 w-7 p-0"
                               iconOnly={true}
                             />
                           )}
 
-                          {/* Log buttons — only for unlogged past reminders */}
+                          {/* Smiley/frown log buttons — only for unlogged past reminders */}
                           {isPast && !isLogged && (
                             <>
                               <button
                                 type="button"
-                                className="h-7 px-1.5 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-xs font-semibold text-green-700 leading-none"
+                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-base leading-none"
                                 onClick={() => completeReminderMutation.mutate(reminder.id)}
                                 disabled={completeReminderMutation.isPending}
                                 title="Did it!"
                                 data-testid={`button-accomplish-${reminder.id}`}
                               >
-                                ✅
+                                😊
                               </button>
                               <button
                                 type="button"
-                                className="h-7 px-1.5 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-xs font-semibold text-red-600 leading-none"
+                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-base leading-none"
                                 onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
                                 disabled={markNotAccomplishedMutation.isPending}
                                 title="Didn't do it"
                                 data-testid={`button-not-accomplish-${reminder.id}`}
                               >
-                                ❌
+                                😞
                               </button>
                             </>
                           )}
