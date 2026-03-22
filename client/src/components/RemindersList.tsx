@@ -158,9 +158,13 @@ export default function RemindersList() {
      r.originalMessage.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const past = all.filter((r: Reminder) =>
-    !r.completed && !(r as any).notAccomplished && new Date(r.scheduledFor) < now
-  ).filter((r: Reminder) =>
+  const past = all.filter((r: Reminder) => {
+    const isUnloggedOverdue = !r.completed && !(r as any).notAccomplished && new Date(r.scheduledFor) < now;
+    const loggedAt = (r as any).loggedAt ? new Date((r as any).loggedAt) : null;
+    const isLoggedWithin24h = (r.completed || (r as any).notAccomplished) && loggedAt &&
+      (now.getTime() - loggedAt.getTime()) < 24 * 60 * 60 * 1000;
+    return isUnloggedOverdue || isLoggedWithin24h;
+  }).filter((r: Reminder) =>
     r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.originalMessage.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -238,6 +242,15 @@ export default function RemindersList() {
           >
             {displayed.map((reminder: Reminder) => {
               const isPast = new Date(reminder.scheduledFor) < now;
+              const isLogged = reminder.completed || !!(reminder as any).notAccomplished;
+              const loggedAt = (reminder as any).loggedAt ? new Date((reminder as any).loggedAt) : null;
+              const clearTime = loggedAt ? new Date(loggedAt.getTime() + 24 * 60 * 60 * 1000) : null;
+              const remainingMs = clearTime ? Math.max(0, clearTime.getTime() - now.getTime()) : 0;
+              const hoursLeft = Math.floor(remainingMs / (60 * 60 * 1000));
+              const minutesLeft = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+              const shareMessage = reminder.completed
+                ? `I just crushed it! ✅ ${reminder.title} — tracked with Rude Reminders 🔥`
+                : `Keeping it real — missed ${reminder.title} today. Tomorrow I'll do better 💪 — Rude Reminders`;
               return (
                 <SwipeableReminderCard
                   key={reminder.id}
@@ -280,37 +293,47 @@ export default function RemindersList() {
                             <Clock className="h-2.5 w-2.5 flex-shrink-0" />
                             <span>{formatShortDate(reminder.scheduledFor)}</span>
                           </div>
+                          {isPast && isLogged && remainingMs > 0 && (
+                            <div className="text-[10px] text-gray-400 italic mt-0.5">
+                              Clears in {hoursLeft}h {minutesLeft}m ⏱
+                            </div>
+                          )}
                         </div>
 
                         {/* Right: action buttons */}
                         <div className="flex items-center gap-0.5 flex-shrink-0">
-                          {isPast && <ShareButton reminder={reminder} className="h-7 w-7 p-0" iconOnly={true} />}
+                          {/* Share — only for logged past reminders, with status-specific text */}
+                          {isPast && isLogged && (
+                            <ShareButton
+                              reminder={reminder}
+                              message={shareMessage}
+                              className="h-7 w-7 p-0"
+                              iconOnly={true}
+                            />
+                          )}
 
-                          {/* Complete/missed buttons — only for past/overdue reminders not yet logged */}
-                          {isPast && !reminder.completed && !(reminder as any).notAccomplished && (
+                          {/* Log buttons — only for unlogged past reminders */}
+                          {isPast && !isLogged && (
                             <>
-                              {/* Smiley = accomplished */}
                               <button
                                 type="button"
-                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-base leading-none"
+                                className="h-7 px-1.5 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-xs font-semibold text-green-700 leading-none"
                                 onClick={() => completeReminderMutation.mutate(reminder.id)}
                                 disabled={completeReminderMutation.isPending}
-                                title="Mark as accomplished"
+                                title="Did it!"
                                 data-testid={`button-accomplish-${reminder.id}`}
                               >
-                                😊
+                                ✅
                               </button>
-
-                              {/* Frown = not accomplished */}
                               <button
                                 type="button"
-                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-base leading-none"
+                                className="h-7 px-1.5 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-xs font-semibold text-red-600 leading-none"
                                 onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
                                 disabled={markNotAccomplishedMutation.isPending}
-                                title="Mark as not accomplished"
+                                title="Didn't do it"
                                 data-testid={`button-not-accomplish-${reminder.id}`}
                               >
-                                😞
+                                ❌
                               </button>
                             </>
                           )}

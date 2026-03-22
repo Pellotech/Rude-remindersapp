@@ -185,6 +185,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   startCleanupScheduler();
 
+  // Hourly cleanup: delete reminders logged (completed/missed) more than 24h ago
+  const cleanupLoggedReminders = async () => {
+    try {
+      const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const result = await db.delete(reminders).where(
+        and(sql`${reminders.loggedAt} IS NOT NULL`, lt(reminders.loggedAt, cutoff))
+      );
+      const count = (result as any).rowCount ?? 0;
+      if (count > 0) {
+        console.log(`🗑️  Auto-deleted ${count} logged reminder(s) older than 24h`);
+      }
+    } catch (err) {
+      console.warn('Logged reminders cleanup failed:', err instanceof Error ? err.message : err);
+    }
+  };
+  cleanupLoggedReminders();
+  setInterval(cleanupLoggedReminders, 60 * 60 * 1000);
+
   // Public auth routes (no authentication required)
   app.post('/api/auth/register', async (req, res) => {
     try {

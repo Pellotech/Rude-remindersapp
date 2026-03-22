@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Volume2, Clock, X, CheckCircle, ImageIcon, ChevronDown, Share2 } from "lucide-react";
+import { Volume2, Clock, X, ImageIcon, ChevronDown } from "lucide-react";
 import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
@@ -43,6 +43,7 @@ interface RichReminderNotificationProps {
     aiGeneratedQuotes?: boolean;
   };
   onComplete?: () => void;
+  onMissed?: () => void;
   onPlayVoice?: () => void;
   isPlayingVoice?: boolean;
 }
@@ -54,6 +55,7 @@ export function RichReminderNotification({
   isPremium = false,
   features = {},
   onComplete,
+  onMissed,
   onPlayVoice,
   isPlayingVoice = false
 }: RichReminderNotificationProps) {
@@ -82,9 +84,6 @@ export function RichReminderNotification({
           <img src={logoImage} alt="Rude Reminders" className="h-8 w-auto" />
           <div className="flex items-center gap-1">
             <ShareButton reminder={reminder} iconOnly className="h-8 w-8 p-0" />
-            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
-              <X className="h-5 w-5" />
-            </Button>
           </div>
         </div>
 
@@ -215,14 +214,27 @@ export function RichReminderNotification({
           </p>
 
           <div className="flex flex-col gap-2 pt-2 border-t">
-            {onComplete && (
-              <Button onClick={onComplete} className="w-full h-9 text-sm" data-testid="button-complete">
-                <CheckCircle className="h-4 w-4 mr-1" />
-                Mark as Complete
-              </Button>
-            )}
-            <Button onClick={onClose} variant="outline" className="w-full h-9 text-sm" data-testid="button-dismiss">
-              Dismiss
+            <Button
+              onClick={onComplete}
+              className="w-full h-10 text-sm font-semibold bg-[#C53B3B] hover:bg-[#a83030] text-white"
+              data-testid="button-complete"
+            >
+              Did it! ✅
+            </Button>
+            <Button
+              onClick={onMissed}
+              className="w-full h-10 text-sm font-semibold bg-[#C9A063] hover:bg-[#b38a50] text-white"
+              data-testid="button-missed"
+            >
+              Didn't do it ❌
+            </Button>
+            <Button
+              onClick={onClose}
+              variant="outline"
+              className="w-full h-9 text-sm border-[#C9A063] text-[#C9A063] hover:bg-[#C9A063]/10"
+              data-testid="button-dismiss"
+            >
+              Let me know later 🔔
             </Button>
           </div>
         </div>

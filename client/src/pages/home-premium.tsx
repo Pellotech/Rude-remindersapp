@@ -35,7 +35,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder } from "@shared/schema";
 
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
@@ -167,19 +167,40 @@ export default function HomePremium() {
   // Complete reminder handler
   const handleCompleteReminder = async () => {
     if (!currentReminder) return;
-
     try {
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
+      queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
       setShowRichNotification(false);
       setCurrentReminder(null);
       toast({
-        title: "Reminder Completed",
-        description: "Excellent work! Your premium motivation is paying off!",
+        title: "Nice work! ✅",
+        description: "Logged! This reminder will clear in 24 hours.",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to mark reminder as complete",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Missed reminder handler
+  const handleMissedReminder = async () => {
+    if (!currentReminder) return;
+    try {
+      await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
+      queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
+      setShowRichNotification(false);
+      setCurrentReminder(null);
+      toast({
+        title: "Logged 💪",
+        description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log reminder",
         variant: "destructive",
       });
     }
@@ -526,6 +547,7 @@ export default function HomePremium() {
             aiGeneratedQuotes: true,
           }}
           onComplete={handleCompleteReminder}
+          onMissed={handleMissedReminder}
           onPlayVoice={handleVoicePlay}
           isPlayingVoice={isPlayingVoice}
         />

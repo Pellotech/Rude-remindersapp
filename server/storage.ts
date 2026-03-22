@@ -262,6 +262,7 @@ export class DatabaseStorage implements IStorage {
       .set({ 
         completed: true, 
         completedAt: new Date(),
+        loggedAt: new Date(),
         updatedAt: new Date()
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
@@ -282,6 +283,7 @@ export class DatabaseStorage implements IStorage {
       .set({ 
         notAccomplished: true, 
         notAccomplishedAt: new Date(),
+        loggedAt: new Date(),
         updatedAt: new Date()
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
@@ -687,6 +689,7 @@ class MemoryStorage implements IStorage {
       ...existing, 
       completed: true, 
       completedAt: new Date(),
+      loggedAt: new Date(),
       updatedAt: new Date() 
     };
     const index = this.reminders.findIndex(r => r.id === id);
@@ -704,6 +707,7 @@ class MemoryStorage implements IStorage {
       ...existing, 
       notAccomplished: true, 
       notAccomplishedAt: new Date(),
+      loggedAt: new Date(),
       updatedAt: new Date() 
     };
     const index = this.reminders.findIndex(r => r.id === id);

@@ -74,6 +74,7 @@ export const reminders = pgTable("reminders", {
   completedAt: timestamp("completed_at"),
   notAccomplished: boolean("not_accomplished").default(false),
   notAccomplishedAt: timestamp("not_accomplished_at"),
+  loggedAt: timestamp("logged_at"),
   browserNotification: boolean("browser_notification").default(true),
   voiceNotification: boolean("voice_notification").default(false),
   emailNotification: boolean("email_notification").default(false),
@@ -142,6 +143,7 @@ const baseInsertReminderSchema = createInsertSchema(reminders).omit({
   createdAt: true,
   updatedAt: true,
   completedAt: true,
+  loggedAt: true,
 });
 
 export const insertReminderSchema = baseInsertReminderSchema.refine((data) => {
