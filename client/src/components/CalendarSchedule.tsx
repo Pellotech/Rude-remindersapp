@@ -146,7 +146,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     disabled={isBefore(date, startOfDay(today))}
                     className={cn(
                       "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl border-2 transition-all",
-                      !isSelected && isToday && "border-[#C9A063] text-[#C9A063]",
+                      !isSelected && isToday && "border-[#C9A063] text-gray-700",
                       !isSelected && !isToday && "border-gray-200 text-gray-700 hover:border-[#C9A063] hover:text-[#C9A063]",
                       isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]"
                     )}
