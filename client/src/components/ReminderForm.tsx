@@ -1389,6 +1389,41 @@ export default function ReminderForm({
                 "Create Reminder"
               )}
             </Button>
+
+            {/* Summary bubble — sits below the Create button */}
+            {(!isMultiDay && scheduledForValue) || (isMultiDay && selectedDays.length > 0) ? (
+              <div className="flex items-center justify-between px-3 py-2.5 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
+                {/* Left: time or day count */}
+                <span className="text-sm font-medium text-[#111827]">
+                  {!isMultiDay && scheduledForValue
+                    ? format(new Date(scheduledForValue), "EEE, MMM d • h:mm a")
+                    : `${selectedDays.length} day${selectedDays.length !== 1 ? "s" : ""} selected`}
+                </span>
+
+                {/* Right: compact icon indicators */}
+                <div className="flex items-center gap-2 text-[#C9A063]">
+                  <span className="text-xs font-medium">🔔 Lv.{rudenessLevel}</span>
+
+                  {selectedVoice && selectedVoice !== "default" && (
+                    <span className="text-xs font-medium">
+                      🎙️ {(voiceCharacters as any[]).find((v: any) => v.id === selectedVoice)?.name?.split(" ")[0] || "Voice"}
+                    </span>
+                  )}
+
+                  {selectedAttachments.length > 0 && (
+                    <span className="text-xs font-medium">📷 x{selectedAttachments.length}</span>
+                  )}
+
+                  {selectedCategory && (
+                    <span className="text-xs">💬</span>
+                  )}
+
+                  {isMultiDay && selectedDays.length > 0 && (
+                    <span className="text-xs font-medium">📅 x{selectedDays.length}</span>
+                  )}
+                </div>
+              </div>
+            ) : null}
           </form>
         </Form>
       </CardContent>

@@ -227,15 +227,6 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
         </Card>
       )}
 
-      {/* Selected DateTime Display */}
-      {selectedDateTime && (
-        <div className="text-center p-3 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
-          <p className="text-sm text-muted-foreground">Selected reminder time:</p>
-          <p className="font-medium text-center">
-            {format(selectedDateTime, "EEE, MMM d • h:mm a")}
-          </p>
-        </div>
-      )}
     </div>
   );
 }
