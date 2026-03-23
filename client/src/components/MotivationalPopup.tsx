@@ -26,16 +26,30 @@ export function MotivationalPopup({ userName = "there" }: MotivationalPopupProps
   const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
-    const lastShown = localStorage.getItem(STORAGE_KEY_LAST_SHOWN);
     const savedIndex = parseInt(localStorage.getItem(STORAGE_KEY_INDEX) || "0", 10);
     const index = isNaN(savedIndex) ? 0 : savedIndex % MESSAGES.length;
     setMessageIndex(index);
 
+    // Allow forcing the popup via ?showPopup=1 in the URL
+    const params = new URLSearchParams(window.location.search);
+    const forceShow = params.get("showPopup") === "1";
+
+    if (forceShow) {
+      // Remove the param from the URL so it doesn't stick
+      params.delete("showPopup");
+      const newUrl =
+        window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+      window.history.replaceState({}, "", newUrl);
+      // Clear the timer so it shows immediately
+      localStorage.removeItem(STORAGE_KEY_LAST_SHOWN);
+    }
+
+    const lastShown = localStorage.getItem(STORAGE_KEY_LAST_SHOWN);
     const shouldShow =
-      !lastShown || Date.now() - parseInt(lastShown, 10) >= TWO_DAYS_MS;
+      forceShow || !lastShown || Date.now() - parseInt(lastShown, 10) >= TWO_DAYS_MS;
 
     if (shouldShow) {
-      const timer = setTimeout(() => setVisible(true), 800);
+      const timer = setTimeout(() => setVisible(true), 600);
       return () => clearTimeout(timer);
     }
   }, []);
