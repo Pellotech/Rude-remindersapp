@@ -902,7 +902,7 @@ export default function ReminderForm({
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-white border-2 border-[#C53B3B] focus:border-[#C53B3B] focus:ring-0 rounded-[14px] py-3 text-[#111827]"
+                      className="bg-white border-2 border-gray-300 focus:border-[#C53B3B] focus-visible:ring-0 focus-visible:border-[#C53B3B] rounded-[14px] py-3 text-[#111827]"
                       {...field}
                     />
                   </FormControl>
