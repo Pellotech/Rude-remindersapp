@@ -28,14 +28,12 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
     const isSelectedDateToday = selectedDate && isSameDay(selectedDate, now);
     
     if (isSelectedDateToday) {
-      // When today is selected: Show only future hours (strictly after current hour)
+      // When today is selected: Show time slots starting from the current hour and continue through the rest of the day
       const currentHour = now.getHours();
-      const startHour = currentHour + 1;
-      const remainingHours = 24 - startHour;
-      if (remainingHours <= 0) return [];
+      const remainingHours = 24 - currentHour;
       
       return Array.from({ length: remainingHours }, (_, i) => {
-        const hour = startHour + i;
+        const hour = currentHour + i;
         return {
           value: hour,
           label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
@@ -155,25 +153,26 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
               const isSelected = isDateSelected(date);
 
               return (
-                <div key={index} className="text-center flex-shrink-0 min-w-[60px]">
+                <div key={index} className="text-center flex-shrink-0 min-w-[56px]">
                   <div className="text-xs font-medium text-muted-foreground mb-1">
                     {dayName}
                   </div>
                   <Button
+                    key={index}
                     type="button"
+                    variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleDateSelect(date)}
                     disabled={isBefore(date, startOfDay(today))}
                     className={cn(
-                      "w-full h-12 flex flex-col items-center justify-center p-1 rounded-xl shadow-sm transition-colors border-2",
-                      isSelected
-                        ? "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]"
-                        : "bg-white border-[#C9A063] text-gray-900 hover:bg-[#FDF8F0]"
+                      "w-full h-10 flex flex-col items-center justify-center p-1",
+                      isToday && !isSelected && "border-primary text-primary",
+                      isSelected && "bg-primary text-primary-foreground"
                     )}
                   >
-                    <span className="text-base font-bold leading-tight">{dayNumber}</span>
+                    <span className={`font-semibold ${isToday ? 'text-sm' : 'text-base'}`}>{dayNumber}</span>
                     {isToday && (
-                      <span className={cn("text-sm leading-none mt-0.5", isSelected ? "text-white" : "text-[#C9A063]")}>•</span>
+                      <span className="text-[10px] leading-tight text-center">Today</span>
                     )}
                   </Button>
                 </div>
@@ -196,14 +195,13 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                   <Button
                     key={slot.value}
                     type="button"
+                    variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleTimeSelect(slot.value)}
                     disabled={isPastTime}
                     className={cn(
-                      "h-10 text-sm font-semibold whitespace-nowrap flex-shrink-0 min-w-[84px] rounded-full shadow-sm transition-colors border-2",
-                      isSelected
-                        ? "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]"
-                        : "bg-white border-[#C9A063] text-gray-900 hover:bg-[#FDF8F0]",
+                      "h-9 text-sm whitespace-nowrap flex-shrink-0 min-w-[72px]",
+                      isSelected && "bg-primary text-primary-foreground",
                       isPastTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
                     )}
                   >
@@ -229,18 +227,20 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                   <Button
                     key={slot.value}
                     type="button"
+                    variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleQuarterSelect(slot.value)}
                     disabled={isPastQuarterTime}
                     className={cn(
-                      "h-10 text-sm font-semibold whitespace-nowrap flex-shrink-0 min-w-[84px] rounded-full shadow-sm transition-colors border-2",
-                      isSelected
-                        ? "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]"
-                        : "bg-white border-[#C9A063] text-gray-900 hover:bg-[#FDF8F0]",
+                      "h-14 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
+                      isSelected && "bg-primary text-primary-foreground",
                       isPastQuarterTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
                     )}
                   >
-                    {slot.label}
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold text-base">{slot.label}</span>
+                      <span className="text-xs opacity-75">{slot.displayLabel}</span>
+                    </div>
                   </Button>
                 );
               })}
