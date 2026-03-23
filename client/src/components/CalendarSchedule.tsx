@@ -173,21 +173,20 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                 const isPastTime = isTimeInPast(slot.value);
 
                 return (
-                  <Button
+                  <button
                     key={slot.value}
                     type="button"
-                    variant="outline"
-                    onClick={() => handleTimeSelect(slot.value)}
+                    onClick={() => !isPastTime && handleTimeSelect(slot.value)}
                     disabled={isPastTime}
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                      !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] border-[#C53B3B] hover:bg-[#a83030]",
+                      !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-white hover:bg-[#C53B3B]",
+                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]",
                       isPastTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
-                    <span style={isSelected ? { color: '#FFFFFF' } : undefined}>{slot.display}</span>
-                  </Button>
+                    {slot.display}
+                  </button>
                 );
               })}
             </div>
@@ -205,21 +204,20 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                 const isPastQuarterTime = quarterState.hour !== null && isTimeInPast(quarterState.hour, slot.value);
 
                 return (
-                  <Button
+                  <button
                     key={slot.value}
                     type="button"
-                    variant="outline"
-                    onClick={() => handleQuarterSelect(slot.value)}
+                    onClick={() => !isPastQuarterTime && handleQuarterSelect(slot.value)}
                     disabled={isPastQuarterTime}
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
-                      !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] border-[#C53B3B] hover:bg-[#a83030]",
+                      !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-white hover:bg-[#C53B3B]",
+                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]",
                       isPastQuarterTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
-                    <span style={isSelected ? { color: '#FFFFFF' } : undefined}>{slot.label}</span>
-                  </Button>
+                    {slot.label}
+                  </button>
                 );
               })}
             </div>
