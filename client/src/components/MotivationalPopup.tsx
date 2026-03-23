@@ -1,0 +1,93 @@
+import { useState, useEffect } from "react";
+
+const STORAGE_KEY_INDEX = "rudeReminders_motivationalIndex";
+const STORAGE_KEY_LAST_SHOWN = "rudeReminders_lastMotivationalShown";
+const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+
+const MESSAGES: Array<(name: string) => string> = [
+  () =>
+    `Did you know? It takes the average person 66 days to build a habit. Every reminder you complete gets you closer. Let's go! 🔥`,
+  (name) =>
+    `Hey ${name}, your habit journey is unique. Most people see real change between day 30 and day 66. Keep showing up — it gets easier. 💪`,
+  () =>
+    `The first 30 days are the hardest. 90% of people quit before day 66. You're not most people. 👑`,
+  () =>
+    `Small actions. Repeated daily. That's how habits are built. You've got this. 🌱`,
+  () =>
+    `Your day 1 starts today of your habit journey. Unless you've already started, then keep going you absolute animal . . 🎯`,
+];
+
+interface MotivationalPopupProps {
+  userName?: string;
+}
+
+export function MotivationalPopup({ userName = "there" }: MotivationalPopupProps) {
+  const [visible, setVisible] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  useEffect(() => {
+    const lastShown = localStorage.getItem(STORAGE_KEY_LAST_SHOWN);
+    const savedIndex = parseInt(localStorage.getItem(STORAGE_KEY_INDEX) || "0", 10);
+    const index = isNaN(savedIndex) ? 0 : savedIndex % MESSAGES.length;
+    setMessageIndex(index);
+
+    const shouldShow =
+      !lastShown || Date.now() - parseInt(lastShown, 10) >= TWO_DAYS_MS;
+
+    if (shouldShow) {
+      const timer = setTimeout(() => setVisible(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  function dismiss() {
+    const nextIndex = (messageIndex + 1) % MESSAGES.length;
+    localStorage.setItem(STORAGE_KEY_INDEX, String(nextIndex));
+    localStorage.setItem(STORAGE_KEY_LAST_SHOWN, String(Date.now()));
+    setVisible(false);
+  }
+
+  if (!visible) return null;
+
+  const displayName =
+    userName && userName !== "there"
+      ? userName.split(" ")[0]
+      : "there";
+
+  const message = MESSAGES[messageIndex](displayName);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
+      onClick={dismiss}
+    >
+      <div
+        className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Gold header bar */}
+        <div className="bg-[#C9A063] px-5 py-4 text-center">
+          <p className="text-[#111827] font-bold text-base leading-snug">
+            {message}
+          </p>
+        </div>
+
+        {/* White body with dismiss button */}
+        <div className="bg-white px-5 py-4 flex flex-col items-center gap-3">
+          <button
+            onClick={dismiss}
+            className="w-full py-2.5 rounded-xl bg-[#C53B3B] text-white font-semibold text-sm hover:bg-[#a83030] transition-colors"
+          >
+            Let's get it 💥
+          </button>
+
+          {/* Tagline */}
+          <p className="text-xs text-center text-gray-400 leading-relaxed">
+            Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

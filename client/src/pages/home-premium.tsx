@@ -34,6 +34,7 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
+import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder } from "@shared/schema";
@@ -216,6 +217,7 @@ export default function HomePremium() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <MotivationalPopup userName={user?.firstName || user?.username || "there"} />
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
