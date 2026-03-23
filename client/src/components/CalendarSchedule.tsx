@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { format, addDays, startOfDay, isSameDay, isBefore } from "date-fns";
 
@@ -139,23 +138,21 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
               return (
                 <div key={index} className="text-center flex-shrink-0 min-w-[64px]">
                   <div className="text-xs font-medium text-muted-foreground mb-1">{dayName}</div>
-                  <Button
+                  <button
                     type="button"
-                    variant="outline"
-                    onClick={() => handleDateSelect(date)}
+                    onClick={() => !isBefore(date, startOfDay(today)) && handleDateSelect(date)}
                     disabled={isBefore(date, startOfDay(today))}
                     className={cn(
-                      "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl transition-all",
-                      !isSelected && isToday && "bg-[#FDF3E3] text-gray-700",
-                      !isSelected && !isToday && "text-gray-700 hover:bg-[#FDF3E3]",
-                      isSelected && "bg-[#C53B3B] text-white hover:bg-[#a83030]"
+                      "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl transition-all bg-[#C9A063] text-white hover:bg-[#FDF3E3] hover:text-[#111827]",
+                      isSelected && "bg-[#C53B3B] text-white hover:bg-[#a83030] hover:text-white",
+                      isBefore(date, startOfDay(today)) && "opacity-40 cursor-not-allowed"
                     )}
                   >
                     <span className="font-bold text-xl leading-none">{dayNumber}</span>
                     {isToday && (
                       <span className="text-xs leading-tight font-medium mt-0.5">Today</span>
                     )}
-                  </Button>
+                  </button>
                 </div>
               );
             })}
@@ -180,8 +177,8 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     disabled={isPastTime}
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                      !isSelected && "bg-[#C9A063] text-white hover:bg-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] text-white hover:bg-[#a83030]",
+                      !isSelected && "bg-[#C9A063] text-white hover:bg-[#FDF3E3] hover:text-[#111827]",
+                      isSelected && "bg-[#C53B3B] text-white hover:bg-[#a83030] hover:text-white",
                       isPastTime && "opacity-40 bg-gray-200 text-gray-400 cursor-not-allowed"
                     )}
                   >
@@ -211,8 +208,8 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     disabled={isPastQuarterTime}
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
-                      !isSelected && "bg-[#C9A063] text-white hover:bg-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] text-white hover:bg-[#a83030]",
+                      !isSelected && "bg-[#C9A063] text-white hover:bg-[#FDF3E3] hover:text-[#111827]",
+                      isSelected && "bg-[#C53B3B] text-white hover:bg-[#a83030] hover:text-white",
                       isPastQuarterTime && "opacity-40 bg-gray-200 text-gray-400 cursor-not-allowed"
                     )}
                   >
