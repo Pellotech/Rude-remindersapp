@@ -148,10 +148,10 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                       "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl border-2 transition-all",
                       !isSelected && isToday && "border-[#C9A063] text-gray-700",
                       !isSelected && !isToday && "border-gray-200 text-gray-700 hover:border-[#C9A063] hover:text-[#C9A063]",
-                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]"
+                      isSelected && "bg-[#C53B3B] !text-white border-[#C53B3B] hover:bg-[#a83030]"
                     )}
                   >
-                    <span className="font-bold text-xl leading-none">{dayNumber}</span>
+                    <span className={cn("font-bold text-xl leading-none", isSelected && "text-white")}>{dayNumber}</span>
                     {isToday && (
                       <span className="text-xs leading-tight font-medium mt-0.5">Today</span>
                     )}
@@ -182,7 +182,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
                       !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]",
+                      isSelected && "bg-[#C53B3B] !text-white border-[#C53B3B] hover:bg-[#a83030]",
                       isPastTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
@@ -214,7 +214,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
                       !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]",
+                      isSelected && "bg-[#C53B3B] !text-white border-[#C53B3B] hover:bg-[#a83030]",
                       isPastQuarterTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
