@@ -182,11 +182,11 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
                       !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] !text-white border-[#C53B3B] hover:bg-[#a83030]",
+                      isSelected && "bg-[#C53B3B] border-[#C53B3B] hover:bg-[#a83030]",
                       isPastTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
-                    {slot.display}
+                    <span style={isSelected ? { color: '#FFFFFF' } : undefined}>{slot.display}</span>
                   </Button>
                 );
               })}
@@ -214,11 +214,11 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
                       !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
-                      isSelected && "bg-[#C53B3B] !text-white border-[#C53B3B] hover:bg-[#a83030]",
+                      isSelected && "bg-[#C53B3B] border-[#C53B3B] hover:bg-[#a83030]",
                       isPastQuarterTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
-                    {slot.label}
+                    <span style={isSelected ? { color: '#FFFFFF' } : undefined}>{slot.label}</span>
                   </Button>
                 );
               })}

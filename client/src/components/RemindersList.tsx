@@ -256,7 +256,19 @@ export default function RemindersList() {
                   key={reminder.id}
                   onDelete={() => {
                     if (isPast) {
-                      toast({ title: "Past reminders are kept for your records", duration: 2500 });
+                      if (isLogged && clearTime) {
+                        toast({
+                          title: "Kept for 24h after logging",
+                          description: `Clears automatically in ${hoursLeft}h ${minutesLeft}m ⏱`,
+                          duration: 3000,
+                        });
+                      } else {
+                        toast({
+                          title: "Past reminders are kept for 24h",
+                          description: "Log it as done ✅ or missed ❌ and it clears automatically after 24 hours.",
+                          duration: 3000,
+                        });
+                      }
                       return;
                     }
                     deleteReminderMutation.mutate(reminder.id);
@@ -344,8 +356,22 @@ export default function RemindersList() {
                               variant="ghost"
                               size="sm"
                               className="h-7 w-7 p-0 text-gray-300 hover:text-gray-400 hover:bg-gray-50"
-                              onClick={() => toast({ title: "Past reminders are kept for your records", duration: 2500 })}
-                              title="Past reminders are kept for your records"
+                              onClick={() => {
+                                if (isLogged && clearTime) {
+                                  toast({
+                                    title: "Kept for 24h after logging",
+                                    description: `Clears automatically in ${hoursLeft}h ${minutesLeft}m ⏱`,
+                                    duration: 3000,
+                                  });
+                                } else {
+                                  toast({
+                                    title: "Past reminders are kept for 24h",
+                                    description: "Log it as done ✅ or missed ❌ and it clears automatically after 24 hours.",
+                                    duration: 3000,
+                                  });
+                                }
+                              }}
+                              title="Kept for 24 hours after logging"
                               data-testid={`button-delete-${reminder.id}`}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
