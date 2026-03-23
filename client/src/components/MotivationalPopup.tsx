@@ -19,40 +19,52 @@ const MESSAGES: Array<(name: string) => string> = [
 
 interface MotivationalPopupProps {
   userName?: string;
+  blocked?: boolean;
 }
 
-export function MotivationalPopup({ userName = "there" }: MotivationalPopupProps) {
+export function MotivationalPopup({
+  userName = "there",
+  blocked = false,
+}: MotivationalPopupProps) {
   const [visible, setVisible] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
+  const [pendingShow, setPendingShow] = useState(false);
 
   useEffect(() => {
     const savedIndex = parseInt(localStorage.getItem(STORAGE_KEY_INDEX) || "0", 10);
     const index = isNaN(savedIndex) ? 0 : savedIndex % MESSAGES.length;
     setMessageIndex(index);
 
-    // Allow forcing the popup via ?showPopup=1 in the URL
     const params = new URLSearchParams(window.location.search);
     const forceShow = params.get("showPopup") === "1";
 
     if (forceShow) {
-      // Remove the param from the URL so it doesn't stick
       params.delete("showPopup");
       const newUrl =
-        window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+        window.location.pathname +
+        (params.toString() ? "?" + params.toString() : "");
       window.history.replaceState({}, "", newUrl);
-      // Clear the timer so it shows immediately
       localStorage.removeItem(STORAGE_KEY_LAST_SHOWN);
     }
 
     const lastShown = localStorage.getItem(STORAGE_KEY_LAST_SHOWN);
     const shouldShow =
-      forceShow || !lastShown || Date.now() - parseInt(lastShown, 10) >= TWO_DAYS_MS;
+      forceShow ||
+      !lastShown ||
+      Date.now() - parseInt(lastShown, 10) >= TWO_DAYS_MS;
 
     if (shouldShow) {
-      const timer = setTimeout(() => setVisible(true), 600);
-      return () => clearTimeout(timer);
+      setPendingShow(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!pendingShow) return;
+    if (blocked) return;
+
+    const timer = setTimeout(() => setVisible(true), 600);
+    return () => clearTimeout(timer);
+  }, [pendingShow, blocked]);
 
   function dismiss() {
     const nextIndex = (messageIndex + 1) % MESSAGES.length;
@@ -64,9 +76,7 @@ export function MotivationalPopup({ userName = "there" }: MotivationalPopupProps
   if (!visible) return null;
 
   const displayName =
-    userName && userName !== "there"
-      ? userName.split(" ")[0]
-      : "there";
+    userName && userName !== "there" ? userName.split(" ")[0] : "there";
 
   const message = MESSAGES[messageIndex](displayName);
 
@@ -80,14 +90,12 @@ export function MotivationalPopup({ userName = "there" }: MotivationalPopupProps
         className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Gold header bar */}
         <div className="bg-[#C9A063] px-5 py-4 text-center">
           <p className="text-[#111827] font-bold text-base leading-snug">
             {message}
           </p>
         </div>
 
-        {/* White body with dismiss button */}
         <div className="bg-white px-5 py-4 flex flex-col items-center gap-3">
           <button
             onClick={dismiss}
@@ -96,7 +104,6 @@ export function MotivationalPopup({ userName = "there" }: MotivationalPopupProps
             Let's get it 💥
           </button>
 
-          {/* Tagline */}
           <p className="text-xs text-center text-gray-400 leading-relaxed">
             Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
           </p>
