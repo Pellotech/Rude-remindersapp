@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { format, addDays, startOfDay, isSameDay, isBefore, isPast } from "date-fns";
+import { format, addDays, startOfDay, isSameDay, isBefore } from "date-fns";
 
 interface CalendarScheduleProps {
   selectedDateTime: Date | null;
@@ -18,32 +18,28 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const [selectedDate, setSelectedDate] = useState<Date | null>(selectedDateTime);
   const [quarterState, setQuarterState] = useState<QuarterState>({ hour: null, minutes: 0 });
 
-  // Generate the 7 days of the week starting from today
   const today = new Date();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
-  // Generate time slots - show appropriate hours based on selected date
   const generateTimeSlots = () => {
     const now = new Date();
     const isSelectedDateToday = selectedDate && isSameDay(selectedDate, now);
-    
+
     if (isSelectedDateToday) {
-      // When today is selected: Show time slots starting from the current hour and continue through the rest of the day
+      // Only show FUTURE hours — exclude the current hour and everything before
       const currentHour = now.getHours();
-      const remainingHours = 24 - currentHour;
-      
+      const remainingHours = 23 - currentHour; // starts at currentHour + 1
       return Array.from({ length: remainingHours }, (_, i) => {
-        const hour = currentHour + i;
+        const hour = currentHour + 1 + i;
         return {
           value: hour,
-          label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
-          display: hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+          label: hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
+          display: hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
         };
       });
     } else {
-      // For future dates: Show all 24 hours in natural order (12 AM - 11 PM)
       return Array.from({ length: 24 }, (_, i) => {
-        const hour = i; // 0 = 12 AM, 1 = 1 AM, ..., 23 = 11 PM
+        const hour = i;
         return {
           value: hour,
           label: hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : hour > 12 ? `${hour - 12} PM` : `${hour} AM`,
@@ -55,17 +51,15 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
   const timeSlots = generateTimeSlots();
 
-  // Quarter-hour options (15-minute intervals)
   const quarterSlots = [
-    { value: 0, label: ":00", displayLabel: "On the hour", minutes: 0 },
-    { value: 15, label: ":15", displayLabel: "Quarter past", minutes: 15 },
-    { value: 30, label: ":30", displayLabel: "Half past", minutes: 30 },
-    { value: 45, label: ":45", displayLabel: "Quarter to", minutes: 45 }
+    { value: 0, label: ":00", minutes: 0 },
+    { value: 15, label: ":15", minutes: 15 },
+    { value: 30, label: ":30", minutes: 30 },
+    { value: 45, label: ":45", minutes: 45 }
   ];
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
-    // If there's already a selected time, combine it with the new date
     if (selectedDateTime) {
       const newDateTime = new Date(date);
       newDateTime.setHours(selectedDateTime.getHours(), selectedDateTime.getMinutes());
@@ -76,21 +70,18 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   const handleTimeSelect = (hour: number) => {
     if (!selectedDate) return;
 
-    // If selecting today's date and this hour, check if we need to start with a future minute
     const now = new Date();
     const isToday = isSameDay(selectedDate, now);
     let initialMinutes = 0;
-    
+
     if (isToday && hour === now.getHours()) {
-      // If it's the current hour, start with the next available 15-minute slot
       const currentMinutes = now.getMinutes();
       if (currentMinutes < 15) initialMinutes = 15;
       else if (currentMinutes < 30) initialMinutes = 30;
       else if (currentMinutes < 45) initialMinutes = 45;
       else {
-        // If past 45 minutes, move to next hour
         hour = hour + 1;
-        if (hour >= 24) return; // Can't schedule for next day in this component
+        if (hour >= 24) return;
         initialMinutes = 0;
       }
     }
@@ -103,45 +94,38 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
   const handleQuarterSelect = (minutes: number) => {
     if (!selectedDate || quarterState.hour === null) return;
-
     setQuarterState({ ...quarterState, minutes });
     const newDateTime = new Date(selectedDate);
     newDateTime.setHours(quarterState.hour, minutes, 0, 0);
     onDateTimeChange(newDateTime);
   };
 
-  const isDateSelected = (date: Date) => {
-    return selectedDate && isSameDay(date, selectedDate);
-  };
+  const isDateSelected = (date: Date) => selectedDate && isSameDay(date, selectedDate);
 
-  const isTimeSelected = (hour: number) => {
-    return selectedDateTime &&
-           selectedDate &&
-           isSameDay(selectedDateTime, selectedDate) &&
-           selectedDateTime.getHours() === hour;
-  };
+  const isTimeSelected = (hour: number) =>
+    selectedDateTime &&
+    selectedDate &&
+    isSameDay(selectedDateTime, selectedDate) &&
+    selectedDateTime.getHours() === hour;
 
-  const isQuarterSelected = (minutes: number) => {
-    return selectedDateTime &&
-           selectedDate &&
-           isSameDay(selectedDateTime, selectedDate) &&
-           selectedDateTime.getMinutes() === minutes &&
-           quarterState.hour !== null;
-  };
+  const isQuarterSelected = (minutes: number) =>
+    selectedDateTime &&
+    selectedDate &&
+    isSameDay(selectedDateTime, selectedDate) &&
+    selectedDateTime.getMinutes() === minutes &&
+    quarterState.hour !== null;
 
   const isTimeInPast = (hour: number, minutes: number = 0) => {
     if (!selectedDate) return false;
-
     const now = new Date();
     const timeSlot = new Date(selectedDate);
     timeSlot.setHours(hour, minutes, 0, 0);
-
     return timeSlot < now;
   };
 
   return (
     <div className="space-y-3">
-      {/* Calendar Section */}
+      {/* Date Buttons */}
       <Card>
         <CardContent className="pt-3 pb-3">
           <p className="text-xs text-muted-foreground mb-2">Choose a day within the next week</p>
@@ -153,26 +137,23 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
               const isSelected = isDateSelected(date);
 
               return (
-                <div key={index} className="text-center flex-shrink-0 min-w-[56px]">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    {dayName}
-                  </div>
+                <div key={index} className="text-center flex-shrink-0 min-w-[64px]">
+                  <div className="text-xs font-medium text-muted-foreground mb-1">{dayName}</div>
                   <Button
-                    key={index}
                     type="button"
-                    variant={isSelected ? "default" : "outline"}
-                    size="sm"
+                    variant="outline"
                     onClick={() => handleDateSelect(date)}
                     disabled={isBefore(date, startOfDay(today))}
                     className={cn(
-                      "w-full h-10 flex flex-col items-center justify-center p-1",
-                      isToday && !isSelected && "border-primary text-primary",
-                      isSelected && "bg-primary text-primary-foreground"
+                      "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl border-2 transition-all",
+                      !isSelected && isToday && "border-[#C9A063] text-[#C9A063]",
+                      !isSelected && !isToday && "border-gray-200 text-gray-700 hover:border-[#C9A063] hover:text-[#C9A063]",
+                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]"
                     )}
                   >
-                    <span className={`font-semibold ${isToday ? 'text-sm' : 'text-base'}`}>{dayNumber}</span>
+                    <span className="font-bold text-xl leading-none">{dayNumber}</span>
                     {isToday && (
-                      <span className="text-[10px] leading-tight text-center">Today</span>
+                      <span className="text-xs leading-tight font-medium mt-0.5">Today</span>
                     )}
                   </Button>
                 </div>
@@ -182,7 +163,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
         </CardContent>
       </Card>
 
-      {/* Time Slots Section */}
+      {/* Hour Buttons */}
       {selectedDate && (
         <Card>
           <CardContent className="pt-3 pb-3">
@@ -195,14 +176,14 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                   <Button
                     key={slot.value}
                     type="button"
-                    variant={isSelected ? "default" : "outline"}
-                    size="sm"
+                    variant="outline"
                     onClick={() => handleTimeSelect(slot.value)}
                     disabled={isPastTime}
                     className={cn(
-                      "h-9 text-sm whitespace-nowrap flex-shrink-0 min-w-[72px]",
-                      isSelected && "bg-primary text-primary-foreground",
-                      isPastTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                      "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
+                      !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
+                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]",
+                      isPastTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
                     {slot.display}
@@ -214,7 +195,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
         </Card>
       )}
 
-      {/* Quarter Hour Selection */}
+      {/* Minute Buttons */}
       {selectedDate && quarterState.hour !== null && (
         <Card>
           <CardContent className="pt-3 pb-3">
@@ -227,20 +208,17 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
                   <Button
                     key={slot.value}
                     type="button"
-                    variant={isSelected ? "default" : "outline"}
-                    size="sm"
+                    variant="outline"
                     onClick={() => handleQuarterSelect(slot.value)}
                     disabled={isPastQuarterTime}
                     className={cn(
-                      "h-14 text-sm whitespace-nowrap flex-shrink-0 min-w-[80px]",
-                      isSelected && "bg-primary text-primary-foreground",
-                      isPastQuarterTime && "opacity-50 bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                      "h-12 min-w-[90px] rounded-full shadow-sm border-2 text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
+                      !isSelected && "border-[#C9A063] text-gray-700 hover:border-[#C53B3B] hover:text-[#C53B3B]",
+                      isSelected && "bg-[#C53B3B] text-white border-[#C53B3B] hover:bg-[#a83030]",
+                      isPastQuarterTime && "opacity-40 bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                     )}
                   >
-                    <div className="flex flex-col items-center">
-                      <span className="font-semibold text-base">{slot.label}</span>
-                      <span className="text-xs opacity-75">{slot.displayLabel}</span>
-                    </div>
+                    {slot.label}
                   </Button>
                 );
               })}
