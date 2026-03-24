@@ -91,13 +91,13 @@ export function MotivationalPopup({
         className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-[#FDF3E3] px-5 pt-3 pb-4 relative">
+        <div className="bg-[#FDF3E3] px-4 pt-4 pb-4 flex flex-row items-start gap-3">
           <img
             src={logoImage}
             alt="Rude Reminders"
-            className="absolute top-3 left-4 w-10 h-10 object-contain"
+            className="w-14 h-14 object-contain flex-shrink-0"
           />
-          <p className="text-[#111827] font-bold text-base leading-snug text-center pt-1">
+          <p className="text-[#111827] font-bold text-base leading-snug">
             {message}
           </p>
         </div>
