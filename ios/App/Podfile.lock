@@ -15,6 +15,8 @@ PODS:
     - GoogleUserMessagingPlatform (< 3.0.0, >= 2.7.0)
   - CapacitorCommunityAppleSignIn (7.1.0):
     - Capacitor
+  - CapacitorCommunityTextToSpeech (6.1.0):
+    - Capacitor
   - CapacitorCordova (7.4.2)
   - CapacitorDevice (7.0.2):
     - Capacitor
@@ -56,6 +58,7 @@ DEPENDENCIES:
   - "CapacitorCamera (from `../../node_modules/@capacitor/camera`)"
   - "CapacitorCommunityAdmob (from `../../node_modules/@capacitor-community/admob`)"
   - "CapacitorCommunityAppleSignIn (from `../../node_modules/@capacitor-community/apple-sign-in`)"
+  - "CapacitorCommunityTextToSpeech (from `../../node_modules/@capacitor-community/text-to-speech`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorDevice (from `../../node_modules/@capacitor/device`)"
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
@@ -92,6 +95,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor-community/admob"
   CapacitorCommunityAppleSignIn:
     :path: "../../node_modules/@capacitor-community/apple-sign-in"
+  CapacitorCommunityTextToSpeech:
+    :path: "../../node_modules/@capacitor-community/text-to-speech"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorDevice:
@@ -125,6 +130,7 @@ SPEC CHECKSUMS:
   CapacitorCamera: 6e18d54c8ab30d7dc7b8cd93d96f9b4f57e9202a
   CapacitorCommunityAdmob: 9267ae3b473314fa65765ce4bead9a9175902ab2
   CapacitorCommunityAppleSignIn: 59bc8ade5677e6ea60a14bdca8d3f4bdc91069e2
+  CapacitorCommunityTextToSpeech: f024b1587fd68b74180c8b132d603b44be81cda3
   CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
   CapacitorDevice: a50a45f0d075e55e2392c7a4be5404d4f69515de
   CapacitorFilesystem: ac0a386949ed6c295a3dffa129ecd26b881ae5be
@@ -143,6 +149,6 @@ SPEC CHECKSUMS:
   RevenueCat: f6b7c7e55f548a2bf304a3abbed0cc2447364427
   RevenuecatPurchasesCapacitor: 8e063564e6c44a23642d6080dde6299180f94c07
 
-PODFILE CHECKSUM: b9a8dce42a88e09f8374f003429096ae6754cf4a
+PODFILE CHECKSUM: 1e1387daf095638b9e57bb2ba809993127c0914b
 
 COCOAPODS: 1.16.2
