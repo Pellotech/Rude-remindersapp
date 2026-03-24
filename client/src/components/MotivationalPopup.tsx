@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 const STORAGE_KEY_INDEX = "rudeReminders_motivationalIndex";
 const STORAGE_KEY_LAST_SHOWN = "rudeReminders_lastMotivationalShown";
@@ -90,13 +91,18 @@ export function MotivationalPopup({
         className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-[#C9A063] px-5 py-4 text-center">
-          <p className="text-[#111827] font-bold text-base leading-snug">
+        <div className="bg-[#FDF3E3] px-5 pt-3 pb-4 relative">
+          <img
+            src={logoImage}
+            alt="Rude Reminders"
+            className="absolute top-3 left-4 w-10 h-10 object-contain"
+          />
+          <p className="text-[#111827] font-bold text-base leading-snug text-center pt-1">
             {message}
           </p>
         </div>
 
-        <div className="bg-white px-5 py-4 flex flex-col items-center gap-3">
+        <div className="bg-[#da7f7f] px-5 py-4 flex flex-col items-center gap-3">
           <button
             onClick={dismiss}
             className="w-full py-2.5 rounded-xl bg-[#C53B3B] text-white font-semibold text-sm hover:bg-[#a83030] transition-colors"
@@ -104,7 +110,7 @@ export function MotivationalPopup({
             Let's get it 💥
           </button>
 
-          <p className="text-xs text-center text-gray-400 leading-relaxed">
+          <p className="text-xs text-center text-[#111827] leading-relaxed">
             Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
           </p>
         </div>
