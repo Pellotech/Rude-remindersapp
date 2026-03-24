@@ -27,7 +27,7 @@ export default function Navigation() {
 
   return (
     <>
-      <header className="bg-[#f4d4b7] relative z-50 safe-area-header">
+      <header className="bg-[#C9A063] relative z-50 safe-area-header">
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Centered logo */}
           <div className="flex justify-center mb-4">
