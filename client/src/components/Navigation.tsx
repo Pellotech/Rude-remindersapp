@@ -28,9 +28,9 @@ export default function Navigation() {
   return (
     <>
       <header className="bg-[#C9A063] relative z-50 safe-area-header">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Centered logo */}
-          <div className="flex justify-center mb-4">
+        <div className="relative max-w-7xl mx-auto px-4 pt-2 pb-0">
+          {/* Centered logo — no bottom margin so header ends at logo bottom */}
+          <div className="flex justify-center">
             <Link href="/">
               <img 
                 src={logoImage} 
@@ -41,8 +41,8 @@ export default function Navigation() {
             </Link>
           </div>
 
-          {/* Action buttons below logo, aligned right */}
-          <div className="flex justify-end items-center gap-2">
+          {/* Action buttons — pinned to bottom-right of header */}
+          <div className="absolute bottom-1 right-4 flex items-center gap-2">
             {/* Show Home button when not on home page */}
             {location !== "/" && (
               <Link href="/">
