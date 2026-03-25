@@ -28,7 +28,7 @@ export default function Navigation() {
   return (
     <>
       <header className="bg-[#C9A063] relative z-50 safe-area-header">
-        <div className="relative max-w-7xl mx-auto px-4 pt-2 pb-0">
+        <div className="relative max-w-7xl mx-auto px-4 pt-4 pb-3">
           {/* Centered logo — no bottom margin so header ends at logo bottom */}
           <div className="flex justify-center">
             <Link href="/">
