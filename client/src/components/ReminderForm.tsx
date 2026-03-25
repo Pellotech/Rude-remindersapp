@@ -1080,7 +1080,7 @@ export default function ReminderForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Rudeness Level</FormLabel>
-                  <div className="px-4 py-6 bg-gray-50 rounded-lg">
+                  <div className="px-4 py-6 bg-[#FDF3E3] rounded-lg">
                     <FormControl>
                       <Slider
                         min={1}
@@ -1297,7 +1297,7 @@ export default function ReminderForm({
                           <ChevronDown className={`h-4 w-4 transition-transform ${quickReminderOpen ? "rotate-180" : ""}`} />
                         </Button>
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-2 p-4 bg-[#E5E7EB] rounded-lg border border-[#D1D5DB]">
+                      <CollapsibleContent className="mt-2 p-4 bg-[#FDF3E3] rounded-lg border border-[#D1D5DB]">
                         <div className="grid grid-cols-4 gap-2">
                           {[
                             { seconds: 10, shortLabel: "10s" },
