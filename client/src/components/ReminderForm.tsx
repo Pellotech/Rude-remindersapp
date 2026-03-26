@@ -902,7 +902,7 @@ export default function ReminderForm({
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-white border-2 border-gray-300 focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] py-3 text-[#111827]"
+                      className="bg-[#FDF3E3] border-2 border-gray-300 focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] py-3 text-[#111827]"
                       {...field}
                     />
                   </FormControl>
@@ -925,7 +925,7 @@ export default function ReminderForm({
                       <Switch
                         checked={isMultiDay}
                         onCheckedChange={handleMultiDayToggle}
-                        className="data-[state=checked]:bg-[#C9A063] data-[state=unchecked]:bg-gray-300"
+                        className="data-[state=checked]:bg-[#C9A063] data-[state=unchecked]:bg-[#FDF3E3] border border-[#C9A063]"
                       />
                     </div>
                   </div>
@@ -946,22 +946,21 @@ export default function ReminderForm({
                                     <div className="text-xs font-medium text-muted-foreground mb-1">
                                       {day.label}
                                     </div>
-                                    <Button
+                                    <button
                                       type="button"
-                                      variant={isSelected ? "default" : "outline"}
-                                      size="sm"
                                       onClick={() => handleDayToggle(day.id)}
                                       className={cn(
-                                        "w-full h-10 flex flex-col items-center justify-center p-1",
-                                        day.isToday && !isSelected && "border-primary text-primary",
-                                        isSelected && "bg-primary text-primary-foreground"
+                                        "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl transition-all",
+                                        isSelected
+                                          ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
+                                          : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3]"
                                       )}
                                     >
-                                      <span className="text-base font-semibold">{day.short}</span>
+                                      <span className="text-base font-bold">{day.short}</span>
                                       {day.isToday && (
-                                        <span className="text-[10px] leading-tight">Today</span>
+                                        <span className="text-xs leading-tight font-medium mt-0.5">Today</span>
                                       )}
-                                    </Button>
+                                    </button>
                                   </div>
                                 );
                               })}
