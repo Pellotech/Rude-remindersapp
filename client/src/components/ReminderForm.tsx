@@ -978,19 +978,19 @@ export default function ReminderForm({
                                   const isSelected = multiDayHour === hour;
                                   const display = hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
                                   return (
-                                    <Button
+                                    <button
                                       key={hour}
                                       type="button"
-                                      variant={isSelected ? "default" : "outline"}
-                                      size="sm"
                                       onClick={() => setMultiDayHour(hour)}
                                       className={cn(
-                                        "h-9 text-sm whitespace-nowrap flex-shrink-0 min-w-[72px]",
-                                        isSelected && "bg-primary text-primary-foreground"
+                                        "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
+                                        isSelected
+                                          ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
+                                          : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
                                       )}
                                     >
                                       {display}
-                                    </Button>
+                                    </button>
                                   );
                                 })}
                               </div>
@@ -1004,29 +1004,26 @@ export default function ReminderForm({
                             <CardContent className="pt-3 pb-3">
                               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {[
-                                  { value: 0, label: ":00", displayLabel: "On the hour" },
-                                  { value: 15, label: ":15", displayLabel: "Quarter past" },
-                                  { value: 30, label: ":30", displayLabel: "Half past" },
-                                  { value: 45, label: ":45", displayLabel: "Quarter to" }
+                                  { value: 0, label: ":00" },
+                                  { value: 15, label: ":15" },
+                                  { value: 30, label: ":30" },
+                                  { value: 45, label: ":45" }
                                 ].map((slot) => {
                                   const isSelected = multiDayMinute === slot.value;
                                   return (
-                                    <Button
+                                    <button
                                       key={slot.value}
                                       type="button"
-                                      variant={isSelected ? "default" : "outline"}
-                                      size="sm"
                                       onClick={() => setMultiDayMinute(slot.value)}
                                       className={cn(
-                                        "h-14 text-sm whitespace-nowrap flex-shrink-0 min-w-[90px]",
-                                        isSelected && "bg-primary text-primary-foreground"
+                                        "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
+                                        isSelected
+                                          ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
+                                          : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
                                       )}
                                     >
-                                      <div className="flex flex-col items-center">
-                                        <span className="font-semibold text-base">{slot.label}</span>
-                                        <span className="text-xs opacity-75">{slot.displayLabel}</span>
-                                      </div>
-                                    </Button>
+                                      {slot.label}
+                                    </button>
                                   );
                                 })}
                               </div>
