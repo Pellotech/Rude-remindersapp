@@ -15,6 +15,7 @@ import { apiRequest, clearAuthToken } from "@/lib/queryClient";
 import { User, Volume2, Bell, Shield, Palette, CreditCard, Calendar, Crown, ChevronRight, ArrowLeft, Trash2, AlertTriangle, ExternalLink } from "lucide-react";
 import { BackNavigation } from "@/components/BackNavigation";
 import { usePremium } from "@/hooks/usePremium";
+import { HelpMenu } from "@/components/HelpMenu";
 import { Browser } from "@capacitor/browser";
 import { Capacitor } from "@capacitor/core";
 
@@ -630,6 +631,11 @@ export default function Settings() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Floating Help Button */}
+      <div className="fixed bottom-20 right-4 z-50">
+        <HelpMenu />
       </div>
     </div>
   );
