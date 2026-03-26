@@ -925,7 +925,7 @@ export default function ReminderForm({
                       <Switch
                         checked={isMultiDay}
                         onCheckedChange={handleMultiDayToggle}
-                        className="data-[state=checked]:bg-[#C9A063] data-[state=unchecked]:bg-[#FDF3E3] border border-[#C9A063]"
+                        className="data-[state=checked]:bg-[#C9A063] data-[state=unchecked]:bg-[#FDF3E3] border border-[#FDF3E3]"
                       />
                     </div>
                   </div>
