@@ -173,7 +173,7 @@ export default function RemindersList() {
 
   if (isLoading) {
     return (
-      <Card className="border border-[#C9A063]">
+      <Card className="border border-[#C9A063] bg-[#FDF3E3]">
         <CardContent className="p-12 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A063] mx-auto mb-4" />
           <p className="text-gray-500">Loading your reminders...</p>
@@ -183,7 +183,7 @@ export default function RemindersList() {
   }
 
   return (
-    <Card className="border border-[#C9A063]">
+    <Card className="border border-[#C9A063] bg-[#FDF3E3]">
       <CardHeader className="pb-2 pt-3 px-3">
         {/* Tab switcher */}
         <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden mb-2">

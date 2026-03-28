@@ -279,7 +279,7 @@ export default function HomePremium() {
 
           <TabsContent value="analytics" className="space-y-4">
             {/* ── COMPLETION GRAPH ── */}
-            <Card className="border border-[#C9A063]">
+            <Card className="border border-[#C9A063] bg-[#FDF3E3]">
               <CardHeader className="pb-2 pt-3 px-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-[#C9A063]" />
