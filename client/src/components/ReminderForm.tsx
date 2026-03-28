@@ -1385,7 +1385,7 @@ export default function ReminderForm({
                 </>
               ) : isMultiDay ? (
                 selectedDays.length > 0
-                  ? `Create Recurring Reminder (${selectedDays.length} days)`
+                  ? `Create Reminder (${selectedDays.length} day${selectedDays.length !== 1 ? 's' : ''})`
                   : "Select Days to Continue"
               ) : (
                 "Create Reminder"
