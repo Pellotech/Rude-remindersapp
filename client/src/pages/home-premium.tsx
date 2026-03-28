@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +63,13 @@ export default function HomePremium() {
   const [showRichNotification, setShowRichNotification] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [graphTab, setGraphTab] = useState<"week" | "year" | "tenWeeks">("week");
+  const graphScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (graphTab !== "week" && graphScrollRef.current) {
+      graphScrollRef.current.scrollLeft = graphScrollRef.current.scrollWidth;
+    }
+  }, [graphTab, graphData]);
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -366,7 +373,7 @@ export default function HomePremium() {
                   );
                   if (needsScroll) {
                     return (
-                      <div style={{ overflowX: "auto", width: "100%", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
+                      <div ref={graphScrollRef} style={{ overflowX: "auto", width: "100%", WebkitOverflowScrolling: "touch" } as React.CSSProperties}>
                         {chartInternals(chartWidth)}
                       </div>
                     );
