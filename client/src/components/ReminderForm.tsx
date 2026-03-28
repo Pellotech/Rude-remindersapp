@@ -1120,10 +1120,11 @@ export default function ReminderForm({
                   <button
                     type="button"
                     onClick={() => setActiveFeatureTab(activeFeatureTab === 'voice' ? null : 'voice')}
-                    className={`flex-1 py-2.5 text-xs font-semibold transition-all ${
+                    className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs font-semibold transition-all ${
                       activeFeatureTab === 'voice' ? 'bg-[#A07840] text-white' : 'bg-[#C9A063] text-white hover:bg-[#B8904F]'
                     }`}
                   >
+                    <Volume2 className="h-4 w-4" />
                     Voice
                   </button>
 
@@ -1134,10 +1135,11 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
                         else { gateAttachments(() => setActiveFeatureTab('photo')); }
                       }}
-                      className={`flex-1 py-2.5 text-xs font-semibold border-l border-r border-[#B8904F] transition-all relative ${
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs font-semibold border-l border-r border-[#B8904F] transition-all relative ${
                         activeFeatureTab === 'photo' ? 'bg-[#A07840] text-white' : 'bg-[#C9A063] text-white hover:bg-[#B8904F]'
                       }`}
                     >
+                      <Camera className="h-4 w-4" />
                       Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-white/60" />}
                     </button>
@@ -1150,10 +1152,11 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
                         else { gateQuotes(() => setActiveFeatureTab('quotes')); }
                       }}
-                      className={`flex-1 py-2.5 text-xs font-semibold transition-all relative ${
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-xs font-semibold transition-all relative ${
                         activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-white' : 'bg-[#C9A063] text-white hover:bg-[#B8904F]'
                       }`}
                     >
+                      <Quote className="h-4 w-4" />
                       Quotes
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-white/60" />}
                     </button>
@@ -1167,7 +1170,7 @@ export default function ReminderForm({
                     {/* Voice panel */}
                     {activeFeatureTab === 'voice' && (
                       <div className="space-y-3">
-                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">Voice Character</p>
+                        <p className="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wide">Voice Character</p>
                         <Select
                           value={form.watch("voiceCharacter")}
                           onValueChange={(value) => {
@@ -1180,7 +1183,7 @@ export default function ReminderForm({
                             }
                           }}
                         >
-                          <SelectTrigger className="w-full text-sm h-9 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#111827]">
+                          <SelectTrigger className="w-full text-[14px] h-10 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#1A1A1A]">
                             <SelectValue placeholder="Select voice">
                               {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Select voice"}
                             </SelectValue>
@@ -1191,30 +1194,10 @@ export default function ReminderForm({
                               const isSelected = form.watch("voiceCharacter") === character.id;
                               return (
                                 <SelectItem key={character.id} value={character.id}>
-                                  <span className="flex items-center gap-2">
+                                  <span className="flex items-center gap-2 text-[14px] text-[#1A1A1A]">
                                     <span className="w-4 text-center text-xs">{isLocked ? '🔒' : isSelected ? '✓' : ''}</span>
                                     <span>{character.name}</span>
                                   </span>
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">Motivation Style</p>
-                        <Select value={selectedCategory} onValueChange={handleCategorySelection}>
-                          <SelectTrigger className="w-full text-xs h-9 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#111827]">
-                            <SelectValue placeholder="Choose motivation style" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {motivationCategories.map((category) => {
-                              const IconComponent = category.icon;
-                              return (
-                                <SelectItem key={category.id} value={category.id}>
-                                  <div className="flex items-center space-x-2">
-                                    <IconComponent className="h-4 w-4" />
-                                    <span>{category.name}</span>
-                                  </div>
                                 </SelectItem>
                               );
                             })}
@@ -1226,7 +1209,7 @@ export default function ReminderForm({
                     {/* Photo panel */}
                     {activeFeatureTab === 'photo' && (
                       <div className="space-y-3">
-                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+                        <p className="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wide">
                           Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
                         </p>
                         {isMobileWithCamera ? (
@@ -1270,9 +1253,9 @@ export default function ReminderForm({
                     {/* Quotes panel */}
                     {activeFeatureTab === 'quotes' && (
                       <div className="space-y-3">
-                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">Motivation Style</p>
+                        <p className="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wide">Motivation Style</p>
                         <Select value={selectedCategory} onValueChange={handleCategorySelection}>
-                          <SelectTrigger className="w-full text-xs h-9 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#111827]">
+                          <SelectTrigger className="w-full text-[14px] h-10 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#1A1A1A]">
                             <SelectValue placeholder="Choose a motivation style…" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1280,7 +1263,7 @@ export default function ReminderForm({
                               const IconComponent = category.icon;
                               return (
                                 <SelectItem key={category.id} value={category.id}>
-                                  <div className="flex items-center space-x-2">
+                                  <div className="flex items-center space-x-2 text-[14px] text-[#1A1A1A]">
                                     <IconComponent className="h-4 w-4" />
                                     <span>{category.name}</span>
                                   </div>
@@ -1289,7 +1272,7 @@ export default function ReminderForm({
                             })}
                           </SelectContent>
                         </Select>
-                        <p className="text-[11px] text-[#9CA3AF]">A motivational quote from your chosen category will be added to your reminder.</p>
+                        <p className="text-[12px] text-[#6B7280]">A motivational quote from your chosen category will be added to your reminder.</p>
                       </div>
                     )}
                   </div>
@@ -1395,7 +1378,7 @@ export default function ReminderForm({
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-transparent hover:bg-[#F5B942]/10 border-2 border-[#F5B942] text-[#C9A063] font-semibold py-3 px-6 text-lg"
+              className="w-full bg-blue-600 hover:bg-blue-700 border-2 border-[#F5B942] text-white font-semibold py-3 px-6 text-lg"
               disabled={
                 createReminderMutation.isPending ||
                 (isMultiDay && selectedDays.length === 0) ||
