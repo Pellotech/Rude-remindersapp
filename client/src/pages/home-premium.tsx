@@ -69,7 +69,7 @@ export default function HomePremium() {
     if (graphTab !== "week" && graphScrollRef.current) {
       graphScrollRef.current.scrollLeft = graphScrollRef.current.scrollWidth;
     }
-  }, [graphTab, graphData]);
+  }, [graphTab]);
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
