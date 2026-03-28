@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core';
 
 const VOICE_SETTINGS: Record<string, { rate: number; pitch: number; lang: string; voiceType: string }> = {
   'default': { rate: 0.85, pitch: 0.9, lang: 'en-US', voiceType: 'female' },
-  'confident-leader': { rate: 0.9, pitch: 0.6, lang: 'en-US', voiceType: 'male' },
+  'confident-leader': { rate: 0.75, pitch: 0.35, lang: 'en-GB', voiceType: 'british-male' },
   'british-butler': { rate: 0.55, pitch: 0.35, lang: 'en-GB', voiceType: 'british-male' },
   'karen-nag': { rate: 0.95, pitch: 1.3, lang: 'en-US', voiceType: 'female' },
 };
