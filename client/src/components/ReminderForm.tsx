@@ -247,9 +247,7 @@ export default function ReminderForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Collapsible states for advanced sections
-  const [voiceCharacterOpen, setVoiceCharacterOpen] = useState(false);
-  const [attachmentsOpen, setAttachmentsOpen] = useState(false);
-  const [motivationalOpen, setMotivationalOpen] = useState(false);
+  const [activeFeatureTab, setActiveFeatureTab] = useState<'voice' | 'photo' | 'quotes' | null>(null);
   const [quickReminderOpen, setQuickReminderOpen] = useState(false);
 
 
@@ -1114,160 +1112,186 @@ export default function ReminderForm({
             {/* Hidden context field — value set programmatically if needed */}
             <input type="hidden" {...form.register("context")} />
 
-            {/* Compact icon-button row for Voice / Photo / Quotes */}
+            {/* Voice / Photo / Quotes unified tab section */}
             {!isSimplifiedInterface && (
               <>
-                <div className="flex gap-2">
-                  {/* Voice */}
+                {/* Tab bar — flush into panel below */}
+                <div className="flex rounded-t-xl overflow-hidden border border-b-0 border-[#C9A063]">
                   <button
                     type="button"
-                    onClick={() => setVoiceCharacterOpen(v => !v)}
-                    className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all ${voiceCharacterOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
+                    onClick={() => setActiveFeatureTab(activeFeatureTab === 'voice' ? null : 'voice')}
+                    className={`flex-1 py-2.5 text-xs font-semibold transition-all ${
+                      activeFeatureTab === 'voice' ? 'bg-[#A07840] text-white' : 'bg-[#C9A063] text-white hover:bg-[#B8904F]'
+                    }`}
                   >
-                    <Volume2 className={`h-5 w-5 ${voiceCharacterOpen ? 'text-white' : 'text-[#B8900A]'}`} />
-                    <span>Voice</span>
+                    Voice
                   </button>
 
-                  {/* Photo */}
                   {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
                     <button
                       type="button"
                       onClick={() => {
-                        if (attachmentsOpen) { setAttachmentsOpen(false); }
-                        else { gateAttachments(() => setAttachmentsOpen(true)); }
+                        if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
+                        else { gateAttachments(() => setActiveFeatureTab('photo')); }
                       }}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${attachmentsOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
+                      className={`flex-1 py-2.5 text-xs font-semibold border-l border-r border-[#B8904F] transition-all relative ${
+                        activeFeatureTab === 'photo' ? 'bg-[#A07840] text-white' : 'bg-[#C9A063] text-white hover:bg-[#B8904F]'
+                      }`}
                     >
-                      <Camera className={`h-5 w-5 ${attachmentsOpen ? 'text-white' : 'text-[#B8900A]'}`} />
-                      <span>Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}</span>
-                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-amber-500" />}
+                      Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-white/60" />}
                     </button>
                   )}
 
-                  {/* Quotes */}
                   {!isFeatureDisabled('MOTIVATIONAL_QUOTES') && (
                     <button
                       type="button"
                       onClick={() => {
-                        if (motivationalOpen) { setMotivationalOpen(false); }
-                        else { gateQuotes(() => setMotivationalOpen(true)); }
+                        if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
+                        else { gateQuotes(() => setActiveFeatureTab('quotes')); }
                       }}
-                      className={`flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all relative ${motivationalOpen ? 'border-[#C9A063] bg-[#C9A063] text-white' : 'border-[#C9A063] bg-white text-[#111827] hover:bg-[#FDF8F0]'}`}
+                      className={`flex-1 py-2.5 text-xs font-semibold transition-all relative ${
+                        activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-white' : 'bg-[#C9A063] text-white hover:bg-[#B8904F]'
+                      }`}
                     >
-                      <Quote className={`h-5 w-5 ${motivationalOpen ? 'text-white' : 'text-[#B8900A]'}`} />
-                      <span className="truncate max-w-full px-1 text-center leading-tight">
-                        {selectedCategory
-                          ? (motivationCategories.find(c => c.id === selectedCategory)?.name ?? 'Quotes').split(' ')[0]
-                          : 'Quotes'}
-                      </span>
-                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-amber-500" />}
+                      Quotes
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-white/60" />}
                     </button>
                   )}
                 </div>
 
-                {/* Voice panel */}
-                {voiceCharacterOpen && (
-                  <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
-                    <Select
-                      value={form.watch("voiceCharacter")}
-                      onValueChange={(value) => {
-                        const character = voiceCharacters.find((v: any) => v.id === value);
-                        if (character?.premium && !hasProAccess) {
-                          setLocation('/subscribe');
-                        } else {
-                          form.setValue("voiceCharacter", value);
-                          setSelectedVoice(value);
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="w-full text-sm h-9 border-[#C9A063] text-[#111827]">
-                        <SelectValue placeholder="Select voice">
-                          {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Select voice"}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {voiceCharacters.map((character: any) => {
-                          const isLocked = character.premium && !hasProAccess;
-                          const isSelected = form.watch("voiceCharacter") === character.id;
-                          return (
-                            <SelectItem key={character.id} value={character.id}>
-                              <span className="flex items-center gap-2">
-                                <span className="w-4 text-center text-xs">
-                                  {isLocked ? '🔒' : isSelected ? '✓' : ''}
-                                </span>
-                                <span>{character.name}</span>
-                              </span>
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                    <Button type="button" variant="outline" className="w-full text-xs h-8" onClick={testVoice}>
-                      <TestTube className="mr-2 h-3.5 w-3.5" />
-                      Test {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Voice"}
-                    </Button>
-                  </div>
-                )}
+                {/* Content panel — only shown when a tab is active */}
+                {activeFeatureTab && (
+                  <div className="border border-t-0 border-[#C9A063] rounded-b-xl bg-white px-3 pt-3 pb-4 space-y-3">
 
-                {/* Photo panel */}
-                {attachmentsOpen && (
-                  <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
-                    {isMobileWithCamera ? (
-                      <MobileCamera
-                        onPhotoCaptured={(photoUrl) => {
-                          const maxAttachments = isFreePlan ? 1 : 5;
-                          setSelectedAttachments(prev => [...prev, photoUrl].slice(0, maxAttachments));
-                        }}
-                        maxFiles={isFreePlan ? 1 : 5}
-                        currentCount={selectedAttachments.length}
-                        onGatedAction={(action) => { gateAttachments(action); }}
-                      />
-                    ) : (
-                      <>
-                        <input type="file" ref={fileInputRef} accept="image/*" multiple onChange={handleFileSelect} className="hidden" />
-                        <Button type="button" variant="outline" className="w-full text-xs h-8" onClick={handlePhotoAttachment} disabled={isFreePlan && selectedAttachments.length >= 1}>
-                          <Camera className="mr-2 h-3.5 w-3.5" />
-                          Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
-                        </Button>
-                      </>
-                    )}
-                    {selectedAttachments.length > 0 && (
-                      <div className="grid grid-cols-3 gap-2">
-                        {selectedAttachments.map((attachment, index) => (
-                          <div key={index} className="relative">
-                            <img src={attachment} alt={`Attachment ${index + 1}`} className="w-full h-20 object-cover rounded-md" />
-                            <button type="button" onClick={() => removeAttachment(index)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">×</button>
-                          </div>
-                        ))}
+                    {/* Voice panel */}
+                    {activeFeatureTab === 'voice' && (
+                      <div className="space-y-3">
+                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">Voice Character</p>
+                        <Select
+                          value={form.watch("voiceCharacter")}
+                          onValueChange={(value) => {
+                            const character = voiceCharacters.find((v: any) => v.id === value);
+                            if (character?.premium && !hasProAccess) {
+                              setLocation('/subscribe');
+                            } else {
+                              form.setValue("voiceCharacter", value);
+                              setSelectedVoice(value);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="w-full text-sm h-9 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#111827]">
+                            <SelectValue placeholder="Select voice">
+                              {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Select voice"}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {voiceCharacters.map((character: any) => {
+                              const isLocked = character.premium && !hasProAccess;
+                              const isSelected = form.watch("voiceCharacter") === character.id;
+                              return (
+                                <SelectItem key={character.id} value={character.id}>
+                                  <span className="flex items-center gap-2">
+                                    <span className="w-4 text-center text-xs">{isLocked ? '🔒' : isSelected ? '✓' : ''}</span>
+                                    <span>{character.name}</span>
+                                  </span>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+
+                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">Motivation Style</p>
+                        <Select value={selectedCategory} onValueChange={handleCategorySelection}>
+                          <SelectTrigger className="w-full text-xs h-9 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#111827]">
+                            <SelectValue placeholder="Choose motivation style" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {motivationCategories.map((category) => {
+                              const IconComponent = category.icon;
+                              return (
+                                <SelectItem key={category.id} value={category.id}>
+                                  <div className="flex items-center space-x-2">
+                                    <IconComponent className="h-4 w-4" />
+                                    <span>{category.name}</span>
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
                       </div>
                     )}
-                  </div>
-                )}
 
-                {/* Quotes panel */}
-                {motivationalOpen && (
-                  <div className="space-y-2 p-3 border rounded-xl bg-gray-50">
-                    <Select value={selectedCategory} onValueChange={handleCategorySelection}>
-                      <SelectTrigger className="w-full text-xs h-9 text-[#111827] data-[placeholder]:text-[#111827]">
-                        <SelectValue placeholder="Choose your motivation" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {motivationCategories.map((category) => {
-                          const IconComponent = category.icon;
-                          return (
-                            <SelectItem key={category.id} value={category.id}>
-                              <div className="flex items-center space-x-2">
-                                <IconComponent className="h-4 w-4 text-rude-red-600" />
-                                <div>
-                                  <div className="font-medium">{category.name}</div>
-                                  <div className="text-xs text-muted-foreground">{category.description}</div>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
+                    {/* Photo panel */}
+                    {activeFeatureTab === 'photo' && (
+                      <div className="space-y-3">
+                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+                          Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
+                        </p>
+                        {isMobileWithCamera ? (
+                          <MobileCamera
+                            onPhotoCaptured={(photoUrl) => {
+                              const maxAttachments = isFreePlan ? 1 : 5;
+                              setSelectedAttachments(prev => [...prev, photoUrl].slice(0, maxAttachments));
+                            }}
+                            maxFiles={isFreePlan ? 1 : 5}
+                            currentCount={selectedAttachments.length}
+                            onGatedAction={(action) => { gateAttachments(action); }}
+                          />
+                        ) : (
+                          <>
+                            <input type="file" ref={fileInputRef} accept="image/*" multiple onChange={handleFileSelect} className="hidden" />
+                            <button
+                              type="button"
+                              onClick={handlePhotoAttachment}
+                              disabled={isFreePlan && selectedAttachments.length >= 1}
+                              className="w-full h-16 rounded-xl border-2 border-dashed border-[#C9A063] bg-[#F5EDE0] flex items-center justify-center gap-2 text-xs text-[#C9A063] font-medium hover:bg-[#EDE0CF] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                            >
+                              <Camera className="h-4 w-4" />
+                              Tap to add photo
+                            </button>
+                          </>
+                        )}
+                        <div className="grid grid-cols-5 gap-1.5">
+                          {selectedAttachments.map((attachment, index) => (
+                            <div key={index} className="relative aspect-square">
+                              <img src={attachment} alt={`Attachment ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                              <button type="button" onClick={() => removeAttachment(index)} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600">×</button>
+                            </div>
+                          ))}
+                          {Array.from({ length: (isFreePlan ? 1 : 5) - selectedAttachments.length }).map((_, i) => (
+                            <div key={`empty-${i}`} className="aspect-square rounded-lg border border-dashed border-[#C9A063]/40 bg-[#F5EDE0]/50" />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Quotes panel */}
+                    {activeFeatureTab === 'quotes' && (
+                      <div className="space-y-3">
+                        <p className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">Motivation Style</p>
+                        <Select value={selectedCategory} onValueChange={handleCategorySelection}>
+                          <SelectTrigger className="w-full text-xs h-9 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#111827]">
+                            <SelectValue placeholder="Choose a motivation style…" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {motivationCategories.map((category) => {
+                              const IconComponent = category.icon;
+                              return (
+                                <SelectItem key={category.id} value={category.id}>
+                                  <div className="flex items-center space-x-2">
+                                    <IconComponent className="h-4 w-4" />
+                                    <span>{category.name}</span>
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-[11px] text-[#9CA3AF]">A motivational quote from your chosen category will be added to your reminder.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </>
@@ -1371,7 +1395,7 @@ export default function ReminderForm({
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 text-lg"
+              className="w-full bg-transparent hover:bg-[#F5B942]/10 border-2 border-[#F5B942] text-[#C9A063] font-semibold py-3 px-6 text-lg"
               disabled={
                 createReminderMutation.isPending ||
                 (isMultiDay && selectedDays.length === 0) ||
