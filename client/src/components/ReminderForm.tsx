@@ -94,26 +94,20 @@ const contextCategories = [
 ];
 
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
-  console.log(`🎙️ [TTS-DIAG] findPreferredVoice called | voiceType="${voiceType}" | available voices: ${voices.length}`);
-  if (voices.length > 0) {
-    console.log(`🎙️ [TTS-DIAG] Voice list:`, voices.map(v => `${v.name} (${v.lang})`).join(', '));
-  } else {
-    console.warn(`🎙️ [TTS-DIAG] ⚠️ NO VOICES available from getVoices()`);
-  }
   let result: SpeechSynthesisVoice | undefined;
   if (voiceType === 'british-male') {
     result = voices.find(v => v.name.includes('Google UK English Male')) ||
-      voices.find(v => v.lang.includes('en-GB') && (v.name.toLowerCase().includes('male') || v.name.includes('Oliver') || v.name.includes('Arthur'))) ||
-      voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man'));
+      voices.find(v => v.lang.startsWith('en-GB') && (v.name.includes('Arthur') || v.name.includes('Oliver') || v.name.includes('Daniel'))) ||
+      voices.find(v => v.lang.startsWith('en-GB')) ||
+      voices.find(v => v.name.includes('Daniel') || v.name.includes('Arthur'));
   } else if (voiceType === 'male') {
-    result = voices.find(v => v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.includes('David') || v.name.includes('Daniel'));
+    result = voices.find(v => v.name.toLowerCase().includes('male') || v.name.includes('David') || v.name.includes('Daniel') || v.name.includes('Aaron') || v.name.includes('Fred') || v.name.includes('Tom') || v.name.includes('Alex'));
   } else if (voiceType === 'female') {
     result = voices.find(v => v.name.includes('Google US English') && v.name.includes('Female')) ||
       voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman') || v.name.includes('Samantha') || v.name.includes('Victoria'));
   } else {
     result = voices.find(v => v.lang.includes('en'));
   }
-  console.log(`🎙️ [TTS-DIAG] Selected voice: ${result ? `${result.name} (${result.lang})` : 'NONE - using default'}`);
   return result;
 }
 
@@ -650,17 +644,29 @@ export default function ReminderForm({
       try {
         speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(message);
-        utterance.rate = voiceSettings?.rate ?? 0.9;
-        utterance.pitch = voiceSettings?.pitch ?? 1.0;
         utterance.volume = 0.8;
 
         const selectedVoiceId = form.watch("voiceCharacter");
         const voiceTypeMap: Record<string, string> = {
           'default': 'female',
-          'confident-leader': 'male',
+          'confident-leader': 'british-male',
           'british-butler': 'british-male',
           'karen-nag': 'female'
         };
+        const voiceRateMap: Record<string, number> = {
+          'default': 0.85,
+          'confident-leader': 0.75,
+          'british-butler': 0.55,
+          'karen-nag': 0.95,
+        };
+        const voicePitchMap: Record<string, number> = {
+          'default': 0.9,
+          'confident-leader': 0.35,
+          'british-butler': 0.35,
+          'karen-nag': 1.3,
+        };
+        utterance.rate = voiceSettings?.rate ?? voiceRateMap[selectedVoiceId] ?? 0.85;
+        utterance.pitch = voiceSettings?.pitch ?? voicePitchMap[selectedVoiceId] ?? 0.9;
         const voiceType = voiceSettings?.voiceType || voiceTypeMap[selectedVoiceId] || 'female';
         console.log(`🎙️ [TTS-DIAG] ReminderForm settings: rate=${utterance.rate}, pitch=${utterance.pitch}, voiceType="${voiceType}", selectedVoiceId="${selectedVoiceId}"`);
         const voices = window.speechSynthesis.getVoices();
