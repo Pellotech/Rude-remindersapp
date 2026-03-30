@@ -1287,7 +1287,7 @@ export default function ReminderForm({
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-[#C9A063] text-white border-[#B8904F] hover:bg-[#BF944F] hover:text-white"
+                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-[#C9A063] text-[#1A1A1A] border-[#B8904F] hover:bg-[#BF944F] hover:text-[#1A1A1A] focus-visible:ring-0 focus-visible:border-[#B8904F]"
                         >
                           <span className="flex items-center">
                             <Clock className="mr-2 h-4 w-4" />
@@ -1296,7 +1296,7 @@ export default function ReminderForm({
                           <ChevronDown className={`h-4 w-4 transition-transform ${quickReminderOpen ? "rotate-180" : ""}`} />
                         </Button>
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-2 p-4 bg-[#FDF3E3] rounded-lg border border-[#D1D5DB]">
+                      <CollapsibleContent className="mt-2 p-4 bg-[#FDF3E3] rounded-lg border border-[#FDF3E3]">
                         <div className="grid grid-cols-4 gap-2">
                           {[
                             { seconds: 10, shortLabel: "10s" },
