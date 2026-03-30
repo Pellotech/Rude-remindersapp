@@ -1106,11 +1106,11 @@ export default function ReminderForm({
             {!isSimplifiedInterface && (
               <>
                 {/* Tab bar — flush into panel below */}
-                <div className="flex rounded-t-xl border border-b-0 border-[#C9A063]">
+                <div className="flex rounded-xl overflow-hidden border border-[#C9A063]">
                   <button
                     type="button"
                     onClick={() => setActiveFeatureTab(activeFeatureTab === 'voice' ? null : 'voice')}
-                    className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all rounded-tl-xl rounded-bl-xl ${
+                    className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none ${
                       activeFeatureTab === 'voice' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
                     }`}
                   >
@@ -1125,7 +1125,7 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
                         else { gateAttachments(() => setActiveFeatureTab('photo')); }
                       }}
-                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative ${
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative focus:outline-none ${
                         activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
                       }`}
                     >
@@ -1142,7 +1142,7 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
                         else { gateQuotes(() => setActiveFeatureTab('quotes')); }
                       }}
-                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative rounded-tr-xl rounded-br-xl ${
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
                         activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
                       }`}
                     >
@@ -1155,7 +1155,7 @@ export default function ReminderForm({
 
                 {/* Content panel — only shown when a tab is active */}
                 {activeFeatureTab && (
-                  <div className="border border-t-0 border-[#C9A063] rounded-b-xl bg-white px-3 pt-3 pb-4 space-y-3">
+                  <div className="mt-2 border border-[#C9A063] rounded-xl bg-white px-3 pt-3 pb-4 space-y-3">
 
                     {/* Voice panel */}
                     {activeFeatureTab === 'voice' && (
