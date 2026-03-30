@@ -1105,17 +1105,16 @@ export default function ReminderForm({
             {/* Voice / Photo / Quotes unified tab section */}
             {!isSimplifiedInterface && (
               <>
-                {/* Tab bar — flush into panel below */}
-                <div className="flex rounded-xl overflow-hidden border border-[#C9A063]">
+                {/* Tab bar */}
+                <div className="flex rounded-xl overflow-hidden border border-[#C9A063] bg-white">
                   <button
                     type="button"
                     onClick={() => setActiveFeatureTab(activeFeatureTab === 'voice' ? null : 'voice')}
-                    className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none ${
-                      activeFeatureTab === 'voice' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
-                    }`}
+                    className="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none bg-white text-[#1A1A1A] hover:bg-[#FDF3E3]"
                   >
                     <Volume2 className="h-5 w-5" />
                     Voice
+                    <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-[#C9A063]' : 'bg-transparent'}`} />
                   </button>
 
                   {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
@@ -1125,13 +1124,12 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
                         else { gateAttachments(() => setActiveFeatureTab('photo')); }
                       }}
-                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative focus:outline-none ${
-                        activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
-                      }`}
+                      className="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#C9A063] transition-all relative focus:outline-none bg-white text-[#1A1A1A] hover:bg-[#FDF3E3]"
                     >
                       <Camera className="h-5 w-5" />
                       Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-[#C9A063]' : 'bg-transparent'}`} />
                     </button>
                   )}
 
@@ -1142,13 +1140,12 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
                         else { gateQuotes(() => setActiveFeatureTab('quotes')); }
                       }}
-                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
-                        activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
-                      }`}
+                      className="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none bg-white text-[#1A1A1A] hover:bg-[#FDF3E3]"
                     >
                       <Quote className="h-5 w-5" />
                       Quotes
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-[#C9A063]' : 'bg-transparent'}`} />
                     </button>
                   )}
                 </div>
@@ -1273,6 +1270,30 @@ export default function ReminderForm({
             {attachmentsModal}
             {quotesModal}
 
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="w-full bg-[#1B2A5E] hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg"
+              disabled={
+                createReminderMutation.isPending ||
+                (isMultiDay && selectedDays.length === 0) ||
+                (!isMultiDay && !form.watch("scheduledFor"))
+              }
+            >
+              {createReminderMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  Creating Reminder...
+                </>
+              ) : isMultiDay ? (
+                selectedDays.length > 0
+                  ? `Create Reminder (${selectedDays.length} day${selectedDays.length !== 1 ? 's' : ''})`
+                  : "Select Days to Continue"
+              ) : (
+                "Create Reminder"
+              )}
+            </Button>
+
             {/* Quick Reminder Settings - Show only when today is selected */}
             {!isMultiDay && scheduledForValue && (
               (() => {
@@ -1364,30 +1385,6 @@ export default function ReminderForm({
                 return null;
               })()
             )}
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full bg-[#1B2A5E] hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg"
-              disabled={
-                createReminderMutation.isPending ||
-                (isMultiDay && selectedDays.length === 0) ||
-                (!isMultiDay && !form.watch("scheduledFor"))
-              }
-            >
-              {createReminderMutation.isPending ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Creating Reminder...
-                </>
-              ) : isMultiDay ? (
-                selectedDays.length > 0
-                  ? `Create Reminder (${selectedDays.length} day${selectedDays.length !== 1 ? 's' : ''})`
-                  : "Select Days to Continue"
-              ) : (
-                "Create Reminder"
-              )}
-            </Button>
 
             {/* Summary bubble — sits below the Create button */}
             {(!isMultiDay && scheduledForValue) || (isMultiDay && selectedDays.length > 0) ? (
