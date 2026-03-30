@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Calendar,
   MessageSquare,
-  CheckCircle,
   Camera,
   Volume2,
   Brain,
@@ -292,10 +291,6 @@ export default function HomeFree() {
               <BarChart3 className="h-3 w-3" />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="upgrade" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
-              <img src={rudeRemindersLogo} alt="" className="h-3 w-3 object-contain" />
-              Upgrade
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="create" className="space-y-6">
@@ -378,57 +373,6 @@ export default function HomeFree() {
             </div>
           </TabsContent>
 
-          <TabsContent value="upgrade" className="space-y-6">
-            <Card className="bg-white border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-[#111827]">
-                  <img src={rudeRemindersLogo} alt="" className="h-5 w-5 object-contain" />
-                  Upgrade to Premium
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-[#111827]">Premium Features:</h3>
-                    <ul className="space-y-2 text-sm text-[#6B7280]">
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Reminders for every life situation
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Various voice characters
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Upload more photos
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Detailed analytics
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-[#C53B3B]" />
-                        Hilarious uplifting and cruel responses
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="pt-4">
-                    </div>
-                    <Button 
-                      className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-sm px-6 py-3 rounded-[14px] h-[52px]"
-                      onClick={() => setLocation('/subscribe')}
-                      data-testid="button-upgrade-premium-main"
-                    >
-                      <img src={rudeRemindersLogo} alt="" className="h-4 w-4 object-contain mr-2" />
-                      <span className="whitespace-nowrap">Choose Your Plan</span>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
 
