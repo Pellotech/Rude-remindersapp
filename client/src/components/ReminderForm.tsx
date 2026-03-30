@@ -1314,7 +1314,7 @@ export default function ReminderForm({
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-[#C9A063] text-[#1A1A1A] border-[#B8904F] hover:bg-[#BF944F] hover:text-[#1A1A1A] focus-visible:ring-0 focus-visible:border-[#B8904F]"
+                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-white text-[#1A1A1A] border border-[#C9A063] hover:bg-[#FDF3E3] hover:text-[#1A1A1A] focus-visible:ring-0 focus-visible:border-[#C9A063]"
                         >
                           <span className="flex items-center">
                             <Clock className="mr-2 h-4 w-4" />
