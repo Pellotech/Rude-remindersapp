@@ -1336,7 +1336,7 @@ export default function ReminderForm({
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="flex items-center justify-center p-2 h-10 bg-[#B8904F] hover:bg-[#A8803F] border-[#A8803F] hover:border-[#98703F] text-[#111827] font-semibold text-sm rounded-lg"
+                              className="flex items-center justify-center p-2 h-10 bg-white hover:bg-[#FDF3E3] border border-[#C9A063] hover:border-[#B8904F] text-[#1A1A1A] font-semibold text-sm rounded-lg"
                               onClick={async () => {
                                 const currentMessage = form.watch("originalMessage");
                                 if (!currentMessage || currentMessage.trim() === "") {
