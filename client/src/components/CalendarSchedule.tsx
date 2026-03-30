@@ -125,7 +125,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
   return (
     <div className="space-y-3">
       {/* Date Buttons */}
-      <Card>
+      <Card className="border-[#FDF3E3]">
         <CardContent className="pt-3 pb-3">
           <p className="text-xs text-muted-foreground mb-2">Choose a day within the next week</p>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -162,7 +162,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
       {/* Hour Buttons */}
       {selectedDate && (
-        <Card>
+        <Card className="border-[#FDF3E3]">
           <CardContent className="pt-3 pb-3">
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {timeSlots.map((slot) => {
@@ -193,7 +193,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
       {/* Minute Buttons */}
       {selectedDate && quarterState.hour !== null && (
-        <Card>
+        <Card className="border-[#FDF3E3]">
           <CardContent className="pt-3 pb-3">
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {quarterSlots.map((slot) => {

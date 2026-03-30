@@ -906,7 +906,7 @@ export default function ReminderForm({
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-[#FDF3E3] border-2 border-gray-300 focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] py-3 text-[#111827]"
+                      className="bg-[#FDF3E3] border-2 border-[#F5B942] focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] py-3 text-[#111827]"
                       {...field}
                     />
                   </FormControl>
@@ -939,7 +939,7 @@ export default function ReminderForm({
                       /* Multi-Day Selection */
                       <div className="space-y-3">
                         {/* Days Selection Card */}
-                        <Card>
+                        <Card className="border-[#FDF3E3]">
                           <CardContent className="pt-3 pb-3">
                             <p className="text-xs text-muted-foreground mb-2">Choose which days to repeat</p>
                             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -974,7 +974,7 @@ export default function ReminderForm({
 
                         {/* Time Selection Card */}
                         {selectedDays.length > 0 && (
-                          <Card>
+                          <Card className="border-[#FDF3E3]">
                             <CardContent className="pt-3 pb-3">
                               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {Array.from({ length: 24 }, (_, i) => {
@@ -1004,7 +1004,7 @@ export default function ReminderForm({
 
                         {/* Minutes Selection Card */}
                         {selectedDays.length > 0 && (
-                          <Card>
+                          <Card className="border-[#FDF3E3]">
                             <CardContent className="pt-3 pb-3">
                               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {[
@@ -1035,19 +1035,6 @@ export default function ReminderForm({
                           </Card>
                         )}
 
-                        {/* Selected Summary Display */}
-                        {selectedDays.length > 0 && (
-                          <div className="text-center p-3 bg-muted rounded-lg">
-                            <p className="text-sm text-muted-foreground">Selected recurring reminder:</p>
-                            <p className="font-medium">
-                              {selectedDays.map(dayId =>
-                                daysOfWeek.find(d => d.id === dayId)?.full
-                              ).join(", ")} at {
-                                multiDayHour === 0 ? "12" : multiDayHour === 12 ? "12" : multiDayHour > 12 ? `${multiDayHour - 12}` : `${multiDayHour}`
-                              }:{multiDayMinute.toString().padStart(2, '0')} {multiDayHour >= 12 ? "PM" : "AM"}
-                            </p>
-                          </div>
-                        )}
                       </div>
                     ) : (
                       /* Regular Calendar/Time picker */
