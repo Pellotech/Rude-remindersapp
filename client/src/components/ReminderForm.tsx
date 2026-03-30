@@ -1081,12 +1081,15 @@ export default function ReminderForm({
 
                     {/* Slider Labels */}
                     <div className="flex justify-between mt-3 text-xs text-[#1A1A1A]">
-                      {rudenessLabels.map((item) => (
-                        <div key={item.level} className="flex flex-col items-center">
-                          <span className="text-lg mb-1">{item.emoji}</span>
-                          <span>{item.label}</span>
-                        </div>
-                      ))}
+                      {rudenessLabels.map((item) => {
+                        const isSelected = field.value === item.level;
+                        return (
+                          <div key={item.level} className="flex flex-col items-center transition-all">
+                            <span className={`mb-1 transition-all duration-200 ${isSelected ? 'text-3xl' : 'text-lg'}`}>{item.emoji}</span>
+                            <span className={isSelected ? 'font-bold' : ''}>{item.label}</span>
+                          </div>
+                        );
+                      })}
                     </div>
 
 
