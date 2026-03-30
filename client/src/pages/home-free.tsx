@@ -16,7 +16,6 @@ import {
   Camera,
   Volume2,
   Brain,
-  BarChart3,
   Target,
   Sparkles,
   HelpCircle,
@@ -278,17 +277,17 @@ export default function HomeFree() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 overflow-x-auto flex-shrink-0">
-            <TabsTrigger value="create" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
-              <Bell className="h-3 w-3" />
+          <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
+            <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+              <Bell className="h-4 w-4" />
               Create
             </TabsTrigger>
-            <TabsTrigger value="manage" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
-              <Target className="h-3 w-3" />
+            <TabsTrigger value="manage" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+              <Target className="h-4 w-4" />
               Manage
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
-              <BarChart3 className="h-3 w-3" />
+            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+              <TrendingUp className="h-4 w-4" />
               Analytics
             </TabsTrigger>
           </TabsList>
