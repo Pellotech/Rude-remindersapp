@@ -939,7 +939,7 @@ export default function ReminderForm({
                       /* Multi-Day Selection */
                       <div className="space-y-3">
                         {/* Days Selection Card */}
-                        <Card className="border-[#FDF3E3]">
+                        <Card className="border-[#C9A063]">
                           <CardContent className="pt-3 pb-3">
                             <p className="text-xs text-muted-foreground mb-2">Choose which days to repeat</p>
                             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -974,7 +974,7 @@ export default function ReminderForm({
 
                         {/* Time Selection Card */}
                         {selectedDays.length > 0 && (
-                          <Card className="border-[#FDF3E3]">
+                          <Card className="border-[#C9A063]">
                             <CardContent className="pt-3 pb-3">
                               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {Array.from({ length: 24 }, (_, i) => {
@@ -1004,7 +1004,7 @@ export default function ReminderForm({
 
                         {/* Minutes Selection Card */}
                         {selectedDays.length > 0 && (
-                          <Card className="border-[#FDF3E3]">
+                          <Card className="border-[#C9A063]">
                             <CardContent className="pt-3 pb-3">
                               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                 {[
