@@ -293,7 +293,7 @@ export default function HomeFree() {
               Analytics
             </TabsTrigger>
             <TabsTrigger value="upgrade" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
-              <Crown className="h-3 w-3" />
+              <img src={rudeRemindersLogo} alt="" className="h-3 w-3 object-contain" />
               Upgrade
             </TabsTrigger>
           </TabsList>
