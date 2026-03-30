@@ -1368,7 +1368,7 @@ export default function ReminderForm({
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 border-2 border-[#F5B942] text-white font-semibold py-3 px-6 text-lg"
+              className="w-full bg-[#1B2A5E] hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-3 px-6 text-lg"
               disabled={
                 createReminderMutation.isPending ||
                 (isMultiDay && selectedDays.length === 0) ||
