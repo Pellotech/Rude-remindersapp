@@ -1106,15 +1106,17 @@ export default function ReminderForm({
             {!isSimplifiedInterface && (
               <>
                 {/* Tab bar */}
-                <div className="flex rounded-xl overflow-hidden border border-[#C9A063] bg-white">
+                <div className="flex rounded-xl overflow-hidden border border-[#C9A063]">
                   <button
                     type="button"
                     onClick={() => setActiveFeatureTab(activeFeatureTab === 'voice' ? null : 'voice')}
-                    className="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none bg-white text-[#1A1A1A] hover:bg-[#FDF3E3]"
+                    className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none ${
+                      activeFeatureTab === 'voice' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                    }`}
                   >
                     <Volume2 className="h-5 w-5" />
                     Voice
-                    <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-[#C9A063]' : 'bg-transparent'}`} />
+                    <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
                   </button>
 
                   {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
@@ -1124,12 +1126,14 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
                         else { gateAttachments(() => setActiveFeatureTab('photo')); }
                       }}
-                      className="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#C9A063] transition-all relative focus:outline-none bg-white text-[#1A1A1A] hover:bg-[#FDF3E3]"
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative focus:outline-none ${
+                        activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                      }`}
                     >
                       <Camera className="h-5 w-5" />
                       Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
-                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-[#C9A063]' : 'bg-transparent'}`} />
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
                     </button>
                   )}
 
@@ -1140,12 +1144,14 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
                         else { gateQuotes(() => setActiveFeatureTab('quotes')); }
                       }}
-                      className="flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none bg-white text-[#1A1A1A] hover:bg-[#FDF3E3]"
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
+                        activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                      }`}
                     >
                       <Quote className="h-5 w-5" />
                       Quotes
                       {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
-                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-[#C9A063]' : 'bg-transparent'}`} />
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
                     </button>
                   )}
                 </div>
