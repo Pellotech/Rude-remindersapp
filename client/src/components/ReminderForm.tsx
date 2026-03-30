@@ -906,7 +906,7 @@ export default function ReminderForm({
                   <FormLabel>What do you need to be reminded about?</FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-[#FDF3E3] border-2 border-[#F5B942] focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] py-3 text-[#111827]"
+                      className="bg-[#FDF3E3] border-2 border-[#FDF3E3] focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] py-3 text-[#111827]"
                       {...field}
                     />
                   </FormControl>
@@ -1080,7 +1080,7 @@ export default function ReminderForm({
                     </FormControl>
 
                     {/* Slider Labels */}
-                    <div className="flex justify-between mt-3 text-xs text-gray-500">
+                    <div className="flex justify-between mt-3 text-xs text-[#1A1A1A]">
                       {rudenessLabels.map((item) => (
                         <div key={item.level} className="flex flex-col items-center">
                           <span className="text-lg mb-1">{item.emoji}</span>
@@ -1259,7 +1259,7 @@ export default function ReminderForm({
                             })}
                           </SelectContent>
                         </Select>
-                        <p className="text-[12px] text-[#6B7280]">A motivational quote from your chosen category will be added to your reminder.</p>
+                        <p className="text-[12px] text-[#1A1A1A]">A motivational quote from your chosen category will be added to your reminder.</p>
                       </div>
                     )}
                   </div>
