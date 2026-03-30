@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { format, addDays, startOfDay, isSameDay, isBefore } from "date-fns";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 interface CalendarScheduleProps {
   selectedDateTime: Date | null;
@@ -16,6 +17,7 @@ interface QuarterState {
 export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: CalendarScheduleProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(selectedDateTime);
   const [quarterState, setQuarterState] = useState<QuarterState>({ hour: null, minutes: 0 });
+  const { isAndroid } = getPlatformInfo();
 
   const today = new Date();
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(today, i));
@@ -127,8 +129,8 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {/* Date Buttons */}
       <Card className="border-[#C9A063]">
         <CardContent className="pt-3 pb-3">
-          <p className="text-xs text-muted-foreground mb-2">Choose a day within the next week</p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <p className={`text-xs mb-2 ${isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>Choose a day within the next week</p>
+          <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
             {weekDays.map((date, index) => {
               const dayName = format(date, 'EEE');
               const dayNumber = format(date, 'd');
@@ -137,7 +139,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
               return (
                 <div key={index} className="text-center flex-shrink-0 min-w-[64px]">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">{dayName}</div>
+                  <div className={`text-xs font-medium mb-1 ${isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>{dayName}</div>
                   <button
                     type="button"
                     onClick={() => !isBefore(date, startOfDay(today)) && handleDateSelect(date)}
@@ -164,7 +166,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {selectedDate && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
               {timeSlots.map((slot) => {
                 const isSelected = isTimeSelected(slot.value);
                 const isPastTime = isTimeInPast(slot.value);
@@ -195,7 +197,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {selectedDate && quarterState.hour !== null && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
               {quarterSlots.map((slot) => {
                 const isSelected = isQuarterSelected(slot.value);
                 const isPastQuarterTime = quarterState.hour !== null && isTimeInPast(quarterState.hour, slot.value);
