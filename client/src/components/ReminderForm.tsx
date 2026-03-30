@@ -846,7 +846,7 @@ export default function ReminderForm({
 
 
   const onSubmit = async (data: FormData) => {
-    if (isFreePlan && getFreeReminderCount() >= 15) {
+    if (isFreePlan && getFreeReminderCount() >= 30) {
       setShowLimitModal(true);
       return;
     }
@@ -1303,7 +1303,7 @@ export default function ReminderForm({
                   <div className="text-center space-y-4">
                     <img src={rudeRemindersLogo} alt="Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
                     <h2 className="text-xl font-bold text-[#111827]">Free Limit Reached</h2>
-                    <p className="text-[#6B7280] text-sm">You've reached the free limit of 15 reminders. Upgrade to Premium for unlimited reminders and full access to all features.</p>
+                    <p className="text-[#6B7280] text-sm">You've reached the free limit of 30 reminders. Upgrade to Premium for unlimited reminders and full access to all features.</p>
                     <div className="space-y-2 pt-2">
                       <button
                         onClick={() => { setShowLimitModal(false); setLocation('/subscribe'); }}
