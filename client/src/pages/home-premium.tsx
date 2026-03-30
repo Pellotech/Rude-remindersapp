@@ -253,15 +253,15 @@ export default function HomePremium() {
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
-            <TabsTrigger value="create" className={`flex items-center gap-2${isAndroid ? ' data-[state=inactive]:bg-[#FDF3E3]' : ''}`}>
+            <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <Bell className="h-4 w-4" />
               Create
             </TabsTrigger>
-            <TabsTrigger value="manage" className={`flex items-center gap-2${isAndroid ? ' data-[state=inactive]:bg-[#FDF3E3]' : ''}`}>
+            <TabsTrigger value="manage" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <Target className="h-4 w-4" />
               Manage
             </TabsTrigger>
-            <TabsTrigger value="analytics" className={`flex items-center gap-2${isAndroid ? ' data-[state=inactive]:bg-[#FDF3E3]' : ''}`}>
+            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <TrendingUp className="h-4 w-4" />
               Analytics
             </TabsTrigger>

@@ -893,7 +893,7 @@ export default function ReminderForm({
 
 
   return (
-    <Card className={`mt-4 bg-white border-2 ${platformInfo.isAndroid ? 'border-[#FDF3E3]' : 'border-[#C9A063]'} rounded-[24px] shadow-[var(--rr-card-shadow)] ring-2 ring-[#C53B3B] ring-offset-2`}>
+    <Card className="mt-4 bg-white border-2 border-[#FDF3E3] rounded-[24px] shadow-[var(--rr-card-shadow)] ring-2 ring-[#C53B3B] ring-offset-2">
       <CardContent className="pt-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -925,7 +925,7 @@ export default function ReminderForm({
                 <FormItem>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className={`text-sm ${platformInfo.isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>Multiple Days</span>
+                      <span className="text-sm text-[#1A1A1A]">Multiple Days</span>
                       <Switch
                         checked={isMultiDay}
                         onCheckedChange={handleMultiDayToggle}
@@ -941,13 +941,13 @@ export default function ReminderForm({
                         {/* Days Selection Card */}
                         <Card className="border-[#C9A063]">
                           <CardContent className="pt-3 pb-3">
-                            <p className={`text-xs mb-2 ${platformInfo.isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>Choose which days to repeat</p>
+                            <p className="text-xs mb-2 text-[#1A1A1A]">Choose which days to repeat</p>
                             <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${platformInfo.isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
                               {daysOfWeek.map((day) => {
                                 const isSelected = selectedDays.includes(day.id);
                                 return (
                                   <div key={day.id} className="text-center flex-shrink-0 min-w-[56px]">
-                                    <div className={`text-xs font-medium mb-1 ${platformInfo.isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>
+                                    <div className="text-xs font-medium mb-1 text-[#1A1A1A]">
                                       {day.label}
                                     </div>
                                     <button
@@ -1066,7 +1066,7 @@ export default function ReminderForm({
               name="rudenessLevel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={platformInfo.isAndroid ? 'text-[#1A1A1A]' : ''}>Rudeness Level</FormLabel>
+                  <FormLabel className="text-[#1A1A1A]">Rudeness Level</FormLabel>
                   <div className="px-4 py-6 bg-[#FDF3E3] rounded-lg">
                     <FormControl>
                       <Slider

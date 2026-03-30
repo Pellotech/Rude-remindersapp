@@ -129,7 +129,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {/* Date Buttons */}
       <Card className="border-[#C9A063]">
         <CardContent className="pt-3 pb-3">
-          <p className={`text-xs mb-2 ${isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>Choose a day within the next week</p>
+          <p className="text-xs mb-2 text-[#1A1A1A]">Choose a day within the next week</p>
           <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
             {weekDays.map((date, index) => {
               const dayName = format(date, 'EEE');
@@ -139,7 +139,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
 
               return (
                 <div key={index} className="text-center flex-shrink-0 min-w-[64px]">
-                  <div className={`text-xs font-medium mb-1 ${isAndroid ? 'text-[#1A1A1A]' : 'text-muted-foreground'}`}>{dayName}</div>
+                  <div className="text-xs font-medium mb-1 text-[#1A1A1A]">{dayName}</div>
                   <button
                     type="button"
                     onClick={() => !isBefore(date, startOfDay(today)) && handleDateSelect(date)}
