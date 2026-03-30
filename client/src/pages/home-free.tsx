@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bell,
-  Crown,
   Zap,
   Star,
   TrendingUp,
@@ -22,8 +21,8 @@ import {
   Target,
   Sparkles,
   HelpCircle,
-  Lock,
 } from "lucide-react";
+import rudeRemindersLogo from '@assets/translusant_logo2_1767108484844.png';
 import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
 import RemindersList from "@/components/RemindersList";
@@ -365,9 +364,7 @@ export default function HomeFree() {
               {/* Upgrade overlay */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <div className="bg-white border-2 border-[#C9A063] rounded-2xl shadow-xl px-6 py-6 text-center max-w-xs mx-auto">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#FDF8F0] border border-[#C9A063] mx-auto mb-3">
-                    <Lock className="h-6 w-6 text-[#C9A063]" />
-                  </div>
+                  <img src={rudeRemindersLogo} alt="Rude Reminders" className="w-12 h-12 mx-auto object-contain mb-3" />
                   <h3 className="font-bold text-gray-900 text-base mb-1">Analytics Locked</h3>
                   <p className="text-sm text-gray-500 mb-4">Rude Reminders is the first of its kind habit-building app. These analytics show you exactly how consistent you're being — streaks, completion rates, and your best days. Because what gets measured, gets done.</p>
                   <button
@@ -385,7 +382,7 @@ export default function HomeFree() {
             <Card className="bg-white border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-[#111827]">
-                  <Crown className="h-5 w-5 text-[#C53B3B]" />
+                  <img src={rudeRemindersLogo} alt="" className="h-5 w-5 object-contain" />
                   Upgrade to Premium
                 </CardTitle>
               </CardHeader>
@@ -424,7 +421,7 @@ export default function HomeFree() {
                       onClick={() => setLocation('/subscribe')}
                       data-testid="button-upgrade-premium-main"
                     >
-                      <Crown className="h-4 w-4 mr-2" />
+                      <img src={rudeRemindersLogo} alt="" className="h-4 w-4 object-contain mr-2" />
                       <span className="whitespace-nowrap">Choose Your Plan</span>
                     </Button>
                   </div>

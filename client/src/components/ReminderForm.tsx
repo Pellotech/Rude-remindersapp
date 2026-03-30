@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import rudeRemindersLogo from '@assets/translusant_logo2_1767108484844.png';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -409,6 +410,16 @@ export default function ReminderForm({
     setPreviewMessage(baseMessage);
   }, [originalMessage, rudenessLevel, phrases]);
 
+  const [showLimitModal, setShowLimitModal] = useState(false);
+
+  const FREE_REMINDER_STORAGE_KEY = 'rr_free_reminder_count';
+  const getFreeReminderCount = () => {
+    try { return parseInt(localStorage.getItem(FREE_REMINDER_STORAGE_KEY) || '0', 10); } catch { return 0; }
+  };
+  const incrementFreeReminderCount = () => {
+    try { localStorage.setItem(FREE_REMINDER_STORAGE_KEY, String(getFreeReminderCount() + 1)); } catch {}
+  };
+
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {
       // For guest users, store reminders in localStorage
@@ -443,6 +454,10 @@ export default function ReminderForm({
     onSuccess: async (result) => {
       // Handle both single reminder and multi-day reminder responses
       const isMultiDayResult = result.count && result.reminders;
+
+      if (isFreePlan) {
+        incrementFreeReminderCount();
+      }
 
       toast({
         title: "Success!",
@@ -831,6 +846,11 @@ export default function ReminderForm({
 
 
   const onSubmit = async (data: FormData) => {
+    if (isFreePlan && getFreeReminderCount() >= 15) {
+      setShowLimitModal(true);
+      return;
+    }
+
     let scheduledDateTime;
 
     if (isMultiDay && selectedDays.length > 0) {
@@ -1275,6 +1295,33 @@ export default function ReminderForm({
 
             {attachmentsModal}
             {quotesModal}
+
+            {/* Free reminder limit modal */}
+            {showLimitModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowLimitModal(false)}>
+                <div className="bg-white rounded-[20px] p-6 mx-4 max-w-sm w-full shadow-xl" onClick={e => e.stopPropagation()}>
+                  <div className="text-center space-y-4">
+                    <img src={rudeRemindersLogo} alt="Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
+                    <h2 className="text-xl font-bold text-[#111827]">Free Limit Reached</h2>
+                    <p className="text-[#6B7280] text-sm">You've reached the free limit of 15 reminders. Upgrade to Premium for unlimited reminders and full access to all features.</p>
+                    <div className="space-y-2 pt-2">
+                      <button
+                        onClick={() => { setShowLimitModal(false); setLocation('/subscribe'); }}
+                        className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white font-semibold rounded-[14px] h-[48px] flex items-center justify-center gap-2 transition-colors"
+                      >
+                        Upgrade to Premium
+                      </button>
+                      <button
+                        onClick={() => setShowLimitModal(false)}
+                        className="w-full text-[#6B7280] h-[44px] text-sm"
+                      >
+                        Maybe Later
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Submit Button */}
             <Button

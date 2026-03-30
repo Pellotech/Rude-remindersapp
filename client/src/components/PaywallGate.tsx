@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Crown, Lock } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { type FeatureKey, isFeatureAvailable, isFeatureDisabled } from '@/config/featureFlags';
+import logoPath from '@assets/translusant_logo2_1767108484844.png';
 
 interface PaywallModalProps {
   open: boolean;
@@ -20,9 +21,7 @@ function PaywallModal({ open, onClose, featureLabel, description }: PaywallModal
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
       <div className="bg-white rounded-[20px] p-6 mx-4 max-w-sm w-full shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-[#FEF2F2] rounded-full flex items-center justify-center">
-            <Lock className="h-8 w-8 text-[#C53B3B]" />
-          </div>
+          <img src={logoPath} alt="Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
           <h2 className="text-xl font-bold text-[#111827]">Premium Feature</h2>
           <p className="text-[#6B7280] text-sm">
             {description || <><strong>{featureLabel}</strong> is available with a Premium subscription. Upgrade to unlock this and other premium features.</>}
