@@ -35,6 +35,9 @@ export default function LoginPage() {
     firstName: "",
     lastName: ""
   });
+  const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
+  const [showVerificationScreen, setShowVerificationScreen] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   useEffect(() => {
     if (user) {
       setLocation(getRedirectUrl());
@@ -67,6 +70,9 @@ export default function LoginPage() {
         await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
         toast({ title: "Welcome back!", description: "Logged in successfully" });
         setLocation(getRedirectUrl());
+      } else if (data.error_code === "email_not_verified") {
+        setVerificationEmail(data.email || loginForm.email);
+        setShowVerificationScreen(true);
       } else {
         toast({ title: "Login Failed", description: data.message || "Invalid credentials", variant: "destructive" });
       }
@@ -104,13 +110,19 @@ export default function LoginPage() {
       });
       const data = await response.json().catch(() => ({}));
       if (response.ok) {
-        // Backend now returns authToken directly from register
-        const token = data.authToken ?? data.token ?? data.accessToken;
-        if (token) await setAuthToken(token);
-        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
-        toast({ title: "Success!", description: "Account created successfully!" });
-        setLocation(getRedirectUrl());
+        if (data.verification_required) {
+          // Show verification pending screen
+          setVerificationEmail(registerForm.email);
+          setShowVerificationScreen(true);
+        } else {
+          // Tester or instant-login path
+          const token = data.authToken ?? data.token ?? data.accessToken;
+          if (token) await setAuthToken(token);
+          await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+          await queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
+          toast({ title: "Success!", description: "Account created successfully!" });
+          setLocation(getRedirectUrl());
+        }
       } else {
         toast({ title: "Registration Failed", description: data.message || "Failed to create account", variant: "destructive" });
       }
@@ -126,7 +138,62 @@ export default function LoginPage() {
     setLocation("/");
   };
 
+  const handleResendVerification = async () => {
+    if (!verificationEmail) return;
+    setResendLoading(true);
+    try {
+      await fetch(getFullApiUrl("/api/auth/resend-verification"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: verificationEmail }),
+      });
+      toast({ title: "Email Sent", description: "Verification email resent. Check your inbox." });
+    } catch {
+      toast({ title: "Error", description: "Failed to resend. Please try again.", variant: "destructive" });
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   if (user) return null;
+
+  // Verification pending screen
+  if (showVerificationScreen) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe">
+        <div className="w-full max-w-md space-y-6">
+          <AppHeader className="mb-4" />
+          <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+            <CardContent className="pt-8 pb-8 text-center space-y-4">
+              <div className="w-16 h-16 bg-[#FDF3E3] rounded-full flex items-center justify-center mx-auto">
+                <Mail className="h-8 w-8 text-[#C9A063]" />
+              </div>
+              <h2 className="text-xl font-bold text-[#111827]">Check your email</h2>
+              <p className="text-[#6B7280] text-sm">
+                Please check your email and click the verification link to continue.
+              </p>
+              {verificationEmail && (
+                <p className="text-[#111827] text-sm font-medium">{verificationEmail}</p>
+              )}
+              <Button
+                onClick={handleResendVerification}
+                disabled={resendLoading}
+                className="w-full bg-[#1B2A5E] hover:bg-[#152347] text-white rounded-[14px] h-[48px]"
+              >
+                {resendLoading ? "Sending..." : "Resend Email"}
+              </Button>
+              <button
+                onClick={() => { setShowVerificationScreen(false); setActiveTab("login"); }}
+                className="text-sm text-[#6B7280] hover:text-[#111827]"
+              >
+                Back to Login
+              </button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe">

@@ -3,6 +3,7 @@ import { Strategy, type VerifyFunction } from "openid-client/passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 import passport from "passport";
 import session from "express-session";
@@ -16,6 +17,56 @@ import { authTokens } from "@shared/schema";
 // Generate cryptographically secure auth token
 function generateSecureToken(): string {
   return crypto.randomBytes(32).toString("hex");
+}
+
+// --- Tester Whitelist ---
+// Comma-separated list of emails that skip email verification and get free-tier access
+function getTesterEmails(): Set<string> {
+  const raw = process.env.TESTER_EMAILS || "";
+  return new Set(
+    raw.split(",").map(e => e.trim().toLowerCase()).filter(Boolean)
+  );
+}
+
+function isTesterEmail(email: string): boolean {
+  return getTesterEmails().has(email.toLowerCase().trim());
+}
+
+// --- Email Verification Sender ---
+async function sendVerificationEmail(toEmail: string, token: string): Promise<boolean> {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER || "ruderemindersinfo@gmail.com",
+        pass: process.env.EMAIL_APP_PASSWORD,
+      },
+    });
+
+    const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || "rude-reminders.replit.app";
+    const verifyUrl = `https://${domain}/api/auth/verify-email?token=${token}`;
+
+    await transporter.sendMail({
+      from: `"Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
+      to: toEmail,
+      subject: "Verify your Rude Reminders account",
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;">
+          <h2 style="color:#1B2A5E;">Welcome to Rude Reminders!</h2>
+          <p>Click the button below to verify your email address and activate your account.</p>
+          <a href="${verifyUrl}" style="display:inline-block;background:#C53B3B;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;">
+            Verify My Email
+          </a>
+          <p style="color:#6B7280;font-size:13px;">Or copy this link into your browser:<br/>${verifyUrl}</p>
+          <p style="color:#9CA3AF;font-size:12px;">If you didn't create this account, you can safely ignore this email.</p>
+        </div>
+      `,
+    });
+    return true;
+  } catch (err) {
+    console.error("Failed to send verification email:", err);
+    return false;
+  }
 }
 
 // Create auth token for user (valid for 30 days)
@@ -146,6 +197,11 @@ export async function setupAuth(app: Express) {
             return done(null, false, { message: "Invalid email or password" });
           }
 
+          // Block login if email not verified (testers always bypass this check)
+          if (!user.emailVerified && !isTesterEmail(normalizedEmail)) {
+            return done(null, false, { message: "EMAIL_NOT_VERIFIED" });
+          }
+
           // Create session-compatible user object
           const sessionUser = {
             claims: {
@@ -262,6 +318,10 @@ export async function setupAuth(app: Express) {
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(password, saltRounds);
 
+      // Testers skip verification; everyone else must verify
+      const skipVerification = isTesterEmail(normalizedEmail);
+      const verificationToken = skipVerification ? null : generateSecureToken();
+
       // Create user
       const userId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const newUser = await storage.upsertUser({
@@ -271,11 +331,23 @@ export async function setupAuth(app: Express) {
         lastName: lastName || null,
         profileImageUrl: null,
         passwordHash,
+        emailVerified: skipVerification,
+        emailVerificationToken: verificationToken,
       });
 
-      // Generate auth token for mobile apps
-      const authToken = await createAuthToken(userId);
+      if (!skipVerification) {
+        // Send verification email (non-blocking — failure doesn't stop account creation)
+        sendVerificationEmail(normalizedEmail, verificationToken!);
 
+        return res.json({
+          success: true,
+          verification_required: true,
+          message: "Account created! Please check your email to verify your account before logging in.",
+        });
+      }
+
+      // Tester path: log straight in
+      const authToken = await createAuthToken(userId);
       res.json({
         success: true,
         authToken,
@@ -294,12 +366,77 @@ export async function setupAuth(app: Express) {
     }
   });
 
+  // Email verification endpoint (link clicked in email)
+  app.get("/api/auth/verify-email", async (req, res) => {
+    const { token } = req.query;
+    if (!token || typeof token !== "string") {
+      return res.status(400).send("Invalid verification link.");
+    }
+    try {
+      const user = await storage.getUserByVerificationToken(token);
+      if (!user) {
+        return res.status(400).send(`
+          <html><body style="font-family:sans-serif;text-align:center;padding:60px;">
+            <h2>Link Invalid or Expired</h2>
+            <p>This verification link is invalid or has already been used.</p>
+            <a href="/">Go to App</a>
+          </body></html>
+        `);
+      }
+      // Mark as verified and clear token
+      await storage.updateUser(user.id, { emailVerified: true, emailVerificationToken: null });
+      return res.send(`
+        <html><body style="font-family:sans-serif;text-align:center;padding:60px;">
+          <h2 style="color:#1B2A5E;">Email Verified!</h2>
+          <p>Your account is now active. You can log in now.</p>
+          <a href="/login" style="display:inline-block;background:#C53B3B;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:16px;">Log In</a>
+        </body></html>
+      `);
+    } catch (err) {
+      console.error("Email verification error:", err);
+      return res.status(500).send("Verification failed. Please try again.");
+    }
+  });
+
+  // Resend verification email
+  app.post("/api/auth/resend-verification", async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+    try {
+      const normalizedEmail = email.toLowerCase().trim();
+      const user = await storage.getUserByEmail(normalizedEmail);
+      if (!user) return res.json({ success: true }); // don't leak whether user exists
+
+      if (user.emailVerified) {
+        return res.json({ success: true, message: "Already verified" });
+      }
+
+      // Generate a fresh token
+      const newToken = generateSecureToken();
+      await storage.updateUser(user.id, { emailVerificationToken: newToken });
+      sendVerificationEmail(normalizedEmail, newToken);
+
+      return res.json({ success: true, message: "Verification email sent" });
+    } catch (err) {
+      console.error("Resend verification error:", err);
+      return res.status(500).json({ message: "Failed to resend verification email" });
+    }
+  });
+
   app.post("/api/auth/login", (req, res, next) => {
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
         return res.status(500).json({ message: "Authentication error" });
       }
       if (!user) {
+        // Special case: email not verified
+        if (info?.message === "EMAIL_NOT_VERIFIED") {
+          return res.status(403).json({
+            message: "Please check your email and click the verification link to continue",
+            error_code: "email_not_verified",
+            email: req.body.email,
+          });
+        }
         return res
           .status(401)
           .json({ message: info?.message || "Invalid credentials" });

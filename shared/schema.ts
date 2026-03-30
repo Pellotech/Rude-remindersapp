@@ -56,6 +56,8 @@ export const users = pgTable("users", {
   simplifiedInterface: boolean("simplified_interface").default(false),
   alarmSound: text("alarm_sound").default("gentle-chime"),
   passwordHash: text("password_hash"),
+  emailVerified: boolean("email_verified").default(true), // true for all existing/OAuth users; false for new email-signup until verified
+  emailVerificationToken: text("email_verification_token"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
