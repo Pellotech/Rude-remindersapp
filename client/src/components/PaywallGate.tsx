@@ -8,9 +8,10 @@ interface PaywallModalProps {
   open: boolean;
   onClose: () => void;
   featureLabel: string;
+  description?: string;
 }
 
-function PaywallModal({ open, onClose, featureLabel }: PaywallModalProps) {
+function PaywallModal({ open, onClose, featureLabel, description }: PaywallModalProps) {
   const [, setLocation] = useLocation();
 
   if (!open) return null;
@@ -24,7 +25,7 @@ function PaywallModal({ open, onClose, featureLabel }: PaywallModalProps) {
           </div>
           <h2 className="text-xl font-bold text-[#111827]">Premium Feature</h2>
           <p className="text-[#6B7280] text-sm">
-            <strong>{featureLabel}</strong> is available with a Premium subscription. Upgrade to unlock this and other premium features.
+            {description || <><strong>{featureLabel}</strong> is available with a Premium subscription. Upgrade to unlock this and other premium features.</>}
           </p>
           <div className="space-y-2 pt-2">
             <Button
@@ -53,7 +54,7 @@ interface UsePaywallGateResult {
   modal: JSX.Element;
 }
 
-export function usePaywallGate(featureKey: FeatureKey, featureLabel: string, hasProAccess: boolean): UsePaywallGateResult {
+export function usePaywallGate(featureKey: FeatureKey, featureLabel: string, hasProAccess: boolean, description?: string): UsePaywallGateResult {
   const [showModal, setShowModal] = useState(false);
 
   const gate = (action: () => void) => {
@@ -75,6 +76,7 @@ export function usePaywallGate(featureKey: FeatureKey, featureLabel: string, has
       open={showModal}
       onClose={() => setShowModal(false)}
       featureLabel={featureLabel}
+      description={description}
     />
   );
 

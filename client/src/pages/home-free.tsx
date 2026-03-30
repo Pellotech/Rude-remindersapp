@@ -280,20 +280,20 @@ export default function HomeFree() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="create" className="flex items-center gap-1 text-xs px-1">
+          <TabsList className="grid w-full grid-cols-4 overflow-x-auto flex-shrink-0">
+            <TabsTrigger value="create" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
               <Bell className="h-3 w-3" />
               Create
             </TabsTrigger>
-            <TabsTrigger value="manage" className="flex items-center gap-1 text-xs px-1">
+            <TabsTrigger value="manage" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
               <Target className="h-3 w-3" />
               Manage
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-1 text-xs px-1">
+            <TabsTrigger value="analytics" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
               <BarChart3 className="h-3 w-3" />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="upgrade" className="flex items-center gap-1 text-xs px-1">
+            <TabsTrigger value="upgrade" className="flex items-center gap-1 text-xs px-1 data-[state=inactive]:bg-[#FDF3E3]">
               <Crown className="h-3 w-3" />
               Upgrade
             </TabsTrigger>
@@ -369,7 +369,7 @@ export default function HomeFree() {
                     <Lock className="h-6 w-6 text-[#C9A063]" />
                   </div>
                   <h3 className="font-bold text-gray-900 text-base mb-1">Analytics Locked</h3>
-                  <p className="text-sm text-gray-500 mb-4">Upgrade to Premium to track your completion trends, streaks, and more.</p>
+                  <p className="text-sm text-gray-500 mb-4">Rude Reminders is the first of its kind habit-building app. These analytics show you exactly how consistent you're being — streaks, completion rates, and your best days. Because what gets measured, gets done.</p>
                   <button
                     onClick={() => setLocation('/subscribe')}
                     className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white font-semibold py-2.5 px-6 rounded-full text-sm transition-colors"
