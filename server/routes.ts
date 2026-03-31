@@ -215,6 +215,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const normalizedEmail = email.toLowerCase().trim();
       const user = await storage.getUserByEmail(normalizedEmail);
 
+      console.log(`[ForgotPassword] email="${normalizedEmail}" user=${user ? user.id : 'NOT_FOUND'} hasPasswordHash=${!!user?.passwordHash}`);
+
       // Always return success to prevent email enumeration
       if (!user || !user.passwordHash) {
         return res.json({ message: "If an account exists with that email, a reset link has been sent." });
@@ -223,7 +225,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const token = crypto.randomBytes(32).toString("hex");
       const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
       await storage.updateUser(user.id, { resetToken: token, resetTokenExpiry: expiry });
-      await sendPasswordResetEmail(normalizedEmail, token);
+      const emailSent = await sendPasswordResetEmail(normalizedEmail, token);
+      console.log(`[ForgotPassword] Email sent=${emailSent} to "${normalizedEmail}" token=${token.slice(0, 8)}...`);
 
       res.json({ message: "If an account exists with that email, a reset link has been sent." });
     } catch (err) {
