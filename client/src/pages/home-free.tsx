@@ -190,6 +190,25 @@ export default function HomeFree() {
     }
   };
 
+  const handleMissedReminder = async () => {
+    if (!currentReminder) return;
+    try {
+      await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
+      setShowRichNotification(false);
+      setCurrentReminder(null);
+      toast({
+        title: "Logged 💪",
+        description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log reminder",
+        variant: "destructive",
+      });
+    }
+  };
+
   const activeReminders = reminders.filter((r: Reminder) => !r.completed);
   const completedToday = reminders.filter((r: Reminder) => 
     r.completed && r.completedAt &&
@@ -390,6 +409,7 @@ export default function HomeFree() {
             aiGeneratedQuotes: false,
           }}
           onComplete={handleCompleteReminder}
+          onMissed={handleMissedReminder}
           onPlayVoice={handleVoicePlay}
           isPlayingVoice={isPlayingVoice}
         />

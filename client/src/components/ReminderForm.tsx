@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import rudeRemindersLogo from '@assets/translusant_logo2_1767108484844.png';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -246,6 +247,7 @@ export default function ReminderForm({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedContextCategory, setSelectedContextCategory] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previousRudenessRef = useRef<number>(3);
 
   // Collapsible states for advanced sections
   const [activeFeatureTab, setActiveFeatureTab] = useState<'voice' | 'photo' | 'quotes' | null>(null);
@@ -1094,7 +1096,14 @@ export default function ReminderForm({
                         max={5}
                         step={1}
                         value={[field.value]}
-                        onValueChange={(value) => field.onChange(value[0])}
+                        onValueChange={(value) => {
+                          const newLevel = value[0];
+                          if (newLevel !== previousRudenessRef.current) {
+                            previousRudenessRef.current = newLevel;
+                            Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+                          }
+                          field.onChange(newLevel);
+                        }}
                         className="rudeness-slider"
                       />
                     </FormControl>

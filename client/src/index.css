@@ -121,40 +121,35 @@
   }
 }
 
-/* Custom slider styling */
-.rudeness-slider::-webkit-slider-thumb {
-  appearance: none;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: hsl(var(--rude-red-600));
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+/* Custom slider styling — targets Radix UI Slider spans */
+.rudeness-slider [role="slider"] {
+  width: 28px !important;
+  height: 28px !important;
+  background: #C9A063 !important;
+  border: 2px solid #C9A063 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 150ms ease !important;
+  touch-action: none;
+  cursor: grab;
 }
 
-.rudeness-slider::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: hsl(var(--rude-red-600));
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+.rudeness-slider [role="slider"]:active {
+  transform: scale(1.15) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+  cursor: grabbing;
 }
 
+.rudeness-slider > span:first-child {
+  height: 10px !important;
+}
+
+.rudeness-slider > span:first-child > span:first-child {
+  background: #C53B3B !important;
+}
+
+/* Increase touch target around the track */
 .rudeness-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  background: hsl(var(--muted));
-  border-radius: 4px;
-  outline: none;
-}
-
-.rudeness-slider::-webkit-slider-track {
-  height: 8px;
-  background: hsl(var(--muted));
-  border-radius: 4px;
+  padding: 12px 0;
 }
 
 /* Disable Apple's iCloud password autofill button and popup */
