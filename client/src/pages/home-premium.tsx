@@ -255,7 +255,10 @@ export default function HomePremium() {
       />
       <Navigation />
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div
+        className="container mx-auto px-4 pt-8 max-w-7xl"
+        style={{ paddingBottom: isAndroid ? '120px' : '80px' }}
+      >
         {/* Welcome Header - Mobile Optimized */}
         <div className="mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
@@ -613,8 +616,11 @@ export default function HomePremium() {
       {/* Banner ad for premium users — no interstitial */}
       <AdMobManager isPremium={true} />
 
-      {/* Floating Help Button */}
-      <div className="fixed bottom-20 right-4 z-50">
+      {/* Floating Help Button — raised above banner */}
+      <div
+        className="fixed right-4 z-50"
+        style={{ bottom: isAndroid ? '130px' : '90px' }}
+      >
         <HelpMenu />
       </div>
 

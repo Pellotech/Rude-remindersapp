@@ -441,7 +441,10 @@ export default function HomeFree() {
       )}
 
       {/* Free Plan Usage Overview - Bottom Section */}
-      <div className="container mx-auto px-4 pb-6 max-w-7xl">
+      <div
+        className="container mx-auto px-4 max-w-7xl"
+        style={{ paddingBottom: Capacitor.getPlatform() === 'android' ? '120px' : '80px' }}
+      >
         <Card className="bg-white border-[#EAEAEA] rounded-[20px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -517,7 +520,7 @@ export default function HomeFree() {
       {/* Floating Help Button — raised above banner on Android */}
       <div
         className="fixed right-4 z-50 flex gap-2"
-        style={{ bottom: Capacitor.getPlatform() === 'android' ? '112px' : '80px' }}
+        style={{ bottom: Capacitor.getPlatform() === 'android' ? '130px' : '90px' }}
       >
         <HelpMenu />
       </div>

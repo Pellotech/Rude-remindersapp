@@ -1,0 +1,64 @@
+Looking at your screenshots carefully:
+
+iOS — banner sits at the very bottom, content hides behind it
+Android — banner sits above the dark system navigation bar (back/home/recent buttons), so the total blocked area is bigger
+
+Here's the full corrected prompt:
+
+In the Rude Reminders app I need to fix content being hidden behind the banner ad at the bottom of the screen on both iOS and Android. The two platforms have different bottom heights:
+Platform differences to account for:
+
+iOS — banner is approximately 50px from the bottom edge
+Android — banner sits above the dark system navigation bar which adds approximately 48px extra, so total blocked area is approximately 100-110px from the bottom edge
+
+1. ADD PLATFORM-AWARE BOTTOM BUFFER to home-premium.tsx and home-free.tsx:
+
+Detect the platform using Capacitor.getPlatform()
+Apply different bottom padding based on platform:
+
+javascriptconst bottomPadding = Capacitor.getPlatform() === 'android' 
+  ? 120  // banner + Android nav bar
+  : 80   // banner only on iOS
+
+Add this as padding to the main scroll container on both pages
+This ensures ALL content scrolls fully above the banner on both platforms
+
+2. FIX the "Selected reminder time" summary bubble:
+
+Currently hidden behind the banner when scrolled to bottom
+The bottom buffer above should fix this
+Double check it is fully visible after the fix on both platforms
+The bubble showing "Wed, Apr 1 • 3:00 PM 🔔 Lv.3" must clear the banner completely
+
+3. FIX the Help button floating position:
+
+Currently partially hidden behind the banner on both platforms
+Apply platform-aware bottom offset:
+
+javascriptconst helpButtonBottom = Capacitor.getPlatform() === 'android'
+  ? 130  // above banner + Android nav bar
+  : 90   // above banner on iOS
+
+Find the Help button component and apply this offset
+Must float fully visible above the banner on both platforms
+
+4. FIX the Quick Reminder section:
+
+Gets clipped at the bottom when scrolled down
+The bottom buffer padding fix should cover this
+Verify it is fully scrollable above the banner after fix
+
+5. ALSO check home-free.tsx:
+
+Free page has the usage counter at the very bottom
+Make sure that counter is also fully visible above the banner
+Apply the same platform-aware bottom padding
+
+6. Do not change:
+
+The banner ad position or behaviour
+Any ad IDs or functionality
+The Android system navigation bar — do not try to change that
+Anything else not mentioned
+
+7. Show every file and exact lines being changed before editing
