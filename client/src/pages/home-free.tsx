@@ -223,7 +223,7 @@ export default function HomeFree() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
                 <span className="truncate">{isGuest ? "Hey Guest" : `Hey ${(user as any)?.firstName || (user as any)?.username || 'there'}`}</span>
-                <Badge className="bg-[#1B2A5E] text-white text-xs flex-shrink-0 border-0">
+                <Badge className="bg-green-400 text-white text-xs flex-shrink-0 border-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free
                 </Badge>
