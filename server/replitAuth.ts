@@ -43,9 +43,8 @@ async function sendVerificationEmail(toEmail: string, token: string): Promise<bo
       },
     });
 
-    const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || "rude-reminders.replit.app";
+    const domain = "rude-reminders.replit.app";
     const verifyUrl = `https://${domain}/api/auth/verify-email?token=${token}`;
-
     const logoUrl = `https://${domain}/logo.png`;
 
     await transporter.sendMail({
@@ -82,7 +81,7 @@ export async function sendPasswordResetEmail(toEmail: string, token: string): Pr
       },
     });
 
-    const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || "rude-reminders.replit.app";
+    const domain = "rude-reminders.replit.app";
     const resetUrl = `https://${domain}/reset-password?token=${token}`;
     const logoUrl = `https://${domain}/logo.png`;
 
