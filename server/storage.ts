@@ -881,6 +881,9 @@ export const storage = {
   async getUserByEmail(email: string) {
     return (await getStorage()).getUserByEmail(email);
   },
+  async getUserByVerificationToken(token: string) {
+    return (await getStorage()).getUserByVerificationToken(token);
+  },
   async upsertUser(user: any) {
     return (await getStorage()).upsertUser(user);
   },
