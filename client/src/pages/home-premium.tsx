@@ -35,6 +35,7 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
+import { AdMobManager } from "@/components/AdMobManager";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -608,6 +609,9 @@ export default function HomePremium() {
           isPlayingVoice={isPlayingVoice}
         />
       )}
+
+      {/* Banner ad for premium users — no interstitial */}
+      <AdMobManager isPremium={true} />
 
       {/* Floating Help Button */}
       <div className="fixed bottom-20 right-4 z-50">

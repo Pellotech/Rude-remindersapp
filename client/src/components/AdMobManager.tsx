@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { BannerAdPosition } from '@capacitor-community/admob';
 import { useAdMob } from '@/hooks/useAdMob';
-import { Gift, Eye, EyeOff, Clock, Zap } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface AdMobManagerProps {
   isPremium: boolean;
@@ -31,26 +31,19 @@ export function AdMobManager({
     isAvailable
   } = useAdMob();
 
-  // Auto-show banner for free users when component mounts
+  // Auto-show banner for all users (free and premium) when component mounts
   useEffect(() => {
-    if (!isPremium && isInitialized && isAvailable) {
+    if (isInitialized && isAvailable) {
       showBanner(BannerAdPosition.BOTTOM_CENTER);
     }
 
-    // Cleanup: remove banner when component unmounts or user becomes premium
+    // Cleanup: remove banner when component unmounts
     return () => {
       if (isBannerVisible) {
         removeBanner();
       }
     };
-  }, [isPremium, isInitialized, isAvailable]);
-
-  // Hide ads for premium users
-  useEffect(() => {
-    if (isPremium && isBannerVisible) {
-      removeBanner();
-    }
-  }, [isPremium, isBannerVisible]);
+  }, [isInitialized, isAvailable]);
 
   // Show interstitial ad every 2 actions (respectfully)
   useEffect(() => {
@@ -92,8 +85,8 @@ export function AdMobManager({
     }
   }, [showRewardAd, onRewardEarned, rewardCooldown]);
 
-  // Don't render anything if AdMob is not available or user is premium
-  if (!isAvailable || isPremium) {
+  // Don't render anything if AdMob is not available
+  if (!isAvailable) {
     return null;
   }
 
@@ -129,34 +122,16 @@ export function AdMobManager({
                 Hide Banner
               </Button>
               
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={showInterstitial}
-                data-testid="show-interstitial-ad"
-              >
-                Show Interstitial
-              </Button>
-              
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleRewardAd}
-                disabled={rewardCooldown > 0}
-                data-testid="show-reward-ad"
-              >
-                {rewardCooldown > 0 ? (
-                  <>
-                    <Clock className="h-3 w-3 mr-1" />
-                    Wait {rewardCooldown}s
-                  </>
-                ) : (
-                  <>
-                    <Gift className="h-3 w-3 mr-1" />
-                    Watch Reward Ad
-                  </>
-                )}
-              </Button>
+              {!isPremium && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={showInterstitial}
+                  data-testid="show-interstitial-ad"
+                >
+                  Show Interstitial
+                </Button>
+              )}
             </div>
             
             <p className="text-xs text-yellow-700 mt-2">
