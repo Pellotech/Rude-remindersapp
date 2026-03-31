@@ -127,7 +127,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       <Card className="border-[#C9A063]">
         <CardContent className="pt-3 pb-3">
           <p className="text-xs mb-2 text-[#1A1A1A]">Choose a day within the next week</p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent">
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {weekDays.map((date, index) => {
               const dayName = format(date, 'EEE');
               const dayNumber = format(date, 'd');
@@ -163,7 +163,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {selectedDate && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {timeSlots.map((slot) => {
                 const isSelected = isTimeSelected(slot.value);
                 const isPastTime = isTimeInPast(slot.value);
@@ -194,7 +194,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {selectedDate && quarterState.hour !== null && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {quarterSlots.map((slot) => {
                 const isSelected = isQuarterSelected(slot.value);
                 const isPastQuarterTime = quarterState.hour !== null && isTimeInPast(quarterState.hour, slot.value);

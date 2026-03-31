@@ -962,7 +962,7 @@ export default function ReminderForm({
                         <Card className="border-[#C9A063]">
                           <CardContent className="pt-3 pb-3">
                             <p className="text-xs mb-2 text-[#1A1A1A]">Choose which days to repeat</p>
-                            <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${platformInfo.isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
+                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                               {daysOfWeek.map((day) => {
                                 const isSelected = selectedDays.includes(day.id);
                                 return (
@@ -996,7 +996,7 @@ export default function ReminderForm({
                         {selectedDays.length > 0 && (
                           <Card className="border-[#C9A063]">
                             <CardContent className="pt-3 pb-3">
-                              <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${platformInfo.isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
+                              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                                 {Array.from({ length: 24 }, (_, i) => {
                                   const hour = i;
                                   const isSelected = multiDayHour === hour;
@@ -1026,7 +1026,7 @@ export default function ReminderForm({
                         {selectedDays.length > 0 && (
                           <Card className="border-[#C9A063]">
                             <CardContent className="pt-3 pb-3">
-                              <div className={`flex gap-2 overflow-x-auto pb-1 scrollbar-thin ${platformInfo.isAndroid ? 'scrollbar-thumb-transparent scrollbar-track-transparent' : 'scrollbar-thumb-gray-300 scrollbar-track-gray-100'}`}>
+                              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                                 {[
                                   { value: 0, label: ":00" },
                                   { value: 15, label: ":15" },
