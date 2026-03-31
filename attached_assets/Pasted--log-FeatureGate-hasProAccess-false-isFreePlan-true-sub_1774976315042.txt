@@ -1,0 +1,39 @@
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - 🎙️ [TTS-DIAG] NotificationProvider.handleVoicePlay called | reminder="Go to library" | character="default" | hasMessage=true
+⚡️  To Native ->  TextToSpeech speak 125783557
+         AVAudioBuffer.mm:281   mBuffers[0].mDataByteSize (0) should be non-zero
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  TO JS undefined
+⚡️  [log] - 🎙️ [TTS] Native speak completed | character="default"
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x131503540 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined
+⚡️  [log] - [FeatureGate] hasProAccess: false isFreePlan: true subscriptionPlan: undefined

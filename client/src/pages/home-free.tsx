@@ -172,9 +172,11 @@ export default function HomeFree() {
 
   // Complete reminder handler
   const handleCompleteReminder = async () => {
+    console.log('[Reminder] handleCompleteReminder called, currentReminder:', currentReminder?.id ?? 'null');
     if (!currentReminder) return;
 
     try {
+      console.log('[Reminder] Calling complete for:', currentReminder.id);
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
       setShowRichNotification(false);
       setCurrentReminder(null);
@@ -193,9 +195,12 @@ export default function HomeFree() {
   };
 
   const handleMissedReminder = async () => {
+    console.log('[Reminder] handleMissedReminder called, currentReminder:', currentReminder?.id ?? 'null');
     if (!currentReminder) return;
     try {
+      console.log('[Reminder] Calling not-accomplished for:', currentReminder.id);
       await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
+      console.log('[Reminder] not-accomplished success');
       setShowRichNotification(false);
       setCurrentReminder(null);
       setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (missed)`); return prev + 1; });
@@ -204,6 +209,7 @@ export default function HomeFree() {
         description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
       });
     } catch (error) {
+      console.error('[Reminder] not-accomplished error:', error);
       toast({
         title: "Error",
         description: "Failed to log reminder",
@@ -493,7 +499,7 @@ export default function HomeFree() {
       />
 
       {/* Floating Help Button */}
-      <div className="fixed bottom-4 right-4 z-50 flex gap-2">
+      <div className="fixed bottom-20 right-4 z-50 flex gap-2">
         <HelpMenu />
       </div>
     </div>
