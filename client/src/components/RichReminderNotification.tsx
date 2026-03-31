@@ -223,10 +223,10 @@ export function RichReminderNotification({
             </Button>
             <Button
               onClick={onMissed}
-              className="w-full h-10 text-sm font-semibold bg-[#C9A063] hover:bg-[#b38a50] text-white"
+              className="w-full h-10 text-sm font-semibold bg-[#7B5E2A] hover:bg-[#6a4f22] text-white"
               data-testid="button-missed"
             >
-              Didn't do it ❌
+              This button doesn't work, like you 🙄
             </Button>
             <Button
               onClick={onClose}

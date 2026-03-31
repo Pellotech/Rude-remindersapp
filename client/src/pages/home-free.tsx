@@ -200,7 +200,6 @@ export default function HomeFree() {
     try {
       console.log('[Reminder] Calling complete for:', currentReminder.id);
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
-      setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (complete)`); return prev + 1; });
       queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
       queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
       toast({
@@ -226,7 +225,6 @@ export default function HomeFree() {
       console.log('[Reminder] Calling not-accomplished for:', currentReminder.id);
       await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
       console.log('[Reminder] not-accomplished success');
-      setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (missed)`); return prev + 1; });
       queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
       queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
       toast({
