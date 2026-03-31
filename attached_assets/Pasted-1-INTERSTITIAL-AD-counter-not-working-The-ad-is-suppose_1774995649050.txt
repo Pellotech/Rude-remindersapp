@@ -1,0 +1,51 @@
+1. INTERSTITIAL AD — counter not working:
+
+The ad is supposed to fire every 2 actions (Quick Reminder or Create Reminder taps)
+It is not triggering at all after 4+ reminders created
+Please find where the action counter increments and add console logs:
+
+javascriptconsole.log('Ad action counter incremented:', count);
+console.log('Ad threshold reached, attempting to show ad');
+console.log('Ad show result:', result);
+
+Check if the counter is actually being called when Create Reminder or Quick Reminder buttons are tapped
+Check if the counter resets correctly
+Check if the ad is loaded and ready before attempting to show
+The logs showed isFreePlan: true repeatedly — verify ads are set to show for free users not just premium
+Fix whatever is broken and show me the exact lines changing
+
+2. FREE TIER REMINDER COUNTER — not working:
+
+The free plan reminder limit counter is not updating correctly
+The logs show isFreePlan: true but the counter appears broken
+Find where the free tier reminder count is tracked
+Check if REMINDER_LIMIT_EXCEEDED error is being thrown correctly when limit is hit
+Check if the counter increments when a reminder is created on free tier
+Add console log: console.log('Free tier reminder count:', count, 'limit:', limit)
+Fix the counter and show every file being changed
+
+3. REMINDER POPUP — "Didn't do it" button not dismissing on free tier:
+
+When the reminder popup fires and user taps "Didn't do it ❌" the popup does NOT dismiss
+It only dismisses when tapping "Did it! ✅" or "Let me know later 🔔"
+This seems to work on premium but NOT on free tier
+Find the RichReminderNotification.tsx component
+Find the handler for the "Didn't do it" button
+Check if there is a premium gate blocking the dismiss/log action on free tier
+The "Didn't do it" button should work identically on both free and premium:
+
+Logs 'missed' to reminder_events
+Closes the popup
+Moves reminder to Past list with 24hr timer
+
+
+Remove any premium check that is blocking this on free tier
+Show exact lines being changed before editing
+
+4. Do not change:
+
+Any premium features or gates
+Ad IDs or initialization
+Any other functionality
+
+5. Show every file being changed before making any edits

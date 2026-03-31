@@ -29,7 +29,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
 import { guestStorage } from "@/services/guestStorage";
 
@@ -200,9 +200,9 @@ export default function HomeFree() {
     try {
       console.log('[Reminder] Calling complete for:', currentReminder.id);
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
-      setShowRichNotification(false);
-      setCurrentReminder(null);
       setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (complete)`); return prev + 1; });
+      queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
       toast({
         title: "Reminder Completed",
         description: "Great job getting it done!",
@@ -213,6 +213,9 @@ export default function HomeFree() {
         description: "Failed to mark reminder as complete",
         variant: "destructive",
       });
+    } finally {
+      setShowRichNotification(false);
+      setCurrentReminder(null);
     }
   };
 
@@ -223,9 +226,9 @@ export default function HomeFree() {
       console.log('[Reminder] Calling not-accomplished for:', currentReminder.id);
       await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
       console.log('[Reminder] not-accomplished success');
-      setShowRichNotification(false);
-      setCurrentReminder(null);
       setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (missed)`); return prev + 1; });
+      queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
       toast({
         title: "Logged 💪",
         description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
@@ -237,6 +240,9 @@ export default function HomeFree() {
         description: "Failed to log reminder",
         variant: "destructive",
       });
+    } finally {
+      setShowRichNotification(false);
+      setCurrentReminder(null);
     }
   };
 
@@ -330,6 +336,13 @@ export default function HomeFree() {
               isFreePlan={true} 
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
+              onReminderCreated={() => {
+                setAdActionCount(prev => {
+                  const next = prev + 1;
+                  console.log('Ad action counter incremented:', next);
+                  return next;
+                });
+              }}
             />
           </TabsContent>
 

@@ -29,6 +29,7 @@ export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExc
 
     const currentCount = result.rows.length > 0 ? result.rows[0].count : 0;
 
+    console.log(`Free tier reminder count: ${currentCount}, limit: ${limit}, exceeded: ${currentCount >= limit}`);
     return { hasExceeded: currentCount >= limit, currentCount, limit, resetDate };
   } catch (error) {
     console.error('Error checking monthly limit:', error);
@@ -61,6 +62,7 @@ export async function atomicIncrementAndCheck(userId: string, count: number = 1)
     const monthlyUsage: Record<string, number> = (lockResult.rows[0].monthly_reminder_usage as Record<string, number>) || {};
     const currentCount = monthlyUsage[currentMonth] || 0;
 
+    console.log(`Free tier reminder count: ${currentCount}, limit: ${limit}, adding: ${count}, allowed: ${currentCount + count <= limit}`);
     if (currentCount + count > limit) {
       await client.query('ROLLBACK');
       return { allowed: false, newCount: currentCount, limit, resetDate };

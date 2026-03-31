@@ -72,6 +72,7 @@ interface ReminderFormProps {
   isFreePlan?: boolean;
   currentReminderCount?: number;
   maxReminders?: number;
+  onReminderCreated?: () => void;
 }
 
 const rudenessLabels = [
@@ -195,7 +196,8 @@ const sampleQuotes = {
 export default function ReminderForm({
   isFreePlan = false,
   currentReminderCount = 0,
-  maxReminders = 5
+  maxReminders = 5,
+  onReminderCreated,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -460,6 +462,9 @@ export default function ReminderForm({
       if (isFreePlan) {
         incrementFreeReminderCount();
       }
+
+      console.log('Ad action counter incremented: reminder created');
+      onReminderCreated?.();
 
       toast({
         title: "Success!",
