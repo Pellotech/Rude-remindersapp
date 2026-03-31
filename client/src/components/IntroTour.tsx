@@ -100,7 +100,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl border-2 border-[#C9A063]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-yellow-600" />

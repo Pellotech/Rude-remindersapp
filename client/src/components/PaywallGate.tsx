@@ -19,7 +19,7 @@ function PaywallModal({ open, onClose, featureLabel, description }: PaywallModal
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
-      <div className="bg-white rounded-[20px] p-6 mx-4 max-w-sm w-full shadow-xl" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-[20px] p-6 mx-4 max-w-sm w-full shadow-xl border-2 border-[#C9A063]" onClick={e => e.stopPropagation()}>
         <div className="text-center space-y-4">
           <img src={logoPath} alt="Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
           <h2 className="text-xl font-bold text-[#111827]">Premium Feature</h2>

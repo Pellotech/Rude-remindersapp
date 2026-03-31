@@ -88,7 +88,7 @@ export function MotivationalPopup({
       onClick={dismiss}
     >
       <div
-        className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border-2 border-[#C9A063]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="bg-[#FDF3E3] px-4 pt-4 pb-4 flex flex-row items-start gap-3">
