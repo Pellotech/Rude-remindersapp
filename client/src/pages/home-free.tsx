@@ -281,7 +281,7 @@ export default function HomeFree() {
           </div>
           {/* Rotating slogan banner */}
           <div
-            className="flex items-center justify-between bg-[#DCFCE7] border border-[#C9A063] rounded-[12px] px-3 mt-2"
+            className="flex items-center justify-between bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 mt-2"
             style={{ height: '52px', overflow: 'hidden' }}
           >
             <p
