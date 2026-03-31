@@ -1,5 +1,6 @@
 import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, RewardAdOptions } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
+import { SafeArea } from 'capacitor-plugin-safe-area';
 
 export class AdMobService {
   private static instance: AdMobService;
@@ -51,22 +52,33 @@ export class AdMobService {
     return this.adUnitIds[type][platform as 'android' | 'ios'] || this.adUnitIds[type].android;
   }
 
+  private async getAndroidBottomMargin(): Promise<number> {
+    if (Capacitor.getPlatform() !== 'android') return 0;
+    try {
+      const { insets } = await SafeArea.getSafeAreaInsets();
+      return insets.bottom || 56; // 56px fallback for typical Android nav bar
+    } catch {
+      return 56;
+    }
+  }
+
   async showBannerAd(position: BannerAdPosition = BannerAdPosition.BOTTOM_CENTER): Promise<void> {
     if (!this.isInitialized || !Capacitor.isNativePlatform()) {
       return;
     }
 
     try {
+      const margin = await this.getAndroidBottomMargin();
       const options: BannerAdOptions = {
         adId: this.getAdUnitId('banner'),
         adSize: BannerAdSize.BANNER,
         position: position,
-        margin: 0,
-        isTesting: false, // Production mode
+        margin: margin,
+        isTesting: false,
       };
 
       await AdMob.showBanner(options);
-      console.log('Banner ad shown successfully');
+      console.log(`Banner ad shown successfully (margin: ${margin}px)`);
     } catch (error) {
       console.error('Failed to show banner ad:', error);
     }

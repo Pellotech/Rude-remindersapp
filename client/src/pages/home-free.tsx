@@ -68,6 +68,7 @@ export default function HomeFree() {
     extraReminders: 0, // Extra reminders from watching ads
     premiumVoicesUntil: 0, // Timestamp when premium voices expire
   });
+  const [adActionCount, setAdActionCount] = useState(0);
 
 
   // For guest users, use localStorage; for authenticated users, use API
@@ -177,6 +178,7 @@ export default function HomeFree() {
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
       setShowRichNotification(false);
       setCurrentReminder(null);
+      setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (complete)`); return prev + 1; });
       toast({
         title: "Reminder Completed",
         description: "Great job getting it done!",
@@ -196,6 +198,7 @@ export default function HomeFree() {
       await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
       setShowRichNotification(false);
       setCurrentReminder(null);
+      setAdActionCount(prev => { console.log(`[AdMob] Action count: ${prev + 1} (missed)`); return prev + 1; });
       toast({
         title: "Logged 💪",
         description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
@@ -461,6 +464,8 @@ export default function HomeFree() {
       {/* AdMob Integration for Free Users */}
       <AdMobManager 
         isPremium={false}
+        showInterstitialOnAction={true}
+        actionCount={adActionCount}
         onRewardEarned={() => {
           const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
 
