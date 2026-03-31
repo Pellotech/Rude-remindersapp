@@ -29,20 +29,14 @@ export class AdMobService {
   }
 
   async initialize(): Promise<void> {
-    // AdMob initialization skipped - configured for production deployment only
-    console.log('AdMob initialization disabled for testing');
-    return;
-    
-    /* ORIGINAL CODE - RE-ENABLE WHEN READY
     if (!Capacitor.isNativePlatform()) {
-      console.log('AdMob not available on web platform');
       return;
     }
 
     try {
       await AdMob.initialize({
-        testingDevices: [], // Add your test device IDs here if needed
-        initializeForTesting: false, // Production mode
+        testingDevices: [],
+        initializeForTesting: false,
       });
       
       this.isInitialized = true;
@@ -50,7 +44,6 @@ export class AdMobService {
     } catch (error) {
       console.error('Failed to initialize AdMob:', error);
     }
-    */
   }
 
   private getAdUnitId(type: 'banner' | 'interstitial' | 'reward'): string {
