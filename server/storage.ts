@@ -337,36 +337,48 @@ export class DatabaseStorage implements IStorage {
       { rudenessLevel: 1, phrase: ", take your time but don't forget! ⏰", category: "gentle" },
       { rudenessLevel: 1, phrase: ", friendly reminder! 😊", category: "polite" },
       { rudenessLevel: 1, phrase: ", just a gentle nudge! 👋", category: "soft" },
+      { rudenessLevel: 1, phrase: ", the best time to start was yesterday, the second best is now 🌱", category: "reflective" },
+      { rudenessLevel: 1, phrase: ", even tiny steps count — you've got more in you than you think ✨", category: "uplifting" },
 
       // Level 2 - Firm
       { rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm" },
       { rudenessLevel: 2, phrase: ", time to get moving!", category: "assertive" },
       { rudenessLevel: 2, phrase: ", no excuses now!", category: "direct" },
       { rudenessLevel: 2, phrase: ", make it happen!", category: "motivational" },
+      { rudenessLevel: 2, phrase: ", your future self is already judging you from next week", category: "forward-looking" },
+      { rudenessLevel: 2, phrase: ", the longer you wait the heavier it gets — just go", category: "urgent" },
 
       // Level 3 - Sarcastic
       { rudenessLevel: 3, phrase: ", because apparently you need reminding...", category: "sarcastic" },
       { rudenessLevel: 3, phrase: ", shocking that you haven't done this yet!", category: "ironic" },
       { rudenessLevel: 3, phrase: ", what a surprise, still not done!", category: "witty" },
       { rudenessLevel: 3, phrase: ", let me guess, you 'forgot' again?", category: "cynical" },
+      { rudenessLevel: 3, phrase: ", shocking absolutely no one, here we are again", category: "deadpan" },
+      { rudenessLevel: 3, phrase: ", bold strategy leaving this for later, let's see how that plays out", category: "ironic" },
 
       // Level 4 - Harsh
       { rudenessLevel: 4, phrase: ", stop procrastinating like a lazy sloth!", category: "harsh" },
       { rudenessLevel: 4, phrase: ", get your act together already!", category: "demanding" },
       { rudenessLevel: 4, phrase: ", quit being such a slacker!", category: "critical" },
       { rudenessLevel: 4, phrase: ", enough with the excuses!", category: "impatient" },
+      { rudenessLevel: 4, phrase: ", at this point your procrastination has its own procrastination", category: "absurdist" },
+      { rudenessLevel: 4, phrase: ", even your excuses are getting tired of you", category: "brutal-honest" },
 
       // Level 5 - Savage
       { rudenessLevel: 5, phrase: ", you absolute couch potato!", category: "savage" },
       { rudenessLevel: 5, phrase: ", stop being such a useless lump!", category: "brutal" },
       { rudenessLevel: 5, phrase: ", what's wrong with you?!", category: "offensive" },
       { rudenessLevel: 5, phrase: ", you're pathetic at this point!", category: "insulting" },
+      { rudenessLevel: 5, phrase: ", a goldfish has completed more tasks than you today", category: "savage-absurd" },
+      { rudenessLevel: 5, phrase: ", history will not remember you fondly for this one", category: "dramatic" },
     ];
 
-    // Check if phrases already exist
-    const existingPhrases = await db.select().from(rudePhrasesData).limit(1);
-    if (existingPhrases.length === 0) {
-      await db.insert(rudePhrasesData).values(phrases);
+    // Insert any phrases that don't already exist (safe to re-run)
+    const existingPhrases = await db.select().from(rudePhrasesData);
+    const existingTexts = new Set(existingPhrases.map(p => p.phrase));
+    const newPhrases = phrases.filter(p => !existingTexts.has(p.phrase));
+    if (newPhrases.length > 0) {
+      await db.insert(rudePhrasesData).values(newPhrases);
     }
   }
 

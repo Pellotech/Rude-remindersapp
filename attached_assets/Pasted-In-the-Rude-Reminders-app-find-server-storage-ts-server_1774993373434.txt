@@ -1,0 +1,94 @@
+In the Rude Reminders app find server/storage.ts, server/services/smartResponseService.ts and server/services/deepseekService.ts. Please make these improvements:
+1. ADD 2 MORE PHRASES per rudeness level in Layer 1 (storage.ts):
+Add these new creative phrases to each level:
+Level 1 (Gentle) — add:
+  ", the best time to start was yesterday, the second best is now 🌱"
+  ", even tiny steps count — you've got more in you than you think ✨"
+
+Level 2 (Firm) — add:
+  ", your future self is already judging you from next week"
+  ", the longer you wait the heavier it gets — just go"
+
+Level 3 (Sarcastic) — add:
+  ", shocking absolutely no one, here we are again"
+  ", bold strategy leaving this for later, let's see how that plays out"
+
+Level 4 (Harsh) — add:
+  ", at this point your procrastination has its own procrastination"
+  ", even your excuses are getting tired of you"
+
+Level 5 (Savage) — add:
+  ", a goldfish has completed more tasks than you today"
+  ", history will not remember you fondly for this one"
+2. REDUCE blacklisted opener repetition — do NOT fully ban them:
+
+In smartResponseService.ts and deepseekService.ts reduce frequency of these openers but do not hard ban them:
+
+"Time to" — reduce to max 1 per set of 4 messages
+"It's time to" — reduce to max 1 per set of 4 messages
+"Don't forget" — reduce to max 1 per set of 4 messages
+"Reminder:" — reduce to max 1 per set
+"Just a reminder" — reduce to max 1 per set
+
+
+For DeepSeek add this instruction:
+
+Avoid starting more than one message with the same opening 
+word or phrase. Vary your openers creatively. If you use 
+"Time to" or "Don't forget" use it maximum once across all 
+4 messages.
+3. PREMIUM — smart selection of best 2 from 4 AI responses:
+
+After DeepSeek returns 4 messages do NOT just take them in order
+Add a scoring/selection step that picks the best 2 out of 4 to display first:
+
+Score each message on:
+
+Uniqueness — does it start differently from the others?
+Tone match — does it actually match the rudeness level requested?
+Specificity — does it reference the actual task creatively rather than generically?
+Humor — does it have a punchline or wit rather than being flat?
+
+
+Select the top 2 scoring messages as responses[0] and responses[1]
+Keep the other 2 as responses[2] and responses[3] — still accessible by swiping
+This way the first 2 shown are always the strongest most fitting ones
+
+
+Implement this as a scoreAndRankResponses() function in deepseekService.ts
+Scoring can be simple keyword/pattern based — does not need another AI call:
+
+javascriptfunction scoreResponse(message, rudenessLevel, taskText) {
+  let score = 0;
+  
+  // Penalise blacklisted openers
+  const weakOpeners = ['Time to', "It's time", "Don't forget", 
+                       'Reminder:', 'Just a reminder'];
+  if (weakOpeners.some(o => message.startsWith(o))) score -= 1;
+  
+  // Reward task name being used creatively
+  const taskWords = taskText.toLowerCase().split(' ');
+  if (taskWords.some(w => w.length > 3 && 
+      message.toLowerCase().includes(w))) score += 2;
+  
+  // Reward questions (engaging)
+  if (message.includes('?')) score += 1;
+  
+  // Reward level 4-5 having a punchline (comma after main clause)
+  if (rudenessLevel >= 4 && message.includes(',')) score += 1;
+  
+  // Reward appropriate length — not too short, not too long
+  const words = message.split(' ').length;
+  if (words >= 8 && words <= 25) score += 1;
+  
+  return score;
+}
+4. Do not change:
+
+The rudeness level tone descriptions
+The fallback system from DeepSeek to template engine
+The category/action detection in the template engine
+The 4 responses still all stored — just ranked better
+Any other functionality
+
+5. Show every file being changed before editing

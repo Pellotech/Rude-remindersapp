@@ -77,7 +77,8 @@ export class DeepSeekService {
         throw new Error('No content received from DeepSeek API');
       }
 
-      return this.parseResponses(content, count);
+      const parsed = this.parseResponses(content, count);
+      return this.scoreAndRankResponses(parsed, context.rudenessLevel, context.task);
     } catch (error) {
       console.error('DeepSeek API error:', error);
       // Fallback to basic responses if API fails
@@ -120,13 +121,14 @@ ${gender ? `- User identifies as: ${gender}` : ''}
 ${culturalBackground ? `- Cultural background: ${culturalBackground}` : ''}${genderGuidance}
 
 Requirements:
-1. Each message should start with "Time to" or similar action-oriented phrasing
+1. Each message must start with a DIFFERENT opening word or phrase — vary your openers creatively. Do NOT start more than one message with the same word. If you use "Time to" or "Don't forget" use it maximum once across all ${count} messages.
 2. Make each response unique and fresh - no repetitive patterns
 3. Consider the specific category context (${category})
 4. Match the requested tone level - for levels 3-5, include humor/jokes/wit but keep it motivational
 5. Keep responses concise but impactful (1-2 sentences max)
 6. Make it feel personal and motivational, not generic
 7. For sarcastic/joking tones: Use clever wordplay, witty observations, or playful roasts that make people smile while pushing them to act
+8. Reference the actual task ("${task}") creatively rather than just saying it generically
 
 Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
   }
@@ -171,6 +173,42 @@ Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
     }
 
     return fallbacks.slice(0, count);
+  }
+
+  private scoreResponse(message: string, rudenessLevel: number, taskText: string): number {
+    let score = 0;
+
+    const weakOpeners = ['Time to', "It's time", "Don't forget", 'Reminder:', 'Just a reminder'];
+    if (weakOpeners.some(o => message.startsWith(o))) score -= 1;
+
+    const taskWords = taskText.toLowerCase().split(' ');
+    if (taskWords.some(w => w.length > 3 && message.toLowerCase().includes(w))) score += 2;
+
+    if (message.includes('?')) score += 1;
+
+    if (rudenessLevel >= 4 && message.includes(',')) score += 1;
+
+    const words = message.split(' ').length;
+    if (words >= 8 && words <= 25) score += 1;
+
+    return score;
+  }
+
+  private scoreAndRankResponses(responses: string[], rudenessLevel: number, taskText: string): string[] {
+    if (responses.length <= 2) return responses;
+
+    const scored = responses.map((msg, idx) => ({
+      msg,
+      idx,
+      score: this.scoreResponse(msg, rudenessLevel, taskText),
+    }));
+
+    scored.sort((a, b) => b.score - a.score);
+
+    const top2 = scored.slice(0, 2).sort((a, b) => a.idx - b.idx);
+    const rest = scored.slice(2).sort((a, b) => a.idx - b.idx);
+
+    return [...top2.map(x => x.msg), ...rest.map(x => x.msg)];
   }
 
   async testConnection(): Promise<boolean> {

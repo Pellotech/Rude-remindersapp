@@ -110,7 +110,27 @@ class SmartResponseService {
     }
     
     // Ensure we always return varied, task-correlated responses
-    return this.ensureTaskCorrelatedVariety(responses, reminder, randomSeed);
+    const varied = this.ensureTaskCorrelatedVariety(responses, reminder, randomSeed);
+    return this.deduplicateOpeners(varied);
+  }
+
+  private deduplicateOpeners(responses: string[]): string[] {
+    const limitedOpeners = ['Time to', "It's time", "Don't forget", 'Reminder:', 'Just a reminder'];
+    const usedOpeners: Record<string, number> = {};
+
+    return responses.map(msg => {
+      const matchedOpener = limitedOpeners.find(o => msg.startsWith(o));
+      if (!matchedOpener) return msg;
+
+      usedOpeners[matchedOpener] = (usedOpeners[matchedOpener] || 0) + 1;
+
+      if (usedOpeners[matchedOpener] > 1) {
+        const alternatives = ['Get on with', 'Sort out', 'Handle', 'Tackle', 'Deal with'];
+        const alt = alternatives[(usedOpeners[matchedOpener] - 2) % alternatives.length];
+        return msg.replace(matchedOpener, alt);
+      }
+      return msg;
+    });
   }
 
   // Helper method to determine time of day for context
