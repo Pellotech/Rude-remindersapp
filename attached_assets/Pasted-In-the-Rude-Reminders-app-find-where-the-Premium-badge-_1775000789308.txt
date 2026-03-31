@@ -1,0 +1,157 @@
+In the Rude Reminders app find where the Premium badge is displayed in home-premium.tsx and the Navigation/header component. I want the badge background color to reflect the user's rudeness level dynamically.
+
+1. RUDENESS LEVEL COLOR MAP:
+
+javascript
+
+const rudeLevelColors = {
+  1: '#38BDF8', // Sky blue — Gentle
+  2: '#22C55E', // Green — Motivational  
+  3: '#FDE047', // Sunshine yellow — Sarcastic
+  4: '#F97316', // Orange — Harsh
+  5: '#b70d0d', // Red — Savage
+}
+
+2. DEFAULT STATE — use the user's saved rudeness level:
+
+
+
+
+
+Do NOT default to red level 5
+
+
+
+Find where the user's saved/default rudeness level is stored — check:
+
+
+
+
+
+User preferences in the database
+
+
+
+localStorage or Capacitor Preferences
+
+
+
+The existing rudeness level state in the app
+
+
+
+Use that saved value to set the badge color on page load
+
+
+
+If no saved preference exists fall back to level 3 sunshine yellow #FDE047
+
+3. DYNAMIC UPDATE while using the reminder form:
+
+
+
+
+
+When the user moves the rudeness slider the badge color updates instantly
+
+
+
+Pass the current rudeness level up from ReminderForm.tsx via a callback:
+
+javascript
+
+onRudenessChange?: (level: number) => void
+
+
+
+
+
+Store the current level in state in home-premium.tsx
+
+
+
+Badge color updates in real time as slider moves
+
+4. PERSISTENT DEFAULT:
+
+
+
+
+
+When the user saves a reminder their last used rudeness level becomes the new default badge color
+
+
+
+This persists across app restarts so the badge always reflects their preferred rudeness level
+
+
+
+Save it to the same place as other user preferences
+
+5. SMOOTH COLOR TRANSITION:
+
+css
+
+transition: background-color 0.3s ease
+
+
+
+
+
+Color fades smoothly when changing — never jumps
+
+6. TEXT COLOR ADJUSTMENT:
+
+
+
+
+
+For lighter colors like sky blue level 1 and sunshine yellow level 3 change the badge text to dark #111827 so it remains readable
+
+
+
+For darker colors like green level 2, orange level 4 and red level 5 keep the badge text white #FFFFFF
+
+
+
+Apply this logic:
+
+javascript
+
+const badgeTextColor = [1, 3].includes(rudenessLevel) 
+  ? '#111827'  // dark text for light backgrounds
+  : '#FFFFFF'  // white text for dark backgrounds
+
+7. APPLY TO:
+
+
+
+
+
+The "Premium " badge next to "Hey Mohammed" on the premium home page
+
+
+
+Check if the badge appears anywhere else and apply same logic there
+
+8. Do not change:
+
+
+
+
+
+Badge text "Premium 👑"
+
+
+
+Badge size or shape
+
+
+
+The rudeness slider functionality
+
+
+
+Any other features
+
+9. Show every file and exact lines being changed before editing

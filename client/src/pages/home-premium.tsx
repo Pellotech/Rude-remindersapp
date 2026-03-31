@@ -76,8 +76,29 @@ export default function HomePremium() {
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [graphTab, setGraphTab] = useState<"week" | "year" | "tenWeeks">("week");
   const graphScrollRef = useRef<HTMLDivElement>(null);
+
+  // Dynamic badge color based on rudeness level
+  const rudeLevelColors: Record<number, string> = {
+    1: '#38BDF8', // Sky blue — Gentle
+    2: '#22C55E', // Green — Motivational
+    3: '#FDE047', // Sunshine yellow — Sarcastic
+    4: '#F97316', // Orange — Harsh
+    5: '#b70d0d', // Red — Savage
+  };
+  const [badgeRudenessLevel, setBadgeRudenessLevel] = useState<number>(
+    (user as any)?.defaultRudenessLevel || 3
+  );
+  const badgeColor = rudeLevelColors[badgeRudenessLevel] ?? rudeLevelColors[3];
+  const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
   const [sloganIndex, setSloganIndex] = useState(0);
   const [sloganVisible, setSloganVisible] = useState(true);
+
+  // Sync badge level when user data loads (it's async)
+  useEffect(() => {
+    if ((user as any)?.defaultRudenessLevel) {
+      setBadgeRudenessLevel((user as any).defaultRudenessLevel);
+    }
+  }, [(user as any)?.defaultRudenessLevel]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -265,9 +286,16 @@ export default function HomePremium() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
                 <span className="truncate">Hey {user?.firstName || user?.username || 'there'}</span>
-                <Badge className="bg-gradient-to-r from-red-700 to-red-600 text-white text-xs flex-shrink-0">
+                <Badge
+                  className="text-xs flex-shrink-0"
+                  style={{
+                    backgroundColor: badgeColor,
+                    color: badgeTextColor,
+                    transition: 'background-color 0.3s ease, color 0.3s ease',
+                  }}
+                >
                   <Crown className="h-3 w-3 mr-1" />
-                  Premium
+                  Premium 👑
                 </Badge>
               </h1>
             </div>
@@ -318,6 +346,7 @@ export default function HomePremium() {
               isFreePlan={false}
               currentReminderCount={reminders.length}
               maxReminders={999999}
+              onRudenessChange={(level) => setBadgeRudenessLevel(level)}
             />
           </TabsContent>
 
