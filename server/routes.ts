@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated, sendPasswordResetEmail } from "./replitAuth";
 import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, reminders, registerSchema, loginSchema, authTokens } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lt, sql } from "drizzle-orm";
@@ -204,6 +204,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setInterval(cleanupLoggedReminders, 60 * 60 * 1000);
 
   // Note: /api/auth/register and /api/auth/login are handled in replitAuth.ts (registered earlier)
+
+  // Forgot password — send reset email
+  app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+      const normalizedEmail = email.toLowerCase().trim();
+      const user = await storage.getUserByEmail(normalizedEmail);
+
+      // Always return success to prevent email enumeration
+      if (!user || !user.passwordHash) {
+        return res.json({ message: "If an account exists with that email, a reset link has been sent." });
+      }
+
+      const token = crypto.randomBytes(32).toString("hex");
+      const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      await storage.updateUser(user.id, { resetToken: token, resetTokenExpiry: expiry });
+      await sendPasswordResetEmail(normalizedEmail, token);
+
+      res.json({ message: "If an account exists with that email, a reset link has been sent." });
+    } catch (err) {
+      console.error("Forgot password error:", err);
+      res.status(500).json({ message: "Something went wrong. Please try again." });
+    }
+  });
+
+  // Reset password — validate token and set new password
+  app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+      if (!token || !newPassword) {
+        return res.status(400).json({ message: "Token and new password are required" });
+      }
+      if (newPassword.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters" });
+      }
+
+      const user = await storage.getUserByResetToken(token);
+      if (!user || !user.resetTokenExpiry) {
+        return res.status(400).json({ message: "This reset link has expired. Please request a new one." });
+      }
+
+      const now = new Date();
+      if (now > user.resetTokenExpiry) {
+        return res.status(400).json({ message: "This reset link has expired. Please request a new one." });
+      }
+
+      const saltRounds = 12;
+      const passwordHash = await bcrypt.hash(newPassword, saltRounds);
+      await storage.updateUser(user.id, {
+        passwordHash,
+        resetToken: null,
+        resetTokenExpiry: null,
+      });
+
+      res.json({ message: "Password updated successfully." });
+    } catch (err) {
+      console.error("Reset password error:", err);
+      res.status(500).json({ message: "Something went wrong. Please try again." });
+    }
+  });
 
   app.post('/api/auth/logout', async (req: any, res) => {
     // Revoke auth token if present

@@ -71,6 +71,44 @@ async function sendVerificationEmail(toEmail: string, token: string): Promise<bo
   }
 }
 
+// --- Password Reset Email Sender ---
+export async function sendPasswordResetEmail(toEmail: string, token: string): Promise<boolean> {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER || "ruderemindersinfo@gmail.com",
+        pass: process.env.EMAIL_APP_PASSWORD,
+      },
+    });
+
+    const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || "rude-reminders.replit.app";
+    const resetUrl = `https://${domain}/reset-password?token=${token}`;
+    const logoUrl = `https://${domain}/logo.png`;
+
+    await transporter.sendMail({
+      from: `"Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
+      to: toEmail,
+      subject: "Reset your Rude Reminders password",
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;text-align:center;">
+          <img src="${logoUrl}" alt="Rude Reminders" style="width:120px;height:auto;margin-bottom:24px;" />
+          <h2 style="color:#1B2A5E;margin-top:0;">Reset Your Password</h2>
+          <p style="color:#374151;">Click the button below to reset your password. This link expires in 1 hour.</p>
+          <a href="${resetUrl}" style="display:inline-block;background:#C53B3B;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;font-size:16px;">
+            Reset My Password
+          </a>
+          <p style="color:#9CA3AF;font-size:12px;margin-top:24px;">If you didn't request a password reset, you can safely ignore this email.</p>
+        </div>
+      `,
+    });
+    return true;
+  } catch (err) {
+    console.error("Failed to send password reset email:", err);
+    return false;
+  }
+}
+
 // Create auth token for user (valid for 30 days)
 async function createAuthToken(userId: string): Promise<string> {
   const token = generateSecureToken();

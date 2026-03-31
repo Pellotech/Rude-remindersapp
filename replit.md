@@ -65,6 +65,13 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Includes photos, motivational quotes, and voice character preferences
     - Uses ISO format timestamps for precise second-level scheduling
     - Backend allows reminders as short as 5 seconds for testing
+- **Forgot Password Flow**: Email-based password reset for email/password accounts
+  - "Forgot Password?" link on login page (below password field, gold color)
+  - `/forgot-password` page accepts email address, sends reset link via Gmail nodemailer
+  - `/reset-password` page validates token, accepts new password (min 8 chars)
+  - Token stored in `resetToken`/`resetTokenExpiry` columns on users table; expires after 1 hour
+  - Anti-enumeration: always returns success message regardless of whether email exists
+  - `POST /api/auth/forgot-password` and `POST /api/auth/reset-password` endpoints
 - **Authentication**: Multi-provider authentication supporting Apple, Google, and Facebook sign-in
   - **Login Page Layout**: Social login buttons (Apple/Google/Facebook) positioned below email/password form per user preference
   - **Apple Sign-In** (iOS Native): Native iOS integration meeting App Store Guideline 4.8

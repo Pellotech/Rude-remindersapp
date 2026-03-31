@@ -1,0 +1,106 @@
+
+
+In the Rude Reminders app I need to add a forgot password / password recovery flow. Please build this fully for both iOS and Android:
+1. ADD "FORGOT PASSWORD?" LINK on the login screen:
+
+Find the login page client/src/pages/login.tsx
+Add a "Forgot Password?" text link below the password input field
+Style it in muted gold #C9A063 small text
+Tapping it navigates to a new forgot password screen
+
+2. CREATE A FORGOT PASSWORD PAGE:
+
+New file: client/src/pages/forgot-password.tsx
+Clean simple layout matching the app theme:
+
+Background: light grey/white
+Card with gold border #C9A063
+Title: "Reset Password" in black bold
+
+
+Contains:
+
+Email input field with #FDF3E3 background and gold border
+Red "Send Reset Link" button #C53B3B white text
+"Back to Login" link below in muted gold
+
+
+On submit show a success message: "If an account exists with that email, a reset link has been sent."
+Show error if email field is empty
+
+3. CREATE BACKEND RESET ENDPOINT:
+
+Add POST /api/auth/forgot-password to server/routes.ts
+Accepts { email } in request body
+Looks up user by email in database
+If found generates a secure reset token and expiry (1 hour)
+Stores token and expiry on the user record
+Sends reset email to the user
+Always returns success message regardless of whether email exists (security best practice — don't reveal if email is registered)
+
+4. ADD RESET TOKEN FIELDS to database:
+
+Add to the users table in shared/schema.ts:
+
+resetToken text field (nullable)
+resetTokenExpiry timestamp field (nullable)
+
+
+Run migration safely
+
+5. CREATE RESET PASSWORD PAGE:
+
+New file: client/src/pages/reset-password.tsx
+User arrives here from the email link with a token in the URL
+Contains:
+
+New password input
+Confirm password input
+Red "Reset Password" button
+
+
+Validates passwords match and are at least 8 characters
+Calls POST /api/auth/reset-password with token and new password
+On success shows "Password updated! Redirecting to login..." and navigates to login after 2 seconds
+On invalid/expired token shows "This reset link has expired. Please request a new one."
+
+6. CREATE BACKEND RESET ENDPOINT:
+
+Add POST /api/auth/reset-password to server/routes.ts
+Accepts { token, newPassword }
+Validates token exists and is not expired
+Hashes new password and updates user record
+Clears resetToken and resetTokenExpiry after successful reset
+
+7. EMAIL SENDING:
+
+Check if the project already has an email sending service set up (Sendgrid, Nodemailer, etc.)
+If yes use it for the reset email
+If no set up Nodemailer with the existing email credentials in environment variables
+Reset email should contain:
+
+Subject: "Reset your Rude Reminders password"
+Body: Simple clean message with the reset link
+Link format: https://[app-url]/reset-password?token=[token]
+
+
+
+8. ADD ROUTES:
+
+Add /forgot-password and /reset-password to the router in App.tsx or wherever routes are defined
+These pages should be accessible without being logged in
+
+9. STYLE — match app theme throughout:
+
+Gold borders #C9A063
+Light gold backgrounds #FDF3E3
+Red buttons #C53B3B
+Black text
+Same card style as the rest of the app
+
+10. Do not change:
+
+Existing login or register functionality
+Any other auth flows (Apple Sign In, Google OAuth)
+Any other pages or components
+

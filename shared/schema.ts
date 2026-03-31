@@ -58,6 +58,8 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash"),
   emailVerified: boolean("email_verified").default(true), // true for all existing/OAuth users; false for new email-signup until verified
   emailVerificationToken: text("email_verification_token"),
+  resetToken: text("reset_token"),
+  resetTokenExpiry: timestamp("reset_token_expiry"),
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

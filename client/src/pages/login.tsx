@@ -272,6 +272,15 @@ export default function LoginPage() {
                       </Button>
                     </div>
                   </div>
+                  <div className="text-right -mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setLocation("/forgot-password")}
+                      className="text-xs text-[#C9A063] hover:underline"
+                    >
+                      Forgot Password?
+                    </button>
+                  </div>
                   <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>

@@ -21,6 +21,8 @@ import LoginPage from "@/pages/login";
 import NotFound from "@/pages/not-found";
 import DeleteAccount from "@/pages/DeleteAccount";
 import DeleteAccountComplete from "@/pages/DeleteAccountComplete";
+import ForgotPassword from "@/pages/forgot-password";
+import ResetPassword from "@/pages/reset-password";
 import { useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from "@capacitor/core";
@@ -101,6 +103,8 @@ function AppRouter() {
       <Route path="/index.html" component={HomeRouter} />
       <Route path="/" component={HomeRouter} />
       <Route path="/login" component={LoginPage} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/subscribe" component={Subscribe} />
       <Route path="/delete-account" component={DeleteAccount} />
       <Route path="/delete-account/complete" component={DeleteAccountComplete} />
