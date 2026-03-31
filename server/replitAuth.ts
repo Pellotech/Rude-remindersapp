@@ -46,19 +46,21 @@ async function sendVerificationEmail(toEmail: string, token: string): Promise<bo
     const domain = process.env.REPLIT_DOMAINS?.split(",")[0] || "rude-reminders.replit.app";
     const verifyUrl = `https://${domain}/api/auth/verify-email?token=${token}`;
 
+    const logoUrl = `https://${domain}/logo.png`;
+
     await transporter.sendMail({
       from: `"Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
       to: toEmail,
       subject: "Verify your Rude Reminders account",
       html: `
-        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;">
-          <h2 style="color:#1B2A5E;">Welcome to Rude Reminders!</h2>
-          <p>Click the button below to verify your email address and activate your account.</p>
-          <a href="${verifyUrl}" style="display:inline-block;background:#C53B3B;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;">
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;text-align:center;">
+          <img src="${logoUrl}" alt="Rude Reminders" style="width:120px;height:auto;margin-bottom:24px;" />
+          <h2 style="color:#1B2A5E;margin-top:0;">Welcome to Rude Reminders!</h2>
+          <p style="color:#374151;">Click the button below to verify your email address and activate your account.</p>
+          <a href="${verifyUrl}" style="display:inline-block;background:#C53B3B;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;font-size:16px;">
             Verify My Email
           </a>
-          <p style="color:#6B7280;font-size:13px;">Or copy this link into your browser:<br/>${verifyUrl}</p>
-          <p style="color:#9CA3AF;font-size:12px;">If you didn't create this account, you can safely ignore this email.</p>
+          <p style="color:#9CA3AF;font-size:12px;margin-top:24px;">If you didn't create this account, you can safely ignore this email.</p>
         </div>
       `,
     });
