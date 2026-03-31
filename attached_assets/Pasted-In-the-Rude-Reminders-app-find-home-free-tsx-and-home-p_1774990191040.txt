@@ -1,0 +1,151 @@
+In the Rude Reminders app find home-free.tsx and home-premium.tsx. Please make these changes:
+
+1. REMOVE the "Earn Free Rewards" card completely:
+
+
+
+
+
+Delete the entire rewards card from both guest and free user views
+
+
+
+Keep the rewarded ad code in admobService.ts — just remove the UI card
+
+2. REPLACE the "Upgrade to Premium for full access" banner with a rotating slogan banner on the FREE/GUEST page:
+
+
+
+
+
+Keep the same slim banner size and position
+
+
+
+Keep the same light gold background #DCFCE7 and gold border #C9A063
+
+
+
+Rotate through these 6 slogans every 4 seconds with a smooth fade or slide transition:
+
+
+
+
+
+"We'll annoy you into becoming a better person."
+
+
+
+"Started with a laugh. Built a habit."
+
+
+
+"Your goals deserve more than a gentle nudge."
+
+
+
+"Hilarious reminders. Real accountability. Actual results."
+
+
+
+"Most apps remind you. We hold you accountable."
+
+
+
+"We'll roast you into your best self."
+
+
+
+
+
+Each slogan shows alongside a red #C53B3B button "Go Premium 😤" in white text
+
+
+
+Tapping the button navigates to the paywall/subscription screen
+
+
+
+Loops continuously through all 6 — never stops rotating
+
+3. ADD the same rotating slogan banner to the PREMIUM page:
+
+
+
+
+
+Same position as the free page banner
+
+
+
+Same 6 slogans rotating every 4 seconds
+
+
+
+Same slim banner size, light gold #FDF3E3 background, gold border #C9A063
+
+
+
+Text color: black #111827, centered, slightly styled to feel like a brand tagline
+
+
+
+NO button on the premium version — slogans only
+
+
+
+Smooth fade or slide transition between messages
+
+4. VISIBILITY RULES:
+
+
+
+
+
+Free users: rotating banner WITH "Go Premium 😤" button ✅
+
+
+
+Guest users: rotating banner WITH "Go Premium 😤" button ✅
+
+
+
+Premium users: rotating banner WITHOUT button ✅
+
+5. ROTATION BEHAVIOUR:
+
+
+
+
+
+Every 4 seconds switch to next slogan
+
+
+
+Smooth fade or slide animation between messages
+
+
+
+Loops 1 → 2 → 3 → 4 → 5 → 6 → 1 continuously
+
+
+
+Button stays constant — only the text changes
+
+6. Do not change:
+
+
+
+
+
+Banner size or position on either page
+
+
+
+Any ad functionality
+
+
+
+Anything else on either home page not mentioned
+
+7. Show every file being changed before editing

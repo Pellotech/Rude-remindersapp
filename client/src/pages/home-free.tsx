@@ -28,7 +28,6 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
-import { RewardAdBanner } from "@/components/RewardAdBanner";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -50,6 +49,15 @@ function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): 
   return voices.find(v => v.lang.includes('en'));
 }
 
+const SLOGANS = [
+  "We'll annoy you into becoming a better person.",
+  "Started with a laugh. Built a habit.",
+  "Your goals deserve more than a gentle nudge.",
+  "Hilarious reminders. Real accountability. Actual results.",
+  "Most apps remind you. We hold you accountable.",
+  "We'll roast you into your best self.",
+];
+
 // Free plan limits
 const FREE_LIMITS = {
   reminders: 15, // 15 reminders per month
@@ -70,6 +78,19 @@ export default function HomeFree() {
     premiumVoicesUntil: 0, // Timestamp when premium voices expire
   });
   const [adActionCount, setAdActionCount] = useState(0);
+  const [sloganIndex, setSloganIndex] = useState(0);
+  const [sloganVisible, setSloganVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSloganVisible(false);
+      setTimeout(() => {
+        setSloganIndex(prev => (prev + 1) % SLOGANS.length);
+        setSloganVisible(true);
+      }, 350);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
 
   // For guest users, use localStorage; for authenticated users, use API
@@ -231,7 +252,6 @@ export default function HomeFree() {
 
   // Calculate free usage with rewarded bonuses
   const effectiveReminderLimit = FREE_LIMITS.reminders + rewardedFeatures.extraReminders;
-  const hasTemporaryPremiumVoices = rewardedFeatures.premiumVoicesUntil > Date.now();
 
   const freeUsage = {
     reminders: monthlyUsage,
@@ -259,50 +279,24 @@ export default function HomeFree() {
               </h1>
             </div>
           </div>
-          {/* Slim upgrade banner */}
-          <div className="flex items-center justify-between bg-[#F9FAFB] border border-[#EAEAEA] rounded-[12px] px-3 py-2 mt-2">
-            <p className="text-xs text-[#6B7280]">Upgrade to Premium for full access</p>
+          {/* Rotating slogan banner */}
+          <div className="flex items-center justify-between bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 py-2 mt-2 min-h-[36px]">
+            <p
+              className="text-xs text-[#111827] flex-1 mr-3"
+              style={{ opacity: sloganVisible ? 1 : 0, transition: 'opacity 0.35s ease' }}
+            >
+              {SLOGANS[sloganIndex]}
+            </p>
             <button
               onClick={() => setLocation('/subscribe')}
-              className="text-xs font-semibold text-white bg-[#C53B3B] px-3 py-1 rounded-full hover:bg-[#A83232] transition-colors"
+              className="text-xs font-semibold text-white bg-[#C53B3B] px-3 py-1 rounded-full hover:bg-[#A83232] transition-colors flex-shrink-0"
             >
-              Subscribe
+              Go Premium 😤
             </button>
           </div>
         </div>
 
 
-
-        {/* Reward Ad Banner */}
-        <RewardAdBanner 
-          onRewardEarned={() => {
-            const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
-
-            if (rewardType === 'reminders') {
-              setRewardedFeatures(prev => ({
-                ...prev,
-                extraReminders: prev.extraReminders + 3
-              }));
-              toast({
-                title: "Reward Earned! 🎁",
-                description: "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
-              });
-            } else {
-              const premiumUntil = Date.now() + (30 * 60 * 1000); // 30 minutes
-              setRewardedFeatures(prev => ({
-                ...prev,
-                premiumVoicesUntil: premiumUntil
-              }));
-              toast({
-                title: "Reward Earned! 🔊",
-                description: "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters.",
-              });
-            }
-          }}
-          currentReminders={freeUsage.reminders}
-          maxReminders={freeUsage.effectiveLimit}
-          hasTemporaryPremiumVoices={hasTemporaryPremiumVoices}
-        />
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="create" className="space-y-6">

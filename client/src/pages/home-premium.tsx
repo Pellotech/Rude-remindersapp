@@ -56,6 +56,15 @@ function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): 
   return voices.find(v => v.lang.includes('en'));
 }
 
+const SLOGANS = [
+  "We'll annoy you into becoming a better person.",
+  "Started with a laugh. Built a habit.",
+  "Your goals deserve more than a gentle nudge.",
+  "Hilarious reminders. Real accountability. Actual results.",
+  "Most apps remind you. We hold you accountable.",
+  "We'll roast you into your best self.",
+];
+
 export default function HomePremium() {
   const { isAndroid } = getPlatformInfo();
   const { user } = useAuth();
@@ -66,6 +75,19 @@ export default function HomePremium() {
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [graphTab, setGraphTab] = useState<"week" | "year" | "tenWeeks">("week");
   const graphScrollRef = useRef<HTMLDivElement>(null);
+  const [sloganIndex, setSloganIndex] = useState(0);
+  const [sloganVisible, setSloganVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSloganVisible(false);
+      setTimeout(() => {
+        setSloganIndex(prev => (prev + 1) % SLOGANS.length);
+        setSloganVisible(true);
+      }, 350);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (graphTab !== "week" && graphScrollRef.current) {
@@ -245,6 +267,15 @@ export default function HomePremium() {
                 </Badge>
               </h1>
             </div>
+          </div>
+          {/* Rotating slogan banner — premium, no button */}
+          <div className="flex items-center justify-center bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 py-2 mt-2 min-h-[36px]">
+            <p
+              className="text-xs text-[#111827] text-center"
+              style={{ opacity: sloganVisible ? 1 : 0, transition: 'opacity 0.35s ease' }}
+            >
+              {SLOGANS[sloganIndex]}
+            </p>
           </div>
         </div>
 
