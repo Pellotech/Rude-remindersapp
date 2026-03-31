@@ -33,28 +33,30 @@ export function RewardAdBanner({
     }
   };
 
+  const cardStyle = { backgroundColor: '#DCFCE7' };
+  const iconStyle = { backgroundColor: '#C9A063' };
+
   if (needsMoreReminders) {
     return (
-      <Card className="mb-4 border-2 border-[#C9A063]" style={{ backgroundColor: '#FDF3E3' }}>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center h-10 w-10 rounded-full" style={{ backgroundColor: '#C9A063' }}>
-                <Bell className="h-5 w-5 text-white" />
+      <Card className="mb-3 border-2 border-[#C9A063]" style={cardStyle}>
+        <CardContent className="p-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <div className="flex items-center justify-center h-7 w-7 rounded-full shrink-0" style={iconStyle}>
+                <Bell className="h-3.5 w-3.5 text-white" />
               </div>
-              <div>
-                <h3 className="font-semibold text-[#111827]">Reminder Limit Reached</h3>
-                <p className="text-sm text-[#111827]">
-                  Watch an ad to earn 3 bonus reminders this month!
-                </p>
+              <div className="min-w-0">
+                <span className="text-xs font-semibold text-[#111827]">Limit reached — </span>
+                <span className="text-xs text-[#111827]">watch an ad for 3 bonus reminders</span>
               </div>
             </div>
             <Button 
+              size="sm"
               onClick={handleWatchAd}
-              className="bg-[#C53B3B] hover:bg-[#a83030] text-white"
+              className="shrink-0 h-7 px-2 text-xs bg-[#C9A063] hover:bg-[#b38a50] text-white"
               data-testid="watch-ad-for-reminders"
             >
-              <Gift className="h-4 w-4 mr-2" />
+              <Gift className="h-3 w-3 mr-1" />
               Watch Ad
             </Button>
           </div>
@@ -65,26 +67,25 @@ export function RewardAdBanner({
 
   if (isNearLimit && !hasTemporaryPremiumVoices) {
     return (
-      <Card className="mb-4 border-2 border-[#C9A063]" style={{ backgroundColor: '#FDF3E3' }}>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center h-10 w-10 rounded-full" style={{ backgroundColor: '#C9A063' }}>
-                <Volume2 className="h-5 w-5 text-white" />
+      <Card className="mb-3 border-2 border-[#C9A063]" style={cardStyle}>
+        <CardContent className="p-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <div className="flex items-center justify-center h-7 w-7 rounded-full shrink-0" style={iconStyle}>
+                <Volume2 className="h-3.5 w-3.5 text-white" />
               </div>
-              <div>
-                <h3 className="font-semibold text-[#111827]">Unlock Premium Voices</h3>
-                <p className="text-sm text-[#111827]">
-                  Watch an ad to unlock premium voice characters for 30 minutes!
-                </p>
+              <div className="min-w-0">
+                <span className="text-xs font-semibold text-[#111827]">Unlock voices — </span>
+                <span className="text-xs text-[#111827]">premium voices for 30 min</span>
               </div>
             </div>
             <Button 
+              size="sm"
               onClick={handleWatchAd}
-              className="bg-[#C53B3B] hover:bg-[#a83030] text-white"
+              className="shrink-0 h-7 px-2 text-xs bg-[#C9A063] hover:bg-[#b38a50] text-white"
               data-testid="watch-ad-for-voices"
             >
-              <Play className="h-4 w-4 mr-2" />
+              <Play className="h-3 w-3 mr-1" />
               Watch Ad
             </Button>
           </div>
@@ -94,27 +95,26 @@ export function RewardAdBanner({
   }
 
   return (
-    <Card className="mb-4 border-2 border-[#C9A063]" style={{ backgroundColor: '#FDF3E3' }}>
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center h-10 w-10 rounded-full" style={{ backgroundColor: '#C9A063' }}>
-              <Star className="h-5 w-5 text-white" />
+    <Card className="mb-3 border-2 border-[#C9A063]" style={cardStyle}>
+      <CardContent className="p-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div className="flex items-center justify-center h-7 w-7 rounded-full shrink-0" style={iconStyle}>
+              <Star className="h-3.5 w-3.5 text-white" />
             </div>
-            <div>
-              <h3 className="font-semibold text-[#111827]">Earn Free Rewards</h3>
-              <p className="text-sm text-[#111827]">
-                Watch ads to earn bonus reminders or unlock premium features temporarily!
-              </p>
+            <div className="min-w-0">
+              <span className="text-xs font-semibold text-[#111827]">Earn Free Rewards — </span>
+              <span className="text-xs text-[#111827]">watch ads for bonus reminders or premium features</span>
             </div>
           </div>
           <Button 
+            size="sm"
             onClick={handleWatchAd}
-            className="bg-[#C53B3B] hover:bg-[#a83030] text-white"
+            className="shrink-0 h-7 px-2 text-xs bg-[#C9A063] hover:bg-[#b38a50] text-white"
             data-testid="watch-ad-general"
           >
-            <Gift className="h-4 w-4 mr-2" />
-            Earn Rewards
+            <Gift className="h-3 w-3 mr-1" />
+            Earn
           </Button>
         </div>
       </CardContent>

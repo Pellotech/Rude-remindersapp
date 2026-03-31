@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
@@ -498,8 +499,11 @@ export default function HomeFree() {
         }}
       />
 
-      {/* Floating Help Button */}
-      <div className="fixed bottom-20 right-4 z-50 flex gap-2">
+      {/* Floating Help Button — raised above banner on Android */}
+      <div
+        className="fixed right-4 z-50 flex gap-2"
+        style={{ bottom: Capacitor.getPlatform() === 'android' ? '112px' : '80px' }}
+      >
         <HelpMenu />
       </div>
     </div>

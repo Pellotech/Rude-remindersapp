@@ -52,10 +52,10 @@ export function AdMobManager({
     }
   }, [isPremium, isBannerVisible]);
 
-  // Show interstitial ad every 3 actions (respectfully)
+  // Show interstitial ad every 2 actions (respectfully)
   useEffect(() => {
-    console.log(`[AdMob] actionCount=${actionCount}, showInterstitialOnAction=${showInterstitialOnAction}, isPremium=${isPremium}`);
-    if (!isPremium && showInterstitialOnAction && actionCount > 0 && actionCount % 3 === 0) {
+    console.log(`[AdMob] Ad action count: ${actionCount}/2 | showInterstitialOnAction=${showInterstitialOnAction} | isPremium=${isPremium}`);
+    if (!isPremium && showInterstitialOnAction && actionCount > 0 && actionCount % 2 === 0) {
       const now = Date.now();
       const minIntervalMs = 5 * 60 * 1000; // 5 minutes minimum between interstitials
       console.log(`[AdMob] Interstitial trigger check: timeSinceLast=${Math.round((now - lastInterstitialTime) / 1000)}s, minInterval=300s`);

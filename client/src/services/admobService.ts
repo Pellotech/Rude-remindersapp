@@ -56,9 +56,9 @@ export class AdMobService {
     if (Capacitor.getPlatform() !== 'android') return 0;
     try {
       const { insets } = await SafeArea.getSafeAreaInsets();
-      return insets.bottom || 56; // 56px fallback for typical Android nav bar
+      return Math.max(insets.bottom, 48); // minimum 48px to clear Android nav bar
     } catch {
-      return 56;
+      return 48;
     }
   }
 

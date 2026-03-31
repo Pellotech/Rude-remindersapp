@@ -1,0 +1,147 @@
+In the Rude Reminders app I have four ad-related fixes needed. Please address all of them:
+
+1. INTERSTITIAL AD — change trigger threshold to 2:
+
+
+
+
+
+Find the action counter that controls when the interstitial ad fires
+
+
+
+Change the threshold from 5 to 2 — ad fires every 2 actions
+
+
+
+Keep the 5 minute minimum gap between ads exactly as is
+
+
+
+Keep whatever currently counts as an action — do not change that logic
+
+
+
+Add a console log: "Ad action count: X/2" every time counter increments so we can verify it works
+
+2. ANDROID — fix Help button hidden behind banner ad:
+
+
+
+
+
+The floating Help button at the bottom right is sitting behind the banner ad on Android
+
+
+
+Find the Help button component
+
+
+
+Add bottom margin/padding of approximately 60px on Android only so it floats above the banner
+
+
+
+iOS Help button position is fine — do not touch it
+
+
+
+Also check if any other floating elements are hidden behind the Android banner and fix those too
+
+3. EARN FREE REWARDS BUBBLE — make compact and fix colors:
+
+
+
+
+
+The card is too large and dominates too much screen space
+
+
+
+Make it more compact:
+
+
+
+
+
+Reduce padding inside the card significantly
+
+
+
+Make the text smaller and tighter
+
+
+
+Make the "Earn Rewards" button smaller and inline with the text
+
+
+
+Overall card should be roughly half its current height
+
+
+
+Background color on BOTH iOS and Android:
+
+
+
+
+
+Light green background #DCFCE7
+
+
+
+Gold border #C9A063
+
+
+
+Text color black #111827
+
+
+
+Button:  #C9A063 with white text
+
+
+
+Both platforms must match — same light green on both
+
+4. ANDROID BANNER AD — move above system navigation bar:
+
+
+
+
+
+The banner ad is being partially covered by Android's system navigation bar (the row with back/home/recent buttons)
+
+
+
+Find the banner ad position configuration in admobService.ts
+
+
+
+Add bottom offset so the banner displays fully above the Android navigation bar
+
+
+
+Use safe area insets or a fixed offset of approximately 48px on Android
+
+
+
+iOS banner position is correct — do not change it
+
+Do not change:
+
+
+
+
+
+Any ad IDs or initialization logic
+
+
+
+iOS banner or Help button — both working correctly
+
+
+
+Any non-ad related UI or functionality
+
+Show every file and exact lines being changed before editing
