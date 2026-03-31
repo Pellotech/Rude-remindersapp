@@ -1,0 +1,107 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm run build
+npx cap sync ios
+npx cap open ios
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 117 modules transformed.
+x Build failed in 959ms
+error during build:
+[vite]: Rollup failed to resolve import "@capacitor/haptics" from "/Users/macbookpro/Documents/GitHub/Rude-remindersapp/client/src/components/ReminderForm.tsx".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at viteWarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/@vitejs/plugin-react/dist/index.mjs:280:9)
+    at onRollupWarning (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+    at file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+    at Object.logger [as onLog] (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+    at file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20025:26
+✔ Copying web assets from public to ios/App/App/public in 14.32ms
+✔ Creating capacitor.config.json in ios/App/App in 7.32ms
+✔ copy ios in 89.79ms
+✔ Updating iOS plugins in 9.75ms
+✔ Updating iOS native dependencies with pod install in 3.66s
+[info] Found 18 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor-community/apple-sign-in@7.1.0
+       @capacitor-community/text-to-speech@6.1.0
+       @capacitor/app@7.1.0
+       @capacitor/app-launcher@7.0.2
+       @capacitor/browser@7.0.2
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/preferences@7.0.3
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @capawesome/capacitor-file-picker@7.2.0
+       @revenuecat/purchases-capacitor@11.2.1
+       capacitor-plugin-safe-area@4.0.3
+✔ update ios in 3.73s
+[info] Sync finished in 4.113s
+✔ Opening the Xcode workspace... in 3.00s
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm run build
+npx cap sync ios
+npx cap open ios
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.19 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 90 modules transformed.
+x Build failed in 884ms
+error during build:
+[vite]: Rollup failed to resolve import "@capacitor/haptics" from "/Users/macbookpro/Documents/GitHub/Rude-remindersapp/client/src/components/ReminderForm.tsx".
+This is most likely unintended because it can break your application at runtime.
+If you do want to externalize this module explicitly add it to
+`build.rollupOptions.external`
+    at viteWarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/@vitejs/plugin-react/dist/index.mjs:280:9)
+    at onRollupWarning (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
+    at onwarn (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+    at file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+    at Object.logger [as onLog] (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+    at file:///Users/macbookpro/Documents/GitHub/Rude-remindersapp/node_modules/rollup/dist/es/shared/node-entry.js:20025:26
+✔ Copying web assets from public to ios/App/App/public in 13.75ms
+✔ Creating capacitor.config.json in ios/App/App in 397.04μs
+✔ copy ios in 72.80ms
+✔ Updating iOS plugins in 9.65ms
+✔ Updating iOS native dependencies with pod install in 2.11s
+[info] Found 18 Capacitor plugins for ios:
+       @capacitor-community/admob@7.0.3
+       @capacitor-community/apple-sign-in@7.1.0
+       @capacitor-community/text-to-speech@6.1.0
+       @capacitor/app@7.1.0
+       @capacitor/app-launcher@7.0.2
+       @capacitor/browser@7.0.2
+       @capacitor/camera@7.0.2
+       @capacitor/device@7.0.2
+       @capacitor/filesystem@7.1.4
+       @capacitor/local-notifications@7.0.2
+       @capacitor/network@7.0.2
+       @capacitor/preferences@7.0.3
+       @capacitor/share@7.0.3
+       @capacitor/splash-screen@7.0.2
+       @capacitor/status-bar@7.0.2
+       @capawesome/capacitor-file-picker@7.2.0
+       @revenuecat/purchases-capacitor@11.2.1
+       capacitor-plugin-safe-area@4.0.3
+✔ update ios in 2.16s
+[info] Sync finished in 2.505s
+✔ Opening the Xcode workspace... in 3.00s
+macbookpro@The-Book-of-OTG Rude-remindersapp % 
