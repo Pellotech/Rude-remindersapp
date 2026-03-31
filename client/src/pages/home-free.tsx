@@ -88,7 +88,7 @@ export default function HomeFree() {
         setSloganIndex(prev => (prev + 1) % SLOGANS.length);
         setSloganVisible(true);
       }, 350);
-    }, 4000);
+    }, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -280,10 +280,20 @@ export default function HomeFree() {
             </div>
           </div>
           {/* Rotating slogan banner */}
-          <div className="flex items-center justify-between bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 py-2 mt-2 min-h-[36px]">
+          <div
+            className="flex items-center justify-between bg-[#DCFCE7] border border-[#C9A063] rounded-[12px] px-3 mt-2"
+            style={{ height: '52px', overflow: 'hidden' }}
+          >
             <p
-              className="text-xs text-[#111827] flex-1 mr-3"
-              style={{ opacity: sloganVisible ? 1 : 0, transition: 'opacity 0.35s ease' }}
+              className="text-[11px] text-[#111827] flex-1 mr-3 leading-snug"
+              style={{
+                opacity: sloganVisible ? 1 : 0,
+                transition: 'opacity 0.35s ease',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical' as const,
+                overflow: 'hidden',
+              }}
             >
               {SLOGANS[sloganIndex]}
             </p>

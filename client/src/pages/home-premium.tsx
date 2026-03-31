@@ -85,7 +85,7 @@ export default function HomePremium() {
         setSloganIndex(prev => (prev + 1) % SLOGANS.length);
         setSloganVisible(true);
       }, 350);
-    }, 4000);
+    }, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -268,14 +268,25 @@ export default function HomePremium() {
               </h1>
             </div>
           </div>
-          {/* Rotating slogan banner — premium, no button */}
-          <div className="flex items-center justify-center bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 py-2 mt-2 min-h-[36px]">
+          {/* Rotating slogan banner — premium, rose emoji */}
+          <div
+            className="flex items-center justify-between bg-[#DCFCE7] border border-[#C9A063] rounded-[12px] px-3 mt-2"
+            style={{ height: '52px', overflow: 'hidden' }}
+          >
             <p
-              className="text-xs text-[#111827] text-center"
-              style={{ opacity: sloganVisible ? 1 : 0, transition: 'opacity 0.35s ease' }}
+              className="text-[11px] text-[#111827] flex-1 mr-2 leading-snug"
+              style={{
+                opacity: sloganVisible ? 1 : 0,
+                transition: 'opacity 0.35s ease',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical' as const,
+                overflow: 'hidden',
+              }}
             >
               {SLOGANS[sloganIndex]}
             </p>
+            <span className="text-xl flex-shrink-0">🌹</span>
           </div>
         </div>
 
