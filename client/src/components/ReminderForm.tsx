@@ -1095,13 +1095,14 @@ export default function ReminderForm({
             />
 
             {/* Rudeness Level Slider */}
+            <div className="-mt-1">
             <FormField
               control={form.control}
               name="rudenessLevel"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[#1A1A1A]">Rudeness Level</FormLabel>
-                  <div className="px-4 py-6 bg-[#FDF3E3] rounded-lg">
+                  <div className="px-4 pt-3 pb-5 bg-[#FDF3E3] rounded-lg">
+                    <p className="text-sm font-medium text-[#1A1A1A] mb-3">Rudeness Level</p>
                     <FormControl>
                       <Slider
                         min={1}
@@ -1139,6 +1140,7 @@ export default function ReminderForm({
                 </FormItem>
               )}
             />
+            </div>
 
             {/* Hidden context field — value set programmatically if needed */}
             <input type="hidden" {...form.register("context")} />

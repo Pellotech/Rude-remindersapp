@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Bell,
-  Crown,
   TrendingUp,
   Calendar,
   MessageSquare,
@@ -294,7 +293,6 @@ export default function HomePremium() {
                     transition: 'background-color 0.3s ease, color 0.3s ease',
                   }}
                 >
-                  <Crown className="h-3 w-3 mr-1" />
                   Premium 👑
                 </Badge>
               </h1>
