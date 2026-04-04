@@ -1,0 +1,42 @@
+I need you to fix timing bugs in the Rudy animation system. There are 3 bugs:
+
+1. The button clone and Rudy disappear at the same time — the button should fly RIGHT first, then Rudy exits after
+2. Some animations skip phases — Rudy pops in and immediately disappears  
+3. The whole form goes blank during animation instead of just the button area
+
+Files to read FIRST before making any changes:
+- client/src/components/RudyAnimation.tsx
+- client/src/pages/home-premium.tsx
+
+The correct sequence for animations 0, 1, and 3 is:
+  Phase 1: Rudy enters from LEFT
+  Phase 2: Rudy does his action (push/pop/stare)
+  Phase 3: onButtonExit fires → button clone flies RIGHT (Rudy is still visible)
+  Phase 4: Rudy reacts (image swaps to smug/thumbs up/smirk)
+  Phase 5: Rudy exits RIGHT — ONLY after button is already gone
+  Phase 6: onComplete fires
+
+Animation 2 is the exception — Rudy and button exit RIGHT simultaneously in Phase 3.
+
+Here is what needs to change in RudyAnimation.tsx:
+- Each phase must be driven by sequential setTimeout chains, NOT by CSS transition end events (those are unreliable)
+- Use explicit millisecond durations for each phase. Suggested timings:
+    Phase 1 (enter): 600ms
+    Phase 2 (action): 500ms  
+    Phase 3 (button exit): fires at 1100ms mark, button flies over 300ms
+    Phase 4 (reaction): fires at 1450ms mark
+    Phase 5 (Rudy exit): fires at 1900ms mark
+    onComplete: fires at 2300ms mark
+- The phase state should be a number (0,1,2,3,4,5) stored in a useRef or useState, advancing only via the setTimeout chain
+- Add a useEffect cleanup that calls clearTimeout on all timers when the component unmounts — this prevents the "disappears immediately" bug
+
+Here is what needs to change in home-premium.tsx:
+- The form/content area must NOT be hidden or set to opacity:0 during animation
+- Only the button itself should be hidden (opacity:0) while the fake button clone is showing
+- The fake button clone should be positioned absolute, overlaid on top of the real button position only
+- Use a wrapper div around just the Create Reminder button with position:relative so the clone can be absolutely positioned inside it
+- Everything else on the page (form fields, inputs, etc.) stays fully visible during animation
+
+Do NOT change any other files. Do NOT change the animation images, the onButtonExit prop, or the overall component structure.
+
+Show me the full updated content of both files before applying changes. Make the smallest safe changes needed to fix the timing.

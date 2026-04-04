@@ -1,0 +1,80 @@
+I want to replace the rotating slogan box (the one with the rose emoji 🌹 that shows lines 
+like "Started with a laugh. Built a habit.") with an interactive Rudy character widget.
+
+Files to read FIRST before making any changes:
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx  
+- client/src/pages/home-guest.tsx (if it exists)
+- client/src/components/RudyAnimation.tsx
+- Check if there is a shared layout or tab component that wraps all three home tabs
+
+DO NOT touch RudyAnimation.tsx. This is a separate, simpler component.
+
+CREATE a new file: client/src/components/RudyWidget.tsx
+
+This component replaces the slogan box. Here is exactly what it should do:
+
+LAYOUT:
+- Same width and position as the current slogan box
+- Height: around 90px
+- Background: same cream/gold card style as the rest of the app (#FDF3E3 or match existing card style)
+- Rounded corners, subtle border matching the app theme
+- Inside: Rudy image on the LEFT, speech bubble on the RIGHT
+
+RUDY IMAGE STATES (4 total):
+- DEFAULT IDLE: /rudy/Rudy_leaning_2_transparent.png — side smug eyes closed
+- IDLE SWAP: every 12 seconds randomly alternate between Rudy_leaning_2_transparent.png 
+  and Rudy_idle_smile_transparent.png to keep him feeling alive even when not interacted with
+- TAPPED: swap to /rudy/Rudy_smirk_content_transparent.png for 1200ms then back to idle
+- REMINDER CREATED: swap to /rudy/Rudy_thumbs_up_smile_transparent.png for 2000ms then back to idle
+- Image size: 64x64px
+- Apply mix-blend-mode: multiply to all Rudy images to handle any background artifacts
+
+SPEECH BUBBLE:
+- Sits to the RIGHT of Rudy
+- Rounded pill shape, background white or very light cream
+- Shows one line of text at a time
+- Text rotates every 8 seconds through these 6 slogans:
+  1. "We'll annoy you into becoming a better person."
+  2. "Started with a laugh. Built a habit."
+  3. "Your goals deserve more than a gentle nudge."
+  4. "Hilarious reminders. Real accountability. Actual results."
+  5. "Most apps remind you. We hold you accountable."
+  6. "We'll roast you into your best self."
+- When user TAPS Rudy, immediately change the speech bubble to a random line from this list:
+  "Oi. You tapped me. Now go do something."
+  "Stop poking me and go finish your tasks."
+  "What are you waiting for? Create a reminder."
+  "I'm watching you. Don't disappoint me."
+  "You think this is a game? It is. And you're losing."
+- After 3 seconds the speech bubble returns to the rotating slogans
+- When REMINDER CREATED event fires, bubble shows: "Nice one. Now actually do it." for 3 seconds
+- When STREAK event fires, bubble shows: "Look at you. Almost forming a habit." for 3 seconds
+
+EVENTS (via props):
+- Accept an optional prop: nudgeEvent?: 'reminder_created' | 'streak' | null
+- When nudgeEvent === 'reminder_created': swap to thumbs up image, show the reminder created bubble line
+- When nudgeEvent === 'streak': swap to thumbs up image, show the streak bubble line
+- Accept prop: onNudgeHandled?: () => void — call this after the event animation finishes so parent can reset
+
+EXPORT the component with these props:
+interface RudyWidgetProps {
+  nudgeEvent?: 'reminder_created' | 'streak' | null;
+  onNudgeHandled?: () => void;
+}
+
+THEN in home-premium.tsx:
+- Remove the existing slogan box (the div/card containing the rose 🌹 and rotating slogans)
+- Import and place <RudyWidget /> exactly where that box was
+- Add state: const [lastEvent, setLastEvent] = useState<'reminder_created' | 'streak' | null>(null)
+- Pass nudgeEvent={lastEvent} and onNudgeHandled={() => setLastEvent(null)}
+- When a reminder is successfully created, call setLastEvent('reminder_created')
+
+Do the same slogan box replacement in home-free.tsx and home-guest.tsx if those files also 
+have the slogan box. Wire up the same lastEvent state in those files too.
+
+Do NOT change any other parts of the home pages. Do NOT touch navigation, the Create Reminder 
+button, the form, RudyAnimation.tsx, or any other components.
+
+Show me the full content of RudyWidget.tsx and only the changed sections of the home page 
+files before applying anything. Make changes incremental and safe.

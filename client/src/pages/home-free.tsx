@@ -28,6 +28,7 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
+import RudyWidget from "@/components/RudyWidget";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -49,14 +50,6 @@ function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): 
   return voices.find(v => v.lang.includes('en'));
 }
 
-const SLOGANS = [
-  "We'll annoy you into becoming a better person.",
-  "Started with a laugh. Built a habit.",
-  "Your goals deserve more than a gentle nudge.",
-  "Hilarious reminders. Real accountability. Actual results.",
-  "Most apps remind you. We hold you accountable.",
-  "We'll roast you into your best self.",
-];
 
 // Free plan limits
 const FREE_LIMITS = {
@@ -78,19 +71,7 @@ export default function HomeFree() {
     premiumVoicesUntil: 0, // Timestamp when premium voices expire
   });
   const [adActionCount, setAdActionCount] = useState(0);
-  const [sloganIndex, setSloganIndex] = useState(0);
-  const [sloganVisible, setSloganVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSloganVisible(false);
-      setTimeout(() => {
-        setSloganIndex(prev => (prev + 1) % SLOGANS.length);
-        setSloganVisible(true);
-      }, 350);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
+  const [lastEvent, setLastEvent] = useState<"reminder_created" | "streak" | null>(null);
 
 
   // For guest users, use localStorage; for authenticated users, use API
@@ -283,27 +264,11 @@ export default function HomeFree() {
               </h1>
             </div>
           </div>
-          {/* Rotating slogan banner */}
-          <div
-            className="flex items-center justify-between bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 mt-2"
-            style={{ height: '52px', overflow: 'hidden' }}
-          >
-            <p
-              className="text-[11px] text-[#111827] flex-1 mr-3 leading-snug"
-              style={{
-                opacity: sloganVisible ? 1 : 0,
-                transition: 'opacity 0.35s ease',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical' as const,
-                overflow: 'hidden',
-              }}
-            >
-              {SLOGANS[sloganIndex]}
-            </p>
+          <RudyWidget nudgeEvent={lastEvent} onNudgeHandled={() => setLastEvent(null)} />
+          <div className="flex justify-end -mt-1">
             <button
               onClick={() => setLocation('/subscribe')}
-              className="text-xs font-semibold text-white bg-[#C53B3B] px-3 py-1 rounded-full hover:bg-[#A83232] transition-colors flex-shrink-0"
+              className="text-xs font-semibold text-white bg-[#C53B3B] px-3 py-1 rounded-full hover:bg-[#A83232] transition-colors"
             >
               Go Premium 😤
             </button>
@@ -335,6 +300,7 @@ export default function HomeFree() {
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
               onReminderCreated={() => {
+                setLastEvent("reminder_created");
                 setAdActionCount(prev => {
                   const next = prev + 1;
                   console.log('Ad action counter incremented:', next);

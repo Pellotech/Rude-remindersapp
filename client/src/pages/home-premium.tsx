@@ -36,6 +36,7 @@ import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyAnimation from "@/components/RudyAnimation";
+import RudyWidget from "@/components/RudyWidget";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -57,14 +58,6 @@ function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): 
   return voices.find(v => v.lang.includes('en'));
 }
 
-const SLOGANS = [
-  "We'll annoy you into becoming a better person.",
-  "Started with a laugh. Built a habit.",
-  "Your goals deserve more than a gentle nudge.",
-  "Hilarious reminders. Real accountability. Actual results.",
-  "Most apps remind you. We hold you accountable.",
-  "We'll roast you into your best self.",
-];
 
 export default function HomePremium() {
   const { isAndroid } = getPlatformInfo();
@@ -90,8 +83,7 @@ export default function HomePremium() {
   );
   const badgeColor = rudeLevelColors[badgeRudenessLevel] ?? rudeLevelColors[3];
   const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
-  const [sloganIndex, setSloganIndex] = useState(0);
-  const [sloganVisible, setSloganVisible] = useState(true);
+  const [lastEvent, setLastEvent] = useState<"reminder_created" | "streak" | null>(null);
   const [showRudy, setShowRudy] = useState(false);
   const [rudyAnimIndex, setRudyAnimIndex] = useState(0);
   const [buttonTransform, setButtonTransform] = useState('translateX(0)');
@@ -103,17 +95,6 @@ export default function HomePremium() {
       setBadgeRudenessLevel((user as any).defaultRudenessLevel);
     }
   }, [(user as any)?.defaultRudenessLevel]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSloganVisible(false);
-      setTimeout(() => {
-        setSloganIndex(prev => (prev + 1) % SLOGANS.length);
-        setSloganVisible(true);
-      }, 350);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (graphTab !== "week" && graphScrollRef.current) {
@@ -303,26 +284,7 @@ export default function HomePremium() {
               </h1>
             </div>
           </div>
-          {/* Rotating slogan banner — premium, rose emoji */}
-          <div
-            className="flex items-center justify-between bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 mt-2"
-            style={{ height: '52px', overflow: 'hidden' }}
-          >
-            <p
-              className="text-[11px] text-[#111827] flex-1 mr-2 leading-snug"
-              style={{
-                opacity: sloganVisible ? 1 : 0,
-                transition: 'opacity 0.35s ease',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical' as const,
-                overflow: 'hidden',
-              }}
-            >
-              {SLOGANS[sloganIndex]}
-            </p>
-            <span className="text-xl flex-shrink-0">🌹</span>
-          </div>
+          <RudyWidget nudgeEvent={lastEvent} onNudgeHandled={() => setLastEvent(null)} />
         </div>
 
 
@@ -368,6 +330,7 @@ export default function HomePremium() {
                 currentReminderCount={reminders.length}
                 maxReminders={999999}
                 onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+                onReminderCreated={() => setLastEvent("reminder_created")}
               />
               {showRudy && (
                 <>
