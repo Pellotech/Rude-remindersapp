@@ -1,0 +1,148 @@
+In the Rude Reminders app I want to add a Rudy character animation that plays every time the user taps the Create Reminder button. All Rudy PNG images are already uploaded with transparent backgrounds. Please do the following:
+1. RUDY IMAGE ASSET PATHS — use these exact paths:
+@assets/Rudy_idle_main_pose_transparent.png     — angry front facing
+@assets/Rudy_walking_transparent.png            — walking side grumpy
+@assets/Rudy_pushing_transparent.png            — pushing side
+@assets/Rudy_pushing_2_transparent.png          — pushing harder side
+@assets/Rudy_standing_angry_transparent.png     — standing angry side
+@assets/Rudy_confident_arms_crossed_transparent.png — front arms crossed smirk
+@assets/Rudy_smirk_content_transparent.png      — front smirk content
+@assets/Rudy_thumbs_up_smile_transparent.png    — front thumbs up smile
+@assets/Rudy_leaning_transparent.png            — side grumpy arms crossed
+@assets/Rudy_leaning_2_transparent.png          — side smug eyes closed
+@assets/Rudy_relaxing_leaning_transparent.png   — side calm
+@assets/Rudy_idle_smile_transparent.png         — front smile
+@assets/Rudy_content_smile_transparent.png      — front content eyes closed
+2. CREATE client/src/components/RudyAnimation.tsx:
+
+Accepts props: animationIndex: number (0-3) and onComplete: () => void
+Absolutely positioned overlay covering the Create Reminder button area
+overflow: hidden on container — nothing renders outside button zone
+Total animation duration: 2.5 seconds then calls onComplete()
+Safety fallback: if animation fails button reappears after 3 seconds maximum
+
+3. FOUR ANIMATIONS — cycle 0→1→2→3→0:
+Animation 0 — SIDE SHOVE:
+Images used:
+- Walk in:  Rudy_walking_transparent.png
+- Push:     Rudy_pushing_transparent.png  
+- Exit:     Rudy_confident_arms_crossed_transparent.png
+
+Timeline:
+0.0-0.6s  Rudy walks in from LEFT — translateX(-150px) → translateX(0)
+           Add walk bob: translateY oscillates ±4px while moving
+0.6-1.1s  Switch to pushing image — Rudy lunges forward translateX(10px) and back
+1.1-1.7s  Button flies off RIGHT — translateX(120%) rotate(8deg) opacity 0
+1.7-2.2s  Switch to confident_arms_crossed — stands smug 0.3s
+2.2-2.5s  Rudy slides off RIGHT — translateX(150px) opacity 0
+Animation 1 — POP UP FROM BELOW:
+Images used:
+- Pop up:   Rudy_idle_main_pose_transparent.png
+- Smirk:    Rudy_smirk_content_transparent.png
+- Exit:     Rudy_thumbs_up_smile_transparent.png
+
+Timeline:
+0.0-0.6s  Rudy springs up from below — translateY(120px) scale(0) → translateY(0) scale(1)
+           Use spring easing: cubic-bezier(0.34, 1.56, 0.64, 1)
+0.6-1.0s  Switch to smirk_content — slight bob translateY(-6px) and back
+1.0-1.6s  Button flies off RIGHT — translateX(120%) opacity 0
+1.6-2.0s  Switch to thumbs_up_smile — holds pose 0.3s
+2.0-2.5s  Rudy shrinks back down — scale(1) → scale(0) translateY(80px)
+Animation 2 — RUDY RIDES THE BUTTON OFF:
+Images used:
+- Riding:   Rudy_leaning_2_transparent.png (smug eyes closed)
+- Exit:     Rudy_thumbs_up_smile_transparent.png
+
+Timeline:
+0.0-0.7s  Rudy drops from ABOVE — translateY(-150px) → translateY(-30px)
+           Bounce on landing: translateY(-30px) → translateY(4px) → translateY(0px)
+0.7-1.2s  Rudy sits smug on button — slight side to side rock ±3px
+1.2-2.0s  BOTH Rudy AND button move together off RIGHT — translateX(0) → translateX(120%)
+           Rudy stays positioned above button as they exit together
+2.0-2.5s  Flash of thumbs_up at right edge — scale(0.8) opacity 1 → opacity 0
+Animation 3 — DOUBLE PUSH SHOVE:
+Images used:
+- Walk in:  Rudy_walking_transparent.png
+- Stop:     Rudy_standing_angry_transparent.png
+- Push:     Rudy_pushing_2_transparent.png
+- Exit:     Rudy_smirk_content_transparent.png
+
+Timeline:
+0.0-0.5s  Rudy walks in fast from LEFT — translateX(-150px) → translateX(0)
+           Walk bob active during movement
+0.5-0.8s  Switch to standing_angry — Rudy stops and stares at button
+0.8-1.3s  Switch to pushing_2 — big lunge translateX(0) → translateX(15px) → translateX(0)
+           Add slight screen shake on push: container shakes ±3px
+1.3-1.9s  Button blasts off RIGHT — translateX(120%) rotate(12deg) opacity 0 FAST (0.3s)
+1.9-2.2s  Switch to smirk_content — Rudy smirks facing forward
+2.2-2.5s  Rudy slides off RIGHT — translateX(150px) opacity 0
+4. CSS KEYFRAMES to include:
+css@keyframes walk-bob {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes bounce-land {
+  0%   { transform: translateY(-30px); }
+  50%  { transform: translateY(5px); }
+  75%  { transform: translateY(-3px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes button-blast-right {
+  0%   { transform: translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(120%) rotate(10deg); opacity: 0; }
+}
+@keyframes screen-shake {
+  0%, 100% { transform: translateX(0); }
+  25%  { transform: translateX(-3px); }
+  75%  { transform: translateX(3px); }
+}
+@keyframes side-rock {
+  0%, 100% { transform: translateX(0); }
+  50%  { transform: translateX(4px); }
+}
+5. WIRE UP in home-free.tsx AND home-premium.tsx:
+javascriptconst [rudyAnimIndex, setRudyAnimIndex] = useState(0);
+const [showRudy, setShowRudy] = useState(false);
+
+// In onReminderCreated callback:
+const handleReminderCreated = () => {
+  setShowRudy(true);
+  // existing ad counter increment stays here
+};
+
+// onComplete handler:
+const handleRudyComplete = () => {
+  setShowRudy(false);
+  setRudyAnimIndex(prev => (prev + 1) % 4);
+};
+6. BUTTON AREA SETUP:
+jsx<div style={{ position: 'relative', overflow: 'hidden' }}>
+  {/* Create Reminder button — hidden during animation */}
+  <div style={{ opacity: showRudy ? 0 : 1, transition: 'opacity 0.1s' }}>
+    {/* existing Create Reminder button */}
+  </div>
+
+  {/* Rudy overlay */}
+  {showRudy && (
+    <RudyAnimation
+      animationIndex={rudyAnimIndex}
+      onComplete={handleRudyComplete}
+    />
+  )}
+</div>
+7. RUDY SIZING AND POSITION:
+
+Rudy image height: 110px
+Rudy positioned so feet align with bottom of button area
+Rudy enters from LEFT edge of screen
+Rudy exits to RIGHT edge of screen
+Button starts centered, exits to RIGHT
+
+8. DO NOT CHANGE:
+
+Reminder creation logic
+onReminderCreated callback
+Any other buttons or UI
+Ad counter increment — keep it working alongside Rudy
+
+9. Show every file being created or changed before making any edits

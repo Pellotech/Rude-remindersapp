@@ -1,0 +1,139 @@
+
+In the Rude Reminders app please create a new file client/src/components/RudyAnimation.tsx. This is a self contained animation component — do not connect it to anything else yet.
+COMPONENT PROPS:
+typescriptinterface RudyAnimationProps {
+  animationIndex: number; // 0, 1, 2, or 3
+  onComplete: () => void; // called when animation finishes
+}
+```
+
+**RUDY IMAGE PATHS — use these exactly:**
+```
+/rudy/Rudy_idle_main_pose_transparent.png
+/rudy/Rudy_walking_transparent.png
+/rudy/Rudy_pushing_transparent.png
+/rudy/Rudy_pushing_2_transparent.png
+/rudy/Rudy_standing_angry_transparent.png
+/rudy/Rudy_confident_arms_crossed_transparent.png
+/rudy/Rudy_smirk_content_transparent.png
+/rudy/Rudy_thumbs_up_smile_transparent.png
+/rudy/Rudy_leaning_transparent.png
+/rudy/Rudy_leaning_2_transparent.png
+First check where the transparent Rudy images are currently stored in the project — they may already be in client/public/ or attached_assets/ or @assets/. Find them and use the correct path. If they are not in client/public/rudy/ copy them there.
+COMPONENT STRUCTURE:
+tsxexport default function RudyAnimation({ animationIndex, onComplete }: RudyAnimationProps) {
+  const [phase, setPhase] = useState(0);
+  const [currentImage, setCurrentImage] = useState('');
+
+  useEffect(() => {
+    // animation logic runs here
+    // advances through phases using setTimeout
+    // calls onComplete() at the end
+  }, [animationIndex]);
+
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      overflow: 'hidden',
+      pointerEvents: 'none',
+      zIndex: 50,
+    }}>
+      <img
+        src={currentImage}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          height: '110px',
+          width: 'auto',
+          transform: rudyTransform, // changes per phase
+          transition: rudyTransition,
+        }}
+      />
+    </div>
+  );
+}
+```
+
+**ANIMATION 0 — SIDE SHOVE:**
+```
+Phase 0 → 1 (0ms,   600ms): Rudy_walking_transparent.png
+  translateX(-150px) → translateX(0px)
+  easing: ease-out
+
+Phase 1 → 2 (600ms, 500ms): Rudy_pushing_transparent.png
+  translateX(0px) → translateX(12px) → translateX(0px)
+  easing: ease-in-out
+
+Phase 2 → 3 (1100ms, 400ms): Rudy_confident_arms_crossed_transparent.png
+  translateX(0px) — holds still smug
+
+Phase 3 → done (1500ms, 600ms):
+  translateX(0px) → translateX(160px) opacity 1 → 0
+  calls onComplete() at 2100ms
+```
+
+**ANIMATION 1 — POP UP FROM BELOW:**
+```
+Phase 0 → 1 (0ms,   600ms): Rudy_idle_main_pose_transparent.png
+  translateY(120px) scale(0.3) → translateY(0px) scale(1)
+  easing: cubic-bezier(0.34, 1.56, 0.64, 1)  ← springy
+
+Phase 1 → 2 (600ms, 500ms): Rudy_smirk_content_transparent.png
+  translateY(0px) → translateY(-6px) → translateY(0px)
+  easing: ease-in-out  ← little bob
+
+Phase 2 → 3 (1100ms, 400ms): Rudy_thumbs_up_smile_transparent.png
+  holds still 0.4s
+
+Phase 3 → done (1500ms, 600ms):
+  scale(1) → scale(0) translateY(80px) opacity 1 → 0
+  calls onComplete() at 2100ms
+```
+
+**ANIMATION 2 — RIDES THE BUTTON OFF:**
+```
+Phase 0 → 1 (0ms,   700ms): Rudy_leaning_2_transparent.png
+  translateY(-150px) → translateY(0px)
+  easing: cubic-bezier(0.34, 1.56, 0.64, 1)  ← bounce land
+
+Phase 1 → 2 (700ms, 500ms): same image
+  translateX(0px) → translateX(4px) → translateX(0px)
+  easing: ease-in-out  ← smug rock side to side
+
+Phase 2 → done (1200ms, 800ms):
+  translateX(0px) → translateX(160px)
+  opacity 1 → 0 at the very end
+  calls onComplete() at 2000ms
+```
+
+**ANIMATION 3 — DOUBLE PUSH SHOVE:**
+```
+Phase 0 → 1 (0ms,   500ms): Rudy_walking_transparent.png
+  translateX(-150px) → translateX(0px)
+  easing: ease-out
+
+Phase 1 → 2 (500ms, 300ms): Rudy_standing_angry_transparent.png
+  holds still — Rudy stops and stares
+
+Phase 2 → 3 (800ms, 500ms): Rudy_pushing_2_transparent.png
+  translateX(0px) → translateX(15px) → translateX(0px)
+  easing: ease-in-out  ← big lunge
+
+Phase 3 → 4 (1300ms, 400ms): Rudy_smirk_content_transparent.png
+  translateX(0px) — smirks
+
+Phase 4 → done (1700ms, 500ms):
+  translateX(0px) → translateX(160px) opacity 1 → 0
+  calls onComplete() at 2200ms
+IMPORTANT RULES:
+
+Use setTimeout chained calls to advance phases — do NOT use CSS animation names as they are hard to control precisely
+Each phase change updates currentImage and rudyTransform state
+rudyTransition changes per phase to match the duration
+Always call onComplete() at the end of every animation — never leave it hanging
+Add a safety net: setTimeout(onComplete, 3000) on mount in case something goes wrong
+Do NOT import or connect this component anywhere yet — just create the file
+Do NOT change any other files
+
+Show me the complete file before saving it
