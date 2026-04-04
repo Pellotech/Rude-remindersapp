@@ -94,6 +94,8 @@ export default function HomePremium() {
   const [sloganVisible, setSloganVisible] = useState(true);
   const [showRudy, setShowRudy] = useState(false);
   const [rudyAnimIndex, setRudyAnimIndex] = useState(0);
+  const [buttonTransform, setButtonTransform] = useState('translateX(0)');
+  const [buttonTransition, setButtonTransition] = useState('none');
 
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
@@ -360,23 +362,50 @@ export default function HomePremium() {
             >
               🧪 Test Rudy Animation {rudyAnimIndex + 1}/4
             </button>
-            <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
-              <div style={{ opacity: showRudy ? 0 : 1 }}>
-                <ReminderForm
-                  isFreePlan={false}
-                  currentReminderCount={reminders.length}
-                  maxReminders={999999}
-                  onRudenessChange={(level) => setBadgeRudenessLevel(level)}
-                />
-              </div>
+            <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden' }}>
+              <ReminderForm
+                isFreePlan={false}
+                currentReminderCount={reminders.length}
+                maxReminders={999999}
+                onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+              />
               {showRudy && (
-                <RudyAnimation
-                  animationIndex={rudyAnimIndex}
-                  onComplete={() => {
-                    setShowRudy(false);
-                    setRudyAnimIndex(prev => (prev + 1) % 4);
-                  }}
-                />
+                <>
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '72px',
+                    background: '#1B2A5E',
+                    border: '2px solid #F5B942',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: '18px',
+                    transform: buttonTransform,
+                    transition: buttonTransition,
+                    zIndex: 10,
+                  }}>
+                    Create Reminder
+                  </div>
+                  <RudyAnimation
+                    animationIndex={rudyAnimIndex}
+                    onButtonExit={(transform, transition) => {
+                      setButtonTransform(transform);
+                      setButtonTransition(transition);
+                    }}
+                    onComplete={() => {
+                      setShowRudy(false);
+                      setRudyAnimIndex(prev => (prev + 1) % 4);
+                      setButtonTransform('translateX(0)');
+                      setButtonTransition('none');
+                    }}
+                  />
+                </>
               )}
             </div>
           </TabsContent>

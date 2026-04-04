@@ -1,0 +1,120 @@
+In the Rude Reminders app the RudyAnimation test in home-premium.tsx has three problems to fix:
+1. FIX THE BLANK SCREEN — only hide the button not the whole form:
+
+Currently the entire <ReminderForm> fades to opacity 0 during animation
+Change it so ONLY the Create Reminder button area fades out
+The rest of the form — date picker, time selector, rudeness slider — must stay fully visible during the animation
+Find the wrapper that currently sets opacity: 0 on the whole form and remove it
+Instead wrap ONLY the button area in the relative container
+
+2. FIX RUDY'S SIZE AND POSITION:
+
+Rudy should appear standing at the bottom of the Create Reminder button
+The overlay container should be the same height as the button — approximately 50px tall
+But Rudy himself should be 110px tall — so he stands ABOVE the button with his feet at the button bottom
+Use overflow: visible on the container so Rudy's upper body shows above the button
+Use overflow: hidden only on the LEFT and RIGHT edges to clip the enter/exit
+
+This CSS on the container:
+cssposition: relative;
+overflow: hidden;        /* clips left/right entry/exit */
+height: /* button height */;
+And on the Rudy img keep:
+cssposition: absolute;
+bottom: 0;              /* feet at button bottom */
+height: 110px;          /* taller than container */
+3. FIX THE BUTTON FLYING OFF — animate the button element itself:
+Add a second animated element inside the container that is a COPY of the button styling but controlled by Rudy's animation state:
+tsx<div style={{ position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
+
+  {/* Real button — hidden when Rudy is active */}
+  <div style={{ opacity: showRudy ? 0 : 1, transition: 'opacity 0.1s' }}>
+    {/* existing Create Reminder button */}
+  </div>
+
+  {/* Fake button clone that flies off during animation */}
+  {showRudy && (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      background: '#1e3a5f',    /* match Create Reminder button color */
+      borderRadius: '12px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      fontWeight: '600',
+      fontSize: '16px',
+      transform: buttonTransform,
+      transition: buttonTransition,
+    }}>
+      Create Reminder
+    </div>
+  )}
+
+  {/* Rudy overlay */}
+  {showRudy && (
+    <RudyAnimation
+      animationIndex={rudyAnimIndex}
+      onComplete={() => {
+        setShowRudy(false);
+        setRudyAnimIndex(prev => (prev + 1) % 4);
+      }}
+      onButtonExit={(transform, transition) => {
+        setButtonTransform(transform);
+        setButtonTransition(transition);
+      }}
+    />
+  )}
+</div>
+4. ADD onButtonExit prop to RudyAnimation.tsx:
+
+Add optional prop: onButtonExit?: (transform: string, transition: string) => void
+In each animation at the phase where the button should fly right call:
+
+javascriptonButtonExit?.('translateX(110%)', 'transform 400ms ease-in');
+
+This triggers the fake button clone to fly off at the right moment in each animation
+
+5. ADD TWO NEW STATE VARIABLES in home-premium.tsx:
+typescriptconst [buttonTransform, setButtonTransform] = useState('translateX(0)');
+const [buttonTransition, setButtonTransition] = useState('none');
+Reset both when onComplete fires:
+typescriptsetButtonTransform('translateX(0)');
+setButtonTransition('none');
+6. MORE RUDY IMAGES — add these to make him less stiff:
+In RudyAnimation.tsx add these to the IMGS object:
+typescriptrelaxing:  "/rudy/Rudy_relaxing_leaning_transparent.png",
+idleSmile: "/rudy/Rudy_idle_smile_transparent.png",
+contentSmile: "/rudy/Rudy_content_smile_transparent.png",
+```
+
+Update animations to swap images more frequently:
+
+Animation 0 — add image swap at lunge peak:
+```
+At push phase peak (750ms): briefly flash Rudy_pushing_2_transparent.png for 150ms then back to pushing
+```
+
+Animation 1 — add extra bob image:
+```
+At bob up (600ms): use Rudy_idle_smile_transparent.png
+At bob down (850ms): switch to Rudy_smirk_content_transparent.png
+```
+
+Animation 2 — add rock images:
+```
+At rock right (700ms): use Rudy_relaxing_leaning_transparent.png
+At rock left (950ms): switch back to Rudy_leaning_2_transparent.png
+```
+
+Animation 3 — add stare moment:
+```
+At angry stare (500ms): use Rudy_standing_angry_transparent.png with slight scale(1.05) pulse
+7. DO NOT CHANGE:
+
+The actual reminder creation logic
+Any other parts of the form
+Any other files besides home-premium.tsx and RudyAnimation.tsx
+
+8. Show every file and exact lines being changed before editing
