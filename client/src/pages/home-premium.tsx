@@ -35,6 +35,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
+import RudyAnimation from "@/components/RudyAnimation";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -91,6 +92,8 @@ export default function HomePremium() {
   const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
   const [sloganIndex, setSloganIndex] = useState(0);
   const [sloganVisible, setSloganVisible] = useState(true);
+  const [showRudy, setShowRudy] = useState(false);
+  const [rudyAnimIndex, setRudyAnimIndex] = useState(0);
 
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
@@ -340,12 +343,42 @@ export default function HomePremium() {
           </TabsList>
 
           <TabsContent value="create" className="space-y-6">
-            <ReminderForm 
-              isFreePlan={false}
-              currentReminderCount={reminders.length}
-              maxReminders={999999}
-              onRudenessChange={(level) => setBadgeRudenessLevel(level)}
-            />
+            {/* TEMPORARY TEST — remove after testing */}
+            <button
+              onClick={() => setShowRudy(true)}
+              style={{
+                background: '#C9A063',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                marginBottom: '8px',
+                fontSize: '13px',
+                cursor: 'pointer',
+                width: '100%',
+              }}
+            >
+              🧪 Test Rudy Animation {rudyAnimIndex + 1}/4
+            </button>
+            <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
+              <div style={{ opacity: showRudy ? 0 : 1 }}>
+                <ReminderForm
+                  isFreePlan={false}
+                  currentReminderCount={reminders.length}
+                  maxReminders={999999}
+                  onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+                />
+              </div>
+              {showRudy && (
+                <RudyAnimation
+                  animationIndex={rudyAnimIndex}
+                  onComplete={() => {
+                    setShowRudy(false);
+                    setRudyAnimIndex(prev => (prev + 1) % 4);
+                  }}
+                />
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
