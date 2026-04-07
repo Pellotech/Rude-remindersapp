@@ -411,13 +411,11 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   }
 
   function returnToIdle() {
-    setBubbleVisible(false);
-    addTimer(() => {
-      setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
-      setBubbleText(getRudyLine("idle"));
-      setBubbleVisible(true);
-      modeRef.current = "idle";
-    }, 350);
+    // Instant update — no timers, no race conditions that can leave the bubble empty
+    modeRef.current = "idle";
+    setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
+    setBubbleText(getRudyLine("idle"));
+    setBubbleVisible(true);
   }
 
   // Idle image cycle every 12 seconds (3-image rotation)
@@ -431,17 +429,11 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
     return () => clearInterval(interval);
   }, []);
 
-  // Idle bubble rotation every 8 seconds
+  // Idle bubble text rotation every 8 seconds — instant swap, no fade
   useEffect(() => {
     const interval = setInterval(() => {
-      if (modeRef.current !== "idle") return;  // guard FIRST — never touch bubble when in event/title/tapped mode
-      setBubbleVisible(false);
-      const tid = setTimeout(() => {
-        if (modeRef.current !== "idle") return;
-        setBubbleText(getRudyLine("idle"));
-        setBubbleVisible(true);
-      }, 350);
-      timersRef.current.push(tid);
+      if (modeRef.current !== "idle") return;
+      setBubbleText(getRudyLine("idle"));
     }, 8000);
     return () => clearInterval(interval);
   }, []);
