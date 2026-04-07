@@ -35,7 +35,6 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
-import RudyAnimation from "@/components/RudyAnimation";
 import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { useToast } from "@/hooks/use-toast";
@@ -88,10 +87,6 @@ export default function HomePremium() {
   const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
   const [reminderTitle, setReminderTitle] = useState("");
-  const [showRudy, setShowRudy] = useState(false);
-  const [rudyAnimIndex, setRudyAnimIndex] = useState(0);
-  const [buttonTransform, setButtonTransform] = useState('translateX(0)');
-  const [buttonTransition, setButtonTransition] = useState('none');
 
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
@@ -324,74 +319,17 @@ export default function HomePremium() {
           </TabsList>
 
           <TabsContent value="create" className="space-y-6">
-            {/* TEMPORARY TEST — remove after testing */}
-            <button
-              onClick={() => setShowRudy(true)}
-              style={{
-                background: '#C9A063',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '8px 16px',
-                marginBottom: '8px',
-                fontSize: '13px',
-                cursor: 'pointer',
-                width: '100%',
+            <ReminderForm
+              isFreePlan={false}
+              currentReminderCount={reminders.length}
+              maxReminders={999999}
+              onRudenessChange={(level) => {
+                setBadgeRudenessLevel(level);
+                fireEvent(`slider_${level}` as RudyEventType);
               }}
-            >
-              🧪 Test Rudy Animation {rudyAnimIndex + 1}/4
-            </button>
-            <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden' }}>
-              <ReminderForm
-                isFreePlan={false}
-                currentReminderCount={reminders.length}
-                maxReminders={999999}
-                onRudenessChange={(level) => {
-                  setBadgeRudenessLevel(level);
-                  fireEvent(`slider_${level}` as RudyEventType);
-                }}
-                onTitleChange={(t) => setReminderTitle(t)}
-                onReminderCreated={() => fireEvent("reminder_created")}
-              />
-              {showRudy && (
-                <>
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '72px',
-                    background: '#1B2A5E',
-                    border: '2px solid #F5B942',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontWeight: '600',
-                    fontSize: '18px',
-                    transform: buttonTransform,
-                    transition: buttonTransition,
-                    zIndex: 10,
-                  }}>
-                    Create Reminder
-                  </div>
-                  <RudyAnimation
-                    animationIndex={rudyAnimIndex}
-                    onButtonExit={(transform, transition) => {
-                      setButtonTransform(transform);
-                      setButtonTransition(transition);
-                    }}
-                    onComplete={() => {
-                      setShowRudy(false);
-                      setRudyAnimIndex(prev => (prev + 1) % 4);
-                      setButtonTransform('translateX(0)');
-                      setButtonTransition('none');
-                    }}
-                  />
-                </>
-              )}
-            </div>
+              onTitleChange={(t) => setReminderTitle(t)}
+              onReminderCreated={() => fireEvent("reminder_created")}
+            />
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
