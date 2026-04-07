@@ -75,7 +75,6 @@ export default function HomeFree() {
   const [eventKey, setEventKey] = useState(0);
   const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
-  const [reminderTitle, setReminderTitle] = useState("");
 
 
   // For guest users, use localStorage; for authenticated users, use API
@@ -271,7 +270,6 @@ export default function HomeFree() {
             nudgeEvent={lastEvent}
             nudgeKey={eventKey}
             onNudgeHandled={() => setLastEvent(null)}
-            taskTitle={activeTab === "create" ? reminderTitle : undefined}
           />
           <div className="flex justify-end -mt-1">
             <button
@@ -314,7 +312,6 @@ export default function HomeFree() {
               isFreePlan={true} 
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
-              onTitleChange={(t) => setReminderTitle(t)}
               onReminderCreated={() => {
                 fireEvent("reminder_created");
                 setAdActionCount(prev => {

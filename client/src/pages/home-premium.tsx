@@ -86,7 +86,6 @@ export default function HomePremium() {
   const [eventKey, setEventKey] = useState(0);
   const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
-  const [reminderTitle, setReminderTitle] = useState("");
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
     if ((user as any)?.defaultRudenessLevel) {
@@ -300,7 +299,6 @@ export default function HomePremium() {
             nudgeEvent={lastEvent}
             nudgeKey={eventKey}
             onNudgeHandled={() => setLastEvent(null)}
-            taskTitle={activeTab === "create" ? reminderTitle : undefined}
           />
         </div>
 
@@ -336,7 +334,6 @@ export default function HomePremium() {
               isFreePlan={false}
               currentReminderCount={reminders.length}
               maxReminders={999999}
-              onTitleChange={(t) => setReminderTitle(t)}
               onReminderCreated={() => fireEvent("reminder_created")}
             />
           </TabsContent>

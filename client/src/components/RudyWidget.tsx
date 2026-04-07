@@ -294,21 +294,6 @@ const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
   return pool[Math.floor(Math.random() * pool.length)];
 };
 
-const TITLE_REACTIONS_RUDE = [
-  (t: string) => `"${t}"? Interesting life choice.`,
-  (t: string) => `"${t}". Bold. We'll see.`,
-  (t: string) => `Oh, "${t}". Another one.`,
-];
-const TITLE_REACTIONS_POSITIVE = [
-  (t: string) => `"${t}". Okay. Let's see if you actually do it.`,
-  (t: string) => `"${t}". Setting intentions. I respect it.`,
-];
-
-const getTitleReaction = (title: string): string => {
-  const useRude = Math.random() < 0.7;
-  const pool = useRude ? TITLE_REACTIONS_RUDE : TITLE_REACTIONS_POSITIVE;
-  return pool[Math.floor(Math.random() * pool.length)](title);
-};
 
 export type RudyEventType =
   | "reminder_created"
@@ -389,10 +374,9 @@ export interface RudyWidgetProps {
   nudgeEvent?: RudyEventType;
   nudgeKey?: number;
   onNudgeHandled?: () => void;
-  taskTitle?: string;
 }
 
-export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskTitle }: RudyWidgetProps) {
+export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled }: RudyWidgetProps) {
 
   // ─── SYSTEM 3: Idle image cycle ────────────────────────────────────────────
   const idleCycleIdxRef = useRef(0);
@@ -407,7 +391,6 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   const [reactionVisible, setReactionVisible] = useState(false);
   const reactionTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastFireTimeRef   = useRef(0); // cooldown — prevents rapid-fire spam
-  const titleDebounceRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep onNudgeHandled in a ref so timers never close over a stale value
   const onNudgeHandledRef = useRef(onNudgeHandled);
@@ -467,27 +450,10 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nudgeEvent, nudgeKey]);
 
-  // ─── Task title (800ms debounce → reaction bubble) ─────────────────────────
-  useEffect(() => {
-    if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
-    if (!taskTitle) return;
-    titleDebounceRef.current = setTimeout(() => {
-      const line = taskTitle.trim().length >= 3
-        ? getTitleReaction(taskTitle.trim())
-        : getRudyLine("creating_generic");
-      fireReaction(line, RUDY_IMAGES.creating, false);
-    }, 800);
-    return () => {
-      if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskTitle]);
-
   // ─── Cleanup ───────────────────────────────────────────────────────────────
   useEffect(() => {
     return () => {
       if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
-      if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
     };
   }, []);
 
@@ -533,7 +499,56 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
       {/* ── Bubble column ───────────────────────────────────────────────────── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: 0 }}>
 
-        {/* REACTION BUBBLE — top, hidden when inactive (visibility keeps layout stable) */}
+        {/* SLOGAN BUBBLE — top, always visible, never interrupted */}
+        <div
+          style={{
+            position: "relative",
+            background: "white",
+            border: "2px solid black",
+            borderRadius: "12px",
+            padding: "8px 12px",
+          }}
+        >
+          {/* Triangle outer — black border */}
+          <div style={{
+            position: "absolute",
+            left: "-10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 0,
+            height: 0,
+            borderTop: "8px solid transparent",
+            borderBottom: "8px solid transparent",
+            borderRight: "10px solid black",
+          }} />
+          {/* Triangle inner — white fill */}
+          <div style={{
+            position: "absolute",
+            left: "-7px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 0,
+            height: 0,
+            borderTop: "6px solid transparent",
+            borderBottom: "6px solid transparent",
+            borderRight: "8px solid white",
+          }} />
+          <p style={{
+            fontSize: "12px",
+            color: "black",
+            fontStyle: "italic",
+            margin: 0,
+            lineHeight: "1.35",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical" as const,
+            overflow: "hidden",
+          }}>
+            {sloganText}
+          </p>
+        </div>
+
+        {/* REACTION BUBBLE — bottom, hidden when inactive (visibility keeps layout stable) */}
         <div
           style={{
             visibility: reactionVisible ? "visible" : "hidden",
@@ -580,43 +595,6 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
             overflow: "hidden",
           }}>
             {reactionText}
-          </p>
-        </div>
-
-        {/* SLOGAN BUBBLE — bottom, always visible, never interrupted */}
-        <div
-          style={{
-            position: "relative",
-            background: "white",
-            border: "2px solid #ddd",
-            borderRadius: "12px",
-            padding: "8px 12px",
-          }}
-        >
-          {/* Triangle — grey border */}
-          <div style={{
-            position: "absolute",
-            left: "-10px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 0,
-            height: 0,
-            borderTop: "8px solid transparent",
-            borderBottom: "8px solid transparent",
-            borderRight: "10px solid #ddd",
-          }} />
-          <p style={{
-            fontSize: "12px",
-            color: "#555",
-            fontStyle: "italic",
-            margin: 0,
-            lineHeight: "1.35",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical" as const,
-            overflow: "hidden",
-          }}>
-            {sloganText}
           </p>
         </div>
 
