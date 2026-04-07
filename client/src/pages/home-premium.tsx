@@ -87,6 +87,7 @@ export default function HomePremium() {
   const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
   const [reminderTitle, setReminderTitle] = useState("");
+  const sliderDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
@@ -94,6 +95,13 @@ export default function HomePremium() {
       setBadgeRudenessLevel((user as any).defaultRudenessLevel);
     }
   }, [(user as any)?.defaultRudenessLevel]);
+
+  // Cleanup slider debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (graphTab !== "week" && graphScrollRef.current) {
@@ -325,7 +333,10 @@ export default function HomePremium() {
               maxReminders={999999}
               onRudenessChange={(level) => {
                 setBadgeRudenessLevel(level);
-                fireEvent(`slider_${level}` as RudyEventType);
+                if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
+                sliderDebounceRef.current = setTimeout(() => {
+                  fireEvent(`slider_${level}` as RudyEventType);
+                }, 800);
               }}
               onTitleChange={(t) => setReminderTitle(t)}
               onReminderCreated={() => fireEvent("reminder_created")}
