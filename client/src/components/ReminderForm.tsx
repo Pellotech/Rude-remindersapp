@@ -208,7 +208,6 @@ export default function ReminderForm({
   const { scheduleReminder: scheduleNativeNotification, requestPermissions } = useMobileNotifications();
 
   const hasProAccess = !isFreePlan && user?.subscriptionPlan === 'premium';
-  console.log('[FeatureGate] hasProAccess:', hasProAccess, 'isFreePlan:', isFreePlan, 'subscriptionPlan:', user?.subscriptionPlan);
   const { gate: gateAttachments, modal: attachmentsModal } = usePaywallGate('MEDIA_ATTACHMENTS', 'Media Attachments', hasProAccess, 'Attach a photo to your reminder — your gym bag, meal prep, a sticky note, anything that makes it real. A picture really is worth a thousand words of nagging. Upgrade to unlock photo attachments.');
   const { gate: gateQuotes, modal: quotesModal } = usePaywallGate('MOTIVATIONAL_QUOTES', 'Motivational Quotes', hasProAccess, 'Add a hand-picked motivational quote from history\'s greatest minds to each reminder. The right words at the right time can light a fire under you. Upgrade to unlock motivational quotes.');
 

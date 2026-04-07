@@ -84,7 +84,6 @@ export default function HomeFree() {
     queryFn: isGuest 
       ? async () => guestStorage.getReminders()
       : undefined, // Use default fetcher for authenticated users
-    refetchInterval: isGuest ? 1000 : undefined, // Poll guest storage for updates
   });
 
   const { data: stats } = useQuery<{ total: number; completed: number; pending: number; overdue: number; monthlyReminderUsage?: Record<string, number> }>({
