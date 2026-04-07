@@ -374,9 +374,12 @@ export interface RudyWidgetProps {
   nudgeEvent?: RudyEventType;
   nudgeKey?: number;
   onNudgeHandled?: () => void;
+  showReactionBubble?: boolean;
+  showPremiumButton?: boolean;
+  onPremiumPress?: () => void;
 }
 
-export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled }: RudyWidgetProps) {
+export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showReactionBubble, showPremiumButton, onPremiumPress }: RudyWidgetProps) {
 
   // ─── SYSTEM 3: Idle image cycle ────────────────────────────────────────────
   const idleCycleIdxRef = useRef(0);
@@ -548,55 +551,74 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled }: Rud
           </p>
         </div>
 
-        {/* REACTION BUBBLE — bottom, hidden when inactive (visibility keeps layout stable) */}
-        <div
-          style={{
-            visibility: reactionVisible ? "visible" : "hidden",
-            position: "relative",
-            background: "white",
-            border: "2px solid black",
-            borderRadius: "12px",
-            padding: "8px 12px",
-          }}
-        >
-          {/* Triangle outer — black border */}
-          <div style={{
-            position: "absolute",
-            left: "-10px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 0,
-            height: 0,
-            borderTop: "8px solid transparent",
-            borderBottom: "8px solid transparent",
-            borderRight: "10px solid black",
-          }} />
-          {/* Triangle inner — white fill */}
-          <div style={{
-            position: "absolute",
-            left: "-7px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 0,
-            height: 0,
-            borderTop: "6px solid transparent",
-            borderBottom: "6px solid transparent",
-            borderRight: "8px solid white",
-          }} />
-          <p style={{
-            fontSize: "12px",
-            color: "#C53B3B",
-            fontWeight: "bold",
-            margin: 0,
-            lineHeight: "1.35",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical" as const,
-            overflow: "hidden",
-          }}>
-            {reactionText}
-          </p>
-        </div>
+        {/* REACTION BUBBLE / PREMIUM BUTTON — bottom slot */}
+        {showPremiumButton ? (
+          <button
+            onClick={(e) => { e.stopPropagation(); onPremiumPress?.(); }}
+            style={{
+              backgroundColor: '#C53B3B',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '8px 14px',
+              fontWeight: 'bold',
+              fontSize: '12px',
+              cursor: 'pointer',
+              width: '100%',
+            }}
+          >
+            🔥 Go Premium
+          </button>
+        ) : showReactionBubble !== false ? (
+          <div
+            style={{
+              visibility: reactionVisible ? "visible" : "hidden",
+              position: "relative",
+              background: "white",
+              border: "2px solid black",
+              borderRadius: "12px",
+              padding: "8px 12px",
+            }}
+          >
+            {/* Triangle outer — black border */}
+            <div style={{
+              position: "absolute",
+              left: "-10px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 0,
+              height: 0,
+              borderTop: "8px solid transparent",
+              borderBottom: "8px solid transparent",
+              borderRight: "10px solid black",
+            }} />
+            {/* Triangle inner — white fill */}
+            <div style={{
+              position: "absolute",
+              left: "-7px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 0,
+              height: 0,
+              borderTop: "6px solid transparent",
+              borderBottom: "6px solid transparent",
+              borderRight: "8px solid white",
+            }} />
+            <p style={{
+              fontSize: "12px",
+              color: "#C53B3B",
+              fontWeight: "bold",
+              margin: 0,
+              lineHeight: "1.35",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical" as const,
+              overflow: "hidden",
+            }}>
+              {reactionText}
+            </p>
+          </div>
+        ) : null}
 
       </div>
     </div>

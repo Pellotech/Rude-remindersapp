@@ -1,0 +1,171 @@
+Three changes needed across RudyWidget, home-premium, and home-free.
+
+Files to read FIRST before changing anything:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+
+═══════════════════════════════════════════
+FIX 1 — Make reaction bubble actually fire 
+on all wired actions in home-premium
+═══════════════════════════════════════════
+
+The reaction bubble is not showing when buttons are tapped.
+The nudgeEvent is being set correctly in home-premium.tsx but
+RudyWidget is not displaying the reaction.
+
+In RudyWidget.tsx check and fix ALL of the following:
+
+1. The nudgeEvent useEffect must fire fireReaction when nudgeEvent 
+   is not null. Confirm it looks exactly like this:
+   useEffect(() => {
+     if (!nudgeEvent) return;
+     // map to line and image
+     fireReaction(line, image);
+   }, [nudgeEvent]);
+
+2. fireReaction must set reactionVisible to true AND set reactionText:
+   const fireReaction = (text: string, image?: string) => {
+     if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+     setReactionText(text);
+     setReactionVisible(true);
+     if (image) {
+       setRudyImage(image);
+       if (imageCycleRef.current) clearInterval(imageCycleRef.current);
+       if (imageTimerRef.current) clearTimeout(imageTimerRef.current);
+       imageTimerRef.current = setTimeout(() => {
+         setRudyImage(RUDY_IMAGES.idle);
+         startIdleCycle();
+       }, 8000);
+     }
+     reactionTimerRef.current = setTimeout(() => {
+       setReactionVisible(false);
+       setReactionText('');
+       onNudgeHandled?.();
+     }, 8000);
+   };
+
+3. The reaction bubble JSX must use visibility style like this:
+   style={{ visibility: reactionVisible ? 'visible' : 'hidden' }}
+   NOT display:none — visibility hidden keeps the layout stable
+
+4. Confirm the full nudgeEvent → RUDY_LINES mapping is present:
+   reminder_created → reminderCreated
+   manage_did_it → managedidIt
+   manage_didnt_do_it → manageDidntDoIt
+   manage_load → manageLoad
+   manage_overdue → manageOverdue
+   streak → streak
+   slider_1 → slider_1
+   slider_2 → slider_2
+   slider_3 → slider_3
+   slider_4 → slider_4
+   slider_5 → slider_5
+   date_today → dateToday
+   date_tomorrow → dateTomorrow
+   date_future → dateFuture
+   voice → voice
+   photo → photo
+   quotes → quotes
+   analytics_this_week → analyticsThisWeek
+   analytics_10_weeks → analytics10Weeks
+   analytics_this_year → analyticsThisYear
+   analytics_graph_dip → analyticsGraphDip
+
+Also confirm in home-premium.tsx that setLastEvent and setEventKey 
+are being called correctly for all these triggers:
+- Date buttons tapped
+- Voice / Photo / Quotes buttons tapped
+- Slider change (debounced 800ms)
+- Reminder successfully created
+If any are missing wire them back in.
+
+═══════════════════════════════════════════
+FIX 2 — home-free gets slogans only,
+no reaction bubble at all
+═══════════════════════════════════════════
+
+In RudyWidget.tsx add a new optional prop:
+  showReactionBubble?: boolean
+
+Default value is true if not passed.
+
+In the JSX wrap the entire reaction bubble div with:
+{showReactionBubble !== false && (
+  <div style={{ visibility: reactionVisible ? 'visible' : 'hidden' }}
+    ... reaction bubble ...
+  />
+)}
+
+In home-free.tsx:
+- Pass showReactionBubble={false} to RudyWidget
+- Remove all nudgeEvent wiring from home-free.tsx entirely:
+  - Remove lastEvent state
+  - Remove setLastEvent calls on all buttons
+  - Remove onNudgeHandled prop
+  - Remove eventKey state if present
+- Just render RudyWidget with no event props at all:
+  <RudyWidget showReactionBubble={false} />
+- The slogan bubble still rotates every 20 seconds as normal
+- Rudy still cycles through idle images as normal
+- No reactions, no event handling on free home page
+
+═══════════════════════════════════════════
+FIX 3 — Add Go Premium button inside 
+RudyWidget on free home page
+═══════════════════════════════════════════
+
+In RudyWidget.tsx add another new optional prop:
+  showPremiumButton?: boolean
+
+When showPremiumButton is true, render a Go Premium button
+IN PLACE of the reaction bubble slot at the bottom of the 
+bubble column. This replaces the hidden reaction bubble space
+so the layout stays consistent.
+
+The button should look like this:
+<button
+  onClick={onPremiumPress}
+  style={{
+    backgroundColor: '#C53B3B',
+    color: 'white',
+    border: 'none',
+    borderRadius: '12px',
+    padding: '8px 14px',
+    fontWeight: 'bold',
+    fontSize: '12px',
+    cursor: 'pointer',
+    width: '100%',
+  }}
+>
+  🔥 Go Premium
+</button>
+
+Add onPremiumPress?: () => void to RudyWidgetProps.
+
+In home-free.tsx:
+- Pass showPremiumButton={true} to RudyWidget
+- Pass onPremiumPress={() => setLocation('/subscribe')} 
+  or whatever the existing navigation to the paywall is
+- This button sits in the same slot where the reaction bubble 
+  would be — bottom of the bubble column next to Rudy
+
+The full RudyWidget on home-free should look like:
+<RudyWidget
+  showReactionBubble={false}
+  showPremiumButton={true}
+  onPremiumPress={() => setLocation('/subscribe')}
+/>
+
+═══════════════════════════════════════════
+FINAL RULES
+═══════════════════════════════════════════
+
+- Do NOT change RUDY_LINES library
+- Do NOT change bubble styling or positioning
+- Do NOT change the slogan rotation system
+- Do NOT touch RudyAnimation.tsx
+- Do NOT change analytics or RemindersList wiring
+- Do NOT change any other components or pages
+- Show changed sections of all files before applying
+- Make changes safe and incremental

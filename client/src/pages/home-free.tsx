@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -28,7 +28,7 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
-import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
+import RudyWidget from "@/components/RudyWidget";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -71,19 +71,7 @@ export default function HomeFree() {
     premiumVoicesUntil: 0, // Timestamp when premium voices expire
   });
   const [adActionCount, setAdActionCount] = useState(0);
-  const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
-  const [eventKey, setEventKey] = useState(0);
-  const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
-
-  const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prevRudenessRef = useRef<number>(3);
-
-  useEffect(() => {
-    return () => {
-      if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
-    };
-  }, []);
 
   // For guest users, use localStorage; for authenticated users, use API
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
@@ -275,18 +263,10 @@ export default function HomeFree() {
             </div>
           </div>
           <RudyWidget
-            nudgeEvent={lastEvent}
-            nudgeKey={eventKey}
-            onNudgeHandled={() => setLastEvent(null)}
+            showReactionBubble={false}
+            showPremiumButton={true}
+            onPremiumPress={() => setLocation('/subscribe')}
           />
-          <div className="flex justify-end -mt-1">
-            <button
-              onClick={() => setLocation('/subscribe')}
-              className="text-xs font-semibold text-white bg-[#C53B3B] px-3 py-1 rounded-full hover:bg-[#A83232] transition-colors"
-            >
-              Go Premium 😤
-            </button>
-          </div>
         </div>
 
 
@@ -296,7 +276,6 @@ export default function HomeFree() {
           value={activeTab}
           onValueChange={(v) => {
             setActiveTab(v);
-            if (v === "manage") fireEvent("manage_load");
           }}
           className="space-y-6"
         >
@@ -321,30 +300,17 @@ export default function HomeFree() {
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
               onReminderCreated={() => {
-                fireEvent("reminder_created");
                 setAdActionCount(prev => {
                   const next = prev + 1;
                   console.log('Ad action counter incremented:', next);
                   return next;
                 });
               }}
-              onDateSelected={(type) => fireEvent(type)}
-              onVoiceTap={() => fireEvent("voice")}
-              onPhotoTap={() => fireEvent("photo")}
-              onQuotesTap={() => fireEvent("quotes")}
-              onRudenessChange={(level) => {
-                if (level === prevRudenessRef.current) return;
-                prevRudenessRef.current = level;
-                if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
-                sliderRudyRef.current = setTimeout(() => {
-                  fireEvent(`slider_${level}` as RudyEventType);
-                }, 800);
-              }}
             />
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
+            <RemindersList />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
