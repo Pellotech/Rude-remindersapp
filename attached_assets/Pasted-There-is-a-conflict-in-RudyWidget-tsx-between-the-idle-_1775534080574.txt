@@ -1,0 +1,61 @@
+There is a conflict in RudyWidget.tsx between the idle slogan rotation and the live 
+task title reaction. The title reaction works inconsistently because the idle rotation 
+timer keeps interrupting it. I need a clean fix.
+
+File to read FIRST before making any changes:
+- client/src/components/RudyWidget.tsx
+
+DO NOT touch any other files.
+
+THE PROBLEM:
+The idle rotation timer (fires every 8-12 seconds) and the taskTitle useEffect are 
+both trying to update the bubble text at the same time. Sometimes the title reaction 
+wins, sometimes the idle rotation overwrites it, causing inconsistent behaviour.
+
+THE FIX — Add a typing lock system:
+
+1. Add a new ref at the top of the component:
+   const isTypingRef = useRef(false);
+   const typingResumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+2. In the taskTitle useEffect (the one with the 800ms debounce):
+   - When taskTitle has 3+ characters:
+     a. Set isTypingRef.current = true
+     b. Clear typingResumeTimerRef if it exists
+     c. PAUSE the idle rotation completely — clear the idle rotation timer
+     d. Show the title reaction line as normal
+   - When taskTitle is less than 3 characters or undefined:
+     a. Set isTypingRef.current = true (still typing, just not enough chars)
+     b. Clear typingResumeTimerRef if it exists  
+     c. PAUSE the idle rotation completely
+     d. Show getRudyLine('creating_generic') and RUDY_IMAGES.creating
+
+3. Add a separate useEffect that watches taskTitle for the RESUME logic:
+   - Whenever taskTitle changes, reset a 5 second timer:
+     typingResumeTimerRef.current = setTimeout(() => {
+       isTypingRef.current = false;
+       restartIdleRotation(); // call whatever function starts the idle cycle
+     }, 5000);
+   - Clear this timer on component unmount
+
+4. In the idle rotation logic (the setInterval or setTimeout that cycles slogans):
+   - At the START of every idle rotation tick, check:
+     if (isTypingRef.current) return; // skip this tick, user is typing
+   - This means even if the idle timer fires during typing, it does nothing
+
+5. Create a restartIdleRotation() function that:
+   - Clears any existing idle rotation timer
+   - Resets to the first idle image and a fresh getRudyLine('idle') line
+   - Restarts the rotation cycle from scratch
+
+The result should be:
+- User starts typing → idle rotation pauses instantly
+- Rudy reads the title (or shows creating_generic if under 3 chars)  
+- User stops typing → 5 seconds later idle rotation resumes cleanly
+- No race conditions, no blank bubbles, no overwriting
+
+Do NOT change the 70/30 rude/positive weighting.
+Do NOT change any event handling, image states, or other props.
+Do NOT change any other files.
+Show me the full updated RudyWidget.tsx before applying.
+Make the smallest safe changes needed to fix this specific issue.

@@ -394,10 +394,14 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   const [bubbleText, setBubbleText] = useState(() => getRudyLine("idle"));
   const [bubbleVisible, setBubbleVisible] = useState(true);
 
-  const idleCycleIdxRef = useRef(0);
-  const modeRef         = useRef<"idle" | "tapped" | "event" | "title">("idle");
-  const timersRef       = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleCycleIdxRef    = useRef(0);
+  const modeRef            = useRef<"idle" | "tapped" | "event" | "title">("idle");
+  const timersRef          = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const titleDebounceRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTypingRef        = useRef(false);
+  const typingResumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const idleImageIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
+  const idleBubbleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function addTimer(fn: () => void, delay: number) {
     const id = setTimeout(fn, delay);
@@ -410,41 +414,61 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
     timersRef.current = [];
   }
 
+  function startIdleIntervals() {
+    if (idleImageIntervalRef.current) clearInterval(idleImageIntervalRef.current);
+    if (idleBubbleIntervalRef.current) clearInterval(idleBubbleIntervalRef.current);
+    idleImageIntervalRef.current = setInterval(() => {
+      if (modeRef.current !== "idle" || isTypingRef.current) return;
+      const next = (idleCycleIdxRef.current + 1) % IDLE_CYCLE.length;
+      idleCycleIdxRef.current = next;
+      setRudyImg(IDLE_CYCLE[next]);
+    }, 12000);
+    idleBubbleIntervalRef.current = setInterval(() => {
+      if (modeRef.current !== "idle" || isTypingRef.current) return;
+      setBubbleText(getRudyLine("idle"));
+    }, 8000);
+  }
+
+  function restartIdleRotation() {
+    isTypingRef.current = false;
+    idleCycleIdxRef.current = 0;
+    modeRef.current = "idle";
+    setRudyImg(IDLE_CYCLE[0]);
+    setBubbleText(getRudyLine("idle"));
+    setBubbleVisible(true);
+    startIdleIntervals();
+  }
+
   function returnToIdle() {
-    // Instant update — no timers, no race conditions that can leave the bubble empty
     modeRef.current = "idle";
     setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
     setBubbleText(getRudyLine("idle"));
     setBubbleVisible(true);
   }
 
-  // Idle image cycle every 12 seconds (3-image rotation)
+  // Start idle intervals on mount, clean up on unmount
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (modeRef.current !== "idle") return;
-      const next = (idleCycleIdxRef.current + 1) % IDLE_CYCLE.length;
-      idleCycleIdxRef.current = next;
-      setRudyImg(IDLE_CYCLE[next]);
-    }, 12000);
-    return () => clearInterval(interval);
+    startIdleIntervals();
+    return () => {
+      if (idleImageIntervalRef.current) clearInterval(idleImageIntervalRef.current);
+      if (idleBubbleIntervalRef.current) clearInterval(idleBubbleIntervalRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Idle bubble text rotation every 8 seconds — instant swap, no fade
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (modeRef.current !== "idle") return;
-      setBubbleText(getRudyLine("idle"));
-    }, 8000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // taskTitle — 800ms debounce, takes priority over nudgeEvent
+  // taskTitle — 800ms debounce + typing lock (pauses idle rotation)
   useEffect(() => {
     if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
     if (!taskTitle) {
+      // User left the create tab — release lock and return to idle
+      isTypingRef.current = false;
+      if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
       if (modeRef.current === "title") returnToIdle();
       return;
     }
+    // Lock idle rotation while user is typing
+    isTypingRef.current = true;
+    if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
     titleDebounceRef.current = setTimeout(() => {
       clearAllTimers();
       modeRef.current = "title";
@@ -461,6 +485,19 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
     return () => {
       if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
     };
+  }, [taskTitle]);
+
+  // Resume idle rotation 5 seconds after user stops typing
+  useEffect(() => {
+    if (!taskTitle) return;
+    if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
+    typingResumeTimerRef.current = setTimeout(() => {
+      restartIdleRotation();
+    }, 5000);
+    return () => {
+      if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskTitle]);
 
   // nudgeEvent handler — re-runs whenever nudgeKey changes, even for repeat events
