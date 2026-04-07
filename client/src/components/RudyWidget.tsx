@@ -448,14 +448,13 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
     }
     setReactionText(text);
     setReactionVisible(true);
-    // Tell the parent to reset nudgeEvent → null immediately, preventing re-trigger loops
-    if (callHandled) onNudgeHandledRef.current?.();
     reactionTimerRef.current = setTimeout(() => {
       setReactionVisible(false);
       if (image) {
         isActiveRef.current = false;
         setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
       }
+      if (callHandled) onNudgeHandledRef.current?.();
     }, 8000);
   }
 

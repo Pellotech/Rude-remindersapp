@@ -1,0 +1,68 @@
+Stop investigating. We are going to fix this by removing the slider 
+wiring completely and rebuilding it simply and cleanly.
+
+Files to change:
+- client/src/pages/home-premium.tsx
+- client/src/components/ReminderForm.tsx
+- client/src/components/RudyWidget.tsx
+
+STEP 1 — In ReminderForm.tsx:
+Find and DELETE everything related to onRudenessChange:
+- The onRudenessChange prop in the interface/props definition
+- Any useEffect that calls onRudenessChange
+- Any useEffect that watches onRudenessChange
+- The onRudenessChange call wherever it fires
+Leave the slider itself working normally — just remove the callback prop.
+
+STEP 2 — In home-premium.tsx:
+Find and DELETE everything related to onRudenessChange:
+- The onRudenessChange prop being passed to ReminderForm
+- The sliderDebounceRef
+- The handleRudenessChange function or useCallback
+- Any setLastEvent call triggered by slider movement
+Leave setBadgeRudenessLevel working if it exists — just remove 
+the Rudy slider wiring entirely.
+
+STEP 3 — In home-premium.tsx:
+Add a NEW simple approach to detect rudeness level changes.
+Find where rudenessLevel state is defined. It should look like:
+const [rudenessLevel, setRudenessLevel] = useState(2);
+
+Add a single useEffect BELOW that state definition:
+const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+const prevRudenessRef = useRef<number>(rudenessLevel);
+
+useEffect(() => {
+  if (rudenessLevel === prevRudenessRef.current) return;
+  prevRudenessRef.current = rudenessLevel;
+  if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
+  sliderRudyRef.current = setTimeout(() => {
+    setLastEvent(`slider_${rudenessLevel}` as RudyEventType);
+    setEventKey(k => k + 1);
+  }, 800);
+}, [rudenessLevel]);
+
+This watches the rudenessLevel state directly instead of going through 
+ReminderForm. It only fires when the value actually changes. It uses 
+a ref to track the previous value so it never fires on mount.
+
+STEP 4 — In RudyWidget.tsx:
+Make sure onNudgeHandled is called INSIDE the 8 second cleanup timer,
+NOT immediately when fireReaction fires.
+The correct order is:
+const fireReaction = (text: string) => {
+  if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+  setReactionText(text);
+  setReactionVisible(true);
+  reactionTimerRef.current = setTimeout(() => {
+    setReactionVisible(false);
+    setReactionText('');
+    onNudgeHandled?.(); // ONLY here, after 8 seconds
+  }, 8000);
+};
+
+Do NOT call onNudgeHandled immediately — that was causing re-renders
+that fed back into the loop.
+
+Show changed sections of all three files before applying.
+Do not touch any other files.

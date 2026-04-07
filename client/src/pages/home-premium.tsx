@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -87,19 +87,6 @@ export default function HomePremium() {
   const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
   const [reminderTitle, setReminderTitle] = useState("");
-  const sliderDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Stable callback — useCallback prevents a new reference every render,
-  // which would otherwise cause ReminderForm's useEffect to re-fire on each parent re-render
-  const handleRudenessChange = useCallback((level: number) => {
-    setBadgeRudenessLevel(level);
-    if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
-    sliderDebounceRef.current = setTimeout(() => {
-      setLastEvent(`slider_${level}` as RudyEventType);
-      setEventKey(k => k + 1);
-    }, 800);
-  }, []); // setState and refs are stable — no deps needed
-
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
     if ((user as any)?.defaultRudenessLevel) {
@@ -107,12 +94,19 @@ export default function HomePremium() {
     }
   }, [(user as any)?.defaultRudenessLevel]);
 
-  // Cleanup slider debounce on unmount
+  // Watch badgeRudenessLevel — only fires when value actually changes, never on mount
+  const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevRudenessRef = useRef<number>(badgeRudenessLevel);
+
   useEffect(() => {
-    return () => {
-      if (sliderDebounceRef.current) clearTimeout(sliderDebounceRef.current);
-    };
-  }, []);
+    if (badgeRudenessLevel === prevRudenessRef.current) return;
+    prevRudenessRef.current = badgeRudenessLevel;
+    if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
+    sliderRudyRef.current = setTimeout(() => {
+      setLastEvent(`slider_${badgeRudenessLevel}` as RudyEventType);
+      setEventKey(k => k + 1);
+    }, 800);
+  }, [badgeRudenessLevel]);
 
   useEffect(() => {
     if (graphTab !== "week" && graphScrollRef.current) {
@@ -342,7 +336,6 @@ export default function HomePremium() {
               isFreePlan={false}
               currentReminderCount={reminders.length}
               maxReminders={999999}
-              onRudenessChange={handleRudenessChange}
               onTitleChange={(t) => setReminderTitle(t)}
               onReminderCreated={() => fireEvent("reminder_created")}
             />

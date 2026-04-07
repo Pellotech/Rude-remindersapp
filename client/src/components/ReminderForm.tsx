@@ -73,7 +73,6 @@ interface ReminderFormProps {
   currentReminderCount?: number;
   maxReminders?: number;
   onReminderCreated?: () => void;
-  onRudenessChange?: (level: number) => void;
   onTitleChange?: (title: string) => void;
 }
 
@@ -200,7 +199,6 @@ export default function ReminderForm({
   currentReminderCount = 0,
   maxReminders = 5,
   onReminderCreated,
-  onRudenessChange,
   onTitleChange,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
@@ -372,11 +370,6 @@ export default function ReminderForm({
 
   const rudenessLevel = form.watch("rudenessLevel");
   const voiceCharacter = form.watch("voiceCharacter");
-
-  // Notify parent of rudeness level changes for badge color
-  useEffect(() => {
-    onRudenessChange?.(rudenessLevel);
-  }, [rudenessLevel, onRudenessChange]);
 
   // Update selectedVoice when form voiceCharacter changes
   useEffect(() => {
