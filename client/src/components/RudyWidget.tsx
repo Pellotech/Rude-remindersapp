@@ -390,193 +390,226 @@ export interface RudyWidgetProps {
 }
 
 export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskTitle }: RudyWidgetProps) {
+
+  // ─── SYSTEM 3: Idle image cycle ────────────────────────────────────────────
+  const idleCycleIdxRef = useRef(0);
+  const isActiveRef     = useRef(false); // true while an event/tap image is showing
   const [rudyImg, setRudyImg] = useState(IDLE_CYCLE[0]);
-  const [bubbleText, setBubbleText] = useState(() => getRudyLine("idle"));
-  const [bubbleVisible, setBubbleVisible] = useState(true);
 
-  const idleCycleIdxRef    = useRef(0);
-  const modeRef            = useRef<"idle" | "tapped" | "event" | "title">("idle");
-  const timersRef          = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const titleDebounceRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isTypingRef        = useRef(false);
-  const typingResumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const idleImageIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
-  const idleBubbleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // ─── SYSTEM 1: Slogan — runs every 20s, never interrupted ──────────────────
+  const [sloganText, setSloganText] = useState(() => getRudyLine("idle"));
 
-  function addTimer(fn: () => void, delay: number) {
-    const id = setTimeout(fn, delay);
-    timersRef.current.push(id);
-    return id;
-  }
+  // ─── SYSTEM 2: Reaction — shows on trigger, hides after 8s ────────────────
+  const [reactionText, setReactionText]       = useState("");
+  const [reactionVisible, setReactionVisible] = useState(false);
+  const reactionTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const titleDebounceRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function clearAllTimers() {
-    timersRef.current.forEach(clearTimeout);
-    timersRef.current = [];
-  }
+  // Keep onNudgeHandled in a ref so timers never close over a stale value
+  const onNudgeHandledRef = useRef(onNudgeHandled);
+  useEffect(() => { onNudgeHandledRef.current = onNudgeHandled; }, [onNudgeHandled]);
 
-  function startIdleIntervals() {
-    if (idleImageIntervalRef.current) clearInterval(idleImageIntervalRef.current);
-    if (idleBubbleIntervalRef.current) clearInterval(idleBubbleIntervalRef.current);
-    idleImageIntervalRef.current = setInterval(() => {
-      if (modeRef.current !== "idle" || isTypingRef.current) return;
+  // ─── SYSTEM 1: Slogan interval ─────────────────────────────────────────────
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSloganText(getRudyLine("idle"));
+    }, 20000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // ─── SYSTEM 3: Idle image cycle interval ───────────────────────────────────
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isActiveRef.current) return;
       const next = (idleCycleIdxRef.current + 1) % IDLE_CYCLE.length;
       idleCycleIdxRef.current = next;
       setRudyImg(IDLE_CYCLE[next]);
     }, 12000);
-    idleBubbleIntervalRef.current = setInterval(() => {
-      if (modeRef.current !== "idle" || isTypingRef.current) return;
-      setBubbleText(getRudyLine("idle"));
+    return () => clearInterval(interval);
+  }, []);
+
+  // ─── SYSTEM 2: fireReaction helper ─────────────────────────────────────────
+  // image: optional Rudy image to show during reaction (restored after)
+  // callHandled: whether to call onNudgeHandled when reaction expires
+  function fireReaction(text: string, image?: string, callHandled = false) {
+    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+    if (image) {
+      isActiveRef.current = true;
+      setRudyImg(image);
+    }
+    setReactionText(text);
+    setReactionVisible(true);
+    reactionTimerRef.current = setTimeout(() => {
+      setReactionVisible(false);
+      if (image) {
+        isActiveRef.current = false;
+        setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
+      }
+      if (callHandled) onNudgeHandledRef.current?.();
     }, 8000);
   }
 
-  function restartIdleRotation() {
-    isTypingRef.current = false;
-    idleCycleIdxRef.current = 0;
-    modeRef.current = "idle";
-    setRudyImg(IDLE_CYCLE[0]);
-    setBubbleText(getRudyLine("idle"));
-    setBubbleVisible(true);
-    startIdleIntervals();
-  }
-
-  function returnToIdle() {
-    modeRef.current = "idle";
-    setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
-    setBubbleText(getRudyLine("idle"));
-    setBubbleVisible(true);
-  }
-
-  // Start idle intervals on mount, clean up on unmount
+  // ─── Nudge events ──────────────────────────────────────────────────────────
   useEffect(() => {
-    startIdleIntervals();
-    return () => {
-      if (idleImageIntervalRef.current) clearInterval(idleImageIntervalRef.current);
-      if (idleBubbleIntervalRef.current) clearInterval(idleBubbleIntervalRef.current);
-    };
+    if (!nudgeEvent) return;
+    const line = getRudyLine(EVENT_LINE_KEY[nudgeEvent]);
+    fireReaction(line, EVENT_IMAGE[nudgeEvent], true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [nudgeEvent, nudgeKey]);
 
-  // taskTitle — 800ms debounce + typing lock (pauses idle rotation)
+  // ─── Task title (800ms debounce → reaction bubble) ─────────────────────────
   useEffect(() => {
     if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
-    if (!taskTitle) {
-      // User left the create tab — release lock and return to idle
-      isTypingRef.current = false;
-      if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
-      if (modeRef.current === "title") returnToIdle();
-      return;
-    }
-    // Lock idle rotation while user is typing
-    isTypingRef.current = true;
-    if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
+    if (!taskTitle) return;
     titleDebounceRef.current = setTimeout(() => {
-      clearAllTimers();
-      modeRef.current = "title";
-      setRudyImg(RUDY_IMAGES.creating);
       const line = taskTitle.trim().length >= 3
         ? getTitleReaction(taskTitle.trim())
         : getRudyLine("creating_generic");
-      setBubbleVisible(false);
-      addTimer(() => {
-        setBubbleText(line);
-        setBubbleVisible(true);
-      }, 200);
+      fireReaction(line, RUDY_IMAGES.creating, false);
     }, 800);
     return () => {
       if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskTitle]);
 
-  // Resume idle rotation 5 seconds after user stops typing
+  // ─── Cleanup ───────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!taskTitle) return;
-    if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
-    typingResumeTimerRef.current = setTimeout(() => {
-      restartIdleRotation();
-    }, 5000);
     return () => {
-      if (typingResumeTimerRef.current) clearTimeout(typingResumeTimerRef.current);
+      if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+      if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskTitle]);
+  }, []);
 
-  // nudgeEvent handler — re-runs whenever nudgeKey changes, even for repeat events
-  useEffect(() => {
-    if (!nudgeEvent) return;
-    if (modeRef.current === "title") return;
-    clearAllTimers();
-    modeRef.current = "event";
-    setRudyImg(EVENT_IMAGE[nudgeEvent]);
-    const line = getRudyLine(EVENT_LINE_KEY[nudgeEvent]);
-    setBubbleVisible(false);
-    addTimer(() => {
-      setBubbleText(line);
-      setBubbleVisible(true);
-    }, 200);
-    addTimer(() => {
-      returnToIdle();
-      addTimer(() => onNudgeHandled?.(), 400);
-    }, 3000);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nudgeEvent, nudgeKey]);
-
+  // ─── Tap handler ───────────────────────────────────────────────────────────
   function handleTap() {
-    if (modeRef.current === "event") return;
-    if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
-    clearAllTimers();
-    modeRef.current = "tapped";
-    setRudyImg(RUDY_IMAGES.tap);
-    const line = getRudyLine("tapped");
-    setBubbleVisible(false);
-    addTimer(() => {
-      setBubbleText(line);
-      setBubbleVisible(true);
-    }, 150);
-    addTimer(() => {
-      setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
-    }, 1200);
-    addTimer(() => returnToIdle(), 3000);
+    fireReaction(getRudyLine("tapped"), RUDY_IMAGES.tap, false);
   }
 
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <div
       onClick={handleTap}
-      className="flex items-center bg-[#FDF3E3] border border-[#C9A063] rounded-[12px] px-3 mt-2 gap-3"
-      style={{ height: "90px", cursor: "pointer", userSelect: "none" }}
+      style={{
+        minHeight: "120px",
+        background: "#FDF3E3",
+        border: "1px solid #C9A063",
+        borderRadius: "12px",
+        padding: "10px 12px",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: "10px",
+        position: "relative",
+        cursor: "pointer",
+        userSelect: "none",
+        marginTop: "8px",
+      }}
     >
+      {/* ── Rudy image (80×80, blend mode) ─────────────────────────────────── */}
       <img
         src={rudyImg}
         alt="Rudy"
         style={{
-          width: "64px",
-          height: "64px",
+          width: "80px",
+          height: "80px",
           objectFit: "contain",
           flexShrink: 0,
+          alignSelf: "center",
           mixBlendMode: "multiply",
         }}
       />
-      <div
-        className="flex-1 bg-white rounded-full px-4 py-2"
-        style={{
-          border: "1px solid #E5D5B0",
-          minHeight: "40px",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <p
-          className="text-[11px] text-[#111827] leading-snug"
+
+      {/* ── Bubble column ───────────────────────────────────────────────────── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: 0 }}>
+
+        {/* REACTION BUBBLE — top, hidden when inactive (visibility keeps layout stable) */}
+        <div
           style={{
-            opacity: bubbleVisible ? 1 : 0,
-            transition: "opacity 0.35s ease",
+            visibility: reactionVisible ? "visible" : "hidden",
+            position: "relative",
+            background: "white",
+            border: "2px solid black",
+            borderRadius: "12px",
+            padding: "8px 12px",
+          }}
+        >
+          {/* Triangle outer — black border */}
+          <div style={{
+            position: "absolute",
+            left: "-10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 0,
+            height: 0,
+            borderTop: "8px solid transparent",
+            borderBottom: "8px solid transparent",
+            borderRight: "10px solid black",
+          }} />
+          {/* Triangle inner — white fill */}
+          <div style={{
+            position: "absolute",
+            left: "-7px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 0,
+            height: 0,
+            borderTop: "6px solid transparent",
+            borderBottom: "6px solid transparent",
+            borderRight: "8px solid white",
+          }} />
+          <p style={{
+            fontSize: "12px",
+            color: "#C53B3B",
+            fontWeight: "bold",
+            margin: 0,
+            lineHeight: "1.35",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical" as const,
             overflow: "hidden",
+          }}>
+            {reactionText}
+          </p>
+        </div>
+
+        {/* SLOGAN BUBBLE — bottom, always visible, never interrupted */}
+        <div
+          style={{
+            position: "relative",
+            background: "white",
+            border: "2px solid #ddd",
+            borderRadius: "12px",
+            padding: "8px 12px",
           }}
         >
-          {bubbleText}
-        </p>
+          {/* Triangle — grey border */}
+          <div style={{
+            position: "absolute",
+            left: "-10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 0,
+            height: 0,
+            borderTop: "8px solid transparent",
+            borderBottom: "8px solid transparent",
+            borderRight: "10px solid #ddd",
+          }} />
+          <p style={{
+            fontSize: "12px",
+            color: "#555",
+            fontStyle: "italic",
+            margin: 0,
+            lineHeight: "1.35",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical" as const,
+            overflow: "hidden",
+          }}>
+            {sloganText}
+          </p>
+        </div>
+
       </div>
     </div>
   );

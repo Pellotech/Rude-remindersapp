@@ -1,0 +1,488 @@
+I need to completely rebuild RudyWidget.tsx from scratch with a new two-bubble 
+comic book layout, larger Rudy, and fully independent slogan and reaction systems.
+
+Files to read FIRST before making any changes:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+- client/src/components/RemindersList.tsx
+- client/src/pages/analytics.tsx (or wherever My Journey graph lives)
+
+DO NOT touch any other files.
+
+═══════════════════════════════════════════
+STEP 1 — IMAGE MAP
+═══════════════════════════════════════════
+
+const RUDY_IMAGES = {
+  idle:           '/rudy/Rudy_leaning_2_transparent.png',
+  idleSwap:       '/rudy/Rudy_idle_smile_transparent.png',
+  sittingFloor:   '/rudy/Rudy_sitting_floor_transparent.png',
+  sittingUpright: '/rudy/Rudy_sitting_upright_transparent.png',
+  sittingBench:   '/rudy/Rudy_sitting_bench_transparent.png',
+  creating:       '/rudy/Rudy_standing_angry_transparent.png',
+  done:           '/rudy/Rudy_thumbs_up_smile_transparent.png',
+  missed:         '/rudy/Rudy_idle_main_pose_transparent.png',
+  tap:            '/rudy/Rudy_pushing_transparent.png',
+};
+
+Idle image cycle — when no reaction is active, rotate every 12 seconds:
+  idle → sittingFloor → idleSwap → repeat
+
+Apply mix-blend-mode: multiply to ALL Rudy images.
+Rudy image size: 80x80px (up from 64x64px).
+
+═══════════════════════════════════════════
+STEP 2 — LINE LIBRARY
+═══════════════════════════════════════════
+
+const RUDY_LINES = {
+  idle: {
+    rude: [
+      "Oh great, you're back. What do you want?",
+      "Still here? Bold choice.",
+      "*stares at you judgmentally*",
+      "You and your 'plans'... cute.",
+      "Don't look at me like that.",
+      "Another reminder? Sure. That'll fix you.",
+      "Most apps remind you. We hold you accountable.",
+      "We'll roast you into your best self.",
+      // ADD MORE RUDE IDLE LINES HERE
+    ],
+    positive: [
+      "You showed up. That already puts you ahead of most people.",
+      "Good to see you. Now let's get something done.",
+      "Every reminder you set is a promise to yourself. Respect.",
+      "Started with a laugh. Built a habit.",
+      "Your goals deserve more than a gentle nudge.",
+      // ADD MORE POSITIVE IDLE LINES HERE
+    ],
+  },
+  tapped: {
+    rude: [
+      "Oi. You tapped me. Now go do something.",
+      "Stop poking me and go finish your tasks.",
+      "What are you waiting for? Create a reminder.",
+      "I'm watching you. Don't disappoint me.",
+      "You think this is a game? It is. And you're losing.",
+      // ADD MORE RUDE TAPPED LINES HERE
+    ],
+    positive: [
+      "Hey! Bold move. Now channel that energy into your tasks.",
+      "You found me. Now go find your motivation.",
+      "Tapped for luck. Now go earn it.",
+      // ADD MORE POSITIVE TAPPED LINES HERE
+    ],
+  },
+  creating_generic: {
+    rude: [
+      "Writing it down won't make you do it...",
+      "Oh wow, a reminder. Revolutionary.",
+      "Sure, add another one. Sure.",
+      "We both know how this ends.",
+      "Ooh, ambitious. Love the optimism. Really.",
+      // ADD MORE RUDE CREATING LINES HERE
+    ],
+    positive: [
+      "Take your time. A good reminder is worth setting right.",
+      "Every great habit started with someone writing it down.",
+      "This is how it starts. One reminder at a time.",
+      // ADD MORE POSITIVE CREATING LINES HERE
+    ],
+  },
+  reminderCreated: {
+    rude: [
+      "Nice one. Now actually do it.",
+      "Reminder set. No excuses now.",
+      "It's in the system. I'm watching.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Locked in. Now the only thing left is to actually do it.",
+      "Set and ready. Future you says thanks.",
+      "That's step one. Keep going.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  managedidIt: {
+    rude: [
+      "...Fine. I guess you did the thing.",
+      "Okay I'll admit it. You actually did it.",
+      "Don't get too smug. There's still tomorrow.",
+      "I'm mildly less disappointed. Mildly.",
+      "One task. Don't celebrate yet.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "That's what I'm talking about. Keep that energy.",
+      "Genuinely proud. Don't tell anyone I said that.",
+      "You showed up for yourself. That's the whole game.",
+      "Look at you actually doing the thing. Respect.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  manageDidntDoIt: {
+    rude: [
+      "Called it.",
+      "Shocked. Truly shocked. Not.",
+      "Oh no. Anyway.",
+      "I've seen this movie before.",
+      "This is my surprised face.",
+      "It's giving 'expected'.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Hey. You logged it honestly. That takes guts. Tomorrow.",
+      "Missing one doesn't break a habit. Getting back up does.",
+      "Honesty is the first step. Tomorrow is still yours.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  streak: {
+    rude: [
+      "Look at you. Almost forming a habit.",
+      "Consistency. Didn't think you had it in you.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A streak worth protecting. Don't blow it now.",
+      "This is what showing up looks like. Keep going.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_1: {
+    rude: [
+      "Oh look, choosing the soft option. Typical.",
+      "Gentle mode. For people who like being ignored.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Gentle is still showing up. That counts.",
+      "Starting soft is still starting. Respect.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_2: {
+    rude: [
+      "Okay, a little nudge. Baby steps.",
+      "Motivational. The participation trophy of rudeness.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Motivational is underrated. Steady wins the race.",
+      "A consistent nudge beats a one-time shove. Smart.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_3: {
+    rude: [
+      "Now we're talking. Mediocrity detector activated.",
+      "Sarcastic. So you want honesty with a smile. Smart.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Sarcastic but effective. You clearly know yourself.",
+      "Level 3. The sweet spot for most people.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_4: {
+    rude: [
+      "Ooh someone wants tough love. Respect.",
+      "Harsh mode. Finally someone who can handle the truth.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Harsh mode means you're serious. Respect that.",
+      "You want real accountability. That's rare.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_5: {
+    rude: [
+      "SAVAGE mode. I like you. You're unhinged.",
+      "Full savage. Your future self is already scared.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Savage. You don't mess around. Neither will I.",
+      "Full send. I respect the commitment.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  dateToday: {
+    rude: [
+      "Leaving it to today? Bold. Or lazy. Probably lazy.",
+      "Today. Cutting it close as usual, aren't we.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Today is the only day that's guaranteed. Smart.",
+      "No delay. I respect the urgency.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  dateTomorrow: {
+    rude: [
+      "Tomorrow. The most popular day to start things.",
+      "Ah yes. Tomorrow. Where dreams go to procrastinate.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Planning ahead by one day still counts as planning.",
+      "Tomorrow works. Just don't let it become next week.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  dateFuture: {
+    rude: [
+      "Planning ahead? Who ARE you?",
+      "Look at you, scheduling like a functioning adult. Suspicious.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Future planning. That's genuinely rare. Keep it up.",
+      "Thinking ahead. You might actually be serious about this.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  voice: {
+    rude: [
+      "Pick a voice. Nothing says accountability like being roasted out loud.",
+      "Voice reminders. So you can hear how bad you're slacking.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A voice reminder hits different. Good call.",
+      "Hearing it out loud makes it real. Smart move.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  photo: {
+    rude: [
+      "Add a photo. Your dog didn't ask to be your motivation but here we are.",
+      "Post your kid, your pet, your dreams. Don't let them down. I'm watching.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A photo makes it real. Smart psychological move.",
+      "Attaching a face to the goal. That's next level.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  quotes: {
+    rude: [
+      "A motivational quote? Sure. Words have never stopped anyone from procrastinating before.",
+      "Pick a quote. Feel inspired. Still do nothing. Classic.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A good quote can shift your whole mindset. Nice touch.",
+      "Words matter. Pair them with action and you're unstoppable.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  manageLoad: {
+    rude: [
+      "Here's your history. Tell the truth. I'm watching.",
+      "Manage tab. Where excuses go to die.",
+      "All your reminders. All your choices. Own them.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Your history is right here. Own every entry.",
+      "Every entry is data. Use it to get better.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  manageOverdue: {
+    rude: [
+      "That one's overdue. We don't talk about that one.",
+      "Still sitting there unfinished? Bold strategy. Not working though.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Overdue just means unfinished, not impossible.",
+      "It's not too late. Log it and move forward.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analyticsThisWeek: {
+    rude: [
+      "One week. That's all you've given me. Show me something.",
+      "Seven days of data. The jury is still out on you.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A week of data. You're already building something.",
+      "Seven days in. Every streak starts here.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analytics10Weeks: {
+    rude: [
+      "Ten weeks. This is where habits are actually built. Pay attention.",
+      "The 66-day window. Science says this is where it clicks. Don't blow it.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Ten weeks in the making. This is where it gets real.",
+      "You're in the habit formation zone. Keep showing up.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analyticsThisYear: {
+    rude: [
+      "A whole year of data. Either you're crushing it or you owe me an explanation.",
+      "Full year view. This is your legacy. Make it worth looking at.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A full year of showing up. That's genuinely rare.",
+      "Twelve months of data. You built something real here.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analyticsGraphDip: {
+    rude: [
+      "That dip in the graph? That's you giving up. Fix it.",
+      "The line went down. I noticed. Just saying.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Every dip is just a bounce waiting to happen.",
+      "The dip doesn't define you. What you do next does.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+};
+
+const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
+  const cat = RUDY_LINES[category];
+  const useRude = Math.random() < 0.7;
+  const pool = useRude ? cat.rude : cat.positive;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
+═══════════════════════════════════════════
+STEP 3 — PROPS INTERFACE
+═══════════════════════════════════════════
+
+interface RudyWidgetProps {
+  nudgeEvent?:
+    | 'reminder_created'
+    | 'streak'
+    | 'slider_1' | 'slider_2' | 'slider_3' | 'slider_4' | 'slider_5'
+    | 'date_today' | 'date_tomorrow' | 'date_future'
+    | 'voice' | 'photo' | 'quotes'
+    | 'manage_load' | 'manage_overdue' 
+    | 'manage_did_it' | 'manage_didnt_do_it'
+    | 'analytics_this_week' | 'analytics_10_weeks' 
+    | 'analytics_this_year' | 'analytics_graph_dip'
+    | null;
+  onNudgeHandled?: () => void;
+  taskTitle?: string;
+}
+
+═══════════════════════════════════════════
+STEP 4 — TWO BUBBLE LAYOUT
+═══════════════════════════════════════════
+
+Widget container:
+- Background: #FDF3E3 (cream/gold card matching app theme)
+- Border radius: 12px
+- Padding: 10px 12px
+- Display: flex, flex-direction: row, align-items: center, gap: 10px
+- Min height: 120px — expand if needed to fit both bubbles comfortably
+- Width: 100% matching existing width
+- position: relative
+
+Left side — Rudy image:
+- Width: 80px, height: 80px (25% larger than before)
+- mix-blend-mode: multiply
+- flex-shrink: 0
+- align-self: center
+
+Right side — bubble column:
+- Display: flex, flex-direction: column, gap: 6px
+- flex: 1
+
+REACTION BUBBLE (top of column):
+- Background: white
+- Border: 2px solid black
+- Text color: #C53B3B (app red)
+- Font weight: bold
+- Font size: 12px
+- Border radius: 12px
+- Padding: 8px 12px
+- Position: relative
+- visibility: hidden when no reaction active (use visibility not display 
+  so layout does not jump)
+- visibility: visible when reaction active
+- Triangle pointer on LEFT side pointing toward Rudy:
+  ::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 10px solid black;
+  }
+  ::after {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 8px solid white;
+  }
+
+SLOGAN BUBBLE (bottom of column):
+- Background: white
+- Border: 2px solid #ddd
+- Text color: #555
+- Font style: italic
+- Font size: 12px
+- Border radius: 12px
+- Padding: 8px 12px
+- Position: relative
+- Always visible, never hidden
+- Triangle pointer on LEFT side pointing toward Rudy:
+  ::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 10px solid #ddd;
+  }
+
+═══════════════════════════════════════════
+STEP 5 — THREE INDEPENDENT SYSTEMS
+═══════════════════════════════════════════
+
+SYSTEM 1 — SLOGAN (runs forever, never interrupted):
+const [sloganText, setSloganText] = useState(() => getRudyLine('idle'));
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setSloganText(getRudyLine('idle'));
+  }, 20000);
+  return () => clearInterval(interval);
+}, []);
+
+This system never interacts with anything else. Ever.
+
+SYSTEM 2 — REACTION (appears on trigger, hides after 8 seconds):
+const [reactionText, setReactionText] = useState('');
+const [reactionVisible, setReactionVisible] = useState(false);
+const reactionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+const fireReaction = (text: string) => {
+  if (reactionTimerRef.current) clearTime
