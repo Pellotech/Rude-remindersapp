@@ -74,6 +74,7 @@ interface ReminderFormProps {
   maxReminders?: number;
   onReminderCreated?: () => void;
   onRudenessChange?: (level: number) => void;
+  onTitleChange?: (title: string) => void;
 }
 
 const rudenessLabels = [
@@ -200,6 +201,7 @@ export default function ReminderForm({
   maxReminders = 5,
   onReminderCreated,
   onRudenessChange,
+  onTitleChange,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -383,6 +385,11 @@ export default function ReminderForm({
 
   const originalMessage = form.watch("originalMessage");
   const scheduledForValue = form.watch("scheduledFor");
+
+  // Notify parent of title changes for Rudy widget reactions
+  useEffect(() => {
+    onTitleChange?.(originalMessage ?? "");
+  }, [originalMessage, onTitleChange]);
 
   // Convert form's scheduledFor string to Date for calendar component
   const selectedDateTime = scheduledForValue ? new Date(scheduledForValue) : null;

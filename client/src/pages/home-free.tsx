@@ -28,7 +28,7 @@ import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
-import RudyWidget from "@/components/RudyWidget";
+import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -71,7 +71,9 @@ export default function HomeFree() {
     premiumVoicesUntil: 0, // Timestamp when premium voices expire
   });
   const [adActionCount, setAdActionCount] = useState(0);
-  const [lastEvent, setLastEvent] = useState<"reminder_created" | "streak" | null>(null);
+  const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
+  const [activeTab, setActiveTab] = useState("create");
+  const [reminderTitle, setReminderTitle] = useState("");
 
 
   // For guest users, use localStorage; for authenticated users, use API
@@ -264,7 +266,11 @@ export default function HomeFree() {
               </h1>
             </div>
           </div>
-          <RudyWidget nudgeEvent={lastEvent} onNudgeHandled={() => setLastEvent(null)} />
+          <RudyWidget
+            nudgeEvent={lastEvent}
+            onNudgeHandled={() => setLastEvent(null)}
+            taskTitle={activeTab === "create" ? reminderTitle : undefined}
+          />
           <div className="flex justify-end -mt-1">
             <button
               onClick={() => setLocation('/subscribe')}
@@ -278,7 +284,14 @@ export default function HomeFree() {
 
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="create" className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => {
+            setActiveTab(v);
+            if (v === "manage") setLastEvent("manage_load");
+          }}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
             <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <Bell className="h-4 w-4" />
@@ -299,6 +312,7 @@ export default function HomeFree() {
               isFreePlan={true} 
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
+              onTitleChange={(t) => setReminderTitle(t)}
               onReminderCreated={() => {
                 setLastEvent("reminder_created");
                 setAdActionCount(prev => {
@@ -311,7 +325,7 @@ export default function HomeFree() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            <RemindersList />
+            <RemindersList onEvent={(e) => setLastEvent(e as RudyEventType)} />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">

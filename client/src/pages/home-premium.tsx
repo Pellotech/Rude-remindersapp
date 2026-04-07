@@ -36,7 +36,7 @@ import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyAnimation from "@/components/RudyAnimation";
-import RudyWidget from "@/components/RudyWidget";
+import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -83,7 +83,9 @@ export default function HomePremium() {
   );
   const badgeColor = rudeLevelColors[badgeRudenessLevel] ?? rudeLevelColors[3];
   const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
-  const [lastEvent, setLastEvent] = useState<"reminder_created" | "streak" | null>(null);
+  const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
+  const [activeTab, setActiveTab] = useState("create");
+  const [reminderTitle, setReminderTitle] = useState("");
   const [showRudy, setShowRudy] = useState(false);
   const [rudyAnimIndex, setRudyAnimIndex] = useState(0);
   const [buttonTransform, setButtonTransform] = useState('translateX(0)');
@@ -284,13 +286,25 @@ export default function HomePremium() {
               </h1>
             </div>
           </div>
-          <RudyWidget nudgeEvent={lastEvent} onNudgeHandled={() => setLastEvent(null)} />
+          <RudyWidget
+            nudgeEvent={lastEvent}
+            onNudgeHandled={() => setLastEvent(null)}
+            taskTitle={activeTab === "create" ? reminderTitle : undefined}
+          />
         </div>
 
 
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="create" className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => {
+            setActiveTab(v);
+            if (v === "manage") setLastEvent("manage_load");
+            if (v === "analytics") setLastEvent("analytics_this_week");
+          }}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
             <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <Bell className="h-4 w-4" />
@@ -329,7 +343,11 @@ export default function HomePremium() {
                 isFreePlan={false}
                 currentReminderCount={reminders.length}
                 maxReminders={999999}
-                onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+                onRudenessChange={(level) => {
+                  setBadgeRudenessLevel(level);
+                  setLastEvent(`slider_${level}` as RudyEventType);
+                }}
+                onTitleChange={(t) => setReminderTitle(t)}
                 onReminderCreated={() => setLastEvent("reminder_created")}
               />
               {showRudy && (
@@ -374,7 +392,7 @@ export default function HomePremium() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            <RemindersList />
+            <RemindersList onEvent={(e) => setLastEvent(e as RudyEventType)} />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
@@ -393,7 +411,11 @@ export default function HomePremium() {
                       <button
                         key={t}
                         type="button"
-                        onClick={() => setGraphTab(t)}
+                        onClick={() => {
+                          setGraphTab(t);
+                          const evMap: Record<string, RudyEventType> = { week: "analytics_this_week", tenWeeks: "analytics_10_weeks", year: "analytics_this_year" };
+                          setLastEvent(evMap[t] ?? null);
+                        }}
                         className={`flex-1 py-1 text-[11px] font-semibold transition-all ${
                           graphTab === t
                             ? "bg-[#C9A063] text-[#111827]"

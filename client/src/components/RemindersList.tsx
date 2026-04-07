@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -45,13 +45,18 @@ const formatShortDate = (scheduledFor: string | Date) => {
   return isOverdue ? `${dateStr} • Overdue` : `${dateStr} • ${timeStr}`;
 };
 
-export default function RemindersList() {
+interface RemindersListProps {
+  onEvent?: (event: string) => void;
+}
+
+export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isGuest } = useAuth();
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState<"upcoming" | "past">("past");
   const [searchTerm, setSearchTerm] = useState("");
+  const overdueEventFiredRef = useRef(false);
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
   const { data: reminders = [], isLoading } = useQuery({
@@ -62,12 +67,26 @@ export default function RemindersList() {
     refetchOnMount: true,  // Always re-fetch when the component mounts
   });
 
+  // Fire manage_overdue once when overdue reminders are detected on load
+  useEffect(() => {
+    if (overdueEventFiredRef.current || !reminders.length) return;
+    const now = new Date();
+    const hasOverdue = (reminders as any[]).some(
+      (r) => !r.completed && !r.notAccomplished && new Date(r.scheduledFor) < now
+    );
+    if (hasOverdue) {
+      overdueEventFiredRef.current = true;
+      onEvent?.("manage_overdue");
+    }
+  }, [reminders, onEvent]);
+
   const completeReminderMutation = useMutation({
     mutationFn: async (id: string) => {
       if (isGuest) return guestStorage.completeReminder(id);
       return apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" });
     },
     onSuccess: async (_, id) => {
+      onEvent?.("manage_did_it");
       playCompletedSound();
       if (supportsNotifications()) {
         try { await cancelNativeNotification(id); } catch {}
@@ -126,6 +145,7 @@ export default function RemindersList() {
       return apiRequest(`/api/reminders/${id}/not-accomplished`, { method: "PATCH" });
     },
     onSuccess: async (_, id) => {
+      onEvent?.("manage_didnt_do_it");
       playNotAccomplishedSound();
       if (supportsNotifications()) {
         try { await cancelNativeNotification(id); } catch {}

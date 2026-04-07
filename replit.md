@@ -5,6 +5,14 @@ The Rude Daily Reminder App is a full-stack application that provides daily remi
 
 Guest users have limited free access, while all authenticated users (including developers) experience the premium interface.
 
+### Rudy Character System
+- **RudyWidget** (`client/src/components/RudyWidget.tsx`): Interactive mascot widget replacing old slogan banners on both home pages. Shows Rudy image (64×64, `mix-blend-mode: multiply`) with animated speech bubble. Idle cycle rotates through 3 images every 12s (leaning_2 → sitting_floor → idle_smile). Slogans rotate every 8s.
+- **RUDY_LINES**: Single source of truth for all Rudy speech. Every category has `rude[]` and `positive[]` sub-arrays. `getRudyLine(category)` picks 70% rude / 30% positive randomly.
+- **RudyEventType**: Union type covering 20+ events (reminder_created, manage_did_it, manage_didnt_do_it, slider_1–5, date_today/tomorrow/future, voice, photo, quotes, analytics_*, manage_load, manage_overdue, streak).
+- **taskTitle prop**: When user types 3+ chars in the reminder title field, Rudy reacts with a snarky/encouraging line about their specific task (800ms debounce). Clears when leaving Create tab.
+- **Event wiring**: Slider changes → slider_1–5 events; tab changes → manage_load / analytics_this_week; RemindersList mutations → manage_did_it / manage_didnt_do_it; overdue detection → manage_overdue; analytics graph buttons → analytics events.
+- **Rudy images** (all in `client/public/rudy/` as `_transparent.png`): idle_main_pose, walking, pushing, pushing_2, standing_angry, confident_arms_crossed, smirk_content, thumbs_up_smile, leaning, leaning_2, relaxing_leaning, idle_smile, content_smile, sitting_floor, sitting_bench, sitting_upright (16 total)
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 UI/UX: Remove intro/landing page - direct authentication flow preferred.

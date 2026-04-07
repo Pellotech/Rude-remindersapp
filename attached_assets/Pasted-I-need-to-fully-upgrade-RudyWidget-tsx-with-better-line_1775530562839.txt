@@ -1,0 +1,464 @@
+I need to fully upgrade RudyWidget.tsx with better lines, dynamic task title reactions,
+a 70/30 rude/positive weighted line picker, cleaner image state mapping, and 3 new 
+sitting pose images. This replaces and improves everything currently in the component.
+
+Files to read FIRST before making any changes:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+- client/src/components/RemindersList.tsx
+- client/src/pages/analytics.tsx (or wherever My Journey graph lives)
+
+DO NOT touch RudyAnimation.tsx or any other files not listed above.
+
+STEP 1 — UPDATE THE IMAGE STATE MAP IN RudyWidget.tsx
+
+Replace all image references with this complete map using existing PNG files:
+
+const RUDY_IMAGES = {
+  idle:            '/rudy/Rudy_leaning_2_transparent.png',
+  idleSwap:        '/rudy/Rudy_idle_smile_transparent.png',
+  sittingFloor:    '/rudy/Rudy_sitting_floor_transparent.png',
+  sittingUpright:  '/rudy/Rudy_sitting_upright_transparent.png',
+  sittingBench:    '/rudy/Rudy_sitting_bench_transparent.png',
+  creating:        '/rudy/Rudy_standing_angry_transparent.png',
+  done:            '/rudy/Rudy_thumbs_up_smile_transparent.png',
+  missed:          '/rudy/Rudy_idle_main_pose_transparent.png',
+  tap:             '/rudy/Rudy_pushing_transparent.png',
+};
+
+Idle behaviour — when no event is active, cycle through these 3 images every 12 seconds:
+  Rudy_leaning_2_transparent.png → Rudy_sitting_floor_transparent.png → 
+  Rudy_idle_smile_transparent.png → back to start
+This makes Rudy feel alive even when nothing is happening.
+
+Apply mix-blend-mode: multiply to ALL Rudy images to handle background artifacts.
+Image size: 64x64px.
+
+STEP 2 — BUILD THE WEIGHTED LINE PICKER
+
+Create this helper at the top of RudyWidget.tsx.
+Every category in RUDY_LINES has two sub-arrays: rude and positive.
+The picker chooses rude 70% of the time and positive 30% of the time:
+
+const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
+  const cat = RUDY_LINES[category];
+  const useRude = Math.random() < 0.7;
+  const pool = useRude ? cat.rude : cat.positive;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
+STEP 3 — REPLACE THE RUDY_LINES LIBRARY COMPLETELY
+
+Replace the entire RUDY_LINES object with this full version.
+New lines can always be added by appending a string to any rude or positive array.
+Never hardcode a Rudy line anywhere else in the codebase — this is the only source of truth:
+
+const RUDY_LINES = {
+  idle: {
+    rude: [
+      "Oh great, you're back. What do you want?",
+      "Still here? Bold choice.",
+      "*stares at you judgmentally*",
+      "You and your 'plans'... cute.",
+      "Don't look at me like that.",
+      "Another reminder? Sure. That'll fix you.",
+      "Most apps remind you. We hold you accountable.",
+      "We'll roast you into your best self.",
+      // ADD MORE RUDE IDLE LINES HERE
+    ],
+    positive: [
+      "You showed up. That already puts you ahead of most people.",
+      "Good to see you. Now let's get something done.",
+      "Every reminder you set is a promise to yourself. Respect.",
+      "Started with a laugh. Built a habit.",
+      "Your goals deserve more than a gentle nudge.",
+      // ADD MORE POSITIVE IDLE LINES HERE
+    ],
+  },
+  tapped: {
+    rude: [
+      "Oi. You tapped me. Now go do something.",
+      "Stop poking me and go finish your tasks.",
+      "What are you waiting for? Create a reminder.",
+      "I'm watching you. Don't disappoint me.",
+      "You think this is a game? It is. And you're losing.",
+      // ADD MORE RUDE TAPPED LINES HERE
+    ],
+    positive: [
+      "Hey! Bold move. Now channel that energy into your tasks.",
+      "You found me. Now go find your motivation.",
+      "Tapped for luck. Now go earn it.",
+      // ADD MORE POSITIVE TAPPED LINES HERE
+    ],
+  },
+  creating_generic: {
+    rude: [
+      "Writing it down won't make you do it...",
+      "Oh wow, a reminder. Revolutionary.",
+      "Sure, add another one. Sure.",
+      "We both know how this ends.",
+      "Ooh, ambitious. Love the optimism. Really.",
+      // ADD MORE RUDE CREATING LINES HERE
+    ],
+    positive: [
+      "Take your time. A good reminder is worth setting right.",
+      "Every great habit started with someone writing it down.",
+      "This is how it starts. One reminder at a time.",
+      // ADD MORE POSITIVE CREATING LINES HERE
+    ],
+  },
+  reminderCreated: {
+    rude: [
+      "Nice one. Now actually do it.",
+      "Reminder set. No excuses now.",
+      "It's in the system. I'm watching.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Locked in. Now the only thing left is to actually do it.",
+      "Set and ready. Future you says thanks.",
+      "That's step one. Keep going.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  managedidIt: {
+    rude: [
+      "...Fine. I guess you did the thing.",
+      "Okay I'll admit it. You actually did it.",
+      "Don't get too smug. There's still tomorrow.",
+      "I'm mildly less disappointed. Mildly.",
+      "One task. Don't celebrate yet.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "That's what I'm talking about. Keep that energy.",
+      "Genuinely proud. Don't tell anyone I said that.",
+      "You showed up for yourself. That's the whole game.",
+      "Look at you actually doing the thing. Respect.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  manageDidntDoIt: {
+    rude: [
+      "Called it.",
+      "Shocked. Truly shocked. Not.",
+      "Oh no. Anyway.",
+      "I've seen this movie before.",
+      "This is my surprised face.",
+      "It's giving 'expected'.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Hey. You logged it honestly. That takes guts. Tomorrow.",
+      "Missing one doesn't break a habit. Getting back up does.",
+      "Honesty is the first step. Tomorrow is still yours.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  streak: {
+    rude: [
+      "Look at you. Almost forming a habit.",
+      "Consistency. Didn't think you had it in you.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A streak worth protecting. Don't blow it now.",
+      "This is what showing up looks like. Keep going.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_1: {
+    rude: [
+      "Oh look, choosing the soft option. Typical.",
+      "Gentle mode. For people who like being ignored.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Gentle is still showing up. That counts.",
+      "Starting soft is still starting. Respect.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_2: {
+    rude: [
+      "Okay, a little nudge. Baby steps.",
+      "Motivational. The participation trophy of rudeness.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Motivational is underrated. Steady wins the race.",
+      "A consistent nudge beats a one-time shove. Smart.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_3: {
+    rude: [
+      "Now we're talking. Mediocrity detector activated.",
+      "Sarcastic. So you want honesty with a smile. Smart.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Sarcastic but effective. You clearly know yourself.",
+      "Level 3. The sweet spot for most people.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_4: {
+    rude: [
+      "Ooh someone wants tough love. Respect.",
+      "Harsh mode. Finally someone who can handle the truth.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Harsh mode means you're serious. Respect that.",
+      "You want real accountability. That's rare.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  slider_5: {
+    rude: [
+      "SAVAGE mode. I like you. You're unhinged.",
+      "Full savage. Your future self is already scared.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Savage. You don't mess around. Neither will I.",
+      "Full send. I respect the commitment.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  dateToday: {
+    rude: [
+      "Leaving it to today? Bold. Or lazy. Probably lazy.",
+      "Today. Cutting it close as usual, aren't we.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Today is the only day that's guaranteed. Smart.",
+      "No delay. I respect the urgency.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  dateTomorrow: {
+    rude: [
+      "Tomorrow. The most popular day to start things.",
+      "Ah yes. Tomorrow. Where dreams go to procrastinate.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Planning ahead by one day still counts as planning.",
+      "Tomorrow works. Just don't let it become next week.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  dateFuture: {
+    rude: [
+      "Planning ahead? Who ARE you?",
+      "Look at you, scheduling like a functioning adult. Suspicious.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Future planning. That's genuinely rare. Keep it up.",
+      "Thinking ahead. You might actually be serious about this.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  voice: {
+    rude: [
+      "Pick a voice. Nothing says accountability like being roasted out loud.",
+      "Voice reminders. So you can hear how bad you're slacking.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A voice reminder hits different. Good call.",
+      "Hearing it out loud makes it real. Smart move.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  photo: {
+    rude: [
+      "Add a photo. Your dog didn't ask to be your motivation but here we are.",
+      "Post your kid, your pet, your dreams. Don't let them down. I'm watching.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A photo makes it real. Smart psychological move.",
+      "Attaching a face to the goal. That's next level.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  quotes: {
+    rude: [
+      "A motivational quote? Sure. Words have never stopped anyone from procrastinating before.",
+      "Pick a quote. Feel inspired. Still do nothing. Classic.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A good quote can shift your whole mindset. Nice touch.",
+      "Words matter. Pair them with action and you're unstoppable.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  manageLoad: {
+    rude: [
+      "Here's your history. Tell the truth. I'm watching.",
+      "Manage tab. Where excuses go to die.",
+      "All your reminders. All your choices. Own them.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Your history is right here. Own every entry.",
+      "Every entry is data. Use it to get better.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  manageOverdue: {
+    rude: [
+      "That one's overdue. We don't talk about that one.",
+      "Still sitting there unfinished? Bold strategy. Not working though.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Overdue just means unfinished, not impossible.",
+      "It's not too late. Log it and move forward.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analyticsThisWeek: {
+    rude: [
+      "One week. That's all you've given me. Show me something.",
+      "Seven days of data. The jury is still out on you.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A week of data. You're already building something.",
+      "Seven days in. Every streak starts here.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analytics10Weeks: {
+    rude: [
+      "Ten weeks. This is where habits are actually built. Pay attention.",
+      "The 66-day window. Science says this is where it clicks. Don't blow it.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Ten weeks in the making. This is where it gets real.",
+      "You're in the habit formation zone. Keep showing up.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analyticsThisYear: {
+    rude: [
+      "A whole year of data. Either you're crushing it or you owe me an explanation.",
+      "Full year view. This is your legacy. Make it worth looking at.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "A full year of showing up. That's genuinely rare.",
+      "Twelve months of data. You built something real here.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  analyticsGraphDip: {
+    rude: [
+      "That dip in the graph? That's you giving up. Fix it.",
+      "The line went down. I noticed. Just saying.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Every dip is just a bounce waiting to happen.",
+      "The dip doesn't define you. What you do next does.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+};
+
+STEP 4 — ADD DYNAMIC TASK TITLE REACTION
+
+Add a new prop to RudyWidgetProps:
+  taskTitle?: string;
+
+Add a useEffect that watches taskTitle with 800ms debounce:
+- If taskTitle has 3 or more characters:
+  - Set image to RUDY_IMAGES.creating
+  - 70% chance: bubble shows `"${taskTitle}"? Interesting life choice.`
+  - 30% chance: bubble shows `"${taskTitle}". Okay. Let's see if you actually do it.`
+  - Add more title reaction lines here in future by expanding this array
+- If taskTitle is less than 3 characters or empty:
+  - Use getRudyLine('creating_generic')
+  - Show RUDY_IMAGES.creating
+- taskTitle reactions take priority over all nudgeEvents
+- Only active when user is on the Create tab
+
+In home-premium.tsx and home-free.tsx:
+- Pass the current reminder title input value as taskTitle={reminderTitle}
+- When NOT on the Create tab pass taskTitle={undefined}
+
+STEP 5 — UPDATE IMAGE LOGIC FOR ALL EVENTS
+
+Map each nudgeEvent to the correct image:
+- reminder_created → RUDY_IMAGES.done
+- manage_did_it → RUDY_IMAGES.done
+- manage_didnt_do_it → RUDY_IMAGES.missed
+- manage_overdue → RUDY_IMAGES.sittingBench
+- manage_load → RUDY_IMAGES.sittingBench
+- slider_1, slider_2, slider_3 → RUDY_IMAGES.sittingUpright
+- slider_4, slider_5 → RUDY_IMAGES.missed
+- date_today, date_tomorrow → RUDY_IMAGES.sittingFloor
+- date_future → RUDY_IMAGES.done
+- voice, photo, quotes → RUDY_IMAGES.creating
+- analytics_this_week → RUDY_IMAGES.sittingUpright
+- analytics_10_weeks → RUDY_IMAGES.sittingBench
+- analytics_this_year → RUDY_IMAGES.done
+- analytics_graph_dip → RUDY_IMAGES.missed
+- tapped by user → RUDY_IMAGES.tap
+
+Idle cycle when no event active — rotate every 12 seconds:
+  RUDY_IMAGES.idle → RUDY_IMAGES.sittingFloor → RUDY_IMAGES.idleSwap → repeat
+
+All event reactions last 3000ms then return to idle cycle.
+
+STEP 6 — WIRE UP ALL TRIGGERS
+
+In home-premium.tsx and home-free.tsx:
+- Slider change (debounced 600ms):
+  value 1 → setLastEvent('slider_1')
+  value 2 → setLastEvent('slider_2')
+  value 3 → setLastEvent('slider_3')
+  value 4 → setLastEvent('slider_4')
+  value 5 → setLastEvent('slider_5')
+- Date button tapped:
+  today → setLastEvent('date_today')
+  tomorrow → setLastEvent('date_tomorrow')
+  2+ days away → setLastEvent('date_future')
+- Voice button tapped → setLastEvent('voice')
+- Photo button tapped → setLastEvent('photo')
+- Quotes button tapped → setLastEvent('quotes')
+- Reminder successfully created → setLastEvent('reminder_created')
+
+In RemindersList.tsx:
+- Manage tab becomes visible → setLastEvent('manage_load')
+- Overdue reminder visible on load → setLastEvent('manage_overdue') once
+- Did it tapped → setLastEvent('manage_did_it')
+- Didn't do it tapped → setLastEvent('manage_didnt_do_it')
+- Import and render <RudyWidget /> at top of Manage tab view
+
+In analytics page:
+- This Week tab selected → setLastEvent('analytics_this_week')
+- 10 Weeks tab selected → setLastEvent('analytics_10_weeks')
+- This Year tab selected → setLastEvent('analytics_this_year')
+- Graph renders with more misses than completions → setLastEvent('analytics_graph_dip')
+- Import and render <RudyWidget /> at top of Analytics tab view
+
+FINAL RULES:
+- RUDY_LINES is the only place lines ever live. Never hardcode anywhere else.
+- getRudyLine() is the only function that picks lines. Always use it.
+- Only one nudgeEvent fires at a time. New event replaces active one immediately.
+- taskTitle reaction takes priority over nudgeEvent if both present.
+- Do not change any styling, navigation, layout, or other components.
+- Do not touch RudyAnimation.tsx.
+- Show full updated RudyWidget.tsx and only the changed sections of other files
+  before applying anything.
+- Make changes incremental and safe.
