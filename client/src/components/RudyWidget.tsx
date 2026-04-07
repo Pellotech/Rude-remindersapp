@@ -297,6 +297,7 @@ const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
 
 export type RudyEventType =
   | "reminder_created"
+  | "creating_generic"
   | "streak"
   | "manage_did_it"
   | "manage_didnt_do_it"
@@ -321,6 +322,7 @@ export type RudyEventType =
 
 const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   reminder_created:     RUDY_IMAGES.done,
+  creating_generic:     RUDY_IMAGES.creating,
   streak:               RUDY_IMAGES.done,
   manage_did_it:        RUDY_IMAGES.done,
   manage_didnt_do_it:   RUDY_IMAGES.missed,
@@ -345,6 +347,7 @@ const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
 
 const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES> = {
   reminder_created:     "reminderCreated",
+  creating_generic:     "creating_generic",
   streak:               "streak",
   manage_did_it:        "managedidIt",
   manage_didnt_do_it:   "manageDidntDoIt",

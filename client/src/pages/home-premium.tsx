@@ -84,7 +84,8 @@ export default function HomePremium() {
   const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
   const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
   const [eventKey, setEventKey] = useState(0);
-  const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
+  const fireEvent = (e: RudyEventType) => { console.log('[home-premium] fireEvent:', e); setLastEvent(e); setEventKey(k => k + 1); };
+  const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [activeTab, setActiveTab] = useState("create");
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
@@ -340,6 +341,12 @@ export default function HomePremium() {
               onPhotoTap={() => fireEvent("photo")}
               onQuotesTap={() => fireEvent("quotes")}
               onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+              onTitleChange={(title) => {
+                if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
+                if (title.trim().length >= 3) {
+                  titleDebounceRef.current = setTimeout(() => fireEvent("creating_generic"), 800);
+                }
+              }}
             />
           </TabsContent>
 
