@@ -1,0 +1,96 @@
+Reactions are still not showing in home-premium.tsx even though 
+the wiring appears correct. The nudgeEvent useEffect in RudyWidget 
+is not triggering when buttons are tapped.
+
+Files to read FIRST:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+
+THE LIKELY PROBLEM:
+React's useEffect only fires when a dependency actually changes value.
+If the same nudgeEvent string fires twice in a row (e.g. 'date_future' 
+then 'date_future' again) React sees no change and skips the effect.
+The nudgeKey or eventKey counter is supposed to force a re-trigger 
+but it may not be wired into RudyWidget's useEffect dependencies.
+
+THE FIX:
+
+STEP 1 — In home-premium.tsx:
+Confirm that BOTH nudgeEvent and nudgeKey (or eventKey) are being 
+passed to RudyWidget:
+<RudyWidget
+  nudgeEvent={lastEvent}
+  nudgeKey={eventKey}
+  onNudgeHandled={() => setLastEvent(null)}
+  ...other props
+/>
+
+If nudgeKey is not being passed, add it.
+Confirm eventKey state exists: const [eventKey, setEventKey] = useState(0)
+Confirm every setLastEvent call is paired with setEventKey(k => k + 1)
+like this:
+  setLastEvent('date_today');
+  setEventKey(k => k + 1);
+
+Check ALL trigger points and make sure both lines exist:
+- Date buttons
+- Voice / Photo / Quotes buttons  
+- Slider debounce timer
+- Reminder created success
+
+STEP 2 — In RudyWidget.tsx:
+Add nudgeKey to the props interface:
+  nudgeKey?: number;
+
+Update the nudgeEvent useEffect to include nudgeKey in dependencies:
+  useEffect(() => {
+    if (!nudgeEvent) return;
+    // map and fire reaction
+  }, [nudgeEvent, nudgeKey]);
+
+This means every time nudgeKey increments the effect fires even if
+nudgeEvent is the same string as before.
+
+STEP 3 — Add a console.log temporarily to confirm firing:
+Inside the nudgeEvent useEffect at the very top add:
+  console.log('Rudy nudge fired:', nudgeEvent, nudgeKey);
+
+This will confirm in the browser console whether the effect is 
+running at all. If it logs but reaction bubble still does not show,
+the problem is inside fireReaction. If it does not log at all,
+the problem is the useEffect dependencies.
+
+STEP 4 — In RudyWidget.tsx confirm fireReaction sets state correctly:
+const fireReaction = (text: string, image?: string) => {
+  console.log('fireReaction called:', text); // temporary log
+  if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+  setReactionText(text);
+  setReactionVisible(true);
+  if (image) {
+    setRudyImage(image);
+    if (imageCycleRef.current) clearInterval(imageCycleRef.current);
+    if (imageTimerRef.current) clearTimeout(imageTimerRef.current);
+    imageTimerRef.current = setTimeout(() => {
+      setRudyImage(RUDY_IMAGES.idle);
+      startIdleCycle();
+    }, 8000);
+  }
+  reactionTimerRef.current = setTimeout(() => {
+    setReactionVisible(false);
+    setReactionText('');
+    onNudgeHandled?.();
+  }, 8000);
+};
+
+STEP 5 — Confirm reaction bubble JSX uses visibility not display:
+The reaction bubble div must have:
+  style={{ 
+    visibility: reactionVisible ? 'visible' : 'hidden',
+    // all other styles
+  }}
+If it uses display: none or a conditional render like 
+{reactionVisible && <div>} change it to visibility hidden/visible
+so the layout does not jump.
+
+Do NOT change RUDY_LINES, slogan system, or any other files.
+Show changed sections before applying.

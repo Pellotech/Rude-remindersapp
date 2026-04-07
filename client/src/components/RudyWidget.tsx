@@ -423,9 +423,13 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
   // callHandled: whether to call onNudgeHandled when reaction expires
   // force: skip cooldown (used for important events like reminder_created)
   function fireReaction(text: string, image?: string, callHandled = false, force = false) {
+    console.log('fireReaction called:', text, '| visible:', reactionVisible, '| force:', force);
     const now = Date.now();
     // 2-second cooldown — ignore rapid-fire taps and slider drags
-    if (!force && reactionVisible && now - lastFireTimeRef.current < 2000) return;
+    if (!force && reactionVisible && now - lastFireTimeRef.current < 2000) {
+      console.log('fireReaction BLOCKED by cooldown');
+      return;
+    }
     lastFireTimeRef.current = now;
     if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
     if (image) {
@@ -446,6 +450,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
 
   // ─── Nudge events ──────────────────────────────────────────────────────────
   useEffect(() => {
+    console.log('Rudy nudge fired:', nudgeEvent, nudgeKey);
     if (!nudgeEvent) return;
     const line  = getRudyLine(EVENT_LINE_KEY[nudgeEvent]);
     const force = HIGH_PRIORITY.has(nudgeEvent);
