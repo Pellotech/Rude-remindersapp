@@ -86,6 +86,7 @@ export default function HomePremium() {
   const [eventKey, setEventKey] = useState(0);
   const fireEvent = (e: RudyEventType) => { console.log('[home-premium] fireEvent:', e); setLastEvent(e); setEventKey(k => k + 1); };
   const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasFiredCreatingRef = useRef(false);
   const [activeTab, setActiveTab] = useState("create");
   // Sync badge level when user data loads (it's async)
   useEffect(() => {
@@ -335,7 +336,7 @@ export default function HomePremium() {
               isFreePlan={false}
               currentReminderCount={reminders.length}
               maxReminders={999999}
-              onReminderCreated={() => fireEvent("reminder_created")}
+              onReminderCreated={() => { hasFiredCreatingRef.current = false; fireEvent("reminder_created"); }}
               onDateSelected={(type) => fireEvent(type)}
               onVoiceTap={() => fireEvent("voice")}
               onPhotoTap={() => fireEvent("photo")}
@@ -343,8 +344,13 @@ export default function HomePremium() {
               onRudenessChange={(level) => setBadgeRudenessLevel(level)}
               onTitleChange={(title) => {
                 if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
-                if (title.trim().length >= 3) {
-                  titleDebounceRef.current = setTimeout(() => fireEvent("creating_generic"), 800);
+                if (title.trim().length < 3) {
+                  hasFiredCreatingRef.current = false;
+                } else if (!hasFiredCreatingRef.current) {
+                  titleDebounceRef.current = setTimeout(() => {
+                    hasFiredCreatingRef.current = true;
+                    fireEvent("creating_generic");
+                  }, 800);
                 }
               }}
             />
