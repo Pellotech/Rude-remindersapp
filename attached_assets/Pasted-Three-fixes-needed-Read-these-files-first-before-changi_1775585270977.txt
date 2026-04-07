@@ -1,0 +1,168 @@
+Three fixes needed. Read these files first before changing anything:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+
+═══════════════════════════════════════════
+FIX 1 — Reactions not firing on button/date/slider taps
+═══════════════════════════════════════════
+
+In home-premium.tsx check that ALL of these are still wired up.
+If any are missing, add them back:
+
+a) Date buttons — when a date is tapped:
+   - Today selected → setLastEvent('date_today')
+   - Tomorrow selected → setLastEvent('date_tomorrow')
+   - Any date 2+ days away → setLastEvent('date_future')
+
+b) Voice button tapped → setLastEvent('voice')
+   Photo button tapped → setLastEvent('photo')
+   Quotes button tapped → setLastEvent('quotes')
+
+c) Slider change — using a debounced ref approach:
+   Add this ref if it does not already exist:
+   const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+   const prevRudenessRef = useRef<number>(rudenessLevel);
+
+   Add this useEffect below the rudenessLevel state definition:
+   useEffect(() => {
+     if (rudenessLevel === prevRudenessRef.current) return;
+     prevRudenessRef.current = rudenessLevel;
+     if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
+     sliderRudyRef.current = setTimeout(() => {
+       setLastEvent(`slider_${rudenessLevel}` as RudyEventType);
+       setEventKey(k => k + 1);
+     }, 800);
+   }, [rudenessLevel]);
+
+   Clean up on unmount:
+   useEffect(() => {
+     return () => {
+       if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
+     };
+   }, []);
+
+d) Reminder successfully created → setLastEvent('reminder_created')
+   This should already exist — confirm it is still wired and not broken.
+
+Also check in RudyWidget.tsx that the nudgeEvent useEffect is correctly
+wired like this and has not been accidentally removed:
+useEffect(() => {
+  if (!nudgeEvent) return;
+  const reactionMap: Record<string, keyof typeof RUDY_LINES> = {
+    reminder_created: 'reminderCreated',
+    manage_did_it: 'managedidIt',
+    manage_didnt_do_it: 'manageDidntDoIt',
+    manage_load: 'manageLoad',
+    manage_overdue: 'manageOverdue',
+    streak: 'streak',
+    slider_1: 'slider_1',
+    slider_2: 'slider_2',
+    slider_3: 'slider_3',
+    slider_4: 'slider_4',
+    slider_5: 'slider_5',
+    date_today: 'dateToday',
+    date_tomorrow: 'dateTomorrow',
+    date_future: 'dateFuture',
+    voice: 'voice',
+    photo: 'photo',
+    quotes: 'quotes',
+    analytics_this_week: 'analyticsThisWeek',
+    analytics_10_weeks: 'analytics10Weeks',
+    analytics_this_year: 'analyticsThisYear',
+    analytics_graph_dip: 'analyticsGraphDip',
+  };
+  const imageMap: Record<string, string> = {
+    reminder_created: RUDY_IMAGES.done,
+    manage_did_it: RUDY_IMAGES.done,
+    manage_didnt_do_it: RUDY_IMAGES.missed,
+    manage_load: RUDY_IMAGES.sittingBench,
+    manage_overdue: RUDY_IMAGES.sittingBench,
+    slider_1: RUDY_IMAGES.sittingUpright,
+    slider_2: RUDY_IMAGES.sittingUpright,
+    slider_3: RUDY_IMAGES.sittingUpright,
+    slider_4: RUDY_IMAGES.missed,
+    slider_5: RUDY_IMAGES.missed,
+    date_today: RUDY_IMAGES.sittingFloor,
+    date_tomorrow: RUDY_IMAGES.sittingFloor,
+    date_future: RUDY_IMAGES.done,
+    voice: RUDY_IMAGES.creating,
+    photo: RUDY_IMAGES.creating,
+    quotes: RUDY_IMAGES.creating,
+    analytics_this_week: RUDY_IMAGES.sittingUpright,
+    analytics_10_weeks: RUDY_IMAGES.sittingBench,
+    analytics_this_year: RUDY_IMAGES.done,
+    analytics_graph_dip: RUDY_IMAGES.missed,
+    streak: RUDY_IMAGES.done,
+  };
+  const lineCategory = reactionMap[nudgeEvent];
+  const image = imageMap[nudgeEvent] ?? RUDY_IMAGES.idle;
+  if (lineCategory) {
+    fireReaction(getRudyLine(lineCategory), image);
+  }
+}, [nudgeEvent]);
+
+If this useEffect is missing or broken, restore it exactly as above.
+
+In home-free.tsx apply the same wiring checks for whatever buttons
+exist on the free version. Add any missing event wiring.
+
+═══════════════════════════════════════════
+FIX 2 — Rudeness slider correct colors
+═══════════════════════════════════════════
+
+In home-premium.tsx and home-free.tsx find where the slider 
+track and thumb colors are set and replace with these exact values:
+
+const sliderColors: Record<number, string> = {
+  1: '#38BDF8',  // sky blue    — Gentle
+  2: '#22C55E',  // green       — Motivational
+  3: '#FDE047',  // yellow      — Sarcastic
+  4: '#F97316',  // orange      — Harsh
+  5: '#b70d0d',  // deep red    — Savage
+};
+const currentSliderColor = sliderColors[rudenessLevel] || '#38BDF8';
+
+Apply currentSliderColor to:
+- The slider track fill (the filled left portion of the track)
+- The slider thumb
+
+Use inline styles driven by rudenessLevel state.
+This is purely visual — completely separate from Rudy and any other system.
+
+═══════════════════════════════════════════
+FIX 3 — Remove slider-based tone weighting
+═══════════════════════════════════════════
+
+In RudyWidget.tsx find the getRudyLine function.
+Remove any logic that adjusts rude/positive ratio based on 
+rudeness level, slider value, or any external prop.
+
+Replace with this simple fixed version always:
+const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
+  const cat = RUDY_LINES[category];
+  const useRude = Math.random() < 0.7;
+  const pool = useRude ? cat.rude : cat.positive;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
+Also in RudyWidget.tsx:
+- Remove rudenessLevel from RudyWidgetProps if it exists
+- Remove any prop called currentRudenessLevel or similar
+
+In home-premium.tsx and home-free.tsx:
+- Remove any rudenessLevel or currentRudenessLevel prop 
+  being passed into RudyWidget
+- Rudy always uses 70/30. Slider has zero effect on his tone.
+
+═══════════════════════════════════════════
+FINAL RULES
+═══════════════════════════════════════════
+
+- Do NOT change RUDY_LINES library
+- Do NOT change the two bubble layout
+- Do NOT change bubble styling or positioning
+- Do NOT touch RudyAnimation.tsx
+- Do NOT change any other components or pages
+- Show changed sections of all files before applying
+- Make changes safe and incremental

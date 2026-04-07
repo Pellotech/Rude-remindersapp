@@ -335,6 +335,11 @@ export default function HomePremium() {
               currentReminderCount={reminders.length}
               maxReminders={999999}
               onReminderCreated={() => fireEvent("reminder_created")}
+              onDateSelected={(type) => fireEvent(type)}
+              onVoiceTap={() => fireEvent("voice")}
+              onPhotoTap={() => fireEvent("photo")}
+              onQuotesTap={() => fireEvent("quotes")}
+              onRudenessChange={(level) => setBadgeRudenessLevel(level)}
             />
           </TabsContent>
 

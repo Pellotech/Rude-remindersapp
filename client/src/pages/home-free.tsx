@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -76,6 +76,14 @@ export default function HomeFree() {
   const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
 
+  const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevRudenessRef = useRef<number>(3);
+
+  useEffect(() => {
+    return () => {
+      if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
+    };
+  }, []);
 
   // For guest users, use localStorage; for authenticated users, use API
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
@@ -319,6 +327,18 @@ export default function HomeFree() {
                   console.log('Ad action counter incremented:', next);
                   return next;
                 });
+              }}
+              onDateSelected={(type) => fireEvent(type)}
+              onVoiceTap={() => fireEvent("voice")}
+              onPhotoTap={() => fireEvent("photo")}
+              onQuotesTap={() => fireEvent("quotes")}
+              onRudenessChange={(level) => {
+                if (level === prevRudenessRef.current) return;
+                prevRudenessRef.current = level;
+                if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
+                sliderRudyRef.current = setTimeout(() => {
+                  fireEvent(`slider_${level}` as RudyEventType);
+                }, 800);
               }}
             />
           </TabsContent>

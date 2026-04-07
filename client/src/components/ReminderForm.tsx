@@ -74,6 +74,11 @@ interface ReminderFormProps {
   maxReminders?: number;
   onReminderCreated?: () => void;
   onTitleChange?: (title: string) => void;
+  onDateSelected?: (type: 'date_today' | 'date_tomorrow' | 'date_future') => void;
+  onVoiceTap?: () => void;
+  onPhotoTap?: () => void;
+  onQuotesTap?: () => void;
+  onRudenessChange?: (level: number) => void;
 }
 
 const rudenessLabels = [
@@ -200,6 +205,11 @@ export default function ReminderForm({
   maxReminders = 5,
   onReminderCreated,
   onTitleChange,
+  onDateSelected,
+  onVoiceTap,
+  onPhotoTap,
+  onQuotesTap,
+  onRudenessChange,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -370,6 +380,15 @@ export default function ReminderForm({
   const rudenessLevel = form.watch("rudenessLevel");
   const voiceCharacter = form.watch("voiceCharacter");
 
+  const sliderColors: Record<number, string> = {
+    1: '#38BDF8',
+    2: '#22C55E',
+    3: '#FDE047',
+    4: '#F97316',
+    5: '#b70d0d',
+  };
+  const currentSliderColor = sliderColors[rudenessLevel] || '#38BDF8';
+
   // Update selectedVoice when form voiceCharacter changes
   useEffect(() => {
     setSelectedVoice(voiceCharacter);
@@ -390,6 +409,17 @@ export default function ReminderForm({
   const handleDateTimeChange = (dateTime: Date) => {
     const formattedDateTime = format(dateTime, "yyyy-MM-dd'T'HH:mm");
     form.setValue("scheduledFor", formattedDateTime);
+    const now = new Date();
+    const todayStart = startOfDay(now);
+    const tomorrowStart = startOfDay(new Date(now.getTime() + 86400000));
+    const dayAfterStart = startOfDay(new Date(now.getTime() + 2 * 86400000));
+    if (!isBefore(dateTime, todayStart) && isBefore(dateTime, tomorrowStart)) {
+      onDateSelected?.('date_today');
+    } else if (!isBefore(dateTime, tomorrowStart) && isBefore(dateTime, dayAfterStart)) {
+      onDateSelected?.('date_tomorrow');
+    } else if (!isBefore(dateTime, dayAfterStart)) {
+      onDateSelected?.('date_future');
+    }
   };
 
   // Fetch rude phrases for preview
@@ -1094,7 +1124,7 @@ export default function ReminderForm({
             />
 
             {/* Rudeness Level Slider */}
-            <div className="-mt-1">
+            <div className="-mt-1" style={{ '--slider-color': currentSliderColor } as React.CSSProperties}>
             <FormField
               control={form.control}
               name="rudenessLevel"
@@ -1115,6 +1145,7 @@ export default function ReminderForm({
                             Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
                           }
                           field.onChange(newLevel);
+                          onRudenessChange?.(newLevel);
                         }}
                         className="rudeness-slider"
                       />
@@ -1151,7 +1182,11 @@ export default function ReminderForm({
                 <div className="flex rounded-xl overflow-hidden border border-[#C9A063]">
                   <button
                     type="button"
-                    onClick={() => setActiveFeatureTab(activeFeatureTab === 'voice' ? null : 'voice')}
+                    onClick={() => {
+                        const opening = activeFeatureTab !== 'voice';
+                        setActiveFeatureTab(opening ? 'voice' : null);
+                        if (opening) onVoiceTap?.();
+                      }}
                     className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none ${
                       activeFeatureTab === 'voice' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
                     }`}
@@ -1166,7 +1201,7 @@ export default function ReminderForm({
                       type="button"
                       onClick={() => {
                         if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
-                        else { gateAttachments(() => setActiveFeatureTab('photo')); }
+                        else { gateAttachments(() => { setActiveFeatureTab('photo'); onPhotoTap?.(); }); }
                       }}
                       className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative focus:outline-none ${
                         activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
@@ -1184,7 +1219,7 @@ export default function ReminderForm({
                       type="button"
                       onClick={() => {
                         if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
-                        else { gateQuotes(() => setActiveFeatureTab('quotes')); }
+                        else { gateQuotes(() => { setActiveFeatureTab('quotes'); onQuotesTap?.(); }); }
                       }}
                       className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
                         activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
