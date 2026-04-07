@@ -84,6 +84,8 @@ export default function HomePremium() {
   const badgeColor = rudeLevelColors[badgeRudenessLevel] ?? rudeLevelColors[3];
   const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
   const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
+  const [eventKey, setEventKey] = useState(0);
+  const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
   const [reminderTitle, setReminderTitle] = useState("");
   const [showRudy, setShowRudy] = useState(false);
@@ -288,6 +290,7 @@ export default function HomePremium() {
           </div>
           <RudyWidget
             nudgeEvent={lastEvent}
+            nudgeKey={eventKey}
             onNudgeHandled={() => setLastEvent(null)}
             taskTitle={activeTab === "create" ? reminderTitle : undefined}
           />
@@ -300,8 +303,8 @@ export default function HomePremium() {
           value={activeTab}
           onValueChange={(v) => {
             setActiveTab(v);
-            if (v === "manage") setLastEvent("manage_load");
-            if (v === "analytics") setLastEvent("analytics_this_week");
+            if (v === "manage") fireEvent("manage_load");
+            if (v === "analytics") fireEvent("analytics_this_week");
           }}
           className="space-y-6"
         >
@@ -345,10 +348,10 @@ export default function HomePremium() {
                 maxReminders={999999}
                 onRudenessChange={(level) => {
                   setBadgeRudenessLevel(level);
-                  setLastEvent(`slider_${level}` as RudyEventType);
+                  fireEvent(`slider_${level}` as RudyEventType);
                 }}
                 onTitleChange={(t) => setReminderTitle(t)}
-                onReminderCreated={() => setLastEvent("reminder_created")}
+                onReminderCreated={() => fireEvent("reminder_created")}
               />
               {showRudy && (
                 <>
@@ -392,7 +395,7 @@ export default function HomePremium() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            <RemindersList onEvent={(e) => setLastEvent(e as RudyEventType)} />
+            <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
@@ -414,7 +417,7 @@ export default function HomePremium() {
                         onClick={() => {
                           setGraphTab(t);
                           const evMap: Record<string, RudyEventType> = { week: "analytics_this_week", tenWeeks: "analytics_10_weeks", year: "analytics_this_year" };
-                          setLastEvent(evMap[t] ?? null);
+                          const ev = evMap[t]; if (ev) fireEvent(ev);
                         }}
                         className={`flex-1 py-1 text-[11px] font-semibold transition-all ${
                           graphTab === t

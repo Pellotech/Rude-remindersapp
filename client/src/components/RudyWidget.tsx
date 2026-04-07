@@ -384,11 +384,12 @@ const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES
 
 export interface RudyWidgetProps {
   nudgeEvent?: RudyEventType;
+  nudgeKey?: number;
   onNudgeHandled?: () => void;
   taskTitle?: string;
 }
 
-export default function RudyWidget({ nudgeEvent, onNudgeHandled, taskTitle }: RudyWidgetProps) {
+export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskTitle }: RudyWidgetProps) {
   const [rudyImg, setRudyImg] = useState(IDLE_CYCLE[0]);
   const [bubbleText, setBubbleText] = useState(() => getRudyLine("idle"));
   const [bubbleVisible, setBubbleVisible] = useState(true);
@@ -433,13 +434,14 @@ export default function RudyWidget({ nudgeEvent, onNudgeHandled, taskTitle }: Ru
   // Idle bubble rotation every 8 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      if (modeRef.current !== "idle") return;
+      if (modeRef.current !== "idle") return;  // guard FIRST — never touch bubble when in event/title/tapped mode
       setBubbleVisible(false);
-      setTimeout(() => {
+      const tid = setTimeout(() => {
         if (modeRef.current !== "idle") return;
         setBubbleText(getRudyLine("idle"));
         setBubbleVisible(true);
       }, 350);
+      timersRef.current.push(tid);
     }, 8000);
     return () => clearInterval(interval);
   }, []);
@@ -469,7 +471,7 @@ export default function RudyWidget({ nudgeEvent, onNudgeHandled, taskTitle }: Ru
     };
   }, [taskTitle]);
 
-  // nudgeEvent handler — skipped if title mode is active
+  // nudgeEvent handler — re-runs whenever nudgeKey changes, even for repeat events
   useEffect(() => {
     if (!nudgeEvent) return;
     if (modeRef.current === "title") return;
@@ -486,7 +488,8 @@ export default function RudyWidget({ nudgeEvent, onNudgeHandled, taskTitle }: Ru
       returnToIdle();
       addTimer(() => onNudgeHandled?.(), 400);
     }, 3000);
-  }, [nudgeEvent]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nudgeEvent, nudgeKey]);
 
   function handleTap() {
     if (modeRef.current === "event") return;

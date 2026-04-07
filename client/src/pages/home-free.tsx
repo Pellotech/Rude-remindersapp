@@ -72,6 +72,8 @@ export default function HomeFree() {
   });
   const [adActionCount, setAdActionCount] = useState(0);
   const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
+  const [eventKey, setEventKey] = useState(0);
+  const fireEvent = (e: RudyEventType) => { setLastEvent(e); setEventKey(k => k + 1); };
   const [activeTab, setActiveTab] = useState("create");
   const [reminderTitle, setReminderTitle] = useState("");
 
@@ -268,6 +270,7 @@ export default function HomeFree() {
           </div>
           <RudyWidget
             nudgeEvent={lastEvent}
+            nudgeKey={eventKey}
             onNudgeHandled={() => setLastEvent(null)}
             taskTitle={activeTab === "create" ? reminderTitle : undefined}
           />
@@ -288,7 +291,7 @@ export default function HomeFree() {
           value={activeTab}
           onValueChange={(v) => {
             setActiveTab(v);
-            if (v === "manage") setLastEvent("manage_load");
+            if (v === "manage") fireEvent("manage_load");
           }}
           className="space-y-6"
         >
@@ -314,7 +317,7 @@ export default function HomeFree() {
               maxReminders={freeUsage.effectiveLimit}
               onTitleChange={(t) => setReminderTitle(t)}
               onReminderCreated={() => {
-                setLastEvent("reminder_created");
+                fireEvent("reminder_created");
                 setAdActionCount(prev => {
                   const next = prev + 1;
                   console.log('Ad action counter incremented:', next);
@@ -325,7 +328,7 @@ export default function HomeFree() {
           </TabsContent>
 
           <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            <RemindersList onEvent={(e) => setLastEvent(e as RudyEventType)} />
+            <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
