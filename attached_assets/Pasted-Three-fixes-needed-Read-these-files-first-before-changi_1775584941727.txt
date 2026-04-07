@@ -1,0 +1,74 @@
+Three fixes needed. Read these files first before changing anything:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+
+FIX 1 — Reactions not firing on button/date/slider taps:
+
+In home-premium.tsx check that ALL of these are still wired up.
+If any are missing, add them back:
+
+a) Date buttons — when a date is tapped:
+   - Today selected → setLastEvent('date_today')
+   - Tomorrow selected → setLastEvent('date_tomorrow')  
+   - Any date 2+ days away → setLastEvent('date_future')
+
+b) Voice button tapped → setLastEvent('voice')
+   Photo button tapped → setLastEvent('photo')
+   Quotes button tapped → setLastEvent('quotes')
+
+c) Slider change — using the existing sliderRudyRef debounce approach:
+   rudenessLevel state changes → after 800ms → 
+   setLastEvent('slider_1' through 'slider_5')
+
+d) Reminder successfully created → setLastEvent('reminder_created')
+
+Also check in RudyWidget.tsx that the nudgeEvent useEffect is correctly 
+wired like this:
+useEffect(() => {
+  if (!nudgeEvent) return;
+  // map nudgeEvent to line and image and call fireReaction
+}, [nudgeEvent]);
+
+If the useEffect is missing or has wrong dependencies, fix it.
+
+In home-free.tsx apply the same wiring checks for whatever buttons 
+exist on the free version.
+
+FIX 2 — Rudeness slider color not changing:
+
+The slider thumb and track color should change based on rudeness level.
+This is a visual CSS feature completely separate from Rudy.
+Find where the slider color was previously set and restore it.
+The color should follow this map:
+- Level 1: #8BC34A (green)
+- Level 2: #4CAF50 (darker green)  
+- Level 3: #FFC107 (yellow/amber)
+- Level 4: #FF9800 (orange)
+- Level 5: #C53B3B (red)
+Apply the color to the slider track fill and thumb using inline styles
+or a dynamic className based on rudenessLevel state.
+This is purely visual — it does not affect Rudy or any other system.
+
+FIX 3 — Remove slider-based tone weighting from Rudy completely:
+
+In RudyWidget.tsx find the getRudyLine function.
+Replace any logic that uses rudeness level or slider value to 
+adjust the rude/positive ratio.
+Replace with simple fixed 70/30 weighting always:
+
+const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
+  const cat = RUDY_LINES[category];
+  const useRude = Math.random() < 0.7;
+  const pool = useRude ? cat.rude : cat.positive;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
+Remove any rudenessLevel prop from RudyWidgetProps if it exists.
+Remove any place rudenessLevel is passed into RudyWidget from 
+home-premium.tsx or home-free.tsx.
+Rudy always uses 70/30. The slider level has no effect on his tone.
+
+Do NOT change anything else.
+Show changed sections before applying.
+Make changes safe and incremental.
