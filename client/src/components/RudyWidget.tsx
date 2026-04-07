@@ -382,6 +382,9 @@ const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES
   analytics_graph_dip:  "analyticsGraphDip",
 };
 
+// Events important enough to override the cooldown and always show immediately
+const HIGH_PRIORITY = new Set<RudyEventType>(["reminder_created", "manage_did_it", "manage_didnt_do_it"]);
+
 export interface RudyWidgetProps {
   nudgeEvent?: RudyEventType;
   nudgeKey?: number;
@@ -403,6 +406,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   const [reactionText, setReactionText]       = useState("");
   const [reactionVisible, setReactionVisible] = useState(false);
   const reactionTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastFireTimeRef   = useRef(0); // cooldown — prevents rapid-fire spam
   const titleDebounceRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep onNudgeHandled in a ref so timers never close over a stale value
@@ -431,7 +435,12 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   // ─── SYSTEM 2: fireReaction helper ─────────────────────────────────────────
   // image: optional Rudy image to show during reaction (restored after)
   // callHandled: whether to call onNudgeHandled when reaction expires
-  function fireReaction(text: string, image?: string, callHandled = false) {
+  // force: skip cooldown (used for important events like reminder_created)
+  function fireReaction(text: string, image?: string, callHandled = false, force = false) {
+    const now = Date.now();
+    // 2-second cooldown — ignore rapid-fire taps and slider drags
+    if (!force && reactionVisible && now - lastFireTimeRef.current < 2000) return;
+    lastFireTimeRef.current = now;
     if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
     if (image) {
       isActiveRef.current = true;
@@ -452,8 +461,9 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, taskT
   // ─── Nudge events ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (!nudgeEvent) return;
-    const line = getRudyLine(EVENT_LINE_KEY[nudgeEvent]);
-    fireReaction(line, EVENT_IMAGE[nudgeEvent], true);
+    const line  = getRudyLine(EVENT_LINE_KEY[nudgeEvent]);
+    const force = HIGH_PRIORITY.has(nudgeEvent);
+    fireReaction(line, EVENT_IMAGE[nudgeEvent], true, force);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nudgeEvent, nudgeKey]);
 
