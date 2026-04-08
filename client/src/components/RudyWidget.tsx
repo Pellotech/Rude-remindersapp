@@ -287,8 +287,12 @@ const RUDY_LINES = {
   },
 };
 
-const getRudyLine = (category: keyof typeof RUDY_LINES): string => {
+const getRudyLine = (category: keyof typeof RUDY_LINES, niceMode = false): string => {
   const cat = RUDY_LINES[category];
+  if (niceMode) {
+    const pool = cat.positive;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
   const useRude = Math.random() < 0.7;
   const pool = useRude ? cat.rude : cat.positive;
   return pool[Math.floor(Math.random() * pool.length)];
@@ -384,13 +388,21 @@ export interface RudyWidgetProps {
 
 export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showReactionBubble, showPremiumButton, onPremiumPress }: RudyWidgetProps) {
 
+  // ─── Nice Mode ─────────────────────────────────────────────────────────────
+  const [niceMode, setNiceMode] = useState(() => localStorage.getItem('rudy_nice_mode') === 'true');
+  useEffect(() => {
+    const handleStorage = () => setNiceMode(localStorage.getItem('rudy_nice_mode') === 'true');
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
   // ─── SYSTEM 3: Idle image cycle ────────────────────────────────────────────
   const idleCycleIdxRef = useRef(0);
   const isActiveRef     = useRef(false); // true while an event/tap image is showing
   const [rudyImg, setRudyImg] = useState(IDLE_CYCLE[0]);
 
   // ─── SYSTEM 1: Slogan — runs every 20s, never interrupted ──────────────────
-  const [sloganText, setSloganText] = useState(() => getRudyLine("idle"));
+  const [sloganText, setSloganText] = useState(() => getRudyLine("idle", localStorage.getItem('rudy_nice_mode') === 'true'));
 
   // ─── SYSTEM 2: Reaction — shows on trigger, hides after 8s ────────────────
   const [reactionText, setReactionText]       = useState("");
@@ -405,10 +417,10 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
   // ─── SYSTEM 1: Slogan interval ─────────────────────────────────────────────
   useEffect(() => {
     const interval = setInterval(() => {
-      setSloganText(getRudyLine("idle"));
+      setSloganText(getRudyLine("idle", niceMode));
     }, 20000);
     return () => clearInterval(interval);
-  }, []);
+  }, [niceMode]);
 
   // ─── SYSTEM 3: Idle image cycle interval ───────────────────────────────────
   useEffect(() => {
@@ -455,7 +467,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
   useEffect(() => {
     console.log('Rudy nudge fired:', nudgeEvent, nudgeKey);
     if (!nudgeEvent) return;
-    const line  = getRudyLine(EVENT_LINE_KEY[nudgeEvent]);
+    const line  = getRudyLine(EVENT_LINE_KEY[nudgeEvent], niceMode);
     const force = HIGH_PRIORITY.has(nudgeEvent);
     fireReaction(line, EVENT_IMAGE[nudgeEvent], true, force);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -470,7 +482,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
 
   // ─── Tap handler ───────────────────────────────────────────────────────────
   function handleTap() {
-    fireReaction(getRudyLine("tapped"), RUDY_IMAGES.tap, false);
+    fireReaction(getRudyLine("tapped", niceMode), RUDY_IMAGES.tap, false);
   }
 
   // ─── Render ────────────────────────────────────────────────────────────────

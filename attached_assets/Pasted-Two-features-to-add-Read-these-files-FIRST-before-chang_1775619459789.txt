@@ -1,0 +1,184 @@
+Two features to add. Read these files FIRST before changing anything:
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+- client/src/pages/settings.tsx (or wherever the settings page lives)
+
+DO NOT touch RudyAnimation.tsx or any other files not listed above.
+
+═══════════════════════════════════════════
+FEATURE 1 — NICE MODE TOGGLE IN SETTINGS
+═══════════════════════════════════════════
+
+WHAT IT DOES:
+When Nice Mode is ON, Rudy only ever picks from the positive array
+in RUDY_LINES for every category. The 70/30 weighting is ignored.
+When Nice Mode is OFF (default), Rudy uses the normal 70/30 weighting.
+This only affects the speech bubble lines in RudyWidget.
+Nothing else in the app changes.
+
+STEP 1 — Store the setting in localStorage:
+Use the key 'rudy_nice_mode' with value 'true' or 'false'.
+Default is 'false' (nice mode off).
+
+STEP 2 — In settings.tsx:
+Find the settings page and add a new toggle row for Nice Mode.
+Place it in a logical section — near notifications or preferences.
+It should look consistent with other settings toggles already on the page.
+
+The row should show:
+- Label: "Nice Rudy Mode"
+- Subtitle: "Switch Rudy to encouraging comments only"
+- A toggle switch (use the same toggle component already used elsewhere
+  in settings, or a simple styled checkbox if no toggle exists)
+
+When toggled ON:
+  localStorage.setItem('rudy_nice_mode', 'true')
+When toggled OFF:
+  localStorage.setItem('rudy_nice_mode', 'false')
+
+Initialize the toggle state from localStorage on mount:
+  const [niceModeOn, setNiceModeOn] = useState(
+    () => localStorage.getItem('rudy_nice_mode') === 'true'
+  );
+
+STEP 3 — In RudyWidget.tsx:
+Read the nice mode setting on mount and whenever it could change:
+  const [niceMode, setNiceMode] = useState(
+    () => localStorage.getItem('rudy_nice_mode') === 'true'
+  );
+
+Add a storage event listener so if the user changes it in settings
+and comes back, RudyWidget picks it up without needing a full reload:
+  useEffect(() => {
+    const handleStorage = () => {
+      setNiceMode(localStorage.getItem('rudy_nice_mode') === 'true');
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+STEP 4 — Update getRudyLine in RudyWidget.tsx:
+Replace the current getRudyLine function with this version:
+
+const getRudyLine = (
+  category: keyof typeof RUDY_LINES, 
+  forceNice?: boolean
+): string => {
+  const cat = RUDY_LINES[category];
+  const useNice = forceNice ?? niceMode;
+  if (useNice) {
+    // nice mode — always pick from positive array
+    const pool = cat.positive;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  // normal mode — 70/30 weighted
+  const useRude = Math.random() < 0.7;
+  const pool = useRude ? cat.rude : cat.positive;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
+Pass niceMode into getRudyLine everywhere it is called:
+  getRudyLine('idle', niceMode)
+  getRudyLine('tapped', niceMode)
+  getRudyLine('reminderCreated', niceMode)
+  etc — update every single getRudyLine call to pass niceMode
+
+STEP 5 — The slogan bubble should also respect nice mode:
+The slogan setInterval that fires every 20 seconds should call:
+  setSloganText(getRudyLine('idle', niceMode))
+So if nice mode is on, even the rotating slogans are encouraging only.
+
+═══════════════════════════════════════════
+FEATURE 2 — STICKY RUDY WIDGET ON SCROLL
+═══════════════════════════════════════════
+
+WHAT IT DOES:
+The RudyWidget starts in its normal position on the page.
+When the user scrolls down past the widget, it sticks to the top
+of the screen just below the app header so Rudy is always visible.
+When the user scrolls back up to where the widget originally was,
+it returns to its normal position in the flow.
+
+STEP 1 — In home-premium.tsx:
+Wrap the RudyWidget in a container div with a ref:
+  const rudyRef = useRef<HTMLDivElement>(null);
+  const [rudySticky, setRudySticky] = useState(false);
+
+Add a scroll listener useEffect:
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!rudyRef.current) return;
+      const rect = rudyRef.current.getBoundingClientRect();
+      // get the header height — check what the actual header height is
+      // in the app and use that value, approximately 60px if unsure
+      const headerHeight = 60;
+      if (rect.top < headerHeight) {
+        setRudySticky(true);
+      } else {
+        setRudySticky(false);
+      }
+    };
+    const scrollContainer = rudyRef.current?.closest(
+      '[data-scroll], .overflow-y-auto, .overflow-auto, main, #root'
+    );
+    const target = scrollContainer || window;
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    return () => target.removeEventListener('scroll', handleScroll);
+  }, []);
+
+STEP 2 — Render a placeholder AND the sticky widget:
+Use this pattern to avoid layout jump when widget goes sticky:
+
+  <div ref={rudyRef} style={{ 
+    height: rudySticky ? '120px' : 'auto' 
+  }}>
+    {!rudySticky && (
+      <RudyWidget ... all props ... />
+    )}
+  </div>
+  
+  {rudySticky && (
+    <div style={{
+      position: 'fixed',
+      top: '60px', // below the header — adjust if header is different height
+      left: 0,
+      right: 0,
+      zIndex: 50,
+      padding: '0 16px',
+      backgroundColor: 'transparent',
+    }}>
+      <RudyWidget ... all props ... />
+    </div>
+  )}
+
+The placeholder div keeps the space reserved in the layout so 
+content does not jump when Rudy goes sticky.
+The fixed div shows Rudy pinned below the header when sticky.
+
+STEP 3 — Apply the same sticky behaviour in home-free.tsx:
+Use the exact same pattern — rudyRef, rudySticky state, scroll 
+listener, placeholder div, and fixed sticky div.
+The free version RudyWidget props stay the same (showReactionBubble=false,
+showPremiumButton=true, onPremiumPress to subscribe page).
+
+STEP 4 — Make sure sticky Rudy looks right:
+When sticky the widget should have:
+- A subtle box shadow so it looks elevated above the content:
+  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+- Same background color as normal (#FDF3E3)
+- Same border radius
+- Full width of the screen with 16px padding on each side
+- No animation or transition needed — instant snap is fine
+
+═══════════════════════════════════════════
+FINAL RULES
+═══════════════════════════════════════════
+
+- Do NOT change RUDY_LINES library content
+- Do NOT change bubble styling or the two bubble layout
+- Do NOT change the reaction or slogan systems
+- Do NOT touch RudyAnimation.tsx
+- Do NOT change analytics, RemindersList, or any other components
+- Show full changed sections of every file before applying
+- Make changes incremental and safe

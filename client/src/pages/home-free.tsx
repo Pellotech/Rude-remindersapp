@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -72,6 +72,24 @@ export default function HomeFree() {
   });
   const [adActionCount, setAdActionCount] = useState(0);
   const [activeTab, setActiveTab] = useState("create");
+
+  const rudyRef = useRef<HTMLDivElement>(null);
+  const [rudySticky, setRudySticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!rudyRef.current) return;
+      const rect = rudyRef.current.getBoundingClientRect();
+      const headerHeight = 60;
+      setRudySticky(rect.top < headerHeight);
+    };
+    const scrollContainer = rudyRef.current?.closest(
+      '[data-scroll], .overflow-y-auto, .overflow-auto, main, #root'
+    );
+    const target = scrollContainer || window;
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    return () => target.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // For guest users, use localStorage; for authenticated users, use API
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
@@ -262,11 +280,33 @@ export default function HomeFree() {
               </h1>
             </div>
           </div>
-          <RudyWidget
-            showReactionBubble={false}
-            showPremiumButton={true}
-            onPremiumPress={() => setLocation('/subscribe')}
-          />
+          <div ref={rudyRef} style={{ height: rudySticky ? '120px' : 'auto' }}>
+            {!rudySticky && (
+              <RudyWidget
+                showReactionBubble={false}
+                showPremiumButton={true}
+                onPremiumPress={() => setLocation('/subscribe')}
+              />
+            )}
+          </div>
+          {rudySticky && (
+            <div style={{
+              position: 'fixed',
+              top: '60px',
+              left: 0,
+              right: 0,
+              zIndex: 50,
+              padding: '0 16px',
+              backgroundColor: '#FDF3E3',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}>
+              <RudyWidget
+                showReactionBubble={false}
+                showPremiumButton={true}
+                onPremiumPress={() => setLocation('/subscribe')}
+              />
+            </div>
+          )}
         </div>
 
 

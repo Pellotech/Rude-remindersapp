@@ -99,6 +99,9 @@ export default function HomePremium() {
   const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevRudenessRef = useRef<number>(badgeRudenessLevel);
 
+  const rudyRef = useRef<HTMLDivElement>(null);
+  const [rudySticky, setRudySticky] = useState(false);
+
   useEffect(() => {
     if (badgeRudenessLevel === prevRudenessRef.current) return;
     prevRudenessRef.current = badgeRudenessLevel;
@@ -114,6 +117,21 @@ export default function HomePremium() {
       graphScrollRef.current.scrollLeft = graphScrollRef.current.scrollWidth;
     }
   }, [graphTab]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!rudyRef.current) return;
+      const rect = rudyRef.current.getBoundingClientRect();
+      const headerHeight = 60;
+      setRudySticky(rect.top < headerHeight);
+    };
+    const scrollContainer = rudyRef.current?.closest(
+      '[data-scroll], .overflow-y-auto, .overflow-auto, main, #root'
+    );
+    const target = scrollContainer || window;
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    return () => target.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ["/api/reminders"],
@@ -297,11 +315,33 @@ export default function HomePremium() {
               </h1>
             </div>
           </div>
-          <RudyWidget
-            nudgeEvent={lastEvent}
-            nudgeKey={eventKey}
-            onNudgeHandled={() => setLastEvent(null)}
-          />
+          <div ref={rudyRef} style={{ height: rudySticky ? '120px' : 'auto' }}>
+            {!rudySticky && (
+              <RudyWidget
+                nudgeEvent={lastEvent}
+                nudgeKey={eventKey}
+                onNudgeHandled={() => setLastEvent(null)}
+              />
+            )}
+          </div>
+          {rudySticky && (
+            <div style={{
+              position: 'fixed',
+              top: '60px',
+              left: 0,
+              right: 0,
+              zIndex: 50,
+              padding: '0 16px',
+              backgroundColor: '#FDF3E3',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}>
+              <RudyWidget
+                nudgeEvent={lastEvent}
+                nudgeKey={eventKey}
+                onNudgeHandled={() => setLastEvent(null)}
+              />
+            </div>
+          )}
         </div>
 
 
