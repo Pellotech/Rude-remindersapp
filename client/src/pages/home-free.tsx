@@ -77,18 +77,13 @@ export default function HomeFree() {
   const [rudySticky, setRudySticky] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!rudyRef.current) return;
-      const rect = rudyRef.current.getBoundingClientRect();
-      const headerHeight = 60;
-      setRudySticky(rect.top < headerHeight);
-    };
-    const scrollContainer = rudyRef.current?.closest(
-      '[data-scroll], .overflow-y-auto, .overflow-auto, main, #root'
+    if (!rudyRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setRudySticky(!entry.isIntersecting),
+      { threshold: 0, rootMargin: '-60px 0px 0px 0px' }
     );
-    const target = scrollContainer || window;
-    target.addEventListener('scroll', handleScroll, { passive: true });
-    return () => target.removeEventListener('scroll', handleScroll);
+    observer.observe(rudyRef.current);
+    return () => observer.disconnect();
   }, []);
 
   // For guest users, use localStorage; for authenticated users, use API

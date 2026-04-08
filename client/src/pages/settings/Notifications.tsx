@@ -32,6 +32,15 @@ export default function Notifications() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const [niceModeOn, setNiceModeOn] = useState(
+    () => localStorage.getItem('rudy_nice_mode') === 'true'
+  );
+
+  const handleNiceModeToggle = (checked: boolean) => {
+    setNiceModeOn(checked);
+    localStorage.setItem('rudy_nice_mode', checked ? 'true' : 'false');
+  };
+
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
@@ -148,6 +157,19 @@ export default function Notifications() {
                   checked={currentSettings.emailSummary || false}
                   onChange={(checked) => updateSetting("emailSummary", checked)}
                 />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Rudy Behaviour</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3">
+                <div>
+                  <p className="text-white text-[17px]">Nice Rudy Mode</p>
+                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Switch Rudy to encouraging comments only</p>
+                </div>
+                <Toggle checked={niceModeOn} onChange={handleNiceModeToggle} />
               </div>
             </div>
           </div>
