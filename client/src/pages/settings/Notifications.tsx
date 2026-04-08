@@ -124,13 +124,19 @@ export default function Notifications() {
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-[#38383A]">
+              <div className="flex items-center justify-between px-4 py-3">
                 <span className="text-white text-[17px]">Browser Notifications</span>
                 <Toggle
                   checked={currentSettings.browserNotifications || false}
                   onChange={(checked) => updateSetting("browserNotifications", checked)}
                 />
               </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Playback</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3">
                 <span className="text-white text-[17px]">Voice Announcements</span>
                 <Toggle
@@ -142,20 +148,13 @@ export default function Notifications() {
           </div>
 
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Email Notifications</h2>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Email</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-[#38383A]">
-                <span className="text-white text-[17px]">Email Reminders</span>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-white text-[17px]">Notify me by Email</span>
                 <Toggle
                   checked={currentSettings.emailNotifications || false}
                   onChange={(checked) => updateSetting("emailNotifications", checked)}
-                />
-              </div>
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Daily Email Summary</span>
-                <Toggle
-                  checked={currentSettings.emailSummary || false}
-                  onChange={(checked) => updateSetting("emailSummary", checked)}
                 />
               </div>
             </div>

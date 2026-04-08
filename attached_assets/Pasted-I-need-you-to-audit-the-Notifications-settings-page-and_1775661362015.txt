@@ -1,0 +1,52 @@
+I need you to audit the Notifications settings page and verify 
+that every toggle actually does what it says it does.
+
+Files to read FIRST:
+- client/src/pages/settings.tsx (or the notifications settings file)
+- server/routes.ts
+- server/services/notificationService.ts (if it exists)
+- client/src/services/ttsService.ts
+
+DO NOT make any changes yet. Just read and report back.
+
+For each toggle listed below, tell me:
+1. What does it currently do when switched on/off?
+2. Is it actually wired to any backend, API call, or real function?
+3. Is it just saving to localStorage with no real effect?
+4. Is it broken or pointing to nothing?
+
+TOGGLES TO AUDIT:
+
+1. BROWSER NOTIFICATIONS
+   - Does it actually request browser/device notification permission?
+   - Does turning it off actually stop notifications from firing?
+   - Check if it calls Capacitor LocalNotifications or browser 
+     Notification API
+
+2. VOICE ANNOUNCEMENTS  
+   - Does it actually stop/start voice playback on reminders?
+   - Check if it is connected to ttsService.ts or 
+     NotificationProvider.tsx
+   - Is the localStorage key being read by the voice playback code?
+
+3. NOTIFY ME BY EMAIL
+   - Does it connect to any email sending logic?
+   - Is there a backend route that reads this preference?
+   - Check server/routes.ts for any email notification endpoint
+   - This should at minimum connect to the password reset email 
+     flow and reminder email notifications if those exist
+
+4. NICE RUDY MODE
+   - Does it save to localStorage key 'rudy_nice_mode'?
+   - Is RudyWidget.tsx reading that key correctly?
+   - This one was just added so confirm it is wired properly
+
+After reading all files report back with a clear status for each:
+   ✅ WORKING — fully wired and functional
+   ⚠️ PARTIAL — saves preference but not fully connected
+   ❌ BROKEN — toggle exists but does nothing
+   🔧 NEEDS WIRING — preference saves but backend/service 
+      needs to read it
+
+Do NOT make any changes yet. Report only.
+Then wait for my instructions.
