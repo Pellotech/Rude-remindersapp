@@ -95,6 +95,15 @@ export default function HomePremium() {
     }
   }, [(user as any)?.defaultRudenessLevel]);
 
+  // Live-sync badge level when default changes from settings page
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setBadgeRudenessLevel((e as CustomEvent).detail);
+    };
+    window.addEventListener('default_rudeness_changed', handler);
+    return () => window.removeEventListener('default_rudeness_changed', handler);
+  }, []);
+
   // Watch badgeRudenessLevel — only fires when value actually changes, never on mount
   const sliderRudyRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevRudenessRef = useRef<number>(badgeRudenessLevel);

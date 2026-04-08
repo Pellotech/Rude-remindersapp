@@ -377,6 +377,15 @@ export default function ReminderForm({
     }
   }, [userNotificationSettings, form]);
 
+  // Live-sync form rudeness when default changes from settings page
+  useEffect(() => {
+    const handler = (e: Event) => {
+      form.setValue("rudenessLevel", (e as CustomEvent).detail);
+    };
+    window.addEventListener('default_rudeness_changed', handler);
+    return () => window.removeEventListener('default_rudeness_changed', handler);
+  }, [form]);
+
   const rudenessLevel = form.watch("rudenessLevel");
   const voiceCharacter = form.watch("voiceCharacter");
 

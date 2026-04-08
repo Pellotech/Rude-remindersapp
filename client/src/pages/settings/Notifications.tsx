@@ -49,6 +49,7 @@ export default function Notifications() {
     const level = Number(value);
     setDefaultRudeness(level);
     localStorage.setItem('default_rudeness_level', String(level));
+    window.dispatchEvent(new CustomEvent('default_rudeness_changed', { detail: level }));
   };
 
   const { data: user, isLoading } = useQuery<any>({
