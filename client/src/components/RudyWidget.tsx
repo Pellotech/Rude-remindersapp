@@ -618,10 +618,6 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
               fontWeight: "bold",
               margin: 0,
               lineHeight: "1.35",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical" as const,
-              overflow: "hidden",
             }}>
               {reactionText}
             </p>
