@@ -294,6 +294,8 @@ export default function HomeFree() {
               padding: '0 16px',
               backgroundColor: '#FDF3E3',
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              transition: 'transform 0.2s ease, opacity 0.2s ease',
+              animation: 'rudySlideIn 0.2s ease',
             }}>
               <RudyWidget
                 showReactionBubble={false}
