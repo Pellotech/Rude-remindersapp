@@ -354,7 +354,7 @@ export default function ReminderForm({
       originalMessage: "",
       context: "",
       scheduledFor: "",
-      rudenessLevel: 3, // Will be updated when user data loads
+      rudenessLevel: parseInt(localStorage.getItem('default_rudeness_level') || '2'),
       voiceCharacter: "default", // Will be updated when user data loads
       attachments: [],
       motivationalQuote: "",
@@ -367,7 +367,7 @@ export default function ReminderForm({
   useEffect(() => {
     if (userNotificationSettings) {
       const userData = userNotificationSettings as any;
-      const defaultRudeness = userData?.defaultRudenessLevel || 3;
+      const defaultRudeness = userData?.defaultRudenessLevel || parseInt(localStorage.getItem('default_rudeness_level') || '2');
       const defaultVoice = userData?.defaultVoiceCharacter || "default";
 
       // Update form values with user's saved preferences

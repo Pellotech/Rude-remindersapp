@@ -78,7 +78,7 @@ export default function HomePremium() {
     5: '#b70d0d', // Red — Savage
   };
   const [badgeRudenessLevel, setBadgeRudenessLevel] = useState<number>(
-    (user as any)?.defaultRudenessLevel || 3
+    (user as any)?.defaultRudenessLevel || parseInt(localStorage.getItem('default_rudeness_level') || '2')
   );
   const badgeColor = rudeLevelColors[badgeRudenessLevel] ?? rudeLevelColors[3];
   const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';

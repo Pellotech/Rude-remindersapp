@@ -1,0 +1,88 @@
+I need to add a Default Rudeness Level setting to the Notifications 
+settings page. This used to exist in the app but has been lost — 
+we are restoring it.
+
+Files to read FIRST:
+- client/src/pages/settings.tsx (or wherever the notifications 
+  settings page lives — the file containing Browser Notifications,
+  Voice Announcements, Nice Rudy Mode toggles)
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+- client/src/components/ReminderForm.tsx
+
+DO NOT touch any other files.
+
+WHAT IT DOES:
+When the user opens the Create Reminder form, the rudeness slider 
+starts at whatever level they set as their default here.
+Currently it always defaults to a hardcoded value — this setting 
+overrides that with the user's personal preference.
+
+STEP 1 — Add to the Notifications settings page:
+
+Add a new section called "PREFERENCES" at the very bottom of the 
+notifications settings page, below the "RUDY BEHAVIOUR" section.
+
+Inside it add a "Default Rudeness Level" row:
+Label: "Default Rudeness Level"
+Subtitle: "Your reminder slider starts here every time"
+
+Below the label show a dropdown select menu with these 5 options:
+  1 — 😊 Gentle
+  2 — 🙂 Motivational
+  3 — 😏 Sarcastic
+  4 — 😤 Harsh
+  5 — 🤬 Savage
+
+Dropdown styling:
+- Full width of the settings card
+- Match the app's dark theme styling
+- Selected option shows the emoji and label
+- Use a native select element styled to match the page
+- Border: 1px solid #333
+- Background: same dark card background as other settings rows
+- Text: white
+- Padding: 10px 12px
+- Border radius: 8px
+
+State and storage:
+const [defaultRudeness, setDefaultRudeness] = useState(
+  () => parseInt(localStorage.getItem('default_rudeness_level') || '2')
+);
+
+When dropdown value changes:
+  setDefaultRudeness(Number(value));
+  localStorage.setItem('default_rudeness_level', String(value));
+
+STEP 2 — In home-premium.tsx:
+
+Find where rudenessLevel state is initialized.
+It probably looks like:
+  const [rudenessLevel, setRudenessLevel] = useState(2);
+
+Replace with:
+  const [rudenessLevel, setRudenessLevel] = useState(
+    () => parseInt(localStorage.getItem('default_rudeness_level') || '2')
+  );
+
+STEP 3 — In home-free.tsx:
+
+Apply the exact same change to rudenessLevel initialization 
+if it exists in home-free.tsx.
+
+STEP 4 — In ReminderForm.tsx:
+
+If ReminderForm has its own internal rudeness level state 
+initialized to a hardcoded value, update it too:
+  const [rudenessLevel, setRudenessLevel] = useState(
+    () => parseInt(localStorage.getItem('default_rudeness_level') || '2')
+  );
+
+FINAL RULES:
+- Do NOT change the slider itself or how it works during reminder creation
+- Do NOT change RUDY_LINES or RudyWidget
+- Do NOT change any other settings sections or toggles
+- The default only sets the STARTING value — user can still 
+  move the slider freely when creating a reminder
+- Show changed sections before applying
+- Make changes safe and incremental
