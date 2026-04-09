@@ -1,18 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 
 const RUDY_IMAGES = {
-  idle:           "/rudy/Rudy_leaning_2_transparent.png",
-  idleSwap:       "/rudy/Rudy_idle_smile_transparent.png",
-  sittingFloor:   "/rudy/Rudy_sitting_floor_transparent.png",
-  sittingUpright: "/rudy/Rudy_sitting_upright_transparent.png",
-  sittingBench:   "/rudy/Rudy_sitting_bench_transparent.png",
-  creating:       "/rudy/Rudy_standing_angry_transparent.png",
-  done:           "/rudy/Rudy_thumbs_up_smile_transparent.png",
-  missed:         "/rudy/Rudy_idle_main_pose_transparent.png",
-  tap:            "/rudy/Rudy_pushing_transparent.png",
+  idle:                       "/rudy/Rudy_leaning_2_transparent.png",
+  idleSwap:                   "/rudy/Rudy_idle_smile_transparent.png",
+  sittingFloor:               "/rudy/Rudy_sitting_floor_transparent.png",
+  sittingUpright:             "/rudy/Rudy_sitting_upright_transparent.png",
+  sittingBench:               "/rudy/Rudy_sitting_bench_transparent.png",
+  creating:                   "/rudy/Rudy_standing_angry_transparent.png",
+  done:                       "/rudy/Rudy_thumbs_up_smile_transparent.png",
+  missed:                     "/rudy/Rudy_idle_main_pose_transparent.png",
+  tap:                        "/rudy/Rudy_pushing_transparent.png",
+  sittingForwardArmsCrossed:  "/rudy/Rudy_sitting_forward_arms_crossed_transparent.png",
+  standingArmsCrossedSideways:"/rudy/Rudy_standing_arms_crossed_sideways_transparent.png",
 };
 
-const IDLE_CYCLE = [RUDY_IMAGES.idle, RUDY_IMAGES.sittingFloor, RUDY_IMAGES.idleSwap];
+const IDLE_CYCLE = [
+  RUDY_IMAGES.idle,
+  RUDY_IMAGES.sittingFloor,
+  RUDY_IMAGES.idleSwap,
+  RUDY_IMAGES.sittingForwardArmsCrossed,
+  RUDY_IMAGES.standingArmsCrossedSideways,
+];
 
 const RUDY_LINES = {
   idle: {
@@ -329,11 +337,11 @@ const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   creating_generic:     RUDY_IMAGES.creating,
   streak:               RUDY_IMAGES.done,
   manage_did_it:        RUDY_IMAGES.done,
-  manage_didnt_do_it:   RUDY_IMAGES.missed,
+  manage_didnt_do_it:   RUDY_IMAGES.sittingForwardArmsCrossed,
   manage_overdue:       RUDY_IMAGES.sittingBench,
-  manage_load:          RUDY_IMAGES.sittingBench,
-  slider_1:             RUDY_IMAGES.sittingUpright,
-  slider_2:             RUDY_IMAGES.sittingUpright,
+  manage_load:          RUDY_IMAGES.sittingForwardArmsCrossed,
+  slider_1:             RUDY_IMAGES.standingArmsCrossedSideways,
+  slider_2:             RUDY_IMAGES.standingArmsCrossedSideways,
   slider_3:             RUDY_IMAGES.sittingUpright,
   slider_4:             RUDY_IMAGES.missed,
   slider_5:             RUDY_IMAGES.missed,
@@ -346,7 +354,7 @@ const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   analytics_this_week:  RUDY_IMAGES.sittingUpright,
   analytics_10_weeks:   RUDY_IMAGES.sittingBench,
   analytics_this_year:  RUDY_IMAGES.done,
-  analytics_graph_dip:  RUDY_IMAGES.missed,
+  analytics_graph_dip:  RUDY_IMAGES.standingArmsCrossedSideways,
 };
 
 const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES> = {
