@@ -58,8 +58,6 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const [searchTerm, setSearchTerm] = useState("");
   const overdueEventFiredRef = useRef(false);
   const [emojiToast, setEmojiToast] = useState<{ reminderId: string; type: 'did' | 'didnt' } | null>(null);
-  const [showHint, setShowHint] = useState(false);
-  const [hintFading, setHintFading] = useState(false);
   const [showRudyTooltip, setShowRudyTooltip] = useState(() => !localStorage.getItem('manage_tooltip_seen'));
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
@@ -70,15 +68,6 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
     staleTime: 0,          // Always treat cached data as stale so a fresh fetch runs on every mount
     refetchOnMount: true,  // Always re-fetch when the component mounts
   });
-
-  // Instructional hint — fires on mount (every time Manage tab opens)
-  useEffect(() => {
-    setShowHint(true);
-    setHintFading(false);
-    const t1 = setTimeout(() => setHintFading(true), 5000);
-    const t2 = setTimeout(() => setShowHint(false), 5500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
 
   // One-time Rudy tooltip — auto-dismiss after 6s
   useEffect(() => {
@@ -274,27 +263,6 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
           </p>
         )}
 
-        {/* Instructional banner — fades in then out every time Manage tab opens */}
-        {tab === 'past' && showHint && (
-          <div style={{
-            opacity: hintFading ? 0 : 1,
-            transition: 'opacity 0.5s ease',
-            background: '#FDF3E3',
-            border: '1px solid #C9A063',
-            borderRadius: '10px',
-            padding: '8px 14px',
-            fontSize: '12px',
-            color: '#555',
-            fontStyle: 'italic',
-            textAlign: 'center',
-            marginBottom: '10px',
-            whiteSpace: 'normal',
-            overflow: 'visible',
-            width: '100%',
-          }}>
-            Tap 😊 or 😔 on each reminder to log what happened
-          </div>
-        )}
 
         {/* One-time Rudy tooltip — only on first Manage tab visit */}
         {tab === 'past' && showRudyTooltip && (
