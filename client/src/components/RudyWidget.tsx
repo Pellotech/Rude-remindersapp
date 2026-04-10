@@ -530,7 +530,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
 
   // ─── Tap handler ───────────────────────────────────────────────────────────
   function handleTap() {
-    fireReaction("You give me a dap, now let's get to work.", RUDY_IMAGES.fistBumpStandingSmirk, false);
+    fireReaction("You gave me a fist bump, now let's get things done.", RUDY_IMAGES.fistBumpStandingSmirk, false);
   }
 
   // ─── Render ────────────────────────────────────────────────────────────────
