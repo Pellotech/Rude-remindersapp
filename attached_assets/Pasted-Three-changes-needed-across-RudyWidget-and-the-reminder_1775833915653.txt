@@ -1,0 +1,68 @@
+Three changes needed across RudyWidget and the reminder popup.
+
+Files to read FIRST before changing anything:
+- client/src/components/RudyWidget.tsx
+- client/src/components/RichReminderNotification.tsx (or wherever 
+  the Did it / Didn't do it / Let me know later popup buttons live)
+
+DO NOT touch any other files.
+
+═══════════════════════════════════════════
+CHANGE 1 — Rudy tapped reaction in widget
+═══════════════════════════════════════════
+
+In RudyWidget.tsx find the handleTap function that fires 
+when the user taps Rudy.
+
+Update it to:
+- Always show image: RUDY_IMAGES.fistBumpStandingSmirk
+- Always show this exact line in the reaction bubble:
+  "You give me a dap, now let's get to work."
+- Do NOT use getRudyLine('tapped') for this specific interaction
+- Keep the 8 second timer before reaction bubble hides
+- Keep onNudgeHandled behaviour unchanged
+
+The tapped lines in RUDY_LINES.tapped stay in the library 
+for potential future use but are no longer used by handleTap.
+
+═══════════════════════════════════════════
+CHANGE 2 — "Didn't do it" button update
+═══════════════════════════════════════════
+
+In RichReminderNotification.tsx find the button that currently 
+says "This button doesn't work, like you" or similar.
+
+Change the button text to:
+  "Button doesn't work, reminds me of someone 🙄"
+
+Change the button background color to:
+  #C53B3B (app red)
+
+Keep the button's existing functionality completely unchanged —
+only the text and background color change.
+
+═══════════════════════════════════════════
+CHANGE 3 — "Did it" button update
+═══════════════════════════════════════════
+
+In RichReminderNotification.tsx find the "Did it! ✅" button.
+
+Change the button text to:
+  "I'm doing it / It's done 👊"
+
+Change the button background color to:
+  #22C55E (green)
+
+Keep the button's existing functionality completely unchanged —
+only the text, emoji and background color change.
+
+═══════════════════════════════════════════
+FINAL RULES
+═══════════════════════════════════════════
+
+- Do NOT change RUDY_LINES library
+- Do NOT change the slogan system or bubble layout
+- Do NOT change the Let me know later button
+- Do NOT change any other components or pages
+- Show changed sections before applying
+- Make changes safe and incremental

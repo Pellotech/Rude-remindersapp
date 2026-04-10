@@ -216,17 +216,17 @@ export function RichReminderNotification({
           <div className="flex flex-col gap-2 pt-2 border-t">
             <Button
               onClick={onComplete}
-              className="w-full h-10 text-sm font-semibold bg-[#C53B3B] hover:bg-[#a83030] text-white"
+              className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
               data-testid="button-complete"
             >
-              Did it! ✅
+              I'm doing it / It's done 👊
             </Button>
             <Button
               onClick={onMissed}
-              className="w-full h-10 text-sm font-semibold bg-[#7B5E2A] hover:bg-[#6a4f22] text-white"
+              className="w-full h-10 text-sm font-semibold bg-[#C53B3B] hover:bg-[#a83030] text-white"
               data-testid="button-missed"
             >
-              This button doesn't work, like you 🙄
+              Button doesn't work, reminds me of someone 🙄
             </Button>
             <Button
               onClick={onClose}
