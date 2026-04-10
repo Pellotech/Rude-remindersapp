@@ -1194,6 +1194,25 @@ export default function ReminderForm({
             {!isSimplifiedInterface && (
               <>
                 {/* Tab bar */}
+                <div className="relative">
+                  {lockedTooltip && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '105%',
+                      left: lockedTooltip === 'photo' ? '50%' : '83%',
+                      transform: 'translateX(-50%)',
+                      backgroundColor: '#1a1a1a',
+                      color: 'white',
+                      fontSize: '12px',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      whiteSpace: 'nowrap',
+                      zIndex: 50,
+                      pointerEvents: 'none',
+                    }}>
+                      🔒 Go Premium
+                    </div>
+                  )}
                 <div className="flex rounded-xl overflow-hidden border border-[#C9A063]">
                   <button
                     type="button"
@@ -1212,83 +1231,44 @@ export default function ReminderForm({
                   </button>
 
                   {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
-                    <div className="relative flex-1 border-l border-r border-[#B8904F]">
-                      {lockedTooltip === 'photo' && (
-                        <div style={{
-                          position: 'absolute',
-                          bottom: '110%',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          backgroundColor: '#1a1a1a',
-                          color: 'white',
-                          fontSize: '12px',
-                          borderRadius: '8px',
-                          padding: '6px 12px',
-                          whiteSpace: 'nowrap',
-                          zIndex: 50,
-                          pointerEvents: 'none',
-                        }}>
-                          🔒 Go Premium
-                        </div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!hasProAccess) { showLockedTooltip('photo'); return; }
-                          if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
-                          else { gateAttachments(() => { setActiveFeatureTab('photo'); onPhotoTap?.(); }); }
-                        }}
-                        className={`w-full py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
-                          activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
-                        }`}
-                      >
-                        <Camera className="h-5 w-5" />
-                        Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
-                        {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
-                        <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!hasProAccess) { showLockedTooltip('photo'); return; }
+                        if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
+                        else { gateAttachments(() => { setActiveFeatureTab('photo'); onPhotoTap?.(); }); }
+                      }}
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative focus:outline-none ${
+                        activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                      }`}
+                    >
+                      <Camera className="h-5 w-5" />
+                      Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
+                    </button>
                   )}
 
                   {!isFeatureDisabled('MOTIVATIONAL_QUOTES') && (
-                    <div className="relative flex-1">
-                      {lockedTooltip === 'quotes' && (
-                        <div style={{
-                          position: 'absolute',
-                          bottom: '110%',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          backgroundColor: '#1a1a1a',
-                          color: 'white',
-                          fontSize: '12px',
-                          borderRadius: '8px',
-                          padding: '6px 12px',
-                          whiteSpace: 'nowrap',
-                          zIndex: 50,
-                          pointerEvents: 'none',
-                        }}>
-                          🔒 Go Premium
-                        </div>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!hasProAccess) { showLockedTooltip('quotes'); return; }
-                          if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
-                          else { gateQuotes(() => { setActiveFeatureTab('quotes'); onQuotesTap?.(); }); }
-                        }}
-                        className={`w-full py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
-                          activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
-                        }`}
-                      >
-                        <Quote className="h-5 w-5" />
-                        Quotes
-                        {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
-                        <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!hasProAccess) { showLockedTooltip('quotes'); return; }
+                        if (activeFeatureTab === 'quotes') { setActiveFeatureTab(null); }
+                        else { gateQuotes(() => { setActiveFeatureTab('quotes'); onQuotesTap?.(); }); }
+                      }}
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
+                        activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                      }`}
+                    >
+                      <Quote className="h-5 w-5" />
+                      Quotes
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
+                    </button>
                   )}
                 </div>
+                </div>{/* end relative tooltip wrapper */}
 
                 {/* Content panel — only shown when a tab is active */}
                 {activeFeatureTab && (
