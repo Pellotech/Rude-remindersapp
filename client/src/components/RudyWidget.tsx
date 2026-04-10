@@ -626,15 +626,14 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
             <div style={{ position: 'absolute', left: '-10px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderRight: '10px solid black' }} />
             {/* Triangle inner — white fill */}
             <div style={{ position: 'absolute', left: '-7px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '6px solid transparent', borderBottom: '6px solid transparent', borderRight: '8px solid white' }} />
-            {/* Go Premium button — above the text */}
-            <button
-              onClick={(e) => { e.stopPropagation(); onPremiumPress?.(); }}
-              style={{ backgroundColor: '#C53B3B', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', marginBottom: '5px', display: 'block' }}
-            >
-              🔥 Go Premium
-            </button>
-            <p style={{ fontSize: '12px', color: '#C53B3B', fontStyle: 'italic', margin: 0, lineHeight: '1.35' }}>
+            <p style={{ fontSize: '12px', color: '#C53B3B', fontStyle: 'italic', margin: 0, lineHeight: '1.5', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px' }}>
               Find out what Rudy really has to say about you..
+              <button
+                onClick={(e) => { e.stopPropagation(); onPremiumPress?.(); }}
+                style={{ backgroundColor: '#C53B3B', color: 'white', border: 'none', borderRadius: '20px', padding: '3px 10px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', fontStyle: 'normal', flexShrink: 0 }}
+              >
+                🔥 Go Premium
+              </button>
             </p>
           </div>
         ) : showReactionBubble !== false ? (
