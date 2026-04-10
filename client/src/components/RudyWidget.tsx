@@ -12,6 +12,9 @@ const RUDY_IMAGES = {
   tap:                        "/rudy/Rudy_pushing_transparent.png",
   sittingForwardArmsCrossed:  "/rudy/Rudy_sitting_forward_arms_crossed_transparent.png",
   standingArmsCrossedSideways:"/rudy/Rudy_standing_arms_crossed_sideways_transparent.png",
+  fistBumpStandingAngry:      "/rudy/big_fist_bump_standing_transparent.png",
+  fistBumpStandingSmirk:      "/rudy/fist_bump_standing_transparent.png",
+  fistBumpSitting:            "/rudy/fist_bump_sitting_transparent.png",
 };
 
 const IDLE_CYCLE = [
@@ -20,6 +23,7 @@ const IDLE_CYCLE = [
   RUDY_IMAGES.idleSwap,
   RUDY_IMAGES.sittingForwardArmsCrossed,
   RUDY_IMAGES.standingArmsCrossedSideways,
+  RUDY_IMAGES.fistBumpStandingSmirk,
 ];
 
 const RUDY_LINES = {
@@ -365,18 +369,18 @@ export type RudyEventType =
   | null;
 
 const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
-  reminder_created:     RUDY_IMAGES.done,
+  reminder_created:     RUDY_IMAGES.fistBumpSitting,
   creating_generic:     RUDY_IMAGES.creating,
-  streak:               RUDY_IMAGES.done,
-  manage_did_it:        RUDY_IMAGES.done,
+  streak:               RUDY_IMAGES.fistBumpStandingAngry,
+  manage_did_it:        RUDY_IMAGES.fistBumpSitting,
   manage_didnt_do_it:   RUDY_IMAGES.sittingForwardArmsCrossed,
   manage_overdue:       RUDY_IMAGES.sittingBench,
   manage_load:          RUDY_IMAGES.sittingForwardArmsCrossed,
   slider_1:             RUDY_IMAGES.standingArmsCrossedSideways,
   slider_2:             RUDY_IMAGES.standingArmsCrossedSideways,
   slider_3:             RUDY_IMAGES.sittingUpright,
-  slider_4:             RUDY_IMAGES.missed,
-  slider_5:             RUDY_IMAGES.missed,
+  slider_4:             RUDY_IMAGES.fistBumpStandingAngry,
+  slider_5:             RUDY_IMAGES.fistBumpStandingAngry,
   date_today:           RUDY_IMAGES.sittingFloor,
   date_tomorrow:        RUDY_IMAGES.sittingFloor,
   date_future:          RUDY_IMAGES.done,
@@ -387,7 +391,7 @@ const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   analytics_10_weeks:   RUDY_IMAGES.sittingBench,
   analytics_this_year:  RUDY_IMAGES.done,
   analytics_graph_dip:  RUDY_IMAGES.standingArmsCrossedSideways,
-  multiple_days_on:     RUDY_IMAGES.sittingUpright,
+  multiple_days_on:     RUDY_IMAGES.fistBumpStandingSmirk,
   multiple_days_off:    RUDY_IMAGES.idle,
 };
 
