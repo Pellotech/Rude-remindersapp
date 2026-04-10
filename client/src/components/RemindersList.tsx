@@ -57,6 +57,10 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const [tab, setTab] = useState<"upcoming" | "past">("past");
   const [searchTerm, setSearchTerm] = useState("");
   const overdueEventFiredRef = useRef(false);
+  const [emojiToast, setEmojiToast] = useState<{ reminderId: string; type: 'did' | 'didnt' } | null>(null);
+  const [showHint, setShowHint] = useState(false);
+  const [hintFading, setHintFading] = useState(false);
+  const [showRudyTooltip, setShowRudyTooltip] = useState(() => !localStorage.getItem('manage_tooltip_seen'));
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
   const { data: reminders = [], isLoading } = useQuery({
@@ -66,6 +70,25 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
     staleTime: 0,          // Always treat cached data as stale so a fresh fetch runs on every mount
     refetchOnMount: true,  // Always re-fetch when the component mounts
   });
+
+  // Instructional hint — fires on mount (every time Manage tab opens)
+  useEffect(() => {
+    setShowHint(true);
+    setHintFading(false);
+    const t1 = setTimeout(() => setHintFading(true), 3000);
+    const t2 = setTimeout(() => setShowHint(false), 3500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  // One-time Rudy tooltip — auto-dismiss after 6s
+  useEffect(() => {
+    if (!showRudyTooltip) return;
+    const t = setTimeout(() => {
+      localStorage.setItem('manage_tooltip_seen', 'true');
+      setShowRudyTooltip(false);
+    }, 6000);
+    return () => clearTimeout(t);
+  }, [showRudyTooltip]);
 
   // Fire manage_overdue once when overdue reminders are detected on load
   useEffect(() => {
@@ -244,6 +267,49 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       </CardHeader>
 
       <CardContent className="px-3 pb-3 pt-0">
+        {/* Instructional banner — fades in then out every time Manage tab opens */}
+        {tab === 'past' && showHint && (
+          <div style={{
+            opacity: hintFading ? 0 : 1,
+            transition: 'opacity 0.5s ease',
+            background: '#FDF3E3',
+            border: '1px solid #C9A063',
+            borderRadius: '10px',
+            padding: '8px 14px',
+            fontSize: '12px',
+            color: '#555',
+            fontStyle: 'italic',
+            textAlign: 'center',
+            marginBottom: '10px',
+          }}>
+            Tap 😊 or 😔 on each reminder to log what happened
+          </div>
+        )}
+
+        {/* One-time Rudy tooltip — only on first Manage tab visit */}
+        {tab === 'past' && showRudyTooltip && (
+          <div style={{
+            background: 'white',
+            border: '2px solid #C9A063',
+            borderRadius: '12px',
+            padding: '10px 12px',
+            fontSize: '11px',
+            color: '#333',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '10px',
+            position: 'relative',
+          }}>
+            <img src="/rudy/Rudy_leaning_2_transparent.png" alt="Rudy" style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }} />
+            <span style={{ flex: 1 }}>First time here? The emoji buttons track your habits. Green means done. Red means missed. Your graph updates automatically.</span>
+            <button
+              onClick={() => { localStorage.setItem('manage_tooltip_seen', 'true'); setShowRudyTooltip(false); }}
+              style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', fontSize: '14px', cursor: 'pointer', color: '#999', lineHeight: 1 }}
+            >✕</button>
+          </div>
+        )}
+
         {displayed.length === 0 ? (
           <div className="text-center py-8">
             <Clock className="h-8 w-8 text-[#C9A063] opacity-40 mx-auto mb-2" />
@@ -347,26 +413,50 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                           {/* Smiley/frown log buttons — only for unlogged past reminders */}
                           {isPast && !isLogged && (
                             <>
-                              <button
-                                type="button"
-                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-green-50 transition-colors text-base leading-none"
-                                onClick={() => completeReminderMutation.mutate(reminder.id)}
-                                disabled={completeReminderMutation.isPending}
-                                title="Did it!"
-                                data-testid={`button-accomplish-${reminder.id}`}
-                              >
-                                😊
-                              </button>
-                              <button
-                                type="button"
-                                className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-red-50 transition-colors text-base leading-none"
-                                onClick={() => markNotAccomplishedMutation.mutate(reminder.id)}
-                                disabled={markNotAccomplishedMutation.isPending}
-                                title="Didn't do it"
-                                data-testid={`button-not-accomplish-${reminder.id}`}
-                              >
-                                😞
-                              </button>
+                              <div style={{ position: 'relative', display: 'inline-flex' }}>
+                                {emojiToast?.reminderId === reminder.id && emojiToast.type === 'did' && (
+                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 10, pointerEvents: 'none' }}>
+                                    It's done ✅
+                                  </div>
+                                )}
+                                <button
+                                  type="button"
+                                  style={{ border: '2.5px solid #22C55E', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                  className="h-7 w-7 hover:bg-green-50 transition-colors text-base leading-none"
+                                  onClick={() => {
+                                    setEmojiToast({ reminderId: reminder.id, type: 'did' });
+                                    setTimeout(() => setEmojiToast(null), 2000);
+                                    completeReminderMutation.mutate(reminder.id);
+                                  }}
+                                  disabled={completeReminderMutation.isPending}
+                                  title="Did it!"
+                                  data-testid={`button-accomplish-${reminder.id}`}
+                                >
+                                  😊
+                                </button>
+                              </div>
+                              <div style={{ position: 'relative', display: 'inline-flex' }}>
+                                {emojiToast?.reminderId === reminder.id && emojiToast.type === 'didnt' && (
+                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 10, pointerEvents: 'none' }}>
+                                    I slacked 😬
+                                  </div>
+                                )}
+                                <button
+                                  type="button"
+                                  style={{ border: '2.5px solid #C53B3B', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                  className="h-7 w-7 hover:bg-red-50 transition-colors text-base leading-none"
+                                  onClick={() => {
+                                    setEmojiToast({ reminderId: reminder.id, type: 'didnt' });
+                                    setTimeout(() => setEmojiToast(null), 2000);
+                                    markNotAccomplishedMutation.mutate(reminder.id);
+                                  }}
+                                  disabled={markNotAccomplishedMutation.isPending}
+                                  title="Didn't do it"
+                                  data-testid={`button-not-accomplish-${reminder.id}`}
+                                >
+                                  😞
+                                </button>
+                              </div>
                             </>
                           )}
 
