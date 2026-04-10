@@ -1,0 +1,138 @@
+Several fixes and improvements needed for the reminder form.
+Read these files FIRST before changing anything:
+- client/src/components/ReminderForm.tsx
+- client/src/components/RudyWidget.tsx
+- client/src/pages/home-premium.tsx
+- client/src/pages/home-free.tsx
+
+DO NOT touch any other files.
+
+═══════════════════════════════════════════
+FIX 1 — Update date section labels
+═══════════════════════════════════════════
+
+In ReminderForm.tsx find the label/heading above the date 
+buttons and update it based on which mode is active:
+
+When single day mode (Multiple Days toggle OFF):
+  Change the heading text to:
+  "Pick a day. You can do this, one week at a time."
+
+When multiple days mode (Multiple Days toggle ON):
+  Change the heading text to:
+  "Choose your days and dominate the week."
+
+This should be a simple conditional on the existing 
+multipleDays boolean state that already exists in the form.
+
+═══════════════════════════════════════════
+FIX 2 — Multiple days form must match 
+single day form behaviour completely
+═══════════════════════════════════════════
+
+Currently when the user switches to Multiple Days mode the 
+hour and minute selection sections either disappear or do 
+not work the same as single day mode.
+
+In ReminderForm.tsx make sure that when Multiple Days 
+toggle is ON, ALL of these sections still show and work 
+exactly the same as single day mode:
+
+a) DATE BUTTONS ROW
+   - Show the same 7 day scrollable row
+   - Allow tapping MULTIPLE dates (they should all highlight 
+     in red when selected, not just one)
+   - Already selected dates should deselect when tapped again
+   - At least one date must be selected to submit
+
+b) HOUR SELECTION ROW
+   - Must show the exact same hour buttons as single day mode
+   - Same styling — gold unselected, red selected
+   - Same scrollable row behaviour
+   - Must be visible and functional in multiple days mode
+
+c) MINUTE SELECTION ROW
+   - Must show the exact same :00 :15 :30 :45 buttons
+   - Same styling — gold unselected, red selected
+   - Must be visible and functional in multiple days mode
+
+d) The selected time applies to ALL selected days equally
+   So if user picks Mon, Wed, Fri at 9:00 AM — all three 
+   reminders fire at 9:00 AM
+
+If any of these sections are currently hidden or broken 
+in multiple days mode, fix them to match single day mode.
+Do not change how single day mode works at all.
+
+═══════════════════════════════════════════
+FIX 3 — Rudy reacts to Multiple Days toggle
+═══════════════════════════════════════════
+
+STEP 1 — Add new lines to RUDY_LINES in RudyWidget.tsx:
+
+Add this new category after the existing 'dateFuture' category:
+
+  multipleDaysOn: {
+    rude: [
+      "Multiple days? Look at you, overcommitting already.",
+      "Ambitious. We'll see how long that lasts.",
+      "Multiple reminders. Bold strategy. Don't bail.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Multiple days. Now that's how you build a habit.",
+      "Look at you planning ahead. Genuinely impressed.",
+      "Multiple days selected. This is how it's done.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+  multipleDaysOff: {
+    rude: [
+      "Just one day? Playing it safe as usual.",
+      "One day at a time. Manageable. Barely.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "One focused day. Quality over quantity. Smart.",
+      "One day, full commitment. That works too.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+
+STEP 2 — Add new nudgeEvent types to RudyWidgetProps:
+Add to the nudgeEvent union type:
+  | 'multiple_days_on'
+  | 'multiple_days_off'
+
+STEP 3 — Add to the nudgeEvent reaction map in RudyWidget.tsx:
+  multiple_days_on  → line: getRudyLine('multipleDaysOn')
+                      image: RUDY_IMAGES.sittingUpright
+  multiple_days_off → line: getRudyLine('multipleDaysOff')
+                      image: RUDY_IMAGES.idle
+
+STEP 4 — Wire the trigger in home-premium.tsx:
+Find where the Multiple Days toggle onChange is handled.
+Add event firing when it changes:
+
+When toggle switches ON:
+  setLastEvent('multiple_days_on');
+  setEventKey(k => k + 1);
+
+When toggle switches OFF:
+  setLastEvent('multiple_days_off');
+  setEventKey(k => k + 1);
+
+Do the same in home-free.tsx if the Multiple Days toggle 
+exists there too.
+
+═══════════════════════════════════════════
+FINAL RULES
+═══════════════════════════════════════════
+
+- Do NOT change the Create Reminder button behaviour
+- Do NOT change single day mode at all
+- Do NOT change RUDY_LINES existing categories
+- Do NOT touch RudyAnimation.tsx
+- Do NOT change any other components or pages
+- Show changed sections of all files before applying
+- Make changes incremental and safe
