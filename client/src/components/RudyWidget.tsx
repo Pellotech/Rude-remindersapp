@@ -202,6 +202,36 @@ const RUDY_LINES = {
       "Thinking ahead. You might actually be serious about this.",
     ],
   },
+  multipleDaysOn: {
+    rude: [
+      "Multiple days? Look at you, overcommitting already.",
+      "Ambitious. We'll see how long that lasts.",
+      "Multiple reminders. Bold strategy. Don't bail.",
+      "So we're doing this every day now? Let's see you follow through.",
+      "Multiple days selected. The excuses are already lining up.",
+    ],
+    positive: [
+      "Multiple days. Now that's how you build a habit.",
+      "Look at you planning ahead. Genuinely impressed.",
+      "Multiple days selected. This is how it's done.",
+      "Consistency is everything. You just proved you get it.",
+      "This is exactly how habits get built. Keep going.",
+    ],
+  },
+  multipleDaysOff: {
+    rude: [
+      "Just one day? Playing it safe as usual.",
+      "One day at a time. Manageable. Barely.",
+      "Back to one day. Commitment not included.",
+      "Scaled it back, huh. Expected.",
+    ],
+    positive: [
+      "One focused day. Quality over quantity. Smart.",
+      "One day, full commitment. That works too.",
+      "Single day, full focus. Let's make it count.",
+      "Sometimes one is all you need. Make it matter.",
+    ],
+  },
   voice: {
     rude: [
       "Pick a voice. Nothing says accountability like being roasted out loud.",
@@ -330,6 +360,8 @@ export type RudyEventType =
   | "analytics_10_weeks"
   | "analytics_this_year"
   | "analytics_graph_dip"
+  | "multiple_days_on"
+  | "multiple_days_off"
   | null;
 
 const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
@@ -355,6 +387,8 @@ const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   analytics_10_weeks:   RUDY_IMAGES.sittingBench,
   analytics_this_year:  RUDY_IMAGES.done,
   analytics_graph_dip:  RUDY_IMAGES.standingArmsCrossedSideways,
+  multiple_days_on:     RUDY_IMAGES.sittingUpright,
+  multiple_days_off:    RUDY_IMAGES.idle,
 };
 
 const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES> = {
@@ -380,6 +414,8 @@ const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES
   analytics_10_weeks:   "analytics10Weeks",
   analytics_this_year:  "analyticsThisYear",
   analytics_graph_dip:  "analyticsGraphDip",
+  multiple_days_on:     "multipleDaysOn",
+  multiple_days_off:    "multipleDaysOff",
 };
 
 // Events important enough to override the cooldown and always show immediately

@@ -388,6 +388,7 @@ export default function HomePremium() {
               onPhotoTap={() => fireEvent("photo")}
               onQuotesTap={() => fireEvent("quotes")}
               onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+              onMultiDayToggle={(on) => fireEvent(on ? "multiple_days_on" : "multiple_days_off")}
               onTitleChange={(title) => {
                 if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
                 if (title.trim().length < 3) {

@@ -79,6 +79,7 @@ interface ReminderFormProps {
   onPhotoTap?: () => void;
   onQuotesTap?: () => void;
   onRudenessChange?: (level: number) => void;
+  onMultiDayToggle?: (on: boolean) => void;
 }
 
 const rudenessLabels = [
@@ -210,6 +211,7 @@ export default function ReminderForm({
   onPhotoTap,
   onQuotesTap,
   onRudenessChange,
+  onMultiDayToggle,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -820,6 +822,7 @@ export default function ReminderForm({
       setSelectedDays([]);
       form.setValue("selectedDays", []);
     }
+    onMultiDayToggle?.(checked);
   };
 
 
@@ -1006,6 +1009,12 @@ export default function ReminderForm({
                     </div>
                   </div>
 
+                  <p className="text-xs text-[#555] mb-1">
+                    {isMultiDay
+                      ? "Choose your days and dominate the week."
+                      : "Pick a day. You can do this, one week at a time."}
+                  </p>
+
                   <FormControl>
                     {isMultiDay ? (
                       /* Multi-Day Selection */
@@ -1013,7 +1022,6 @@ export default function ReminderForm({
                         {/* Days Selection Card */}
                         <Card className="border-[#C9A063]">
                           <CardContent className="pt-3 pb-3">
-                            <p className="text-xs mb-2 text-[#1A1A1A]">Choose which days to repeat</p>
                             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                               {daysOfWeek.map((day) => {
                                 const isSelected = selectedDays.includes(day.id);
@@ -1045,67 +1053,63 @@ export default function ReminderForm({
                         </Card>
 
                         {/* Time Selection Card */}
-                        {selectedDays.length > 0 && (
-                          <Card className="border-[#C9A063]">
-                            <CardContent className="pt-3 pb-3">
-                              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                                {Array.from({ length: 24 }, (_, i) => {
-                                  const hour = i;
-                                  const isSelected = multiDayHour === hour;
-                                  const display = hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
-                                  return (
-                                    <button
-                                      key={hour}
-                                      type="button"
-                                      onClick={() => setMultiDayHour(hour)}
-                                      className={cn(
-                                        "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                                        isSelected
-                                          ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
-                                          : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
-                                      )}
-                                    >
-                                      {display}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )}
+                        <Card className="border-[#C9A063]">
+                          <CardContent className="pt-3 pb-3">
+                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                              {Array.from({ length: 24 }, (_, i) => {
+                                const hour = i;
+                                const isSelected = multiDayHour === hour;
+                                const display = hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
+                                return (
+                                  <button
+                                    key={hour}
+                                    type="button"
+                                    onClick={() => setMultiDayHour(hour)}
+                                    className={cn(
+                                      "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
+                                      isSelected
+                                        ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
+                                        : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
+                                    )}
+                                  >
+                                    {display}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </CardContent>
+                        </Card>
 
                         {/* Minutes Selection Card */}
-                        {selectedDays.length > 0 && (
-                          <Card className="border-[#C9A063]">
-                            <CardContent className="pt-3 pb-3">
-                              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                                {[
-                                  { value: 0, label: ":00" },
-                                  { value: 15, label: ":15" },
-                                  { value: 30, label: ":30" },
-                                  { value: 45, label: ":45" }
-                                ].map((slot) => {
-                                  const isSelected = multiDayMinute === slot.value;
-                                  return (
-                                    <button
-                                      key={slot.value}
-                                      type="button"
-                                      onClick={() => setMultiDayMinute(slot.value)}
-                                      className={cn(
-                                        "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                                        isSelected
-                                          ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
-                                          : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
-                                      )}
-                                    >
-                                      {slot.label}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )}
+                        <Card className="border-[#C9A063]">
+                          <CardContent className="pt-3 pb-3">
+                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                              {[
+                                { value: 0, label: ":00" },
+                                { value: 15, label: ":15" },
+                                { value: 30, label: ":30" },
+                                { value: 45, label: ":45" }
+                              ].map((slot) => {
+                                const isSelected = multiDayMinute === slot.value;
+                                return (
+                                  <button
+                                    key={slot.value}
+                                    type="button"
+                                    onClick={() => setMultiDayMinute(slot.value)}
+                                    className={cn(
+                                      "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
+                                      isSelected
+                                        ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
+                                        : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
+                                    )}
+                                  >
+                                    {slot.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </CardContent>
+                        </Card>
 
                       </div>
                     ) : (
