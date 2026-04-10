@@ -77,7 +77,7 @@ export function RichReminderNotification({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[85vh] flex flex-col bg-white border-2 border-[#C9A063] rounded-[16px]">
+      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[85vh] flex flex-col bg-white border-[6px] border-[#C9A063] rounded-[16px]">
         <DialogHeader className="sr-only">
           <DialogTitle>Reminder</DialogTitle>
         </DialogHeader>
@@ -105,7 +105,7 @@ export function RichReminderNotification({
 
           {/* Main rude message bubble */}
           {reminder.rudeMessage && (
-            <div className="p-3 rounded-xl border border-[#C9A063] bg-[#FDF3E3]">
+            <div className="p-3 rounded-xl bg-[#FDF3E3]">
               <p className="text-sm font-medium text-[#1a1a1a]">
                 {reminder.rudeMessage}
               </p>
@@ -117,7 +117,7 @@ export function RichReminderNotification({
             <div className="space-y-2">
               <Label className="text-xs font-medium text-gray-500">Response Variations</Label>
               {reminder.responses.slice(0, 2).map((response: string, index: number) => (
-                <div key={index} className="p-2 rounded-xl border border-[#C9A063] bg-[#FDF3E3]">
+                <div key={index} className="p-2 rounded-xl bg-[#FDF3E3]">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-xs text-[#1a1a1a] flex-1">{response}</p>
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0">{index + 1}</Badge>
@@ -129,7 +129,7 @@ export function RichReminderNotification({
 
           {/* Motivational quote */}
           {reminder.motivationalQuote && (
-            <div className="p-2 rounded-xl border border-[#C9A063] bg-[#FDF3E3]">
+            <div className="p-2 rounded-xl bg-[#FDF3E3]">
               <p className="text-xs italic text-[#1a1a1a]">
                 "{reminder.motivationalQuote}"
               </p>
