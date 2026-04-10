@@ -219,7 +219,7 @@ export function RichReminderNotification({
               className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
               data-testid="button-complete"
             >
-              I'm doing it / It's done 👊
+              It's done 👊 or I'm doing it.
             </Button>
             <Button
               onClick={onMissed}
