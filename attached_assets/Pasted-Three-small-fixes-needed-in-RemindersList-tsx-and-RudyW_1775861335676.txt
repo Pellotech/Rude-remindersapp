@@ -1,0 +1,87 @@
+Three small fixes needed in RemindersList.tsx and RudyWidget.tsx.
+
+Files to read FIRST before changing anything:
+- client/src/components/RemindersList.tsx
+- client/src/components/RudyWidget.tsx
+
+DO NOT touch any other files.
+
+═══════════════════════════════════════════
+FIX 1 — Instructional banner fixes
+═══════════════════════════════════════════
+
+In RemindersList.tsx find the fading instructional banner.
+
+Make these two changes:
+a) Increase visible duration from 3 seconds to 5 seconds
+   before it starts fading out:
+   setTimeout(() => setHintFading(true), 5000);
+   setTimeout(() => setShowHint(false), 5500);
+
+b) Make sure the banner text is not getting cut off.
+   Add these styles to the banner container:
+   - white-space: normal (allow text to wrap)
+   - min-height: auto
+   - overflow: visible
+   - width: 100%
+   The full text must read:
+   "Tap 😊 or 😔 on each reminder to log what happened"
+   Make sure nothing is truncating it.
+
+═══════════════════════════════════════════
+FIX 2 — Add permanent instruction title 
+above reminder list
+═══════════════════════════════════════════
+
+In RemindersList.tsx add a PERMANENT small title 
+that always shows above the Past reminders list.
+This never fades, never disappears.
+
+Text: "Tap 😊 or 😔 to log what happened"
+
+Style:
+- Font size: 12px
+- Color: #888 (muted grey)
+- Italic
+- Left aligned
+- Margin bottom: 8px
+- Always visible — no state, no timer, just static JSX
+
+This sits above the fading banner so the order is:
+1. Permanent title (always there)
+2. Fading banner (appears and fades on each visit)
+3. One-time Rudy tooltip (first visit only)
+4. Reminder cards
+
+═══════════════════════════════════════════
+FIX 3 — Revert manageLoad Rudy lines
+back to original non-instructional ones
+═══════════════════════════════════════════
+
+In RudyWidget.tsx find the manageLoad category 
+in RUDY_LINES and revert it back to these lines only:
+
+  manageLoad: {
+    rude: [
+      "Here's your history. Tell the truth. I'm watching.",
+      "Manage tab. Where excuses go to die.",
+      "All your reminders. All your choices. Own them.",
+      // ADD MORE RUDE HERE
+    ],
+    positive: [
+      "Your history is right here. Own every entry.",
+      "Every entry is data. Use it to get better.",
+      "All your choices are here. Make them count.",
+      // ADD MORE POSITIVE HERE
+    ],
+  },
+
+Remove any lines that tell users how to use the 
+emoji buttons — those instructions now live in 
+the permanent title and fading banner instead.
+Rudy goes back to his normal judgy/encouraging tone.
+
+DO NOT change any other RUDY_LINES categories.
+DO NOT change anything else in either file.
+Show changed sections before applying.
+Make changes safe and incremental.

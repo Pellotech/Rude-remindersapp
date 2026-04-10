@@ -75,8 +75,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   useEffect(() => {
     setShowHint(true);
     setHintFading(false);
-    const t1 = setTimeout(() => setHintFading(true), 3000);
-    const t2 = setTimeout(() => setShowHint(false), 3500);
+    const t1 = setTimeout(() => setHintFading(true), 5000);
+    const t2 = setTimeout(() => setShowHint(false), 5500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
@@ -267,6 +267,13 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       </CardHeader>
 
       <CardContent className="px-3 pb-3 pt-0">
+        {/* Permanent instruction label — always visible on Past tab */}
+        {tab === 'past' && (
+          <p style={{ fontSize: '12px', color: '#888', fontStyle: 'italic', textAlign: 'left', marginBottom: '8px' }}>
+            Tap 😊 or 😔 to log what happened
+          </p>
+        )}
+
         {/* Instructional banner — fades in then out every time Manage tab opens */}
         {tab === 'past' && showHint && (
           <div style={{
@@ -281,6 +288,9 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             fontStyle: 'italic',
             textAlign: 'center',
             marginBottom: '10px',
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            width: '100%',
           }}>
             Tap 😊 or 😔 on each reminder to log what happened
           </div>
