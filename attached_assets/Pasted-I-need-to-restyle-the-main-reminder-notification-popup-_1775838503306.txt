@@ -1,0 +1,99 @@
+I need to restyle the main reminder notification popup to match 
+the cleaner look of the reminder share card.
+
+Files to read FIRST before changing anything:
+- client/src/components/RichReminderNotification.tsx
+- Look for any related CSS or styling files for this component
+
+DO NOT touch the share card component or any other files.
+
+═══════════════════════════════════════════
+CHANGE 1 — Overall background and border
+═══════════════════════════════════════════
+
+Change the notification popup container to match the share card:
+- Background: white
+- Border: 2px solid #C9A063 (muted gold)
+- Border radius: 16px
+- Remove any dark or gold/brown background that currently exists
+- Keep the same padding and overall dimensions
+
+═══════════════════════════════════════════
+CHANGE 2 — Dialogue/content bubbles
+═══════════════════════════════════════════
+
+The main reminder message box and each response variation box 
+should have:
+- Background: #FDF3E3 (light gold/cream)
+- Border: 1px solid #C9A063 (muted gold)
+- Border radius: 12px
+- Text color: #1a1a1a (dark, readable)
+- Keep the same padding and font size
+
+═══════════════════════════════════════════
+CHANGE 3 — Rudeness Level badge color
+═══════════════════════════════════════════
+
+The "Rudeness Level X" badge at the top should use the matching 
+rudeness level color:
+- Level 1: #38BDF8 (sky blue)
+- Level 2: #22C55E (green)
+- Level 3: #FDE047 (yellow) with dark text
+- Level 4: #F97316 (orange)
+- Level 5: #b70d0d (deep red)
+
+Badge styling:
+- Background: the level color above
+- Text: white (except level 3 use #1a1a1a dark text for contrast)
+- Border radius: 20px
+- Padding: 4px 14px
+- Font weight: bold
+- Font size: 13px
+
+Find where rudenessLevel or the level number is available in 
+the component and use it to set the badge color dynamically.
+If the level is stored as a string like "Harsh" or "Sarcastic"
+map it to the number:
+  Gentle = 1, Motivational = 2, Sarcastic = 3, 
+  Harsh = 4, Savage = 5
+
+═══════════════════════════════════════════
+CHANGE 4 — Share button
+═══════════════════════════════════════════
+
+Find the existing share functionality in the component.
+Replace it with a clear dedicated share button:
+- Text: "Share 􀈂" (use the share symbol icon or 
+  use this unicode arrow: ↑ or the emoji 📤)
+- Style:
+  background: white
+  border: 2px solid #C9A063
+  color: #C9A063
+  border-radius: 20px
+  padding: 6px 16px
+  font-weight: bold
+  font-size: 13px
+- Position it clearly visible — either at the top right 
+  of the popup or below the response variations, above 
+  the action buttons
+- Keep its existing onClick share functionality unchanged
+- Just make it more visible and clearly labeled
+
+═══════════════════════════════════════════
+CHANGE 5 — Keep buttons exactly as is
+═══════════════════════════════════════════
+
+Do NOT change these buttons at all — colors, text, or function:
+- "I'm doing it / It's done 👊" (green)
+- "Button doesn't work, reminds me of someone 🙄" (red)
+- "Let me know later 🔔" (yellow/gold)
+
+═══════════════════════════════════════════
+FINAL RULES
+═══════════════════════════════════════════
+
+- Do NOT change RudyWidget or any other components
+- Do NOT change the share card component
+- Do NOT change button functionality anywhere
+- Show full changed sections before applying
+- Make changes safe and incremental

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Volume2, Clock, X, ImageIcon, ChevronDown } from "lucide-react";
+import { Volume2, Clock, X, ChevronDown } from "lucide-react";
 import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
@@ -20,8 +20,8 @@ const isImagePath = (path: string): boolean => {
 };
 
 const getImageSrc = (attachment: string): string => {
-  if (attachment.startsWith('blob:') || 
-      attachment.startsWith('data:') || 
+  if (attachment.startsWith('blob:') ||
+      attachment.startsWith('data:') ||
       attachment.startsWith('http') ||
       attachment.startsWith('file://') ||
       attachment.startsWith('capacitor://')) {
@@ -31,6 +31,17 @@ const getImageSrc = (attachment: string): string => {
     return getFullApiUrl(attachment);
   }
   return getFullApiUrl(`/${attachment}`);
+};
+
+const getRudenessStyle = (level: number): { bg: string; color: string } => {
+  const map: Record<number, { bg: string; color: string }> = {
+    1: { bg: '#38BDF8', color: '#ffffff' },
+    2: { bg: '#22C55E', color: '#ffffff' },
+    3: { bg: '#FDE047', color: '#1a1a1a' },
+    4: { bg: '#F97316', color: '#ffffff' },
+    5: { bg: '#b70d0d', color: '#ffffff' },
+  };
+  return map[level] ?? { bg: '#C9A063', color: '#ffffff' };
 };
 
 interface RichReminderNotificationProps {
@@ -62,62 +73,53 @@ export function RichReminderNotification({
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const getRudenessColor = (level: number) => {
-    const colors = {
-      1: "bg-green-100 text-green-800",
-      2: "bg-blue-100 text-blue-800", 
-      3: "bg-yellow-100 text-yellow-800",
-      4: "bg-orange-100 text-orange-800",
-      5: "bg-red-100 text-red-800",
-    };
-    return colors[level as keyof typeof colors] || "bg-gray-100 text-gray-800";
-  };
+  const rudenessStyle = getRudenessStyle(reminder.rudenessLevel);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[85vh] flex flex-col">
+      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[85vh] flex flex-col bg-white border-2 border-[#C9A063] rounded-[16px]">
         <DialogHeader className="sr-only">
           <DialogTitle>Reminder</DialogTitle>
         </DialogHeader>
-        
-        <div className="sticky top-0 z-10 bg-white border-b px-3 py-2 flex items-center justify-between">
+
+        {/* Header bar */}
+        <div className="sticky top-0 z-10 bg-white border-b border-[#C9A063]/30 px-3 py-2 flex items-center justify-between">
           <img src={logoImage} alt="Rude Reminders" className="h-8 w-auto" />
-          <div className="flex items-center gap-1">
-            <ShareButton reminder={reminder} iconOnly className="h-8 w-8 p-0" />
-          </div>
+          <ShareButton
+            reminder={reminder}
+            className="h-8 px-3 text-xs font-bold text-[#C9A063] bg-white border-2 border-[#C9A063] rounded-full hover:bg-[#FDF3E3]"
+          />
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
+          {/* Title + badge */}
           <div className="text-center">
             <h2 className="text-lg font-bold text-gray-900 leading-tight">{reminder.title}</h2>
-            <Badge className={`mt-1 text-xs ${getRudenessColor(reminder.rudenessLevel)}`}>
+            <span
+              className="inline-block mt-1 px-3.5 py-1 rounded-full text-[13px] font-bold"
+              style={{ background: rudenessStyle.bg, color: rudenessStyle.color }}
+            >
               Rudeness Level {reminder.rudenessLevel}
-            </Badge>
+            </span>
           </div>
 
+          {/* Main rude message bubble */}
           {reminder.rudeMessage && (
-            <div className={`p-3 rounded-lg border-l-4 ${
-              isPremium && features.aiGeneratedResponses
-                ? 'bg-purple-50 border-purple-400'
-                : 'bg-gray-50 border-gray-400'
-            }`}>
-              <p className="text-sm font-medium text-gray-800">
+            <div className="p-3 rounded-xl border border-[#C9A063] bg-[#FDF3E3]">
+              <p className="text-sm font-medium text-[#1a1a1a]">
                 {reminder.rudeMessage}
               </p>
             </div>
           )}
 
+          {/* Response variations */}
           {reminder.responses && reminder.responses.length > 1 && (
             <div className="space-y-2">
               <Label className="text-xs font-medium text-gray-500">Response Variations</Label>
               {reminder.responses.slice(0, 2).map((response: string, index: number) => (
-                <div key={index} className={`p-2 rounded-lg border-l-4 ${
-                  isPremium && features.aiGeneratedResponses
-                    ? 'bg-purple-50 border-purple-400'
-                    : 'bg-gray-50 border-gray-400'
-                }`}>
+                <div key={index} className="p-2 rounded-xl border border-[#C9A063] bg-[#FDF3E3]">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs text-gray-700 flex-1">{response}</p>
+                    <p className="text-xs text-[#1a1a1a] flex-1">{response}</p>
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0">{index + 1}</Badge>
                   </div>
                 </div>
@@ -125,25 +127,22 @@ export function RichReminderNotification({
             </div>
           )}
 
+          {/* Motivational quote */}
           {reminder.motivationalQuote && (
-            <div className={`p-2 rounded-lg border-l-4 ${
-              isPremium && features.aiGeneratedQuotes
-                ? 'bg-purple-50 border-purple-500'
-                : 'bg-blue-50 border-blue-500'
-            }`}>
-              <p className={`text-xs italic ${
-                isPremium && features.aiGeneratedQuotes ? 'text-purple-800' : 'text-blue-800'
-              }`}>
+            <div className="p-2 rounded-xl border border-[#C9A063] bg-[#FDF3E3]">
+              <p className="text-xs italic text-[#1a1a1a]">
                 "{reminder.motivationalQuote}"
               </p>
             </div>
           )}
 
+          {/* Original message */}
           <div>
             <Label className="text-xs font-medium text-gray-500">Original Message</Label>
             <p className="text-xs text-gray-600 mt-0.5">{reminder.originalMessage}</p>
           </div>
 
+          {/* Attachments */}
           {reminder.attachments && reminder.attachments.length > 0 && (
             <div>
               <Label className="text-xs font-medium text-gray-500">Attachments</Label>
@@ -152,8 +151,8 @@ export function RichReminderNotification({
                   const isImage = isImagePath(attachment);
                   const imageSrc = getImageSrc(attachment);
                   return (
-                    <div 
-                      key={index} 
+                    <div
+                      key={index}
                       className="relative flex-shrink-0 cursor-pointer"
                       onClick={() => isImage && setViewingImage(imageSrc)}
                       data-testid={`attachment-${index}`}
@@ -174,6 +173,7 @@ export function RichReminderNotification({
             </div>
           )}
 
+          {/* Details collapsible */}
           <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm" className="w-full justify-between text-xs text-gray-500 h-7 px-2">
@@ -213,6 +213,7 @@ export function RichReminderNotification({
             {new Date(reminder.scheduledFor).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} {' • '} {new Date(reminder.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
           </p>
 
+          {/* Action buttons — unchanged */}
           <div className="flex flex-col gap-2 pt-2 border-t">
             <Button
               onClick={onComplete}
@@ -239,14 +240,15 @@ export function RichReminderNotification({
         </div>
       </DialogContent>
 
+      {/* Full-size image viewer */}
       <Dialog open={!!viewingImage} onOpenChange={() => setViewingImage(null)}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 bg-black/95">
           <DialogHeader className="sr-only">
             <DialogTitle>Image Viewer</DialogTitle>
           </DialogHeader>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setViewingImage(null)}
             className="absolute top-2 right-2 z-10 text-white hover:bg-white/20"
             data-testid="button-close-image"
