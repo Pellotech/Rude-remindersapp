@@ -126,7 +126,7 @@ export function CalendarSchedule({ selectedDateTime, onDateTimeChange }: Calenda
       {/* Date Buttons */}
       <Card className="border-[#C9A063]">
         <CardContent className="pt-3 pb-3">
-          <p className="text-xs mb-2 text-[#1A1A1A]">Choose a day within the next week</p>
+          <p className="text-xs mb-2 text-[#1A1A1A]">Pick a day. You can do this, one week at a time.</p>
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             {weekDays.map((date, index) => {
               const dayName = format(date, 'EEE');
