@@ -339,14 +339,14 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                   }}
                   disabled={isPast || deleteReminderMutation.isPending}
                 >
-                  <Card className={cn(
-                    "border border-[#C9A063] w-full",
-                    (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
-                  )} style={{ overflow: 'visible' }}>
+                  <Card className="border border-[#C9A063] w-full" style={{ overflow: 'visible' }}>
                     <CardContent className="p-2.5">
                       <div className="flex items-center justify-between gap-2">
                         {/* Left: title + tag + date */}
-                        <div className="flex-1 min-w-0">
+                        <div className={cn(
+                          "flex-1 min-w-0",
+                          (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
+                        )}>
                           <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
                             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
                               {reminder.title}
@@ -380,11 +380,13 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                         <div className="flex items-center gap-0.5 flex-shrink-0">
                           {/* Share — all past reminders, status-specific text for logged ones */}
                           {isPast && (
-                            <ShareButton
-                              reminder={reminder}
-                              message={isLogged ? shareMessage : undefined}
-                              iconOnly={false}
-                            />
+                            <div className="[&_svg]:hidden">
+                              <ShareButton
+                                reminder={reminder}
+                                message={isLogged ? shareMessage : undefined}
+                                iconOnly={false}
+                              />
+                            </div>
                           )}
 
                           {/* Smiley/frown log buttons — only for unlogged past reminders */}
