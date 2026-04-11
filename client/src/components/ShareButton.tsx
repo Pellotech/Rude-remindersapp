@@ -328,8 +328,8 @@ export function ShareButton({
         size="sm" 
         className={`${className} ${iconOnly ? 'text-gray-400 hover:text-blue-600 h-7 w-7 p-0' : ''}`}
         style={!iconOnly ? {
-          backgroundColor: 'transparent',
-          color: '#1a3a5c',
+          backgroundColor: '#1a3a5c',
+          color: 'white',
           border: '1.5px solid #1a3a5c',
           borderRadius: '12px',
           padding: '3px 10px',
