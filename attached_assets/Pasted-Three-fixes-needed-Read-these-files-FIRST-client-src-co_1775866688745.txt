@@ -1,0 +1,85 @@
+Three fixes needed. Read these files FIRST:
+- client/src/components/RemindersList.tsx
+- client/src/components/ShareReminderCard.tsx (or wherever 
+  the share reminder card/modal lives)
+DO NOT touch any other files.
+═══════════════════════════════════════════
+FIX 1 — Toast pops above the gold border
+═══════════════════════════════════════════
+In RemindersList.tsx find the emojiToast positioning.
+The toast is currently sitting behind the card border.
+Fix by adding overflow: visible to the reminder card 
+container and increasing the toast z-index:
+On the reminder card outer container:
+  overflow: visible (was likely overflow: hidden)
+On the toast element:
+  z-index: 50
+  position: absolute
+  bottom: 110%
+  left: 50%
+  transform: translateX(-50%)
+  white-space: nowrap
+  pointer-events: none
+This makes the toast float above everything including 
+the gold border without affecting any other cards.
+Each toast is scoped to its own card so no bleeding 
+between cards. make it pop up 3 seconds total with same effects
+═══════════════════════════════════════════
+FIX 2 — Add Share button on reminder 
+cards in the Manage tab
+═══════════════════════════════════════════
+In RemindersList.tsx find the action buttons row 
+on each reminder card (where share icon, emoji 
+buttons and delete button live).
+The share icon is currently just an icon with no label.
+Replace it with a small labeled Share button:
+Style:
+- Background: transparent
+- Text: "Share"
+- Text color: #1a3a5c (navy blue)
+- Font size: 11px
+- Font weight: bold
+- Border: 1.5px solid #1a3a5c (navy blue)
+- Border radius: 12px
+- Padding: 3px 10px
+- Display: flex, align-items: center, gap: 4px
+- Include the existing share icon next to the text
+Keep the existing share onClick functionality 
+completely unchanged — just update the visual.
+═══════════════════════════════════════════
+FIX 3 — Share reminder card rudeness 
+badge matches rudeness level color
+═══════════════════════════════════════════
+In ShareReminderCard.tsx (or wherever the share 
+card renders) find the Rudeness Level badge.
+Update it to use the matching color per level:
+const rudenessColors: Record<number, string> = {
+  1: '#38BDF8',  // sky blue    — Gentle
+  2: '#22C55E',  // green       — Motivational
+  3: '#FDE047',  // yellow      — Sarcastic
+  4: '#F97316',  // orange      — Harsh
+  5: '#b70d0d',  // deep red    — Savage
+};
+const rudenessTextColors: Record<number, string> = {
+  1: 'white',
+  2: 'white',
+  3: '#1a1a1a',  // dark text on yellow
+  4: 'white',
+  5: 'white',
+};
+If the rudeness level is stored as a string name 
+map it to a number first:
+const rudenessNameToLevel: Record<string, number> = {
+  'Gentle': 1,
+  'Motivational': 2,
+  'Sarcastic': 3,
+  'Harsh': 4,
+  'Savage': 5,
+};
+Apply the color as inline style on the badge:
+  backgroundColor: rudenessColors[level]
+  color: rudenessTextColors[level]
+Do NOT change anything else on the share card.
+Do NOT change button functionality anywhere.
+Show changed sections before applying.
+Make changes safe and incremental.

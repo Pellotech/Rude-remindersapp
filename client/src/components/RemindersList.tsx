@@ -342,7 +342,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                   <Card className={cn(
                     "border border-[#C9A063] w-full",
                     (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
-                  )}>
+                  )} style={{ overflow: 'visible' }}>
                     <CardContent className="p-2.5">
                       <div className="flex items-center justify-between gap-2">
                         {/* Left: title + tag + date */}
@@ -383,8 +383,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                             <ShareButton
                               reminder={reminder}
                               message={isLogged ? shareMessage : undefined}
-                              className="h-7 w-7 p-0"
-                              iconOnly={true}
+                              iconOnly={false}
                             />
                           )}
 
@@ -393,7 +392,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                             <>
                               <div style={{ position: 'relative', display: 'inline-flex' }}>
                                 {emojiToast?.reminderId === reminder.id && emojiToast.type === 'did' && (
-                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 10, pointerEvents: 'none' }}>
+                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 50, pointerEvents: 'none' }}>
                                     It's done ✅
                                   </div>
                                 )}
@@ -403,7 +402,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                                   className="h-7 w-7 hover:bg-green-50 transition-colors text-base leading-none"
                                   onClick={() => {
                                     setEmojiToast({ reminderId: reminder.id, type: 'did' });
-                                    setTimeout(() => setEmojiToast(null), 2000);
+                                    setTimeout(() => setEmojiToast(null), 3000);
                                     completeReminderMutation.mutate(reminder.id);
                                   }}
                                   disabled={completeReminderMutation.isPending}
@@ -415,7 +414,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                               </div>
                               <div style={{ position: 'relative', display: 'inline-flex' }}>
                                 {emojiToast?.reminderId === reminder.id && emojiToast.type === 'didnt' && (
-                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 10, pointerEvents: 'none' }}>
+                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 50, pointerEvents: 'none' }}>
                                     I slacked 😬
                                   </div>
                                 )}
@@ -425,7 +424,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                                   className="h-7 w-7 hover:bg-red-50 transition-colors text-base leading-none"
                                   onClick={() => {
                                     setEmojiToast({ reminderId: reminder.id, type: 'didnt' });
-                                    setTimeout(() => setEmojiToast(null), 2000);
+                                    setTimeout(() => setEmojiToast(null), 3000);
                                     markNotAccomplishedMutation.mutate(reminder.id);
                                   }}
                                   disabled={markNotAccomplishedMutation.isPending}

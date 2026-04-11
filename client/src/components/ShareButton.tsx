@@ -74,15 +74,19 @@ export function ShareButton({
   const voiceCharacter = reminder?.voiceCharacter || "default";
   const attachments = reminder?.attachments || [];
 
-  const getRudenessColor = (level: number) => {
-    const colors: Record<number, string> = {
-      1: "bg-green-100 text-green-800",
-      2: "bg-blue-100 text-blue-800", 
-      3: "bg-yellow-100 text-yellow-800",
-      4: "bg-orange-100 text-orange-800",
-      5: "bg-red-100 text-red-800",
-    };
-    return colors[level] || "bg-gray-100 text-gray-800";
+  const rudenessColors: Record<number, string> = {
+    1: '#38BDF8',
+    2: '#22C55E',
+    3: '#FDE047',
+    4: '#F97316',
+    5: '#b70d0d',
+  };
+  const rudenessTextColors: Record<number, string> = {
+    1: 'white',
+    2: 'white',
+    3: '#1a1a1a',
+    4: 'white',
+    5: 'white',
   };
 
   const preloadImages = async (): Promise<void> => {
@@ -320,14 +324,27 @@ export function ShareButton({
   return (
     <>
       <Button 
-        variant={iconOnly ? "ghost" : "outline"} 
+        variant="ghost"
         size="sm" 
-        className={`${className} ${iconOnly ? 'text-gray-400 hover:text-blue-600' : ''}`}
+        className={`${className} ${iconOnly ? 'text-gray-400 hover:text-blue-600 h-7 w-7 p-0' : ''}`}
+        style={!iconOnly ? {
+          backgroundColor: 'transparent',
+          color: '#1a3a5c',
+          border: '1.5px solid #1a3a5c',
+          borderRadius: '12px',
+          padding: '3px 10px',
+          height: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          fontSize: '11px',
+          fontWeight: 'bold',
+        } : undefined}
         onClick={handleButtonClick}
         disabled={isSharing}
         data-testid="button-share"
       >
-        <Share2 className={`h-4 w-4 ${iconOnly ? '' : 'mr-2'}`} />
+        <Share2 className={iconOnly ? 'h-4 w-4' : 'h-3 w-3'} />
         {!iconOnly && (isSharing ? "Sharing..." : "Share")}
       </Button>
 
@@ -357,7 +374,13 @@ export function ShareButton({
 
               <div className="text-center mb-3">
                 <h2 className="text-lg font-bold text-gray-900 leading-tight">{reminderTitle}</h2>
-                <Badge className={`mt-1 text-xs ${getRudenessColor(rudenessLevel)}`}>
+                <Badge
+                  className="mt-1 text-xs"
+                  style={{
+                    backgroundColor: rudenessColors[rudenessLevel] ?? '#C9A063',
+                    color: rudenessTextColors[rudenessLevel] ?? 'white',
+                  }}
+                >
                   Rudeness Level {rudenessLevel}
                 </Badge>
               </div>
