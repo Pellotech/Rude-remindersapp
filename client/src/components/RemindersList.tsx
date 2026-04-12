@@ -57,7 +57,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const [tab, setTab] = useState<"upcoming" | "past">("past");
   const [searchTerm, setSearchTerm] = useState("");
   const overdueEventFiredRef = useRef(false);
-  const [emojiToast, setEmojiToast] = useState<{ reminderId: string; type: 'did' | 'didnt' } | null>(null);
+  const [emojiToast, setEmojiToast] = useState<{ reminderId: string; type: 'did' | 'didnt'; x: number; y: number } | null>(null);
   const [showRudyTooltip, setShowRudyTooltip] = useState(() => !localStorage.getItem('manage_tooltip_seen'));
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
@@ -392,50 +392,38 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                           {/* Smiley/frown log buttons — only for unlogged past reminders */}
                           {isPast && !isLogged && (
                             <>
-                              <div style={{ position: 'relative', display: 'inline-flex' }}>
-                                {emojiToast?.reminderId === reminder.id && emojiToast.type === 'did' && (
-                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 50, pointerEvents: 'none' }}>
-                                    It's done ✅
-                                  </div>
-                                )}
-                                <button
-                                  type="button"
-                                  style={{ border: '2.5px solid #22C55E', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                  className="h-7 w-7 hover:bg-green-50 transition-colors text-base leading-none"
-                                  onClick={() => {
-                                    setEmojiToast({ reminderId: reminder.id, type: 'did' });
-                                    setTimeout(() => setEmojiToast(null), 3000);
-                                    completeReminderMutation.mutate(reminder.id);
-                                  }}
-                                  disabled={completeReminderMutation.isPending}
-                                  title="Did it!"
-                                  data-testid={`button-accomplish-${reminder.id}`}
-                                >
-                                  😊
-                                </button>
-                              </div>
-                              <div style={{ position: 'relative', display: 'inline-flex' }}>
-                                {emojiToast?.reminderId === reminder.id && emojiToast.type === 'didnt' && (
-                                  <div style={{ position: 'absolute', bottom: '110%', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap', backgroundColor: '#1a1a1a', color: 'white', fontSize: '12px', borderRadius: '8px', padding: '6px 12px', zIndex: 50, pointerEvents: 'none' }}>
-                                    I slacked 😬
-                                  </div>
-                                )}
-                                <button
-                                  type="button"
-                                  style={{ border: '2.5px solid #C53B3B', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                  className="h-7 w-7 hover:bg-red-50 transition-colors text-base leading-none"
-                                  onClick={() => {
-                                    setEmojiToast({ reminderId: reminder.id, type: 'didnt' });
-                                    setTimeout(() => setEmojiToast(null), 3000);
-                                    markNotAccomplishedMutation.mutate(reminder.id);
-                                  }}
-                                  disabled={markNotAccomplishedMutation.isPending}
-                                  title="Didn't do it"
-                                  data-testid={`button-not-accomplish-${reminder.id}`}
-                                >
-                                  😞
-                                </button>
-                              </div>
+                              <button
+                                type="button"
+                                style={{ border: '2.5px solid #22C55E', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                className="h-7 w-7 hover:bg-green-50 transition-colors text-base leading-none"
+                                onClick={(e) => {
+                                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                                  setEmojiToast({ reminderId: reminder.id, type: 'did', x: rect.left + rect.width / 2, y: rect.top });
+                                  setTimeout(() => setEmojiToast(null), 3000);
+                                  completeReminderMutation.mutate(reminder.id);
+                                }}
+                                disabled={completeReminderMutation.isPending}
+                                title="Did it!"
+                                data-testid={`button-accomplish-${reminder.id}`}
+                              >
+                                😊
+                              </button>
+                              <button
+                                type="button"
+                                style={{ border: '2.5px solid #C53B3B', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                className="h-7 w-7 hover:bg-red-50 transition-colors text-base leading-none"
+                                onClick={(e) => {
+                                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                                  setEmojiToast({ reminderId: reminder.id, type: 'didnt', x: rect.left + rect.width / 2, y: rect.top });
+                                  setTimeout(() => setEmojiToast(null), 3000);
+                                  markNotAccomplishedMutation.mutate(reminder.id);
+                                }}
+                                disabled={markNotAccomplishedMutation.isPending}
+                                title="Didn't do it"
+                                data-testid={`button-not-accomplish-${reminder.id}`}
+                              >
+                                😞
+                              </button>
                             </>
                           )}
 
@@ -488,6 +476,28 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
           </div>
         )}
       </CardContent>
+
+      {/* Fixed-position emoji toast — rendered outside all overflow:hidden ancestors */}
+      {emojiToast && (
+        <div
+          style={{
+            position: 'fixed',
+            top: emojiToast.y - 44,
+            left: emojiToast.x,
+            transform: 'translateX(-50%)',
+            whiteSpace: 'nowrap',
+            backgroundColor: '#1a1a1a',
+            color: 'white',
+            fontSize: '12px',
+            borderRadius: '8px',
+            padding: '6px 12px',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}
+        >
+          {emojiToast.type === 'did' ? "It's done ✅" : "I slacked 😬"}
+        </div>
+      )}
     </Card>
   );
 }
