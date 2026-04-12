@@ -69,15 +69,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
     refetchOnMount: true,  // Always re-fetch when the component mounts
   });
 
-  // One-time Rudy tooltip — auto-dismiss after 6s
-  useEffect(() => {
-    if (!showRudyTooltip) return;
-    const t = setTimeout(() => {
-      localStorage.setItem('manage_tooltip_seen', 'true');
-      setShowRudyTooltip(false);
-    }, 6000);
-    return () => clearTimeout(t);
-  }, [showRudyTooltip]);
+  // One-time Rudy tooltip — stays until user taps X (no auto-dismiss)
 
   // Fire manage_overdue once when overdue reminders are detected on load
   useEffect(() => {

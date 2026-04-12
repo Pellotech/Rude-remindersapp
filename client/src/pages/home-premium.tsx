@@ -67,6 +67,7 @@ export default function HomePremium() {
   const [showRichNotification, setShowRichNotification] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [graphTab, setGraphTab] = useState<"week" | "year" | "tenWeeks">("week");
+  const [showAnalyticsTooltip, setShowAnalyticsTooltip] = useState(() => !localStorage.getItem('analytics_tooltip_seen'));
   const graphScrollRef = useRef<HTMLDivElement>(null);
 
   // Dynamic badge color based on rudeness level
@@ -408,6 +409,28 @@ export default function HomePremium() {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
+            {/* One-time Rudy tooltip — first Analytics visit only */}
+            {showAnalyticsTooltip && (
+              <div style={{
+                background: 'white',
+                border: '2px solid #C9A063',
+                borderRadius: '12px',
+                padding: '10px 12px',
+                fontSize: '11px',
+                color: '#333',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                position: 'relative',
+              }}>
+                <img src="/rudy/Rudy_sitting_upright_transparent.png" alt="Rudy" style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }} />
+                <span style={{ flex: 1 }}>This is your habit journey. Every time you tap done or missed, it logs here. The 10 Weeks graph is where habits are built — science says day 66 is the magic number. 🔥</span>
+                <button
+                  onClick={() => { localStorage.setItem('analytics_tooltip_seen', 'true'); setShowAnalyticsTooltip(false); }}
+                  style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', fontSize: '14px', cursor: 'pointer', color: '#999', lineHeight: 1 }}
+                >✕</button>
+              </div>
+            )}
             {/* ── COMPLETION GRAPH ── */}
             <Card className="border border-[#C9A063] bg-[#FDF3E3]">
               <CardHeader className="pb-2 pt-3 px-4">
