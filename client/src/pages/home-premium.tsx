@@ -457,14 +457,38 @@ export default function HomePremium() {
                       <XAxis
                         dataKey="name"
                         tick={(props: any) => {
-                          const { x, y, payload } = props;
+                          const { x, y, payload, index } = props;
                           const isHighlight = graphTab === "year" && payload.value === currentMonthAbbrev;
+                          if (graphTab === "week") {
+                            const todayNow = new Date();
+                            const todayDow = todayNow.getDay();
+                            const todayDiffToMon = (todayDow === 0 ? -6 : 1 - todayDow);
+                            const weekStartDate = new Date(todayNow);
+                            weekStartDate.setDate(todayNow.getDate() + todayDiffToMon);
+                            weekStartDate.setHours(0, 0, 0, 0);
+                            const dayDate = new Date(weekStartDate);
+                            dayDate.setDate(weekStartDate.getDate() + index);
+                            const monthAbbrevs = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                            const dateLabel = `${monthAbbrevs[dayDate.getMonth()]} ${dayDate.getDate()}`;
+                            const isToday = dayDate.toDateString() === todayNow.toDateString();
+                            return (
+                              <g>
+                                <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isToday ? "#C9A063" : "#9CA3AF"} fontWeight={isToday ? 700 : 400}>
+                                  {payload.value}
+                                </text>
+                                <text x={x} y={y + 22} textAnchor="middle" fontSize={9} fill={isToday ? "#C9A063" : "#b0b7c3"}>
+                                  {dateLabel}
+                                </text>
+                              </g>
+                            );
+                          }
                           return (
                             <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isHighlight ? "#C9A063" : "#9CA3AF"} fontWeight={isHighlight ? 700 : 400}>
                               {payload.value}
                             </text>
                           );
                         }}
+                        height={36}
                       />
                       <YAxis
                         domain={[-4, 6]}
