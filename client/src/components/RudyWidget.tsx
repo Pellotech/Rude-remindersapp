@@ -15,6 +15,7 @@ const RUDY_IMAGES = {
   fistBumpStandingAngry:      "/rudy/big_fist_bump_standing_transparent.png",
   fistBumpStandingSmirk:      "/rudy/fist_bump_standing_transparent.png",
   fistBumpSitting:            "/rudy/fist_bump_sitting_transparent.png",
+  punching:                   "/rudy/Rudy_punching_forward_transparent.png",
 };
 
 const IDLE_CYCLE = [
@@ -24,6 +25,7 @@ const IDLE_CYCLE = [
   RUDY_IMAGES.sittingForwardArmsCrossed,
   RUDY_IMAGES.standingArmsCrossedSideways,
   RUDY_IMAGES.fistBumpStandingSmirk,
+  RUDY_IMAGES.fistBumpStandingAngry,
 ];
 
 const RUDY_LINES = {
@@ -372,7 +374,7 @@ export type RudyEventType =
 const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   reminder_created:     RUDY_IMAGES.fistBumpSitting,
   creating_generic:     RUDY_IMAGES.creating,
-  streak:               RUDY_IMAGES.fistBumpStandingAngry,
+  streak:               RUDY_IMAGES.fistBumpSitting,
   manage_did_it:        RUDY_IMAGES.fistBumpSitting,
   manage_didnt_do_it:   RUDY_IMAGES.sittingForwardArmsCrossed,
   manage_overdue:       RUDY_IMAGES.sittingBench,
@@ -380,8 +382,8 @@ const EVENT_IMAGE: Record<NonNullable<RudyEventType>, string> = {
   slider_1:             RUDY_IMAGES.standingArmsCrossedSideways,
   slider_2:             RUDY_IMAGES.standingArmsCrossedSideways,
   slider_3:             RUDY_IMAGES.sittingUpright,
-  slider_4:             RUDY_IMAGES.fistBumpStandingAngry,
-  slider_5:             RUDY_IMAGES.fistBumpStandingAngry,
+  slider_4:             RUDY_IMAGES.punching,
+  slider_5:             RUDY_IMAGES.tap,
   date_today:           RUDY_IMAGES.sittingFloor,
   date_tomorrow:        RUDY_IMAGES.sittingFloor,
   date_future:          RUDY_IMAGES.done,
