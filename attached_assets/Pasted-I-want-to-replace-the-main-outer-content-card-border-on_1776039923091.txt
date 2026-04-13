@@ -1,0 +1,48 @@
+I want to replace the main outer content card border on the home screen 
+with a floral rose/vine image border. This applies to BOTH home-free.tsx 
+and home-premium.tsx.
+
+SETUP FIRST:
+The floral border image has already been provided. Save the file 
+'Rude_remdrs__LinkedIn_Single_Image_Ad___2_.png' into 
+client/public/ and rename it to 'floral-border.png'
+
+THE CHANGE:
+Find the main outer container div on the home page — it's the large 
+card/bubble that wraps the Rudy widget, the Create/Manage/Analytics 
+tab bar, and all the content below. It currently has a light gold border 
+(something like border: '1px solid #C9A063' or similar, with a cream/light 
+background and border-radius).
+
+Replace that border with the floral image frame by:
+
+1. Remove the existing gold border style from that outer container div
+
+2. Wrap that outer container in a new parent div styled like this:
+   - position: 'relative'
+   - display: 'block'
+   - padding: '18px' (this creates space for the floral frame to show)
+
+3. Add the floral border as a background image on that NEW parent div:
+   - backgroundImage: "url('/floral-border.png')"
+   - backgroundSize: '100% 100%' (stretches to fit all card sizes)
+   - backgroundRepeat: 'no-repeat'
+   - backgroundPosition: 'center'
+   - borderRadius: '16px'
+
+4. The inner container (the actual content card) should:
+   - Keep its cream/light gold background color (#FDF3E3 or whatever it is)
+   - Keep its border-radius
+   - Have NO border anymore
+   - Fill the space naturally inside the padding
+
+5. Make sure the floral frame looks correct on both:
+   - home-free.tsx (guest users)
+   - home-premium.tsx (premium users)
+
+IMPORTANT: 
+- Do NOT touch the Rudy widget internals, tab bar, or any content inside
+- Do NOT change any colors, fonts, or functionality
+- Do NOT affect the Manage tab cards or any other page
+- The rudeness slider and emoji tone selector must remain completely unchanged
+- Safe incremental changes only — show me what files you're changing before applying

@@ -301,6 +301,16 @@ export default function HomePremium() {
         className="container mx-auto px-4 pt-8 max-w-7xl"
         style={{ paddingBottom: isAndroid ? '120px' : '80px' }}
       >
+        {/* Floral border frame */}
+        <div style={{
+          backgroundImage: "url('/floral-border.png')",
+          backgroundSize: '100% 100%',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          borderRadius: '16px',
+          padding: '18px',
+        }}>
+
         {/* Welcome Header - Mobile Optimized */}
         <div className="mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
@@ -723,6 +733,7 @@ export default function HomePremium() {
 
 
         </Tabs>
+        </div>{/* end floral frame */}
       </div>
 
       {/* Rich Reminder Notification Modal */}

@@ -262,6 +262,16 @@ export default function HomeFree() {
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Floral border frame */}
+        <div style={{
+          backgroundImage: "url('/floral-border.png')",
+          backgroundSize: '100% 100%',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          borderRadius: '16px',
+          padding: '18px',
+        }}>
+
         {/* Welcome Header - Mobile Optimized */}
         <div className="mb-3 sm:mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
@@ -419,6 +429,7 @@ export default function HomeFree() {
           </TabsContent>
 
         </Tabs>
+        </div>{/* end floral frame */}
       </div>
 
       {/* Rich Reminder Notification Modal */}
