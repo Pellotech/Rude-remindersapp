@@ -1,0 +1,64 @@
+Open the file: client/src/components/BookDatePicker.tsx
+
+I need 3 specific visual fixes. Do NOT change any logic, state, callbacks, 
+or functionality. Only modify style/CSS values.
+
+---
+
+FIX 1 — Remove the center spine completely
+
+Find the center spine element. It is approximately 20px wide, colored #3d1a08, 
+and sits between the left and right page sections. It may have gold dots and 
+a box shadow on it.
+
+Remove this element entirely (delete the JSX element and its styles).
+
+The left page fan section and right page section should now sit directly 
+next to each other with no gap, no divider, and no spine between them.
+
+---
+
+FIX 2 — Make the closed book 45% larger
+
+The closed book (currentIdx === 0) currently sits at approximately 35% of the 
+card width and 145px height (or whatever the current value is after the last fix).
+
+Increase BOTH the width AND height of the closed book by 45%.
+- If width was 35%, change it to approximately 50-51%
+- If height was 145px, change it to approximately 210px
+- Scale up the logo size, text sizes, and spine width proportionally if they 
+  look too small after the resize
+
+The goal is a more substantial closed book that fills the card space better.
+
+---
+
+FIX 3 — Fix the top and bottom edge bars to span the full book width
+
+Currently the top and bottom dark brown edge bars (6px tall, color #3d1a08, 
+position absolute) are stopping short at the inner pages and not covering the 
+outer brown cover strips on each side.
+
+Find these top and bottom edge elements. They currently have:
+  left: 13px (or similar offset)
+  right: 13px (or similar offset)
+
+Change them to:
+  left: 0
+  right: 0
+
+This will make the dark brown top and bottom bars span the FULL width of the 
+open book including over the outer cover strips on both sides, so the corners 
+are fully enclosed and the book looks like a proper rectangle.
+
+Also remove any border-radius from these top/bottom edge bars — they should 
+be sharp rectangles:
+  border-radius: 0
+
+---
+
+After all 3 fixes, confirm:
+- No logic, state, or callbacks were changed
+- The book still opens and closes correctly  
+- The controls row below the book is unchanged
+- The center of the open book now shows pages touching with no spine gap

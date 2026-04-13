@@ -266,7 +266,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             {/* Closed book */}
             <div style={{
-              width: '35%',
+              width: '51%',
               height: 147,
               boxShadow: '5px 5px 18px rgba(0,0,0,0.32), -1px 0 4px rgba(0,0,0,0.1)',
               borderRadius: '5px 7px 7px 5px',
@@ -314,26 +314,26 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 {/* Logo — no ring */}
                 <img
                   src={rudeRemindersLogo}
-                  style={{ width: 32, height: 32, objectFit: 'contain', position: 'relative', zIndex: 1 }}
+                  style={{ width: 46, height: 46, objectFit: 'contain', position: 'relative', zIndex: 1 }}
                   alt=""
                 />
                 {/* Divider */}
                 <div style={{ width: 26, height: 1, background: 'rgba(201,160,99,0.3)', position: 'relative', zIndex: 1 }} />
                 {/* Title */}
                 <div style={{
-                  color: '#C9A063', fontSize: 6.5, letterSpacing: '0.12em',
+                  color: '#C9A063', fontSize: 8, letterSpacing: '0.12em',
                   fontWeight: 500, textAlign: 'center', lineHeight: 1.7,
                   position: 'relative', zIndex: 1,
                 }}>RUDE REMINDERS</div>
                 {/* Sub */}
                 <div style={{
-                  color: 'rgba(201,160,99,0.5)', fontSize: 5.5,
+                  color: 'rgba(201,160,99,0.5)', fontSize: 7,
                   letterSpacing: '0.07em', position: 'relative', zIndex: 1,
                 }}>your week ahead</div>
 
                 {/* Right page edge — stacked lines */}
                 <div style={{
-                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 5,
+                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 7,
                   display: 'flex', flexDirection: 'column', overflow: 'hidden',
                   borderRadius: '0 7px 7px 0',
                 }}>
