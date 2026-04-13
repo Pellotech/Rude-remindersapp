@@ -273,7 +273,7 @@ export default function ReminderForm({
     lockedTooltipTimerRef.current = setTimeout(() => setLockedTooltip(null), 2000);
   };
   const [quickReminderOpen, setQuickReminderOpen] = useState(false);
-
+  const [todayIsSelected, setTodayIsSelected] = useState(false);
 
   const [scheduleValid, setScheduleValid] = useState(false);
 
@@ -933,6 +933,16 @@ export default function ReminderForm({
                     }
                     form.setValue("isMultiDay", result.isMultiDay);
                     form.setValue("selectedDays", result.selectedDays);
+                    // Detect if today is selected (with or without a time chosen yet)
+                    const todayName = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date().getDay()];
+                    if (result.scheduledFor) {
+                      const d = new Date(result.scheduledFor);
+                      setTodayIsSelected(d.toDateString() === new Date().toDateString());
+                    } else if (!result.isMultiDay && result.selectedDays.length > 0) {
+                      setTodayIsSelected(result.selectedDays.includes(todayName));
+                    } else {
+                      setTodayIsSelected(false);
+                    }
                   }}
                   onDateEventFired={onDateSelected}
                 />
@@ -1235,14 +1245,7 @@ export default function ReminderForm({
             </Button>
 
             {/* Quick Reminder Settings - Show only when today is selected */}
-            {!form.watch("isMultiDay") && scheduledForValue && (
-              (() => {
-                const scheduledDate = new Date(scheduledForValue);
-                const now = new Date();
-                const isToday = scheduledDate.toDateString() === now.toDateString();
-
-                if (isToday) {
-                  return (
+            {!form.watch("isMultiDay") && todayIsSelected && (
                     <Collapsible open={quickReminderOpen} onOpenChange={setQuickReminderOpen}>
                       <CollapsibleTrigger asChild>
                         <Button
@@ -1320,10 +1323,6 @@ export default function ReminderForm({
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
-                  );
-                }
-                return null;
-              })()
             )}
 
             {/* Summary bubble — sits below the Create button */}
