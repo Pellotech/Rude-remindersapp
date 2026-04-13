@@ -159,6 +159,20 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       return;
     }
 
+    /* Close: open → cover page */
+    if (bookOpen && newIdx === 0) {
+      setAnimDir('backward');
+      setIsExiting(true);
+      setCurrentIdx(0);
+      setTimeout(() => {
+        setBookOpen(false);
+        setDisplayIdx(0);
+        setIsExiting(false);
+        setTimeout(() => { isAnimating.current = false; }, 350);
+      }, 240);
+      return;
+    }
+
     /* Page-to-page (already open) */
     if (navTimer.current) clearTimeout(navTimer.current);
     setAnimDir(newIdx > currentIdx ? 'forward' : 'backward');
@@ -500,7 +514,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     color: isPageSelected(displayIdx) ? '#C53B3B' : '#1a1005',
                     transition: 'color 0.2s',
                   }}>
-                    {format(getPageDate(displayIdx), 'd')}
+                    {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
                   </div>
                   {/* Day name */}
                   <div style={{
@@ -508,11 +522,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     color: isPageSelected(displayIdx) ? 'rgba(197,59,59,0.78)' : '#3d2010',
                     transition: 'color 0.2s',
                   }}>
-                    {format(getPageDate(displayIdx), 'EEEE')}
+                    {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'EEEE') : ''}
                   </div>
                   {/* Month */}
                   <div style={{ fontSize: 12, fontWeight: 500, color: '#C9A063' }}>
-                    {format(getPageDate(displayIdx), 'MMM')}
+                    {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'MMM') : ''}
                   </div>
                 </div>
 
