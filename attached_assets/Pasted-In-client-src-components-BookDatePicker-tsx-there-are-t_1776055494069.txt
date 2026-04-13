@@ -1,0 +1,114 @@
+In client/src/components/BookDatePicker.tsx there are two visual 
+bugs to fix. Read the full file before making any changes.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+FIX 1 — Spine overlapping Rudy widget and banners above
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The spine element has a zIndex too high and is bleeding 
+outside the book component, overlapping UI above it.
+
+Fix:
+- Add overflow: 'hidden' to the OUTERMOST wrapper div 
+  of BookDatePicker (the one that wraps the entire component 
+  including book + controls + hour/minute pickers)
+- Make sure the book outer wrapper (the 195px perspective div)
+  also has overflow: 'hidden'
+- Reduce spine zIndex from 100 to 10
+- Make sure NO element in BookDatePicker uses 
+  position: 'fixed' — everything must be position: 'absolute' 
+  or 'relative' only
+- The entire component must be self-contained and not 
+  bleed outside its own bounds
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+FIX 2 — Make the book look like an actual open book
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Currently the book takes the full width of the card which 
+makes it look like a flat card, not a real book.
+
+Redesign the book layout like this:
+
+OUTER BOOK CONTAINER:
+- width: 100%
+- height: 200px
+- display: flex
+- align-items: stretch
+- border-radius: 8px
+- overflow: hidden
+
+LEFT SIDE — "already read" pages (left of spine):
+- width: 35% of total width
+- background: #ddc99a (the tan back-of-page color)
+- Shows stacked page edges to give depth:
+  Add 3 thin vertical lines on the right edge of this section
+  using box-shadow or border, color rgba(0,0,0,0.08), 
+  spaced 2px apart — simulates a stack of pages
+- This section is NOT interactive — purely decorative
+- Display the back face color of flipped pages here
+
+SPINE (center divider):
+- width: 28px
+- flex-shrink: 0
+- background: #6B3410
+- zIndex: 10 (NOT higher)
+- display flex column, align center, justify center, gap 8px
+- box-shadow: 2px 0 8px rgba(0,0,0,0.25), 
+              -2px 0 8px rgba(0,0,0,0.15)
+- 3 gold dots + 2 lines as before
+
+RIGHT SIDE — current page:
+- flex: 1 (takes remaining width)
+- position: relative
+- background: #FDF3E3
+- border: 1.5px solid #C9A063
+- border-left: none (spine is the left edge)
+- border-radius: 0 10px 10px 0
+- overflow: hidden
+- Shows the current date page content (number, day, month,
+  today badge, Rudy scribble)
+- The page content (number/day/month) should be centered 
+  in this right section
+
+PAGE FLIP ANIMATION — adapt for this layout:
+- Instead of full-width pages rotating from left edge,
+  now only the RIGHT section content changes on navigation
+- When going forward: current page content slides/fades out 
+  to left, new page content slides in from right
+- When going back: reverse direction
+- Use CSS transition on opacity + transform: translateX
+  for a smooth page-turn feel:
+  * Exiting: opacity 0, transform translateX(-20px), 
+    transition 0.25s ease
+  * Entering: start at translateX(20px) opacity 0, 
+    then transition to translateX(0) opacity 1 over 0.35s
+
+LEFT SIDE page count indicator:
+- In the left "read pages" section, show a small number 
+  in the center: how many pages have been flipped
+- Style: font-size 11px, color rgba(0,0,0,0.3), 
+  font-weight 500
+- This gives the feel of "pages already turned"
+
+COVER PAGE special case:
+- When currentIdx === 0 (cover showing):
+  * Left section: completely empty, background #5a2a08 
+    (darker brown, like the inside front cover)
+  * Right section: shows the cover content 
+    (logo ring, RUDE REMINDERS text, your week ahead)
+    with background #6B3410 (brown cover)
+
+SELECTED pages:
+- Selected date text still turns red (#C53B3B)
+- Page background stays #FDF3E3
+- Rudy scribble still appears bottom-right
+
+Keep all controls row, meta row, hour picker, and minute 
+picker completely unchanged.
+
+Do NOT change anything in ReminderForm.tsx.
+Do NOT change the rudeness slider, voice/photo/quotes tabs,
+or any other part of the form.
+Safe incremental changes only — show me the changes before 
+applying them.
