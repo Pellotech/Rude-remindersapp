@@ -37,15 +37,15 @@ const LEFT_FAN = [
   { left: 28, bg: '#dcbc90' },
 ];
 
-/* ─── right fan layers (right-anchored) ─── */
+/* ─── right fan layers (right-anchored, compressed to 1/3 spread) ─── */
 const RIGHT_FAN = [
-  { right: 0,  bg: '#dcbc90' },
-  { right: 4,  bg: '#d6b484' },
-  { right: 8,  bg: '#d0aa78' },
-  { right: 12, bg: '#caa26c' },
-  { right: 16, bg: '#c29860' },
-  { right: 20, bg: '#ba9052' },
-  { right: 24, bg: '#EFE5D0' },
+  { right: 0, bg: '#dcbc90' },
+  { right: 1, bg: '#d6b484' },
+  { right: 3, bg: '#d0aa78' },
+  { right: 4, bg: '#caa26c' },
+  { right: 5, bg: '#c29860' },
+  { right: 7, bg: '#ba9052' },
+  { right: 8, bg: '#EFE5D0' },
 ];
 
 export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDatePickerProps) {
@@ -267,7 +267,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             {/* Closed book */}
             <div style={{
               width: '35%',
-              height: 220,
+              height: 147,
               boxShadow: '5px 5px 18px rgba(0,0,0,0.32), -1px 0 4px rgba(0,0,0,0.1)',
               borderRadius: '5px 7px 7px 5px',
               display: 'flex',
@@ -375,20 +375,20 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             <div style={{
               position: 'absolute', top: 0, left: 13, right: 13,
               height: 6, background: '#3d1a08',
-              borderRadius: '3px 3px 0 0',
+              borderRadius: 0,
             }} />
             {/* Bottom edge */}
             <div style={{
               position: 'absolute', bottom: 0, left: 13, right: 13,
               height: 6, background: '#3d1a08',
-              borderRadius: '0 0 3px 3px',
+              borderRadius: 0,
             }} />
 
             {/* Open book */}
             <div style={{
-              width: '100%', height: 210,
+              width: '100%', height: 140,
               display: 'flex',
-              borderRadius: 4,
+              borderRadius: 0,
               overflow: 'hidden',
               boxShadow: '0 4px 22px rgba(0,0,0,0.3)',
             }}>
@@ -396,7 +396,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Left outer cover strip */}
               <div style={{
                 width: 13, background: '#3d1a08',
-                borderRadius: '4px 0 0 4px', flexShrink: 0,
+                borderRadius: 0, flexShrink: 0,
               }} />
 
               {/* Left page section */}
@@ -590,7 +590,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Right outer cover strip */}
               <div style={{
                 width: 13, background: '#3d1a08',
-                borderRadius: '0 4px 4px 0', flexShrink: 0,
+                borderRadius: 0, flexShrink: 0,
               }} />
             </div>
           </div>
