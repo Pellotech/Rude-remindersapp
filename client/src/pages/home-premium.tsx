@@ -301,20 +301,6 @@ export default function HomePremium() {
         className="container mx-auto px-4 pt-8 max-w-7xl"
         style={{ paddingBottom: isAndroid ? '120px' : '80px' }}
       >
-        {/* Main content card with gold border and floral corner decorations */}
-        <div style={{
-          border: '1px solid #C9A063',
-          borderRadius: '12px',
-          padding: '16px',
-          position: 'relative',
-          overflow: 'visible',
-        }}>
-          {/* Floral corner decorations */}
-          <img src="/floral-border.png" alt="" style={{ position: 'absolute', top: -18, left: -18, width: 60, height: 60, transform: 'rotate(0deg)', mixBlendMode: 'multiply', pointerEvents: 'none', zIndex: 10 }} />
-          <img src="/floral-border.png" alt="" style={{ position: 'absolute', top: -18, right: -18, width: 60, height: 60, transform: 'rotate(90deg)', mixBlendMode: 'multiply', pointerEvents: 'none', zIndex: 10 }} />
-          <img src="/floral-border.png" alt="" style={{ position: 'absolute', bottom: -18, right: -18, width: 60, height: 60, transform: 'rotate(180deg)', mixBlendMode: 'multiply', pointerEvents: 'none', zIndex: 10 }} />
-          <img src="/floral-border.png" alt="" style={{ position: 'absolute', bottom: -18, left: -18, width: 60, height: 60, transform: 'rotate(270deg)', mixBlendMode: 'multiply', pointerEvents: 'none', zIndex: 10 }} />
-
         {/* Welcome Header - Mobile Optimized */}
         <div className="mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
@@ -737,7 +723,6 @@ export default function HomePremium() {
 
 
         </Tabs>
-        </div>{/* end main content card */}
       </div>
 
       {/* Rich Reminder Notification Modal */}
