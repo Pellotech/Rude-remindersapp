@@ -25,20 +25,54 @@ const QUARTER_SLOTS = [
   { value: 45, label: ":45" },
 ];
 
+/* ─── left fan layers (darkest → lightest, left-anchored) ─── */
+const LEFT_FAN = [
+  { left: 0,  bg: '#a88040' },
+  { left: 4,  bg: '#b28848' },
+  { left: 8,  bg: '#ba9052' },
+  { left: 12, bg: '#c29860' },
+  { left: 16, bg: '#caa26c' },
+  { left: 20, bg: '#d0aa78' },
+  { left: 24, bg: '#d6b484' },
+  { left: 28, bg: '#dcbc90' },
+];
+
+/* ─── right fan layers (right-anchored) ─── */
+const RIGHT_FAN = [
+  { right: 0,  bg: '#dcbc90' },
+  { right: 4,  bg: '#d6b484' },
+  { right: 8,  bg: '#d0aa78' },
+  { right: 12, bg: '#caa26c' },
+  { right: 16, bg: '#c29860' },
+  { right: 20, bg: '#ba9052' },
+  { right: 24, bg: '#EFE5D0' },
+];
+
 export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDatePickerProps) {
+  /* ─── navigation state ───────────────────────────────────────────────── */
   const [currentIdx, setCurrentIdx]       = useState(0);
   const [displayIdx, setDisplayIdx]       = useState(0);
   const [isExiting, setIsExiting]         = useState(false);
   const [animDir, setAnimDir]             = useState<'forward' | 'backward'>('forward');
+  const [bookOpen, setBookOpen]           = useState(false);
+  const [closedExiting, setClosedExiting] = useState(false);
+
+  /* ─── selection state ────────────────────────────────────────────────── */
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedHour, setSelectedHour]   = useState<number | null>(null);
   const [selectedMinute, setSelectedMinute] = useState(0);
-  const navTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /* ─── refs ───────────────────────────────────────────────────────────── */
+  const isAnimating  = useRef(false);
+  const navTimer     = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openKey      = useRef(0);
+  const touchStartX  = useRef<number | null>(null);
+  const mouseStartX  = useRef<number | null>(null);
 
   const today = new Date();
   const pages = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
-  /* ─── schedule-change emitter ──────────────────────────────────────── */
+  /* ─── schedule-change emitter (UNCHANGED) ───────────────────────────── */
   const fireChange = useCallback(
     (dates: Date[], hour: number | null, minute: number) => {
       if (dates.length === 0) {
@@ -70,7 +104,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     [onScheduleChange],
   );
 
-  /* ─── time slots ────────────────────────────────────────────────────── */
+  /* ─── time slots (UNCHANGED) ─────────────────────────────────────────── */
   const generateTimeSlots = () => {
     const now = new Date();
     const onlyTodaySelected = selectedDates.length === 1 && isSameDay(selectedDates[0], now);
@@ -99,17 +133,33 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     return slot < now;
   };
 
-  /* ─── selection helpers ─────────────────────────────────────────────── */
-  const getPageDate = (idx: number) => pages[idx - 1];
-
-  const isPageSelected = (idx: number) =>
-    idx > 0 && selectedDates.some(d => isSameDay(d, getPageDate(idx)));
-
+  /* ─── selection helpers ───────────────────────────────────────────────── */
+  const getPageDate      = (idx: number) => pages[idx - 1];
+  const isPageSelected   = (idx: number) => idx > 0 && selectedDates.some(d => isSameDay(d, getPageDate(idx)));
   const currentDisplaySelected = isPageSelected(displayIdx);
 
-  /* ─── navigation with slide animation ──────────────────────────────── */
+  /* ─── navigate ────────────────────────────────────────────────────────── */
   const navigate = (newIdx: number) => {
-    if (newIdx === currentIdx || isExiting) return;
+    if (newIdx < 0 || newIdx > 7 || newIdx === currentIdx) return;
+    if (isAnimating.current) return;
+    isAnimating.current = true;
+
+    /* First open: closed → open */
+    if (!bookOpen && newIdx >= 1) {
+      setClosedExiting(true);
+      setTimeout(() => {
+        openKey.current += 1;
+        setCurrentIdx(newIdx);
+        setDisplayIdx(newIdx);
+        setBookOpen(true);
+        setClosedExiting(false);
+        /* release lock after open-in animation */
+        setTimeout(() => { isAnimating.current = false; }, 350);
+      }, 200);
+      return;
+    }
+
+    /* Page-to-page (already open) */
     if (navTimer.current) clearTimeout(navTimer.current);
     setAnimDir(newIdx > currentIdx ? 'forward' : 'backward');
     setIsExiting(true);
@@ -117,16 +167,16 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     navTimer.current = setTimeout(() => {
       setDisplayIdx(newIdx);
       setIsExiting(false);
+      /* 550 ms total lock from spec */
+      setTimeout(() => { isAnimating.current = false; }, 310);
     }, 240);
   };
 
-  /* ─── select/deselect handler ───────────────────────────────────────── */
+  /* ─── select / deselect ───────────────────────────────────────────────── */
   const handleSelectBtn = () => {
     if (displayIdx === 0) { navigate(1); return; }
-
     const pageDate = getPageDate(displayIdx);
     const already  = selectedDates.some(d => isSameDay(d, pageDate));
-
     if (already) {
       const newDates = selectedDates.filter(d => !isSameDay(d, pageDate));
       setSelectedDates(newDates);
@@ -135,250 +185,421 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       const newDates = [...selectedDates, pageDate];
       setSelectedDates(newDates);
       fireChange(newDates, selectedHour, selectedMinute);
-
       const now      = new Date();
       const tomorrow = addDays(today, 1);
-      if (isSameDay(pageDate, now))           onDateEventFired?.('date_today');
+      if      (isSameDay(pageDate, now))      onDateEventFired?.('date_today');
       else if (isSameDay(pageDate, tomorrow)) onDateEventFired?.('date_tomorrow');
       else                                    onDateEventFired?.('date_future');
     }
   };
 
+  /* ─── time pickers (UNCHANGED) ────────────────────────────────────────── */
   const handleHourSelect = (hour: number) => {
     setSelectedHour(hour);
     fireChange(selectedDates, hour, selectedMinute);
   };
-
   const handleMinuteSelect = (minute: number) => {
     setSelectedMinute(minute);
     if (selectedHour !== null) fireChange(selectedDates, selectedHour, minute);
   };
 
-  /* ─── chip label ─────────────────────────────────────────────────────── */
-  const chipLabel = (d: Date) => `${format(d, 'EEE')} ${format(d, 'd')}`;
-
-  /* ─── right-side page content ────────────────────────────────────────── */
-  const renderPageContent = () => {
-    const idx = displayIdx;
-
-    if (idx === 0) {
-      return (
-        <div style={{
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          height: '100%', gap: 8,
-        }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: '50%',
-            border: '2px solid #C9A063',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(0,0,0,0.15)',
-          }}>
-            <img src={rudeRemindersLogo} style={{ width: 36, height: 36, objectFit: 'contain' }} alt="" />
-          </div>
-          <div style={{ width: 32, height: 1, background: 'rgba(201,160,99,0.3)' }} />
-          <div style={{ color: '#C9A063', fontSize: 11, letterSpacing: '0.1em', fontWeight: 600 }}>
-            RUDE REMINDERS
-          </div>
-          <div style={{ color: 'rgba(201,160,99,0.55)', fontSize: 9 }}>
-            your week ahead
-          </div>
-        </div>
-      );
-    }
-
-    const date     = getPageDate(idx);
-    const selected = isPageSelected(idx);
-    const isToday  = isSameDay(date, today);
-    const dayNum   = format(date, 'd');
-    const dayName  = format(date, 'EEEE');
-    const monthName = format(date, 'MMM');
-
-    return (
-      <div style={{ position: 'relative', height: '100%', overflow: 'hidden' }}>
-        {/* Left shadow from spine */}
-        <div style={{
-          position: 'absolute', left: 0, top: 0, width: 8, height: '100%',
-          background: 'linear-gradient(to right, rgba(0,0,0,0.08), transparent)',
-          pointerEvents: 'none', zIndex: 1,
-        }} />
-
-        {/* Today badge */}
-        {isToday && (
-          <div style={{
-            position: 'absolute', top: 8, right: 10, zIndex: 2,
-            background: '#C9A063', color: '#fff',
-            fontSize: 10, fontWeight: 700,
-            padding: '2px 7px', borderRadius: 6,
-          }}>Today</div>
-        )}
-
-        {/* Date content */}
-        <div style={{
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'flex-start', justifyContent: 'center',
-          height: '100%', paddingLeft: 20, paddingTop: 8,
-        }}>
-          <div style={{
-            fontSize: 52, fontWeight: 500, lineHeight: 1,
-            color: selected ? '#C53B3B' : '#1a1a1a',
-            transition: 'color 0.3s',
-          }}>{dayNum}</div>
-          <div style={{
-            fontSize: 14, marginTop: 2,
-            color: selected ? 'rgba(196,59,59,0.75)' : '#777',
-            transition: 'color 0.3s',
-          }}>{dayName}</div>
-          <div style={{
-            fontSize: 11, fontWeight: 500, marginTop: 2,
-            color: selected ? 'rgba(196,59,59,0.65)' : '#C9A063',
-            transition: 'color 0.3s',
-          }}>{monthName}</div>
-        </div>
-
-        {/* Rudy scribble SVG */}
-        <svg
-          width="44" height="44"
-          viewBox="0 0 44 44"
-          style={{
-            position: 'absolute', bottom: 8, right: 8, zIndex: 2,
-            pointerEvents: 'none',
-            opacity: selected ? 1 : 0,
-            transition: 'opacity 0.2s',
-          }}
-        >
-          <style>{`
-            @keyframes rudyDraw {
-              from { stroke-dashoffset: 200; }
-              to   { stroke-dashoffset: 0; }
-            }
-            .rudy-path-${idx} {
-              stroke-dasharray: 200;
-              stroke-dashoffset: ${selected ? 0 : 200};
-              animation: ${selected ? `rudyDraw 0.65s ease forwards` : 'none'};
-            }
-          `}</style>
-          <circle className={`rudy-path-${idx}`}
-            cx="23" cy="21" r="12"
-            fill="none" stroke="#C53B3B" strokeWidth="1.8" strokeLinecap="round"
-          />
-          <circle cx="19" cy="18" r="1.8" fill="#C53B3B" />
-          <circle cx="27" cy="18" r="1.8" fill="#C53B3B" />
-          <path className={`rudy-path-${idx}`}
-            d="M18 25 Q23 30 28 25"
-            fill="none" stroke="#C53B3B" strokeWidth="1.8" strokeLinecap="round"
-          />
-          <path className={`rudy-path-${idx}`}
-            d="M16 13 Q18 11 20 13"
-            fill="none" stroke="#C9A063" strokeWidth="1.4" strokeLinecap="round"
-          />
-          <path className={`rudy-path-${idx}`}
-            d="M26 13 Q28 11 30 13"
-            fill="none" stroke="#C9A063" strokeWidth="1.4" strokeLinecap="round"
-          />
-        </svg>
-      </div>
-    );
+  /* ─── swipe handlers ──────────────────────────────────────────────────── */
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd   = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) > 35) navigate(dx < 0 ? currentIdx + 1 : currentIdx - 1);
+  };
+  const onMouseDown  = (e: React.MouseEvent) => { mouseStartX.current = e.clientX; };
+  const onMouseUp    = (e: React.MouseEvent) => {
+    if (mouseStartX.current === null) return;
+    const dx = e.clientX - mouseStartX.current;
+    mouseStartX.current = null;
+    if (Math.abs(dx) > 35) navigate(dx < 0 ? currentIdx + 1 : currentIdx - 1);
   };
 
-  /* ─── render ─────────────────────────────────────────────────────────── */
-  const isCover = displayIdx === 0;
-  const pagesFlipped = currentIdx; // how many pages have been turned
+  /* ─── helpers ─────────────────────────────────────────────────────────── */
+  const chipLabel = (d: Date) => `${format(d, 'EEE')} ${format(d, 'd')}`;
 
+  /* ghost page (left section of open book) */
+  const ghostPage = displayIdx >= 2 ? getPageDate(displayIdx - 1) : null;
+
+  /* ─── render ──────────────────────────────────────────────────────────── */
   return (
     <div style={{ overflow: 'hidden' }} className="space-y-3">
 
-      {/* animation keyframes */}
+      {/* ── keyframes ─────────────────────────────────────────────────── */}
       <style>{`
+        @keyframes bookOpenIn {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         @keyframes enterFromRight {
-          from { opacity: 0; transform: translateX(20px); }
+          from { opacity: 0; transform: translateX(18px); }
           to   { opacity: 1; transform: translateX(0); }
         }
         @keyframes enterFromLeft {
-          from { opacity: 0; transform: translateX(-20px); }
+          from { opacity: 0; transform: translateX(-18px); }
           to   { opacity: 1; transform: translateX(0); }
         }
         @keyframes chipIn {
           from { transform: scale(0.7); opacity: 0; }
-          to   { transform: scale(1); opacity: 1; }
+          to   { transform: scale(1);   opacity: 1; }
         }
+        @keyframes scribble { to { stroke-dashoffset: 0; } }
       `}</style>
 
-      {/* ── BOOK ─────────────────────────────────────────────────────── */}
+      {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
       <div style={{
-        width: '100%', height: 200,
-        display: 'flex', alignItems: 'stretch',
-        borderRadius: 8, overflow: 'hidden',
+        background: '#FDF3E3',
+        border: '1.5px solid #C9A063',
+        borderRadius: 14,
+        padding: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}>
 
-        {/* LEFT SIDE — "already read" pages */}
-        <div style={{
-          width: '35%', flexShrink: 0,
-          background: isCover ? '#5a2a08' : '#ddc99a',
-          position: 'relative',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          /* stacked page edges: 3 thin lines on right edge */
-          boxShadow: isCover ? 'none' : 'inset -2px 0 0 rgba(0,0,0,0.08), inset -4px 0 0 rgba(0,0,0,0.05), inset -6px 0 0 rgba(0,0,0,0.03)',
-          transition: 'background 0.3s',
-        }}>
-          {/* Pages-read count */}
-          {pagesFlipped > 0 && !isCover && (
-            <span style={{
-              fontSize: 11, color: 'rgba(0,0,0,0.3)',
-              fontWeight: 500, userSelect: 'none',
-            }}>{pagesFlipped}</span>
-          )}
-        </div>
+        {/* ══ CLOSED STATE ══════════════════════════════════════════════ */}
+        {!bookOpen && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+            {/* Closed book */}
+            <div style={{
+              width: '35%',
+              height: 220,
+              boxShadow: '5px 5px 18px rgba(0,0,0,0.32), -1px 0 4px rgba(0,0,0,0.1)',
+              borderRadius: '5px 7px 7px 5px',
+              display: 'flex',
+              overflow: 'hidden',
+              transform: closedExiting ? 'scale(0.95)' : 'scale(1)',
+              opacity: closedExiting ? 0 : 1,
+              transition: 'transform 0.2s ease, opacity 0.2s ease',
+            }}>
 
-        {/* SPINE */}
-        <div style={{
-          width: 28, flexShrink: 0,
-          background: '#6B3410',
-          zIndex: 10,
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center', gap: 8,
-          boxShadow: '2px 0 8px rgba(0,0,0,0.25), -2px 0 8px rgba(0,0,0,0.15)',
-        }}>
-          {[0,1,2].map(i => (
-            <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: '#C9A063' }} />
-          ))}
-        </div>
+              {/* Spine */}
+              <div style={{
+                width: 14,
+                background: '#3d1a08',
+                borderRadius: '5px 0 0 5px',
+                flexShrink: 0,
+                position: 'relative',
+              }}>
+                <div style={{
+                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 3,
+                  background: 'rgba(255,255,255,0.06)',
+                }} />
+              </div>
 
-        {/* RIGHT SIDE — current page */}
-        <div style={{
-          flex: 1,
-          position: 'relative',
-          background: isCover ? '#6B3410' : '#FDF3E3',
-          border: '1.5px solid #C9A063',
-          borderLeft: 'none',
-          borderRadius: '0 10px 10px 0',
-          overflow: 'hidden',
-          transition: 'background 0.3s',
-        }}>
-          {/* Animated content wrapper */}
-          <div
-            key={`page-${displayIdx}`}
-            style={{
-              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-              ...(isExiting
-                ? {
-                    opacity: 0,
-                    transform: animDir === 'forward' ? 'translateX(-20px)' : 'translateX(20px)',
-                    transition: 'opacity 0.24s ease, transform 0.24s ease',
-                  }
-                : {
-                    animation: `${animDir === 'forward' ? 'enterFromRight' : 'enterFromLeft'} 0.35s ease both`,
-                  }
-              ),
-            }}
-          >
-            {renderPageContent()}
+              {/* Cover */}
+              <div style={{
+                flex: 1,
+                background: '#4a1e0a',
+                borderRadius: '0 7px 7px 0',
+                position: 'relative',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 5,
+                padding: 10,
+              }}>
+                {/* Inner spine shadow */}
+                <div style={{
+                  position: 'absolute', left: 0, top: 0, bottom: 0, width: 6,
+                  background: 'rgba(0,0,0,0.15)',
+                }} />
+
+                {/* Logo — no ring */}
+                <img
+                  src={rudeRemindersLogo}
+                  style={{ width: 32, height: 32, objectFit: 'contain', position: 'relative', zIndex: 1 }}
+                  alt=""
+                />
+                {/* Divider */}
+                <div style={{ width: 26, height: 1, background: 'rgba(201,160,99,0.3)', position: 'relative', zIndex: 1 }} />
+                {/* Title */}
+                <div style={{
+                  color: '#C9A063', fontSize: 6.5, letterSpacing: '0.12em',
+                  fontWeight: 500, textAlign: 'center', lineHeight: 1.7,
+                  position: 'relative', zIndex: 1,
+                }}>RUDE REMINDERS</div>
+                {/* Sub */}
+                <div style={{
+                  color: 'rgba(201,160,99,0.5)', fontSize: 5.5,
+                  letterSpacing: '0.07em', position: 'relative', zIndex: 1,
+                }}>your week ahead</div>
+
+                {/* Right page edge — stacked lines */}
+                <div style={{
+                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 5,
+                  display: 'flex', flexDirection: 'column', overflow: 'hidden',
+                  borderRadius: '0 7px 7px 0',
+                }}>
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div key={i} style={{
+                      flex: 1,
+                      background: '#F5EFE6',
+                      borderBottom: '1px solid rgba(0,0,0,0.06)',
+                    }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Hint text */}
+            <p style={{
+              marginTop: 8, fontSize: 11,
+              color: 'rgba(0,0,0,0.35)', textAlign: 'center',
+            }}>swipe or press → to open</p>
           </div>
-        </div>
+        )}
+
+        {/* ══ OPEN STATE ════════════════════════════════════════════════ */}
+        {bookOpen && (
+          <div
+            key={`open-${openKey.current}`}
+            style={{
+              position: 'relative',
+              width: '100%',
+              padding: '6px 0',
+              animation: 'bookOpenIn 0.3s ease both',
+            }}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+          >
+            {/* Top edge */}
+            <div style={{
+              position: 'absolute', top: 0, left: 13, right: 13,
+              height: 6, background: '#3d1a08',
+              borderRadius: '3px 3px 0 0',
+            }} />
+            {/* Bottom edge */}
+            <div style={{
+              position: 'absolute', bottom: 0, left: 13, right: 13,
+              height: 6, background: '#3d1a08',
+              borderRadius: '0 0 3px 3px',
+            }} />
+
+            {/* Open book */}
+            <div style={{
+              width: '100%', height: 210,
+              display: 'flex',
+              borderRadius: 4,
+              overflow: 'hidden',
+              boxShadow: '0 4px 22px rgba(0,0,0,0.3)',
+            }}>
+
+              {/* Left outer cover strip */}
+              <div style={{
+                width: 13, background: '#3d1a08',
+                borderRadius: '4px 0 0 4px', flexShrink: 0,
+              }} />
+
+              {/* Left page section */}
+              <div style={{
+                flex: 1, position: 'relative',
+                background: '#c8a870',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                {/* Fan layers */}
+                {LEFT_FAN.map((layer, i) => (
+                  <div key={i} style={{
+                    position: 'absolute', top: 0, bottom: 0,
+                    left: layer.left, right: 0,
+                    background: layer.bg,
+                  }} />
+                ))}
+                {/* Right shadow overlay */}
+                <div style={{
+                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 22,
+                  background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.22))',
+                  zIndex: 5, pointerEvents: 'none',
+                }} />
+                {/* Ghost: previous page number + day */}
+                {ghostPage && (
+                  <div style={{ position: 'relative', zIndex: 6, textAlign: 'center' }}>
+                    <div style={{ fontSize: 32, fontWeight: 500, color: 'rgba(50,20,5,0.2)', lineHeight: 1 }}>
+                      {format(ghostPage, 'd')}
+                    </div>
+                    <div style={{ fontSize: 10, color: 'rgba(50,20,5,0.15)', marginTop: 2 }}>
+                      {format(ghostPage, 'EEE')}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Center spine */}
+              <div style={{
+                width: 20, background: '#3d1a08', flexShrink: 0,
+                zIndex: 10,
+                boxShadow: '2px 0 8px rgba(0,0,0,0.35), -2px 0 8px rgba(0,0,0,0.25)',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 6,
+                position: 'relative',
+              }}>
+                {/* Left glow */}
+                <div style={{
+                  position: 'absolute', left: 0, top: 0, bottom: 0, width: 5,
+                  background: 'linear-gradient(to right, rgba(0,0,0,0.3), transparent)',
+                }} />
+                {/* Right glow */}
+                <div style={{
+                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 5,
+                  background: 'linear-gradient(to left, rgba(0,0,0,0.3), transparent)',
+                }} />
+                {/* Dots and lines */}
+                {[0,1,2].map((dotI) => (
+                  <div key={dotI} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, position: 'relative', zIndex: 2 }}>
+                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#C9A063' }} />
+                    {dotI < 2 && (
+                      <div style={{ width: 1, height: 12, background: 'rgba(255,255,255,0.15)' }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Right page section */}
+              <div style={{
+                flex: 1, position: 'relative', overflow: 'hidden',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 4,
+              }}>
+                {/* Right fan layers */}
+                {RIGHT_FAN.map((layer, i) => (
+                  <div key={i} style={{
+                    position: 'absolute', top: 0, bottom: 0,
+                    left: 0, right: layer.right,
+                    background: layer.bg,
+                  }} />
+                ))}
+
+                {/* Depth overlays */}
+                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to right, rgba(60,25,5,0.22), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to left, rgba(60,25,5,0.2), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to top, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(255,248,230,0.45) 0%, transparent 68%)', zIndex: 3, pointerEvents: 'none' }} />
+
+                {/* Ruled lines */}
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 5, pointerEvents: 'none',
+                  display: 'flex', flexDirection: 'column',
+                  justifyContent: 'flex-end', padding: '8px 12px', gap: 10,
+                }}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} style={{ height: 1, background: 'rgba(150,100,50,0.13)' }} />
+                  ))}
+                </div>
+
+                {/* Today badge */}
+                {displayIdx === 1 && (
+                  <div style={{
+                    position: 'absolute', top: 10, right: 30, zIndex: 8,
+                    background: '#5c2d0e', color: '#F5EFE6',
+                    fontSize: 9, fontWeight: 500,
+                    padding: '2px 6px', borderRadius: 3,
+                  }}>Today</div>
+                )}
+
+                {/* Date content — animated on page change */}
+                <div
+                  key={`content-${displayIdx}`}
+                  style={{
+                    position: 'relative', zIndex: 6,
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: 2,
+                    ...(isExiting
+                      ? {
+                          opacity: 0,
+                          transform: animDir === 'forward' ? 'translateX(-18px)' : 'translateX(18px)',
+                          transition: 'opacity 0.22s ease, transform 0.22s ease',
+                        }
+                      : {
+                          animation: `${animDir === 'forward' ? 'enterFromRight' : 'enterFromLeft'} 0.32s ease both`,
+                        }
+                    ),
+                  }}
+                >
+                  {/* Day number */}
+                  <div style={{
+                    fontSize: 54, fontWeight: 500, lineHeight: 1,
+                    color: isPageSelected(displayIdx) ? '#C53B3B' : '#1a1005',
+                    transition: 'color 0.2s',
+                  }}>
+                    {format(getPageDate(displayIdx), 'd')}
+                  </div>
+                  {/* Day name */}
+                  <div style={{
+                    fontSize: 14,
+                    color: isPageSelected(displayIdx) ? 'rgba(197,59,59,0.78)' : '#3d2010',
+                    transition: 'color 0.2s',
+                  }}>
+                    {format(getPageDate(displayIdx), 'EEEE')}
+                  </div>
+                  {/* Month */}
+                  <div style={{ fontSize: 12, fontWeight: 500, color: '#C9A063' }}>
+                    {format(getPageDate(displayIdx), 'MMM')}
+                  </div>
+                </div>
+
+                {/* Rudy scribble — key resets animation on select */}
+                <svg
+                  key={`scribble-${displayIdx}-${isPageSelected(displayIdx)}`}
+                  width="36" height="36"
+                  viewBox="0 0 46 46"
+                  fill="none"
+                  style={{
+                    position: 'absolute', bottom: 10, right: 30,
+                    zIndex: 8, pointerEvents: 'none',
+                    opacity: isPageSelected(displayIdx) ? 1 : 0,
+                  }}
+                >
+                  {isPageSelected(displayIdx) && (
+                    <>
+                      <circle cx="23" cy="21" r="12"
+                        stroke="#C53B3B" strokeWidth="1.8" strokeLinecap="round"
+                        strokeDasharray="300" strokeDashoffset="300"
+                        style={{ animation: 'scribble 0.65s ease forwards' }}
+                      />
+                      <circle cx="19" cy="18" r="1.8" fill="#C53B3B" />
+                      <circle cx="27" cy="18" r="1.8" fill="#C53B3B" />
+                      <path d="M18 25 Q23 30 28 25"
+                        stroke="#C53B3B" strokeWidth="1.8" strokeLinecap="round"
+                        strokeDasharray="300" strokeDashoffset="300"
+                        style={{ animation: 'scribble 0.65s ease forwards 0.2s' }}
+                      />
+                      <path d="M16 13 Q18 11 20 13"
+                        stroke="#C9A063" strokeWidth="1.4" strokeLinecap="round"
+                        strokeDasharray="100" strokeDashoffset="100"
+                        style={{ animation: 'scribble 0.4s ease forwards 0.4s' }}
+                      />
+                      <path d="M26 13 Q28 11 30 13"
+                        stroke="#C9A063" strokeWidth="1.4" strokeLinecap="round"
+                        strokeDasharray="100" strokeDashoffset="100"
+                        style={{ animation: 'scribble 0.4s ease forwards 0.5s' }}
+                      />
+                    </>
+                  )}
+                </svg>
+              </div>
+
+              {/* Right outer cover strip */}
+              <div style={{
+                width: 13, background: '#3d1a08',
+                borderRadius: '0 4px 4px 0', flexShrink: 0,
+              }} />
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* ── CONTROLS ROW ──────────────────────────────────────────────── */}
+      {/* ── CONTROLS ROW ──────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36 }}>
+
         {/* ← */}
         <button
           type="button"
@@ -396,13 +617,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#C9A063'; }}
         >←</button>
 
-        {/* Select / Open / Deselect */}
+        {/* Centre button */}
         <button
           type="button"
           onClick={handleSelectBtn}
           style={{
             flex: 1, height: 36, borderRadius: 20, cursor: 'pointer',
-            fontSize: 14, fontWeight: 600, border: 'none',
+            fontSize: 13, fontWeight: 500,
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
               ? { background: '#C9A063', color: '#fff', border: 'none' }
@@ -414,9 +635,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         >
           {displayIdx === 0
             ? 'Open cover'
-            : currentDisplaySelected
-              ? 'Deselect'
-              : 'Select this day'}
+            : currentDisplaySelected ? 'Deselect' : 'Select this day'}
         </button>
 
         {/* → */}
@@ -442,7 +661,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           border: '1.5px solid #C9A063',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
-          padding: '0 8px', flexShrink: 0,
+          padding: '0 10px', flexShrink: 0,
         }}>
           <span style={{
             fontSize: 15, fontWeight: 500, lineHeight: 1,
@@ -452,27 +671,26 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         </div>
       </div>
 
-      {/* ── META ROW ──────────────────────────────────────────────────── */}
+      {/* ── META ROW ──────────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 20 }}>
+
         {/* Progress dots */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {Array.from({ length: 8 }, (_, i) => {
-            const isCurrent  = i === currentIdx;
-            const isDotCover = i === 0;
+            const isCurrent   = i === currentIdx;
+            const isDotCover  = i === 0;
             const dotSelected = i > 0 && isPageSelected(i);
-
-            let bg = 'var(--color-border-secondary, #e2e8f0)';
-            if (isDotCover)   bg = '#6B3410';
-            if (dotSelected)  bg = '#C53B3B';
-            if (isCurrent)    bg = '#C9A063';
-
+            let bg = 'rgba(0,0,0,0.15)';
+            if (isDotCover)  bg = '#6B3410';
+            if (dotSelected) bg = '#C53B3B';
+            if (isCurrent)   bg = '#C9A063';
             return (
               <div key={i} style={{
                 height: 6,
                 width: isCurrent ? 14 : 6,
                 borderRadius: isCurrent ? 3 : '50%',
                 background: bg,
-                transition: 'width 0.2s, background 0.2s',
+                transition: 'width 0.25s, background 0.25s',
               }} />
             );
           })}
@@ -492,7 +710,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         </div>
       </div>
 
-      {/* ── HOUR PICKER ───────────────────────────────────────────────── */}
+      {/* ── HOUR PICKER (UNCHANGED) ───────────────────────────────────────── */}
       {selectedDates.length > 0 && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
@@ -520,7 +738,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         </Card>
       )}
 
-      {/* ── MINUTE PICKER ─────────────────────────────────────────────── */}
+      {/* ── MINUTE PICKER (UNCHANGED) ─────────────────────────────────────── */}
       {selectedDates.length > 0 && selectedHour !== null && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
