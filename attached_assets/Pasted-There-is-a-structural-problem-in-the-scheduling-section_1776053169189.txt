@@ -1,0 +1,252 @@
+There is a structural problem in the scheduling section of the app.
+The date/time picking logic is split across TWO files:
+- client/src/components/CalendarSchedule.tsx
+- client/src/components/ReminderForm.tsx (inline multi-day section)
+
+This causes bugs where changes in one place don't register in the other.
+The fix is to consolidate EVERYTHING into one new component and delete the old ones.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — Create ONE new file:
+client/src/components/BookDatePicker.tsx
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This single component handles EVERYTHING:
+- Single day selection
+- Multiple day selection (same UI, just tap more pages)
+- Hour selection
+- Minute selection
+
+Props:
+interface BookDatePickerProps {
+  onScheduleChange: (result: {
+    scheduledFor?: string;       // ISO string — set when 1 date selected
+    isMultiDay: boolean;         // true when 2+ dates selected
+    selectedDays: string[];      // ["monday","tuesday"...] for multi-day
+    hasValidSchedule: boolean;   // true when dates AND time are chosen
+  }) => void;
+  onDateEventFired?: (type: 'date_today' | 'date_tomorrow' | 'date_future') => void;
+}
+
+Internal state (all lives here, nowhere else):
+- currentIdx: number (which book page is showing, 0 = cover)
+- selectedDates: Date[] (which dates user has confirmed)
+- selectedHour: number | null
+- selectedMinute: number (0, 15, 30, 45)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+BOOK UI (already designed, implement exactly):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SPINE:
+- width 24px, background #6B3410, border-radius 6px 0 0 6px
+- zIndex 100, box-shadow 2px 0 6px rgba(0,0,0,0.18)
+- 3 gold dots (#C9A063, 7px circles) with lines between them
+
+PAGES WRAP:
+- position absolute, left 24px, top 0, right 0, height 195px
+- perspective: 900px on outer wrapper
+
+COVER PAGE (index 0):
+- page-front background: #6B3410
+- border: 1.5px solid #4a2008, border-left: 3px solid #3a1800
+- border-radius: 0 12px 12px 0
+- Centered content:
+  * 60x60px circle, border 2px solid #C9A063, border-radius 50%
+  * Inside: app logo from '@assets/translusant_logo2_1767108484844.png'
+    width 40px height 40px object-fit contain
+  * 36px gold divider line (1px, rgba(201,160,99,0.3))
+  * "RUDE REMINDERS" — color #C9A063, font-size 12px, letter-spacing 0.1em
+  * "your week ahead" — color rgba(201,160,99,0.55), font-size 9px
+
+DATE PAGES (index 1 to 7, today through today+6):
+- page-front background: #FDF3E3 ALWAYS (never changes on select)
+- border: 1.5px solid #C9A063, border-left: 3px solid #a07830
+- border-radius: 0 12px 12px 0
+- Left shadow: absolute, left 0, width 8px, 
+  background linear-gradient(to right, rgba(0,0,0,0.09), transparent)
+- page-back background: #ddc99a, same border, transform rotateY(180deg)
+- "Today" badge: absolute top-right, background #C9A063, white text, 
+  10px font, only on the first date page (today)
+- Date number: font-size 52px, font-weight 500
+  * Unselected: color #1a1a1a
+  * Selected: color #C53B3B
+- Day name: font-size 14px
+  * Unselected: color #777
+  * Selected: color rgba(196,59,59,0.75)
+- Month name: font-size 11px, font-weight 500
+  * Unselected: color #C9A063
+  * Selected: color rgba(196,59,59,0.65)
+- Rudy scribble SVG (bottom-right, 44x44px, position absolute, 
+  pointer-events none):
+  * opacity 0 when not selected, opacity 1 when selected
+  * On select: stroke-dasharray draw animation, 0.65s ease
+  * SVG paths (all stroke #C53B3B, stroke-width 1.8, stroke-linecap round):
+    - Face circle: cx=23 cy=21 r=12
+    - Left eye: filled circle cx=19 cy=18 r=1.8
+    - Right eye: filled circle cx=27 cy=18 r=1.8
+    - Smile: M18 25 Q23 30 28 25
+    - Left brow: M16 13 Q18 11 20 13 (stroke #C9A063, width 1.4)
+    - Right brow: M26 13 Q28 11 30 13 (stroke #C9A063, width 1.4)
+
+PAGE FLIP:
+- transform-origin: left center
+- transform-style: preserve-3d
+- transition: transform 0.50s cubic-bezier(0.4,0,0.2,1)
+- Flipped: transform rotateY(-180deg)
+- Selected pages: NOT flipped (stay visible, text turns red)
+- zIndex: current page = 80, flipped pages = their index, 
+  unflipped future pages = 60 - index
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTROLS ROW (one single line below book):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[← arrow] [Select this day / Open cover / Deselect] [→ arrow] [0 days pill]
+
+All height 36px, gap 8px, width 100%.
+
+← arrow btn:
+- bg #FDF3E3, border 1.5px solid #C9A063, border-radius 20px, width 42px
+- color #C9A063, hover: bg #C9A063 color white
+- disabled (opacity 0.25) when currentIdx === 0
+
+Select button (flex 1):
+- currentIdx === 0: text "Open cover", bg #C9A063, color white → clicking goes to page 1
+- currentIdx > 0, page NOT selected: text "Select this day", 
+  bg #C9A063, color white → adds date, triggers Rudy draw
+- currentIdx > 0, page IS selected: text "Deselect", 
+  bg white, color #C53B3B, border 1.5px solid #C53B3B → removes date, hides Rudy
+
+→ arrow btn: same as ← but disabled when currentIdx === 7
+
+Counter pill:
+- border 1.5px solid #C9A063, border-radius 20px, min-width 46px, height 36px
+- Number: font-size 15px, font-weight 500
+  * 0 days: color #C9A063
+  * >0 days: color #C53B3B
+- "days" label: font-size 9px, color #C9A063
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+META ROW (one line, space-between, below controls):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Left: progress dots (8 total — 1 cover + 7 days)
+- Cover dot: bg #6B3410
+- Selected date dots: bg #C53B3B
+- Current page dot: bg #C9A063, width 14px, border-radius 3px
+- Others: var(--color-border-secondary), 6x6px circles
+
+Right: selected date chips
+- bg #C53B3B, color white, font-size 10px, border-radius 8px, padding 2px 7px
+- Format: "Mon 13", "Tue 14" etc
+- Animate in: scale 0.7→1, opacity 0→1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOUR PICKER (shows when selectedDates.length > 0):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Keep EXACTLY the same logic and look as the current CalendarSchedule hour picker:
+- Card with border-[#C9A063]
+- Horizontally scrollable row of hour chips
+- When today is selected: only show future hours (currentHour + 1 onwards)
+- When future date: show all 24 hours
+- When multiple dates selected: show all 24 hours
+- Chip style: h-12 min-w-[90px] rounded-full
+  * Unselected: bg #FDF3E3, text #111827, hover bg #C9A063
+  * Selected: bg #C53B3B, text white
+- On select: fires onScheduleChange with updated scheduledFor or selectedDays
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+MINUTE PICKER (shows when hour is selected):
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Keep EXACTLY the same as CalendarSchedule minute picker:
+- Card with border-[#C9A063]
+- 4 chips: :00 / :15 / :30 / :45
+- Same chip styling as hour picker
+- On select: fires onScheduleChange with final complete schedule
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+onScheduleChange FIRING LOGIC:
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fire this callback every time selectedDates, selectedHour, 
+or selectedMinute changes:
+
+if selectedDates.length === 0:
+  { scheduledFor: undefined, isMultiDay: false, 
+    selectedDays: [], hasValidSchedule: false }
+
+if selectedDates.length === 1 and selectedHour !== null:
+  const dt = new Date(selectedDates[0]);
+  dt.setHours(selectedHour, selectedMinute, 0, 0);
+  { scheduledFor: dt.toISOString(), isMultiDay: false,
+    selectedDays: [], hasValidSchedule: true }
+
+if selectedDates.length > 1 and selectedHour !== null:
+  const dayNames = ["sunday","monday","tuesday",
+    "wednesday","thursday","friday","saturday"];
+  { scheduledFor: undefined, isMultiDay: true,
+    selectedDays: selectedDates.map(d => dayNames[d.getDay()]),
+    hasValidSchedule: true }
+
+if dates selected but no hour yet:
+  { hasValidSchedule: false, ... }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 2 — Update ReminderForm.tsx
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. DELETE the import of CalendarSchedule
+2. ADD import of BookDatePicker
+3. REMOVE all of these (they move into BookDatePicker):
+   - isMultiDay state and handleMultiDayToggle
+   - selectedDays state  
+   - multiDayHour and multiDayMinute state
+   - The entire Multiple Days toggle Switch
+   - The entire isMultiDay ternary block with day/hour/minute cards
+   - The CalendarSchedule component usage
+   - handleDateTimeChange function
+
+4. ADD this state:
+   const [scheduleValid, setScheduleValid] = useState(false);
+
+5. REPLACE the entire scheduling FormField content with:
+   <BookDatePicker
+     onScheduleChange={(result) => {
+       setScheduleValid(result.hasValidSchedule);
+       if (result.scheduledFor) {
+         form.setValue("scheduledFor", 
+           format(new Date(result.scheduledFor), "yyyy-MM-dd'T'HH:mm"));
+       } else {
+         form.setValue("scheduledFor", "");
+       }
+       form.setValue("isMultiDay", result.isMultiDay);
+       form.setValue("selectedDays", result.selectedDays);
+     }}
+     onDateEventFired={onDateSelected}
+   />
+
+6. UPDATE submit button disabled logic:
+   disabled={createReminderMutation.isPending || !scheduleValid}
+
+7. UPDATE summary bubble condition:
+   Show when scheduleValid is true
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3 — DELETE CalendarSchedule.tsx
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After confirming BookDatePicker works, delete:
+client/src/components/CalendarSchedule.tsx
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL — DO NOT CHANGE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Rudeness slider and emoji labels — untouched
+- Voice/Photo/Quotes tab section — untouched
+- Submit button style — untouched
+- All form validation schema — untouched
+- All other form fields — untouched
+- Show me BookDatePicker.tsx before touching ReminderForm.tsx
