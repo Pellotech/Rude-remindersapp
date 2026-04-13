@@ -1,0 +1,112 @@
+PART 2 — Wire into ReminderForm.tsx
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+READ the full file first. Then make ONLY these changes:
+
+ADD import:
+  import { BookDatePicker } from "./BookDatePicker";
+
+REMOVE import:
+  The CalendarSchedule import line
+
+ADD state (near other state declarations):
+  const [scheduleValid, setScheduleValid] = useState(false);
+
+REMOVE these state variables + their handlers entirely:
+  isMultiDay, setIsMultiDay
+  selectedDays, setSelectedDays
+  multiDayHour, setMultiDayHour
+  multiDayMinute, setMultiDayMinute
+  handleMultiDayToggle function
+  handleDateTimeChange function
+
+Also remove from form.reset() in onSuccess:
+  selectedDays: []
+  isMultiDay: false
+
+Also remove from the reset block in onSuccess:
+  setIsMultiDay(false)
+  setSelectedDays([])
+  setMultiDayHour(9)
+  setMultiDayMinute(0)
+
+REPLACE the entire scheduling FormField block
+(the one containing the Multiple Days Switch AND the 
+isMultiDay ternary AND CalendarSchedule) with:
+
+  <FormItem>
+    <FormControl>
+      <BookDatePicker
+        onScheduleChange={(result) => {
+          setScheduleValid(result.hasValidSchedule);
+          if (result.scheduledFor) {
+            form.setValue(
+              "scheduledFor",
+              format(
+                new Date(result.scheduledFor),
+                "yyyy-MM-dd'T'HH:mm"
+              )
+            );
+          } else {
+            form.setValue("scheduledFor", "");
+          }
+          form.setValue("isMultiDay", result.isMultiDay);
+          form.setValue("selectedDays", result.selectedDays);
+        }}
+        onDateEventFired={onDateSelected}
+      />
+    </FormControl>
+  </FormItem>
+
+UPDATE submit button disabled prop:
+  disabled={createReminderMutation.isPending || !scheduleValid}
+
+UPDATE submit button text — simplify to:
+  {createReminderMutation.isPending ? (
+    <><div className="animate-spin rounded-full h-4 w-4 
+      border-b-2 border-white mr-2" />Creating Reminder...</>
+  ) : (
+    "Create Reminder"
+  )}
+
+UPDATE summary bubble condition — replace the old 
+isMultiDay ternary condition with:
+  {scheduleValid && (
+
+UPDATE summary bubble left text — replace with:
+  {form.watch("isMultiDay")
+    ? `${form.watch("selectedDays")?.length || 0} days selected`
+    : form.watch("scheduledFor")
+      ? format(new Date(form.watch("scheduledFor")), 
+          "EEE, MMM d • h:mm a")
+      : ""}
+
+UPDATE onSubmit scheduledDateTime block — replace with:
+  const scheduledDateTime = form.getValues("scheduledFor")
+    ? new Date(form.getValues("scheduledFor")).toISOString()
+    : undefined;
+
+UPDATE submissionData in onSubmit:
+  isMultiDay: form.getValues("isMultiDay") || false,
+  selectedDays: form.getValues("selectedDays") || [],
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+PART 3 — Delete CalendarSchedule.tsx
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After confirming no other file imports CalendarSchedule,
+delete client/src/components/CalendarSchedule.tsx entirely.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL — DO NOT TOUCH:
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Rudeness slider and emoji labels — untouched
+- Voice/Photo/Quotes tab section — untouched
+- Submit button className/styling — untouched
+- formSchema validation — untouched
+- form defaultValues — untouched
+- Quick Reminder collapsible — untouched
+- File upload logic — untouched
+- Quote generation logic — untouched
+- All other imports, handlers, state — untouched
+- Show me a summary of every file changed before finishing

@@ -20,14 +20,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bell, Volume2, Mail, TestTube, User, Bot, Crown, Heart, Zap, Camera, Quote, ImageIcon, Video, ChevronDown, Calendar, Clock, Briefcase, Users, Dumbbell, Brain, GraduationCap, ChefHat, Home, DollarSign, Gamepad2, Lock } from "lucide-react";
-import { CalendarSchedule } from "./CalendarSchedule";
-import { format, isSameDay, startOfDay, isBefore } from "date-fns";
+import { BookDatePicker } from "./BookDatePicker";
+import { format } from "date-fns";
 import { QuotesService } from "@/services/quotesService";
 import { CulturalQuotesService } from "@/services/culturalQuotesService";
 import { MobileCamera } from "./MobileCamera";
@@ -276,11 +275,7 @@ export default function ReminderForm({
   const [quickReminderOpen, setQuickReminderOpen] = useState(false);
 
 
-  // Multi-day selection state
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [isMultiDay, setIsMultiDay] = useState(false);
-  const [multiDayHour, setMultiDayHour] = useState(9); // Default 9 AM
-  const [multiDayMinute, setMultiDayMinute] = useState(0); // Default :00
+  const [scheduleValid, setScheduleValid] = useState(false);
 
   // Detect if we're on mobile platform
   const platformInfo = getPlatformInfo();
@@ -420,25 +415,6 @@ export default function ReminderForm({
     onTitleChange?.(originalMessage ?? "");
   }, [originalMessage, onTitleChange]);
 
-  // Convert form's scheduledFor string to Date for calendar component
-  const selectedDateTime = scheduledForValue ? new Date(scheduledForValue) : null;
-
-  // Handle calendar date/time selection
-  const handleDateTimeChange = (dateTime: Date) => {
-    const formattedDateTime = format(dateTime, "yyyy-MM-dd'T'HH:mm");
-    form.setValue("scheduledFor", formattedDateTime);
-    const now = new Date();
-    const todayStart = startOfDay(now);
-    const tomorrowStart = startOfDay(new Date(now.getTime() + 86400000));
-    const dayAfterStart = startOfDay(new Date(now.getTime() + 2 * 86400000));
-    if (!isBefore(dateTime, todayStart) && isBefore(dateTime, tomorrowStart)) {
-      onDateSelected?.('date_today');
-    } else if (!isBefore(dateTime, tomorrowStart) && isBefore(dateTime, dayAfterStart)) {
-      onDateSelected?.('date_tomorrow');
-    } else if (!isBefore(dateTime, dayAfterStart)) {
-      onDateSelected?.('date_future');
-    }
-  };
 
   // Fetch rude phrases for preview
   const { data: phrases } = useQuery({
@@ -598,10 +574,7 @@ export default function ReminderForm({
       setSelectedAttachments([]);
       setSelectedCategory("");
       setSelectedContextCategory("");
-      setSelectedDays([]);
-      setIsMultiDay(false);
-      setMultiDayHour(9);
-      setMultiDayMinute(0);
+      setScheduleValid(false);
 
       // Invalidate the correct query based on guest mode
       if (isGuest) {
@@ -791,46 +764,6 @@ export default function ReminderForm({
     });
   };
 
-  // Multi-day selection helper functions
-  const getWeekDays = () => {
-    const today = new Date();
-    // Generate the 7 days starting from today, just like single day interface
-    return Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-      return {
-        id: dayNames[date.getDay()],
-        label: format(date, 'EEE'), // Mon, Tue, Wed, etc.
-        short: format(date, 'd'), // Date number
-        full: format(date, 'EEEE'), // Full day name
-        date: date,
-        isToday: isSameDay(date, today)
-      };
-    });
-  };
-
-  const daysOfWeek = getWeekDays();
-
-  const handleDayToggle = (dayId: string) => {
-    setSelectedDays(prev => {
-      const newDays = prev.includes(dayId)
-        ? prev.filter(d => d !== dayId)
-        : [...prev, dayId];
-      form.setValue("selectedDays", newDays);
-      return newDays;
-    });
-  };
-
-  const handleMultiDayToggle = (checked: boolean) => {
-    setIsMultiDay(checked);
-    form.setValue("isMultiDay", checked);
-    if (!checked) {
-      setSelectedDays([]);
-      form.setValue("selectedDays", []);
-    }
-    onMultiDayToggle?.(checked);
-  };
 
 
 
@@ -913,24 +846,9 @@ export default function ReminderForm({
       return;
     }
 
-    let scheduledDateTime;
-
-    if (isMultiDay && selectedDays.length > 0) {
-      // For multi-day reminders, create a date with the selected hour and minute
-      // Use tomorrow as base date for multi-day scheduling
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(multiDayHour, multiDayMinute, 0, 0);
-      scheduledDateTime = tomorrow.toISOString();
-    } else if (!isMultiDay && data.scheduledFor) {
-      scheduledDateTime = data.scheduledFor;
-    } else {
-      // Fallback: use tomorrow at 9 AM if no valid schedule is set
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(9, 0, 0, 0);
-      scheduledDateTime = tomorrow.toISOString();
-    }
+    const scheduledDateTime = form.getValues("scheduledFor")
+      ? new Date(form.getValues("scheduledFor")).toISOString()
+      : undefined;
 
     // Generate quote if category is selected
     let finalMotivationalQuote = "";
@@ -951,8 +869,8 @@ export default function ReminderForm({
       voiceCharacter: selectedVoice,
       attachments: selectedAttachments,
       motivationalQuote: finalMotivationalQuote,
-      selectedDays: isMultiDay ? selectedDays : [],
-      isMultiDay: isMultiDay,
+      selectedDays: form.getValues("selectedDays") || [],
+      isMultiDay: form.getValues("isMultiDay") || false,
       // Apply user's notification preferences from settings
       browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
       voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
@@ -1000,143 +918,26 @@ export default function ReminderForm({
 
 
             {/* Select Date Section */}
-            <FormField
-              control={form.control}
-              name="scheduledFor"
-              render={({ fieldState }) => (
-                <FormItem>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-[#1A1A1A]">Multiple Days</span>
-                      <Switch
-                        checked={isMultiDay}
-                        onCheckedChange={handleMultiDayToggle}
-                        className="data-[state=checked]:bg-[#C9A063] data-[state=unchecked]:bg-[#FDF3E3] border border-[#FDF3E3]"
-                      />
-                    </div>
-                  </div>
-
-                  <FormControl>
-                    {isMultiDay ? (
-                      /* Multi-Day Selection */
-                      <div className="space-y-3">
-                        {/* Days Selection Card */}
-                        <Card className="border-[#C9A063]">
-                          <CardContent className="pt-3 pb-3">
-                            <p className="text-xs mb-2 text-[#1A1A1A]">Choose your days and dominate the week.</p>
-                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                              {daysOfWeek.map((day) => {
-                                const isSelected = selectedDays.includes(day.id);
-                                return (
-                                  <div key={day.id} className="text-center flex-shrink-0 min-w-[56px]">
-                                    <div className="text-xs font-medium mb-1 text-[#1A1A1A]">
-                                      {day.label}
-                                    </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDayToggle(day.id)}
-                                      className={cn(
-                                        "w-full h-14 flex flex-col items-center justify-center gap-0 p-1 shadow-sm rounded-xl transition-all",
-                                        isSelected
-                                          ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
-                                          : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3]"
-                                      )}
-                                    >
-                                      <span className="text-base font-bold">{day.short}</span>
-                                      {day.isToday && (
-                                        <span className="text-xs leading-tight font-medium mt-0.5">Today</span>
-                                      )}
-                                    </button>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        {/* Time Selection Card */}
-                        <Card className="border-[#C9A063]">
-                          <CardContent className="pt-3 pb-3">
-                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                              {Array.from({ length: 24 }, (_, i) => {
-                                const hour = i;
-                                const isSelected = multiDayHour === hour;
-                                const display = hour === 0 ? "12:00 AM" : hour === 12 ? "12:00 PM" : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`;
-                                return (
-                                  <button
-                                    key={hour}
-                                    type="button"
-                                    onClick={() => setMultiDayHour(hour)}
-                                    className={cn(
-                                      "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                                      isSelected
-                                        ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
-                                        : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
-                                    )}
-                                  >
-                                    {display}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        {/* Minutes Selection Card */}
-                        <Card className="border-[#C9A063]">
-                          <CardContent className="pt-3 pb-3">
-                            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                              {[
-                                { value: 0, label: ":00" },
-                                { value: 15, label: ":15" },
-                                { value: 30, label: ":30" },
-                                { value: 45, label: ":45" }
-                              ].map((slot) => {
-                                const isSelected = multiDayMinute === slot.value;
-                                return (
-                                  <button
-                                    key={slot.value}
-                                    type="button"
-                                    onClick={() => setMultiDayMinute(slot.value)}
-                                    className={cn(
-                                      "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                                      isSelected
-                                        ? "bg-[#C53B3B] text-white hover:bg-[#a83030]"
-                                        : "bg-[#C9A063] text-[#111827] hover:bg-[#FDF3E3] hover:text-[#111827]"
-                                    )}
-                                  >
-                                    {slot.label}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                      </div>
-                    ) : (
-                      /* Regular Calendar/Time picker */
-                      <CalendarSchedule
-                        selectedDateTime={selectedDateTime}
-                        onDateTimeChange={handleDateTimeChange}
-                      />
-                    )}
-                  </FormControl>
-                  {/* Show validation errors */}
-                  {fieldState.error && (
-                    <p className="text-sm font-medium text-destructive">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                  {isMultiDay && selectedDays.length === 0 && (
-                    <p className="text-sm text-amber-600">
-                      Please select at least one day for your recurring reminder
-                    </p>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormItem>
+              <FormControl>
+                <BookDatePicker
+                  onScheduleChange={(result) => {
+                    setScheduleValid(result.hasValidSchedule);
+                    if (result.scheduledFor) {
+                      form.setValue(
+                        "scheduledFor",
+                        format(new Date(result.scheduledFor), "yyyy-MM-dd'T'HH:mm")
+                      );
+                    } else {
+                      form.setValue("scheduledFor", "");
+                    }
+                    form.setValue("isMultiDay", result.isMultiDay);
+                    form.setValue("selectedDays", result.selectedDays);
+                  }}
+                  onDateEventFired={onDateSelected}
+                />
+              </FormControl>
+            </FormItem>
 
             {/* Rudeness Level Slider */}
             <div className="-mt-1" style={{ '--slider-color': currentSliderColor } as React.CSSProperties}>
@@ -1421,28 +1222,20 @@ export default function ReminderForm({
             <Button
               type="submit"
               className="w-full bg-[#1B2A5E] hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg disabled:opacity-100 disabled:cursor-default"
-              disabled={
-                createReminderMutation.isPending ||
-                (isMultiDay && selectedDays.length === 0) ||
-                (!isMultiDay && !form.watch("scheduledFor"))
-              }
+              disabled={createReminderMutation.isPending || !scheduleValid}
             >
               {createReminderMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                   Creating Reminder...
                 </>
-              ) : isMultiDay ? (
-                selectedDays.length > 0
-                  ? `Create Reminder (${selectedDays.length} day${selectedDays.length !== 1 ? 's' : ''})`
-                  : "Select Days to Continue"
               ) : (
                 "Create Reminder"
               )}
             </Button>
 
             {/* Quick Reminder Settings - Show only when today is selected */}
-            {!isMultiDay && scheduledForValue && (
+            {!form.watch("isMultiDay") && scheduledForValue && (
               (() => {
                 const scheduledDate = new Date(scheduledForValue);
                 const now = new Date();
@@ -1534,13 +1327,15 @@ export default function ReminderForm({
             )}
 
             {/* Summary bubble — sits below the Create button */}
-            {(!isMultiDay && scheduledForValue) || (isMultiDay && selectedDays.length > 0) ? (
+            {scheduleValid && (
               <div className="flex items-center justify-between px-3 py-2.5 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
                 {/* Left: time or day count */}
                 <span className="text-sm font-medium text-[#111827]">
-                  {!isMultiDay && scheduledForValue
-                    ? format(new Date(scheduledForValue), "EEE, MMM d • h:mm a")
-                    : `${selectedDays.length} day${selectedDays.length !== 1 ? "s" : ""} selected`}
+                  {form.watch("isMultiDay")
+                    ? `${form.watch("selectedDays")?.length || 0} days selected`
+                    : form.watch("scheduledFor")
+                      ? format(new Date(form.watch("scheduledFor")), "EEE, MMM d • h:mm a")
+                      : ""}
                 </span>
 
                 {/* Right: compact icon indicators */}
@@ -1561,12 +1356,12 @@ export default function ReminderForm({
                     <span className="text-xs">💬</span>
                   )}
 
-                  {isMultiDay && selectedDays.length > 0 && (
-                    <span className="text-xs font-medium">📅 x{selectedDays.length}</span>
+                  {form.watch("isMultiDay") && (form.watch("selectedDays")?.length || 0) > 0 && (
+                    <span className="text-xs font-medium">📅 x{form.watch("selectedDays")?.length}</span>
                   )}
                 </div>
               </div>
-            ) : null}
+            )}
           </form>
         </Form>
       </CardContent>
