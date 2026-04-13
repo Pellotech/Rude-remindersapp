@@ -373,13 +373,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           >
             {/* Top edge */}
             <div style={{
-              position: 'absolute', top: 0, left: 13, right: 13,
+              position: 'absolute', top: 0, left: 0, right: 0,
               height: 6, background: '#3d1a08',
               borderRadius: 0,
             }} />
             {/* Bottom edge */}
             <div style={{
-              position: 'absolute', bottom: 0, left: 13, right: 13,
+              position: 'absolute', bottom: 0, left: 0, right: 0,
               height: 6, background: '#3d1a08',
               borderRadius: 0,
             }} />
@@ -430,36 +430,6 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     </div>
                   </div>
                 )}
-              </div>
-
-              {/* Center spine */}
-              <div style={{
-                width: 20, background: '#3d1a08', flexShrink: 0,
-                zIndex: 10,
-                boxShadow: '2px 0 8px rgba(0,0,0,0.35), -2px 0 8px rgba(0,0,0,0.25)',
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center', gap: 6,
-                position: 'relative',
-              }}>
-                {/* Left glow */}
-                <div style={{
-                  position: 'absolute', left: 0, top: 0, bottom: 0, width: 5,
-                  background: 'linear-gradient(to right, rgba(0,0,0,0.3), transparent)',
-                }} />
-                {/* Right glow */}
-                <div style={{
-                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 5,
-                  background: 'linear-gradient(to left, rgba(0,0,0,0.3), transparent)',
-                }} />
-                {/* Dots and lines */}
-                {[0,1,2].map((dotI) => (
-                  <div key={dotI} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, position: 'relative', zIndex: 2 }}>
-                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#C9A063' }} />
-                    {dotI < 2 && (
-                      <div style={{ width: 1, height: 12, background: 'rgba(255,255,255,0.15)' }} />
-                    )}
-                  </div>
-                ))}
               </div>
 
               {/* Right page section */}
