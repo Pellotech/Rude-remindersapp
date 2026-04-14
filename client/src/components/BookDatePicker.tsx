@@ -45,7 +45,7 @@ const RIGHT_FAN = [
   { right: 4, bg: '#caa26c' },
   { right: 5, bg: '#c29860' },
   { right: 7, bg: '#ba9052' },
-  { right: 8, bg: '#EFE5D0' },
+  { right: 8, bg: '#FFFFFF' },
 ];
 
 export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDatePickerProps) {
@@ -68,6 +68,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
   const openKey      = useRef(0);
   const touchStartX  = useRef<number | null>(null);
   const mouseStartX  = useRef<number | null>(null);
+  const direction    = useRef<'forward' | 'back'>('forward');
 
   const today = new Date();
   const pages = Array.from({ length: 7 }, (_, i) => addDays(today, i));
@@ -443,7 +444,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Left page section */}
               <div style={{
                 flex: 1, position: 'relative',
-                background: '#c8a87a',
+                background: '#FFFFFF',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 {/* Fan layers */}
@@ -476,6 +477,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Right page section */}
               <div style={{
                 flex: 1, position: 'relative',
+                background: '#FFFFFF',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 4,
                 borderLeft: '3px solid #a07830',
@@ -484,7 +486,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 backfaceVisibility: 'hidden',
                 ...(isExiting
                   ? {
-                      transform: animDir === 'forward' ? 'rotateY(-180deg)' : 'rotateY(180deg)',
+                      transform: direction.current === 'forward' ? 'rotateY(-180deg)' : 'rotateY(180deg)',
                       transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                     }
                   : {
@@ -494,13 +496,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 ),
               }}>
 
-                {/* Back face — cream to match front page */}
+                {/* Back face — white to match front page */}
                 <div style={{
                   position: 'absolute',
                   top: 0, left: 0, width: '100%', height: '100%',
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
-                  background: '#FDF3E3',
+                  background: '#FFFFFF',
                   zIndex: 20,
                 }} />
                 {/* Right fan layers */}
@@ -647,7 +649,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {/* ← */}
         <button
           type="button"
-          onClick={() => navigate(Math.max(0, currentIdx - 1))}
+          onClick={() => { direction.current = 'back'; navigate(Math.max(0, currentIdx - 1)); }}
           disabled={currentIdx === 0}
           style={{
             width: 42, height: 36, flexShrink: 0,
@@ -685,7 +687,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {/* → */}
         <button
           type="button"
-          onClick={() => navigate(Math.min(7, currentIdx + 1))}
+          onClick={() => { direction.current = 'forward'; navigate(Math.min(7, currentIdx + 1)); }}
           disabled={currentIdx === 7}
           style={{
             width: 42, height: 36, flexShrink: 0,
