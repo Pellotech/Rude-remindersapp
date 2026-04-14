@@ -262,6 +262,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           to   { transform: scale(1);   opacity: 1; }
         }
         @keyframes scribble { to { stroke-dashoffset: 0; } }
+        @keyframes swipeNudge {
+          0%,100% { opacity: 0.5; transform: translateX(0); }
+          50%      { opacity: 1;   transform: translateX(4px); }
+        }
       `}</style>
 
       {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
@@ -359,14 +363,27 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     }} />
                   ))}
                 </div>
+
+                {/* Swipe nudge arrow */}
+                <div style={{
+                  position: 'absolute', bottom: 10, right: 14,
+                  display: 'flex', gap: 2, alignItems: 'center',
+                  animation: 'swipeNudge 2.2s ease-in-out infinite',
+                  zIndex: 2,
+                }}>
+                  {[0, 1, 2].map(i => (
+                    <div key={i} style={{
+                      width: 4, height: 4,
+                      borderRight: '1.5px solid rgba(201,160,99,0.55)',
+                      borderTop: '1.5px solid rgba(201,160,99,0.55)',
+                      transform: 'rotate(45deg)',
+                      opacity: 1 - i * 0.25,
+                    }} />
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Hint text */}
-            <p style={{
-              marginTop: 8, fontSize: 11,
-              color: 'rgba(0,0,0,0.35)', textAlign: 'center',
-            }}>swipe or press → to open</p>
           </div>
         )}
 
