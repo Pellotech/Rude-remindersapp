@@ -494,13 +494,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 ),
               }}>
 
-                {/* Back face — shows fan gradient when page is flipping */}
+                {/* Back face — cream to match front page */}
                 <div style={{
                   position: 'absolute',
                   top: 0, left: 0, width: '100%', height: '100%',
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
-                  background: 'linear-gradient(to right, #a88040, #dcbc90)',
+                  background: '#FDF3E3',
                   zIndex: 20,
                 }} />
                 {/* Right fan layers */}
@@ -533,8 +533,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 {/* Today badge */}
                 {displayIdx === 1 && (
                   <div style={{
-                    position: 'absolute', top: 10, right: 30, zIndex: 8,
-                    background: '#5c2d0e', color: '#F5EFE6',
+                    position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', zIndex: 8,
+                    background: '#FDF3E3', color: '#6B3410',
+                    border: '1.5px solid #6B3410',
                     fontSize: 9, fontWeight: 500,
                     padding: '2px 6px', borderRadius: 3,
                   }}>Today</div>
@@ -578,7 +579,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   viewBox="0 0 46 46"
                   fill="none"
                   style={{
-                    position: 'absolute', bottom: 10, right: 30,
+                    position: 'absolute', bottom: 10, left: 10,
                     zIndex: 8, pointerEvents: 'none',
                     opacity: isPageSelected(displayIdx) ? 1 : 0,
                   }}
@@ -625,6 +626,24 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       {/* ── CONTROLS ROW ──────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36, marginTop: 10 }}>
 
+        {/* Clear button */}
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={selectedDates.length === 0}
+          style={{
+            minWidth: 46, height: 36, borderRadius: 20,
+            border: selectedDates.length > 0 ? '1.5px solid #b70d0d' : '1.5px solid #C9A063',
+            background: 'transparent',
+            color: '#1a1a1a',
+            fontSize: 11, fontWeight: 500,
+            padding: '0 10px', flexShrink: 0, cursor: 'pointer',
+            opacity: selectedDates.length > 0 ? 1 : 0.4,
+            pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
+            transition: 'border 0.15s, color 0.15s, opacity 0.15s',
+          }}
+        >Clear</button>
+
         {/* ← */}
         <button
           type="button"
@@ -633,13 +652,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           style={{
             width: 42, height: 36, flexShrink: 0,
             background: '#FDF3E3', border: '1.5px solid #C9A063',
-            borderRadius: 20, color: '#C9A063', cursor: 'pointer',
+            borderRadius: 20, color: '#1a1a1a', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: currentIdx === 0 ? 0.25 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { if (currentIdx !== 0) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#C9A063'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
         >←</button>
 
         {/* Centre button */}
@@ -651,10 +670,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             fontSize: 13, fontWeight: 500,
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
-              ? { background: '#C9A063', color: '#fff', border: 'none' }
+              ? { background: '#C9A063', color: '#1a1a1a', border: 'none' }
               : currentDisplaySelected
-                ? { background: '#fff', color: '#b70d0d', border: '1.5px solid #b70d0d' }
-                : { background: '#C9A063', color: '#fff', border: 'none' }
+                ? { background: '#fff', color: '#1a1a1a', border: '1.5px solid #b70d0d' }
+                : { background: '#C9A063', color: '#1a1a1a', border: 'none' }
             ),
           }}
         >
@@ -671,32 +690,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           style={{
             width: 42, height: 36, flexShrink: 0,
             background: '#FDF3E3', border: '1.5px solid #C9A063',
-            borderRadius: 20, color: '#C9A063', cursor: 'pointer',
+            borderRadius: 20, color: '#1a1a1a', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: currentIdx === 7 ? 0.25 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { if (currentIdx !== 7) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#C9A063'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
         >→</button>
-
-        {/* Clear button */}
-        <button
-          type="button"
-          onClick={handleClear}
-          disabled={selectedDates.length === 0}
-          style={{
-            minWidth: 46, height: 36, borderRadius: 20,
-            border: selectedDates.length > 0 ? '1.5px solid #b70d0d' : '1.5px solid #C9A063',
-            background: 'transparent',
-            color: selectedDates.length > 0 ? '#b70d0d' : '#C9A063',
-            fontSize: 11, fontWeight: 500,
-            padding: '0 10px', flexShrink: 0, cursor: 'pointer',
-            opacity: selectedDates.length > 0 ? 1 : 0.4,
-            pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
-            transition: 'border 0.15s, color 0.15s, opacity 0.15s',
-          }}
-        >Clear</button>
       </div>
 
       {/* ── META ROW ──────────────────────────────────────────────────────── */}
