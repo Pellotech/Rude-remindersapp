@@ -447,14 +447,12 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 background: '#FFFFFF',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                {/* Fan layers */}
-                {LEFT_FAN.map((layer, i) => (
-                  <div key={i} style={{
-                    position: 'absolute', top: 0, bottom: 0,
-                    left: layer.left, right: 0,
-                    background: layer.bg,
-                  }} />
-                ))}
+                {/* Right shadow overlay */}
+                <div style={{
+                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 22,
+                  background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.22))',
+                  zIndex: 5, pointerEvents: 'none',
+                }} />
                 {/* Ghost: previous page number + day */}
                 {ghostPage && (
                   <div style={{ position: 'relative', zIndex: 6, textAlign: 'center' }}>
