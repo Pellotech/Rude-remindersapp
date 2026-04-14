@@ -1,0 +1,169 @@
+Open the file: client/src/components/BookDatePicker.tsx
+
+Multiple changes needed. Do NOT touch any logic beyond what is 
+described. Do not change animations, callbacks, or any 
+functionality unless explicitly stated below.
+
+---
+
+FIX 1 — Remove the hint text below the closed book
+
+Find and delete the element that displays the text:
+  "swipe or press → to open"
+or similar hint/instruction text that appears below the closed book.
+Delete only that text element. Nothing else.
+
+---
+
+FIX 2 — Replace the days counter pill with a "Clear" button
+
+The controls row has a pill on the far right that shows a number 
+and a "days" label. Replace it entirely with a "Clear" button:
+- Same dimensions: height 36px, min-width 46px, padding 0 10px
+- border-radius: 20px
+- Default state (no days selected): 
+    border: 1.5px solid #C9A063
+    background: transparent
+    color: #C9A063
+    font-size: 11px
+    font-weight: 500
+    label: "Clear"
+    opacity: 0.4
+    pointer-events: none
+- Active state (1 or more days selected):
+    border: 1.5px solid #C53B3B
+    background: transparent  
+    color: #C53B3B
+    opacity: 1
+    pointer-events: auto
+    label: "Clear"
+- On tap/click: clears all selectedDates back to empty, 
+  resets the book to cover page (currentIdx = 0),
+  fires onScheduleChange with:
+    { scheduledFor: undefined, isMultiDay: false, 
+      selectedDays: [], hasValidSchedule: false }
+This replaces the counter pill completely — the day count 
+number and "days" label are removed entirely.
+
+---
+
+FIX 3 — Update brown colours throughout the book
+
+Find every instance of these colours and replace them:
+- #4a1e0a → replace with #6B3410
+- #3d1a08 → replace with #6B3410
+- #4a2008 → replace with #6B3410
+
+This affects the spine, outer cover strips, top/bottom edge 
+bars, and the closed book cover.
+
+---
+
+FIX 4 — Add darker left edge border to each date page
+
+Find the right page section (the cream #FDF3E3 content area 
+in the open book) and update its left border to:
+  borderLeft: '3px solid #a07830'
+
+---
+
+FIX 5 — Update flipped page back colour
+
+Find the background colour used for the back face of flipped 
+pages. Change it to: #c8a87a
+
+---
+
+FIX 6 — Closed book width 65%, stays centered
+
+The closed book currently sits at 51% width. Increase to 65% 
+so it fills the card more but stays centered with space on 
+both sides. Do not touch the height.
+
+---
+
+FIX 7 — Open book goes full card width edge to edge
+
+When the book is open (currentIdx >= 1), the book container 
+width should be 100%. Remove any margin, padding, or max-width 
+on the open book container that prevents it from reaching the 
+card edges.
+
+---
+
+FIX 8 — Remove the center spine from the open book
+
+Search for a div element with ALL of these characteristics:
+- Width between 14px and 24px
+- Background color #6B3410 or #3d1a08 or similar dark brown
+- Positioned between the left fan page section and the right 
+  cream page section
+
+Print the exact line numbers and code of that element to 
+confirm you found it, then DELETE it entirely including all 
+children. After deletion the left fan pages and right cream 
+page must be directly adjacent with zero gap between them.
+
+---
+
+FIX 9 — Top and bottom edge bars span full width
+
+Find the two absolutely positioned bars (top and bottom) 
+that are dark brown (#6B3410) and approximately 6px tall.
+
+Print their current style values, then change both to:
+  left: 0
+  right: 0
+  borderRadius: 0
+
+They must stretch edge to edge across the full open book 
+width including over the outer cover strips on both sides.
+
+---
+
+FIX 10 — Closed book same height as open book, touches 
+top and bottom of card
+
+Find the height value on the open book container and apply 
+that exact same height to the closed book container.
+
+Remove any padding-top and padding-bottom from the card 
+wrapper containing the closed book so the book touches the 
+top and bottom edges of the cream card with zero gap.
+
+Width stays the same. Closed book stays horizontally centered.
+
+---
+
+FIX 11 — Detach the controls row from the book card
+
+The arrow buttons (← →), "Select this day" button, and 
+"Clear" button must be moved OUTSIDE and BELOW the book 
+card entirely.
+
+The controls row should:
+- Sit below the book card with margin-top: 10px
+- Have NO background, NO border, NO card wrapper of its own
+- Float as a plain row of buttons beneath the book
+- Keep all existing button styles unchanged
+- The meta row (progress dots + selected day chips) stays 
+  below the controls row as it currently is
+
+The book card (cream #FDF3E3 with gold border) must contain 
+ONLY the book visual — no buttons inside it.
+
+---
+
+Confirm after each fix:
+- Hint text gone
+- Counter pill replaced with Clear button (dimmed/active states work)
+- All dark browns updated to #6B3410
+- Left page border is #a07830
+- Flipped page back is #c8a87a
+- Closed book is 65% wide centered
+- Open book is 100% card width
+- Center spine deleted (show line numbers removed)
+- Top/bottom bars are left:0 right:0 borderRadius:0
+- Closed book height matches open book height, touches card edges
+- Controls row is detached below the card with 10px gap
+- Zero logic, state, or functionality was changed

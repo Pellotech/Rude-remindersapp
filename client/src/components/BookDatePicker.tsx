@@ -186,6 +186,15 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     }, 240);
   };
 
+  /* ─── clear all ──────────────────────────────────────────────────────── */
+  const handleClear = () => {
+    setSelectedDates([]);
+    setSelectedHour(null);
+    setSelectedMinute(0);
+    onScheduleChange({ scheduledFor: undefined, isMultiDay: false, selectedDays: [], hasValidSchedule: false });
+    if (bookOpen) navigate(0);
+  };
+
   /* ─── select / deselect ───────────────────────────────────────────────── */
   const handleSelectBtn = () => {
     if (displayIdx === 0) { navigate(1); return; }
@@ -273,7 +282,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         background: '#FDF3E3',
         border: '1.5px solid #C9A063',
         borderRadius: 14,
-        padding: 20,
+        padding: '0 20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -284,8 +293,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             {/* Closed book */}
             <div style={{
-              width: '51%',
-              height: 147,
+              width: '65%',
+              height: 140,
               boxShadow: '5px 5px 18px rgba(0,0,0,0.32), -1px 0 4px rgba(0,0,0,0.1)',
               borderRadius: '5px 7px 7px 5px',
               display: 'flex',
@@ -298,7 +307,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Spine */}
               <div style={{
                 width: 14,
-                background: '#3d1a08',
+                background: '#6B3410',
                 borderRadius: '5px 0 0 5px',
                 flexShrink: 0,
                 position: 'relative',
@@ -312,7 +321,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Cover */}
               <div style={{
                 flex: 1,
-                background: '#4a1e0a',
+                background: '#6B3410',
                 borderRadius: '0 7px 7px 0',
                 position: 'relative',
                 overflow: 'hidden',
@@ -405,13 +414,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             {/* Top edge */}
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0,
-              height: 6, background: '#3d1a08',
+              height: 6, background: '#6B3410',
               borderRadius: 0,
             }} />
             {/* Bottom edge */}
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
-              height: 6, background: '#3d1a08',
+              height: 6, background: '#6B3410',
               borderRadius: 0,
             }} />
 
@@ -426,14 +435,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
               {/* Left outer cover strip */}
               <div style={{
-                width: 13, background: '#3d1a08',
+                width: 13, background: '#6B3410',
                 borderRadius: 0, flexShrink: 0,
               }} />
 
               {/* Left page section */}
               <div style={{
                 flex: 1, position: 'relative',
-                background: '#c8a870',
+                background: '#c8a87a',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 {/* Fan layers */}
@@ -468,6 +477,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 flex: 1, position: 'relative', overflow: 'hidden',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 4,
+                borderLeft: '3px solid #a07830',
               }}>
                 {/* Right fan layers */}
                 {RIGHT_FAN.map((layer, i) => (
@@ -590,7 +600,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
               {/* Right outer cover strip */}
               <div style={{
-                width: 13, background: '#3d1a08',
+                width: 13, background: '#6B3410',
                 borderRadius: 0, flexShrink: 0,
               }} />
             </div>
@@ -599,7 +609,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       </div>
 
       {/* ── CONTROLS ROW ──────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36, marginTop: 10 }}>
 
         {/* ← */}
         <button
@@ -656,20 +666,23 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#C9A063'; }}
         >→</button>
 
-        {/* Counter pill */}
-        <div style={{
-          minWidth: 46, height: 36, borderRadius: 20,
-          border: '1.5px solid #C9A063',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          padding: '0 10px', flexShrink: 0,
-        }}>
-          <span style={{
-            fontSize: 15, fontWeight: 500, lineHeight: 1,
+        {/* Clear button */}
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={selectedDates.length === 0}
+          style={{
+            minWidth: 46, height: 36, borderRadius: 20,
+            border: selectedDates.length > 0 ? '1.5px solid #C53B3B' : '1.5px solid #C9A063',
+            background: 'transparent',
             color: selectedDates.length > 0 ? '#C53B3B' : '#C9A063',
-          }}>{selectedDates.length}</span>
-          <span style={{ fontSize: 9, color: '#C9A063', lineHeight: 1, marginTop: 1 }}>days</span>
-        </div>
+            fontSize: 11, fontWeight: 500,
+            padding: '0 10px', flexShrink: 0, cursor: 'pointer',
+            opacity: selectedDates.length > 0 ? 1 : 0.4,
+            pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
+            transition: 'border 0.15s, color 0.15s, opacity 0.15s',
+          }}
+        >Clear</button>
       </div>
 
       {/* ── META ROW ──────────────────────────────────────────────────────── */}
