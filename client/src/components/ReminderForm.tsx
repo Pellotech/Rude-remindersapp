@@ -881,13 +881,14 @@ export default function ReminderForm({
     createReminderMutation.mutate(submissionData);
   };
 
-  // Set default date/time to tomorrow at 9 AM and calculate max date (one week from now)
+  // Set default date/time to tomorrow at 9 AM and mark schedule as valid
   useEffect(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(9, 0, 0, 0);
     const isoString = tomorrow.toISOString().slice(0, 16);
     form.setValue("scheduledFor", isoString);
+    setScheduleValid(true);
   }, [form]);
 
 

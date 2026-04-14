@@ -1,0 +1,71 @@
+Open these two files:
+1. client/src/components/BookDatePicker.tsx
+2. client/src/components/ReminderForm.tsx
+
+I cannot create reminders since BookDatePicker was added.
+The date is not being passed back to the form correctly.
+Do NOT change any UI, colours, layout, animations or add 
+any new buttons or features. This is a data-wiring fix only.
+
+---
+
+INVESTIGATE FIRST — before changing anything, check these:
+
+In BookDatePicker.tsx:
+1. Find the onScheduleChange callback. Confirm it fires when:
+   - A date page is selected (selectedDates has 1+ entries)
+   - AND a valid hour is selected
+   Print the exact condition that triggers hasValidSchedule: true
+
+2. Check that scheduledFor is being set as a proper ISO string
+   using toISOString() — not undefined when a date+time is chosen
+
+3. Check that the hour picker and minute picker are still 
+   present and functioning — they must still fire 
+   onScheduleChange when a time is selected
+
+In ReminderForm.tsx:
+4. Find where BookDatePicker is used and check the 
+   onScheduleChange handler. Confirm it does ALL of these:
+   - Sets scheduleValid = result.hasValidSchedule
+   - Calls form.setValue("scheduledFor", ...) with the 
+     formatted date string when result.scheduledFor exists
+   - Calls form.setValue("isMultiDay", result.isMultiDay)
+   - Calls form.setValue("selectedDays", result.selectedDays)
+
+5. Check the submit button disabled prop — it should be:
+   disabled={createReminderMutation.isPending || !scheduleValid}
+   If it says anything else, that may be the blocker.
+
+6. Check if scheduledFor field in the form schema is marked 
+   as required — if so confirm it is receiving a value.
+
+---
+
+FIX whatever is broken based on the investigation above.
+
+Most likely causes in order of probability:
+A) onScheduleChange is never firing because the hour picker 
+   was accidentally disconnected during recent UI changes
+B) hasValidSchedule is never becoming true because the 
+   condition requires BOTH a date AND an hour but the hour 
+   picker state was reset or removed
+C) form.setValue("scheduledFor") is receiving an empty string 
+   or undefined instead of a valid ISO date string
+D) The scheduleValid state in ReminderForm is not being set
+
+Fix only what is broken. Do not change any UI, colours, 
+layout, button styles, animations, or add anything new.
+
+---
+
+Confirm after:
+- The exact cause of the bug is identified and stated
+- The fix is applied
+- Selecting a date page AND a time now correctly fires 
+  onScheduleChange with hasValidSchedule: true
+- form.setValue("scheduledFor") receives a valid date string
+- The Create Reminder button becomes enabled after 
+  date + time are both selected
+- Reminders can be created successfully again
+- Zero UI or visual changes were made
