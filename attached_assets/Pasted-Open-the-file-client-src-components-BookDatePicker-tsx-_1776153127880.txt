@@ -1,0 +1,67 @@
+Open the file: client/src/components/BookDatePicker.tsx
+
+ONE change only — restore the page flip animation so navigating 
+between pages looks like a real book page turning, not a slide.
+
+Do NOT change any logic, state, colours, layout, or any other 
+functionality.
+
+---
+
+FIX — Restore 3D page flip animation
+
+Currently the page transition looks like a horizontal slide.
+Replace it with a 3D book page-turn effect as follows:
+
+SETUP:
+- The parent container that holds the pages needs:
+    perspective: '1200px'
+    transformStyle: 'preserve-3d'
+
+Each page element needs these base styles:
+    transformOrigin: 'left center'
+    transformStyle: 'preserve-3d'
+    transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+    backfaceVisibility: 'hidden'
+
+FORWARD navigation (→ arrow or swipe left):
+- The current page animates OUT with:
+    transform: 'rotateY(-180deg)'
+  giving the appearance of the page flipping left toward the spine
+- The next page starts at rotateY(0deg) and is already visible 
+  behind it
+
+BACKWARD navigation (← arrow or swipe right):
+- The current page animates back from:
+    transform: 'rotateY(-180deg)' → rotateY(0deg)
+  giving the appearance of the page flipping back open
+
+PAGE BACK FACE:
+- Each page has a back face div with:
+    position: 'absolute'
+    top: 0, left: 0, width: '100%', height: '100%'
+    backfaceVisibility: 'hidden'
+    transform: 'rotateY(180deg)'
+    background: '#c8a87a'
+  This shows the warm tan inside-of-page colour when flipping
+
+TIMING:
+- Block rapid taps during animation using the existing 
+  isAnimating ref (if it exists) or add one:
+    const isAnimating = useRef(false)
+    Set to true when flip starts
+    Set back to false after 500ms (matching transition duration)
+
+The result should look like physically turning a page in a 
+hardcover book — the page peels away from right to left 
+revealing the next date underneath.
+
+---
+
+Confirm after:
+- Pages flip with 3D rotateY animation, not a slide
+- Forward flip goes rotateY(0) → rotateY(-180deg)
+- Backward flip reverses that
+- Back face shows #c8a87a warm tan colour during flip
+- Rapid tap protection is in place
+- Zero colours, layout, logic or other functionality was changed

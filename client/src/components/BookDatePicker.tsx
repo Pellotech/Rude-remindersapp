@@ -181,9 +181,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     navTimer.current = setTimeout(() => {
       setDisplayIdx(newIdx);
       setIsExiting(false);
-      /* 550 ms total lock from spec */
-      setTimeout(() => { isAnimating.current = false; }, 310);
-    }, 240);
+      /* release after full 500ms flip completes */
+      setTimeout(() => { isAnimating.current = false; }, 260);
+    }, 250);
   };
 
   /* ─── clear all ──────────────────────────────────────────────────────── */
@@ -431,6 +431,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               borderRadius: 0,
               overflow: 'hidden',
               boxShadow: '0 4px 22px rgba(0,0,0,0.3)',
+              perspective: '1200px',
             }}>
 
               {/* Left outer cover strip */}
@@ -474,11 +475,34 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
               {/* Right page section */}
               <div style={{
-                flex: 1, position: 'relative', overflow: 'hidden',
+                flex: 1, position: 'relative',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 4,
                 borderLeft: '3px solid #a07830',
+                transformOrigin: 'left center',
+                transformStyle: 'preserve-3d',
+                backfaceVisibility: 'hidden',
+                ...(isExiting
+                  ? {
+                      transform: animDir === 'forward' ? 'rotateY(-180deg)' : 'rotateY(180deg)',
+                      transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }
+                  : {
+                      transform: 'rotateY(0deg)',
+                      transition: 'none',
+                    }
+                ),
               }}>
+
+                {/* Back face — shows warm tan when page is flipping */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0, left: 0, width: '100%', height: '100%',
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                  background: '#c8a87a',
+                  zIndex: 20,
+                }} />
                 {/* Right fan layers */}
                 {RIGHT_FAN.map((layer, i) => (
                   <div key={i} style={{
@@ -516,23 +540,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   }}>Today</div>
                 )}
 
-                {/* Date content — animated on page change */}
+                {/* Date content */}
                 <div
                   key={`content-${displayIdx}`}
                   style={{
                     position: 'relative', zIndex: 6,
                     display: 'flex', flexDirection: 'column',
                     alignItems: 'center', gap: 2,
-                    ...(isExiting
-                      ? {
-                          opacity: 0,
-                          transform: animDir === 'forward' ? 'translateX(-18px)' : 'translateX(18px)',
-                          transition: 'opacity 0.22s ease, transform 0.22s ease',
-                        }
-                      : {
-                          animation: `${animDir === 'forward' ? 'enterFromRight' : 'enterFromLeft'} 0.32s ease both`,
-                        }
-                    ),
                   }}
                 >
                   {/* Day number */}
