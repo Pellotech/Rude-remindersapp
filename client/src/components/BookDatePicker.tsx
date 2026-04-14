@@ -279,7 +279,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
       {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
       <div style={{
-        background: '#FDF3E3',
+        background: '#ffffff',
         border: '1.5px solid #C9A063',
         borderRadius: 14,
         padding: '0 20px',
