@@ -494,13 +494,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 ),
               }}>
 
-                {/* Back face — shows warm tan when page is flipping */}
+                {/* Back face — shows fan gradient when page is flipping */}
                 <div style={{
                   position: 'absolute',
                   top: 0, left: 0, width: '100%', height: '100%',
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
-                  background: '#c8a87a',
+                  background: 'linear-gradient(to right, #a88040, #dcbc90)',
                   zIndex: 20,
                 }} />
                 {/* Right fan layers */}
@@ -552,7 +552,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {/* Day number */}
                   <div style={{
                     fontSize: 54, fontWeight: 500, lineHeight: 1,
-                    color: isPageSelected(displayIdx) ? '#C53B3B' : '#1a1005',
+                    color: isPageSelected(displayIdx) ? '#F5B942' : '#1a1005',
                     transition: 'color 0.2s',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
@@ -560,7 +560,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {/* Day name */}
                   <div style={{
                     fontSize: 14,
-                    color: isPageSelected(displayIdx) ? 'rgba(197,59,59,0.78)' : '#3d2010',
+                    color: isPageSelected(displayIdx) ? 'rgba(183,13,13,0.78)' : '#3d2010',
                     transition: 'color 0.2s',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'EEEE') : ''}
@@ -586,14 +586,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {isPageSelected(displayIdx) && (
                     <>
                       <circle cx="23" cy="21" r="12"
-                        stroke="#C53B3B" strokeWidth="1.8" strokeLinecap="round"
+                        stroke="#b70d0d" strokeWidth="1.8" strokeLinecap="round"
                         strokeDasharray="300" strokeDashoffset="300"
                         style={{ animation: 'scribble 0.65s ease forwards' }}
                       />
-                      <circle cx="19" cy="18" r="1.8" fill="#C53B3B" />
-                      <circle cx="27" cy="18" r="1.8" fill="#C53B3B" />
+                      <circle cx="19" cy="18" r="1.8" fill="#b70d0d" />
+                      <circle cx="27" cy="18" r="1.8" fill="#b70d0d" />
                       <path d="M18 25 Q23 30 28 25"
-                        stroke="#C53B3B" strokeWidth="1.8" strokeLinecap="round"
+                        stroke="#b70d0d" strokeWidth="1.8" strokeLinecap="round"
                         strokeDasharray="300" strokeDashoffset="300"
                         style={{ animation: 'scribble 0.65s ease forwards 0.2s' }}
                       />
@@ -653,7 +653,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             ...(displayIdx === 0
               ? { background: '#C9A063', color: '#fff', border: 'none' }
               : currentDisplaySelected
-                ? { background: '#fff', color: '#C53B3B', border: '1.5px solid #C53B3B' }
+                ? { background: '#fff', color: '#b70d0d', border: '1.5px solid #b70d0d' }
                 : { background: '#C9A063', color: '#fff', border: 'none' }
             ),
           }}
@@ -687,9 +687,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={selectedDates.length === 0}
           style={{
             minWidth: 46, height: 36, borderRadius: 20,
-            border: selectedDates.length > 0 ? '1.5px solid #C53B3B' : '1.5px solid #C9A063',
+            border: selectedDates.length > 0 ? '1.5px solid #b70d0d' : '1.5px solid #C9A063',
             background: 'transparent',
-            color: selectedDates.length > 0 ? '#C53B3B' : '#C9A063',
+            color: selectedDates.length > 0 ? '#b70d0d' : '#C9A063',
             fontSize: 11, fontWeight: 500,
             padding: '0 10px', flexShrink: 0, cursor: 'pointer',
             opacity: selectedDates.length > 0 ? 1 : 0.4,
@@ -710,7 +710,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             const dotSelected = i > 0 && isPageSelected(i);
             let bg = 'rgba(0,0,0,0.15)';
             if (isDotCover)  bg = '#6B3410';
-            if (dotSelected) bg = '#C53B3B';
+            if (dotSelected) bg = '#b70d0d';
             if (isCurrent)   bg = '#C9A063';
             return (
               <div key={i} style={{
@@ -728,7 +728,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '60%' }}>
           {selectedDates.map((d, i) => (
             <span key={i} style={{
-              background: '#C53B3B', color: '#fff',
+              background: '#b70d0d', color: '#fff',
               fontSize: 10, borderRadius: 8, padding: '2px 7px',
               animation: 'chipIn 0.2s ease',
             }}>
@@ -755,7 +755,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
                       !isSel && !isPast && "bg-[#FDF3E3] text-[#111827] hover:bg-[#C9A063] hover:text-[#111827]",
-                      isSel  && "bg-[#C53B3B] text-white hover:bg-[#a83030] hover:text-white",
+                      isSel  && "bg-[#b70d0d] text-white hover:bg-[#a83030] hover:text-white",
                       isPast && "opacity-40 bg-gray-200 text-gray-400 cursor-not-allowed",
                     )}
                   >{slot.display}</button>
@@ -783,7 +783,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
                       !isSel && !isPast && "bg-[#FDF3E3] text-[#111827] hover:bg-[#C9A063] hover:text-[#111827]",
-                      isSel  && "bg-[#C53B3B] text-white hover:bg-[#a83030] hover:text-white",
+                      isSel  && "bg-[#b70d0d] text-white hover:bg-[#a83030] hover:text-white",
                       isPast && "opacity-40 bg-gray-200 text-gray-400 cursor-not-allowed",
                     )}
                   >{slot.label}</button>

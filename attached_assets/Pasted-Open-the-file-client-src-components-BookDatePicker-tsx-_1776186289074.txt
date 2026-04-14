@@ -1,0 +1,85 @@
+Open the file: client/src/components/BookDatePicker.tsx
+
+Three purely aesthetic colour changes only. Do NOT change any 
+logic, state, functionality, animations, page flip behaviour, 
+layout, or anything else. Only the specific colour values below.
+
+---
+
+FIX 1 — Replace red colour throughout the book picker
+
+Find every instance of #C53B3B in this file and replace with 
+#b70d0d
+
+This affects:
+- The "Clear" button active state border and text
+- The selected date number colour
+- The Rudy scribble SVG strokes
+- The selected day chips in the meta row
+- Any other element in this file using #C53B3B
+
+Do a full find-and-replace of #C53B3B → #b70d0d across the 
+entire BookDatePicker.tsx file.
+
+---
+
+FIX 2 — Selected date number turns #F5B942 gold
+
+When a date page is selected, the large date number currently 
+changes to #b70d0d (after Fix 1 above).
+
+Change ONLY the date number colour on selection to #F5B942 
+instead. The day name and month name can stay at #b70d0d 
+(or whatever colour they currently use on selection).
+
+So on a selected page:
+- Large date number → #F5B942
+- Day name → #b70d0d  
+- Month name → #b70d0d
+- Page background stays #FDF3E3 — do not change it
+
+---
+
+FIX 3 — Back face of flipped page matches front page colour
+including the gradient fan effect
+
+Currently the back face of a flipped page shows a flat colour 
+(#c8a87a or similar).
+
+Replace it so the back face shows the SAME gradient fan layers 
+as the left page section (the already-turned pages side). 
+
+The left page section has stacked gradient layers going from 
+darkest to lightest left to right:
+  Layer 1: #a88040
+  Layer 2: #b28848
+  Layer 3: #ba9052
+  Layer 4: #c29860
+  Layer 5: #caa26c
+  Layer 6: #d0aa78
+  Layer 7: #d6b484
+  Layer 8: #dcbc90
+
+Apply this same gradient appearance to the back face div of 
+each page so when a page flips over it reveals the same warm 
+layered look as the left fan section.
+
+The back face div should use:
+  background: linear-gradient(to right, #a88040, #dcbc90)
+
+This keeps the gradient feel consistent between the fan pages 
+already turned and the page currently being turned.
+
+The FRONT face of each page (the cream date display) stays 
+exactly as it is — #FDF3E3 with the date content.
+
+---
+
+Confirm after:
+- All #C53B3B replaced with #b70d0d throughout the file
+- Selected date number specifically uses #F5B942
+- Back face of flipping pages shows the fan gradient 
+  linear-gradient(to right, #a88040, #dcbc90)
+- Front face of pages unchanged
+- Page flip animation unchanged
+- Zero logic, layout, or functionality was changed
