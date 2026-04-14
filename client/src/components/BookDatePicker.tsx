@@ -455,12 +455,6 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     background: layer.bg,
                   }} />
                 ))}
-                {/* Right shadow overlay */}
-                <div style={{
-                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 22,
-                  background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.22))',
-                  zIndex: 5, pointerEvents: 'none',
-                }} />
                 {/* Ghost: previous page number + day */}
                 {ghostPage && (
                   <div style={{ position: 'relative', zIndex: 6, textAlign: 'center' }}>
