@@ -640,14 +640,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={currentIdx === 0}
           style={{
             width: 42, height: 36, flexShrink: 0,
-            background: '#FDF3E3', border: '1.5px solid #C9A063',
+            background: '#FEF9C3', border: '1.5px solid #FEF9C3',
             borderRadius: 20, color: '#1a1a1a', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: currentIdx === 0 ? 0.25 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { if (currentIdx !== 0) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEF9C3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
         >←</button>
 
         {/* Centre button */}
@@ -662,13 +662,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               ? { background: '#C9A063', color: '#1a1a1a', border: 'none' }
               : currentDisplaySelected
                 ? { background: '#fff', color: '#1a1a1a', border: '1.5px solid #b70d0d' }
-                : { background: '#C9A063', color: '#1a1a1a', border: 'none' }
+                : { background: '#FEF9C3', color: '#1a1a1a', border: '1.5px solid #FEF9C3' }
             ),
           }}
         >
           {displayIdx === 0
             ? 'Open cover'
-            : currentDisplaySelected ? 'Deselect' : 'Select this day'}
+            : currentDisplaySelected ? 'Deselect' : 'Select'}
         </button>
 
         {/* → */}
@@ -678,14 +678,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={currentIdx === 7}
           style={{
             width: 42, height: 36, flexShrink: 0,
-            background: '#FDF3E3', border: '1.5px solid #C9A063',
+            background: '#FEF9C3', border: '1.5px solid #FEF9C3',
             borderRadius: 20, color: '#1a1a1a', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: currentIdx === 7 ? 0.25 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { if (currentIdx !== 7) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEF9C3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
         >→</button>
       </div>
 
