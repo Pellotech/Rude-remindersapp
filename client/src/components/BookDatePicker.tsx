@@ -504,14 +504,6 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   background: '#FFFFFF',
                   zIndex: 20,
                 }} />
-                {/* Right fan layers */}
-                {RIGHT_FAN.map((layer, i) => (
-                  <div key={i} style={{
-                    position: 'absolute', top: 0, bottom: 0,
-                    left: 0, right: layer.right,
-                    background: layer.bg,
-                  }} />
-                ))}
 
                 {/* Depth overlays */}
                 <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to right, rgba(60,25,5,0.22), transparent)', zIndex: 4, pointerEvents: 'none' }} />
