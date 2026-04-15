@@ -680,6 +680,53 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         >→</button>
       </div>
 
+      {/* ── META ROW ──────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 6, minHeight: 28, position: 'relative' }}>
+
+        {/* Clear button — left */}
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={selectedDates.length === 0}
+          style={{
+            minWidth: 46, height: 28, borderRadius: 20,
+            border: '1.5px solid #C9A063',
+            background: '#FDF3E3',
+            color: '#111827',
+            fontSize: 11, fontWeight: 500,
+            padding: '0 10px', flexShrink: 0, cursor: 'pointer',
+            opacity: selectedDates.length > 0 ? 1 : 0.4,
+            pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
+            transition: 'border 0.15s, background 0.15s, color 0.15s, opacity 0.15s',
+          }}
+        >Clear</button>
+
+        {/* Progress dots — absolutely centered */}
+        <div style={{
+          position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+          display: 'flex', alignItems: 'center', gap: 4,
+        }}>
+          {Array.from({ length: 8 }, (_, i) => {
+            const isCurrent   = i === currentIdx;
+            const isDotCover  = i === 0;
+            const dotSelected = i > 0 && isPageSelected(i);
+            let bg = 'rgba(0,0,0,0.15)';
+            if (isDotCover)  bg = '#6B3410';
+            if (dotSelected) bg = '#b70d0d';
+            if (isCurrent)   bg = '#C9A063';
+            return (
+              <div key={i} style={{
+                height: 6,
+                width: isCurrent ? 14 : 6,
+                borderRadius: isCurrent ? 3 : '50%',
+                background: bg,
+                transition: 'width 0.25s, background 0.25s',
+              }} />
+            );
+          })}
+        </div>
+
+      </div>
       </div>{/* end controls + meta wrapper */}
 
       {/* ── HOUR PICKER (UNCHANGED) ───────────────────────────────────────── */}
