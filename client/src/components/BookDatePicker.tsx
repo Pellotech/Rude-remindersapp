@@ -410,7 +410,6 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             style={{
               position: 'relative',
               width: '100%',
-              padding: '6px 0',
               animation: 'bookOpenIn 0.3s ease both',
             }}
             onTouchStart={onTouchStart}
