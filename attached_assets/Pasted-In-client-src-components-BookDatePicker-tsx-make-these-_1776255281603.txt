@@ -1,0 +1,60 @@
+In client/src/components/BookDatePicker.tsx, make these 2 changes only. Do not touch any logic, state, or anything outside of what is listed here.
+
+CHANGE A — Apply the hour/minute picker colour scheme to all navigation buttons:
+
+Default state (unselected):
+  background: '#FDF3E3'
+  color: '#111827'
+  border: '1.5px solid #C9A063'
+
+Selected/active state (Select this day becomes Deselect, Clear when days chosen):
+  background: '#b70d0d'
+  color: '#ffffff'
+  border: '1.5px solid #b70d0d'
+
+Disabled state (← when on first page, → when on last page, Clear when no days selected):
+  background: '#FDF3E3'
+  color: '#111827'
+  opacity: 0.4
+  border: '1.5px solid #C9A063'
+
+Apply these colours to: the ← arrow button, → arrow button, the centre Select/Deselect button, and the Clear button.
+Do not change button sizes, border-radius, font-weight, or any other styles.
+
+CHANGE B — Add sounds:
+
+Add this audio utility near the top of the component (outside the JSX, inside the component function):
+
+const playSound = (type: 'turn' | 'select') => {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    if (type === 'turn') {
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(180, ctx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.12);
+      gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.15);
+    } else {
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(520, ctx.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+      gainNode.gain.setValueAtTime(0.07, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.1);
+    }
+  } catch (e) {}
+};
+
+Then:
+- Call playSound('turn') inside the → arrow onClick handler, just before setCurrentIdx
+- Call playSound('turn') inside the ← arrow onClick handler, just before setCurrentIdx
+- Call playSound('select') inside the Select/Deselect centre button onClick handler, just before toggling selection
+
+Do not change anything else.

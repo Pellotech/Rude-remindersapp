@@ -548,8 +548,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {/* Day number */}
                   <div style={{
                     fontSize: 54, fontWeight: 500, lineHeight: 1,
-                    color: isPageSelected(displayIdx) ? '#F5B942' : '#1a1005',
-                    transition: 'color 0.2s',
+                    color: '#1a1a1a',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
                   </div>
@@ -618,6 +617,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         )}
       </div>
 
+      {/* ── CONTROLS + META WRAPPER ───────────────────────────────────────── */}
+      <div style={{ width: '100%', maxWidth: '100%', alignSelf: 'center' }}>
+
       {/* ── CONTROLS ROW ──────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36, marginTop: 10 }}>
 
@@ -662,7 +664,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           onClick={handleSelectBtn}
           style={{
             flex: 1, height: 36, borderRadius: 20, cursor: 'pointer',
-            fontSize: 13, fontWeight: 500,
+            fontSize: 12, fontWeight: 500, padding: '0 8px',
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
               ? { background: '#FEF9C3', color: '#1a1a1a', border: '1.5px solid #FEF9C3' }
@@ -733,6 +735,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           ))}
         </div>
       </div>
+      </div>{/* end controls + meta wrapper */}
 
       {/* ── HOUR PICKER (UNCHANGED) ───────────────────────────────────────── */}
       {selectedDates.length > 0 && (
