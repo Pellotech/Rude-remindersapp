@@ -233,14 +233,20 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     if (touchStartX.current === null) return;
     const dx = e.changedTouches[0].clientX - touchStartX.current;
     touchStartX.current = null;
-    if (Math.abs(dx) > 35) navigate(dx < 0 ? currentIdx + 1 : currentIdx - 1);
+    if (Math.abs(dx) > 35) {
+      direction.current = dx < 0 ? 'forward' : 'back';
+      navigate(dx < 0 ? currentIdx + 1 : currentIdx - 1);
+    }
   };
   const onMouseDown  = (e: React.MouseEvent) => { mouseStartX.current = e.clientX; };
   const onMouseUp    = (e: React.MouseEvent) => {
     if (mouseStartX.current === null) return;
     const dx = e.clientX - mouseStartX.current;
     mouseStartX.current = null;
-    if (Math.abs(dx) > 35) navigate(dx < 0 ? currentIdx + 1 : currentIdx - 1);
+    if (Math.abs(dx) > 35) {
+      direction.current = dx < 0 ? 'forward' : 'back';
+      navigate(dx < 0 ? currentIdx + 1 : currentIdx - 1);
+    }
   };
 
   /* ─── helpers ─────────────────────────────────────────────────────────── */
