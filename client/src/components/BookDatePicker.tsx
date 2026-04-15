@@ -196,40 +196,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     if (bookOpen) navigate(0);
   };
 
-  /* ─── sound ───────────────────────────────────────────────────────────── */
-  const playSound = (type: 'turn' | 'select') => {
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = ctx.createOscillator();
-      const gainNode = ctx.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      if (type === 'turn') {
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(180, ctx.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.12);
-        gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-        oscillator.start(ctx.currentTime);
-        oscillator.stop(ctx.currentTime + 0.15);
-      } else {
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(520, ctx.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
-        gainNode.gain.setValueAtTime(0.07, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-        oscillator.start(ctx.currentTime);
-        oscillator.stop(ctx.currentTime + 0.1);
-      }
-    } catch (e) {}
-  };
-
   /* ─── select / deselect ───────────────────────────────────────────────── */
   const handleSelectBtn = () => {
     if (displayIdx === 0) { navigate(1); return; }
     const pageDate = getPageDate(displayIdx);
     const already  = selectedDates.some(d => isSameDay(d, pageDate));
-    playSound('select');
     if (already) {
       const newDates = selectedDates.filter(d => !isSameDay(d, pageDate));
       setSelectedDates(newDates);
@@ -673,7 +644,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {/* ← */}
         <button
           type="button"
-          onClick={() => { playSound('turn'); direction.current = 'back'; navigate(Math.max(0, currentIdx - 1)); }}
+          onClick={() => { direction.current = 'back'; navigate(Math.max(0, currentIdx - 1)); }}
           disabled={currentIdx === 0}
           style={{
             width: 42, height: 36, flexShrink: 0,
@@ -711,7 +682,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {/* → */}
         <button
           type="button"
-          onClick={() => { playSound('turn'); direction.current = 'forward'; navigate(Math.min(7, currentIdx + 1)); }}
+          onClick={() => { direction.current = 'forward'; navigate(Math.min(7, currentIdx + 1)); }}
           disabled={currentIdx === 7}
           style={{
             width: 42, height: 36, flexShrink: 0,
