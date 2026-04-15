@@ -999,6 +999,43 @@ export default function ReminderForm({
             />
             </div>
 
+            {/* Summary bubble — sits below Rudeness Level */}
+            {scheduleValid && (
+              <div className="flex items-center justify-between px-3 py-2.5 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
+                {/* Left: time or day count */}
+                <span className="text-sm font-medium text-[#111827]">
+                  {form.watch("isMultiDay")
+                    ? `${form.watch("selectedDays")?.length || 0} days selected`
+                    : form.watch("scheduledFor")
+                      ? format(new Date(form.watch("scheduledFor")), "EEE, MMM d • h:mm a")
+                      : ""}
+                </span>
+
+                {/* Right: compact icon indicators */}
+                <div className="flex items-center gap-2 text-[#C9A063]">
+                  <span className="text-xs font-medium">🔔 Lv.{rudenessLevel}</span>
+
+                  {selectedVoice && selectedVoice !== "default" && (
+                    <span className="text-xs font-medium">
+                      🎙️ {(voiceCharacters as any[]).find((v: any) => v.id === selectedVoice)?.name?.split(" ")[0] || "Voice"}
+                    </span>
+                  )}
+
+                  {selectedAttachments.length > 0 && (
+                    <span className="text-xs font-medium">📷 x{selectedAttachments.length}</span>
+                  )}
+
+                  {selectedCategory && (
+                    <span className="text-xs">💬</span>
+                  )}
+
+                  {form.watch("isMultiDay") && (form.watch("selectedDays")?.length || 0) > 0 && (
+                    <span className="text-xs font-medium">📅 x{form.watch("selectedDays")?.length}</span>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Hidden context field — value set programmatically if needed */}
             <input type="hidden" {...form.register("context")} />
 
@@ -1326,42 +1363,6 @@ export default function ReminderForm({
                     </Collapsible>
             )}
 
-            {/* Summary bubble — sits below the Create button */}
-            {scheduleValid && (
-              <div className="flex items-center justify-between px-3 py-2.5 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
-                {/* Left: time or day count */}
-                <span className="text-sm font-medium text-[#111827]">
-                  {form.watch("isMultiDay")
-                    ? `${form.watch("selectedDays")?.length || 0} days selected`
-                    : form.watch("scheduledFor")
-                      ? format(new Date(form.watch("scheduledFor")), "EEE, MMM d • h:mm a")
-                      : ""}
-                </span>
-
-                {/* Right: compact icon indicators */}
-                <div className="flex items-center gap-2 text-[#C9A063]">
-                  <span className="text-xs font-medium">🔔 Lv.{rudenessLevel}</span>
-
-                  {selectedVoice && selectedVoice !== "default" && (
-                    <span className="text-xs font-medium">
-                      🎙️ {(voiceCharacters as any[]).find((v: any) => v.id === selectedVoice)?.name?.split(" ")[0] || "Voice"}
-                    </span>
-                  )}
-
-                  {selectedAttachments.length > 0 && (
-                    <span className="text-xs font-medium">📷 x{selectedAttachments.length}</span>
-                  )}
-
-                  {selectedCategory && (
-                    <span className="text-xs">💬</span>
-                  )}
-
-                  {form.watch("isMultiDay") && (form.watch("selectedDays")?.length || 0) > 0 && (
-                    <span className="text-xs font-medium">📅 x{form.watch("selectedDays")?.length}</span>
-                  )}
-                </div>
-              </div>
-            )}
           </form>
         </Form>
       </CardContent>

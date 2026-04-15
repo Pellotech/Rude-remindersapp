@@ -1,0 +1,16 @@
+Prompt 1 — Remove the date pills row entirely
+
+In BookDatePicker.tsx, find and delete the JSX block that renders selected date chips/pills (small red rounded tags showing things like "Wed 15", "Fri 17", "Mon 20" — likely mapped from a selectedDates array). Also delete the Clear button that sits alongside them, and the dot pagination row if it still exists. Do not touch the confirmation summary bar at the bottom (the one showing a formatted date + time + bell icon with a light gold/cream background). Confirm exactly what you found and plan to remove before making any changes.
+
+
+Prompt 2 — Fix the disappearing confirmation bar bug
+
+In BookDatePicker.tsx, there is a confirmation/summary bar near the bottom of the component that shows the selected date and time formatted like "Thu, Apr 16 • 3:00 PM" with a bell icon, on a light gold background. This bar disappears when a date is selected. Find why — look for: (1) a conditional render wrapping it such as {selectedDates.length === 0 && ...} or {!hasSelection && ...} that hides it when dates exist, (2) a useEffect or handler that resets the display state when a date is tapped, or (3) a z-index or layout shift caused by the date pills row pushing it off screen. Fix it so the bar is always visible as long as a date and time have been chosen. Do not change its styling or content. Confirm what you find before editing.
+
+
+Prompt 3 — Move the confirmation bar below the Rudeness Level card
+
+In BookDatePicker.tsx, find the JSX block for the confirmation summary bar (the element showing formatted date + time + bell icon with a light gold/#FDF3E3 background). Cut it from its current position and paste it immediately after the closing tag of the Rudeness Level card (the card containing the green slider and the 5 emoji labels: Gentle, Motivational, Sarcastic, Harsh, Savage). Place it before the Voice/Photo/Quotes button row. Do not modify any content or styles inside either block. Confirm the current JSX order before making changes.
+
+
+The most likely cause of the disappearing bug (Prompt 2) is a conditional like selectedDates.length === 0 that was written to show the bar as a "placeholder" state — and when you actually select dates it hides. Worth telling the AI assistant that specifically so it looks there first.
