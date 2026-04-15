@@ -454,12 +454,16 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   : { transform: 'rotateY(0deg)', transition: 'none' }
                 ),
               }}>
-                {/* Right shadow overlay */}
-                <div style={{
-                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 22,
-                  background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.22))',
-                  zIndex: 5, pointerEvents: 'none',
-                }} />
+                {/* Fan layers */}
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0,  width: 6, background: '#a88040', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 3,  width: 6, background: '#c29860', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 6,  width: 6, background: '#d0aa78', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 9,  width: 6, background: '#d6b484', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 12, width: 6, background: '#dcbc90', pointerEvents: 'none', zIndex: 2 }} />
+                {/* Shadow overlays */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to top, rgba(60,25,5,0.18), transparent)', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 12, background: 'linear-gradient(to right, rgba(60,25,5,0.18), transparent)', pointerEvents: 'none', zIndex: 2 }} />
                 {/* Ghost: previous page number + day */}
                 {ghostPage && (
                   <div style={{ position: 'relative', zIndex: 6, textAlign: 'center' }}>
@@ -505,12 +509,16 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   zIndex: 20,
                 }} />
 
-                {/* Depth overlays */}
-                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to right, rgba(60,25,5,0.22), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to left, rgba(60,25,5,0.2), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to top, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(255,248,230,0.45) 0%, transparent 68%)', zIndex: 3, pointerEvents: 'none' }} />
+                {/* Fan layers */}
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0,  width: 6, background: '#dcbc90', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 3,  width: 6, background: '#d6b484', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 6,  width: 6, background: '#d0aa78', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 9,  width: 6, background: '#c29860', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 12, width: 6, background: '#EFE5D0', pointerEvents: 'none', zIndex: 2 }} />
+                {/* Shadow overlays */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to top, rgba(60,25,5,0.18), transparent)', pointerEvents: 'none', zIndex: 2 }} />
+                <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: 12, background: 'linear-gradient(to left, rgba(60,25,5,0.18), transparent)', pointerEvents: 'none', zIndex: 2 }} />
 
                 {/* Ruled lines */}
                 <div style={{
@@ -538,7 +546,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 <div
                   key={`content-${displayIdx}`}
                   style={{
-                    position: 'relative', zIndex: 6,
+                    position: 'relative', zIndex: 3,
                     display: 'flex', flexDirection: 'column',
                     alignItems: 'center', gap: 2,
                   }}

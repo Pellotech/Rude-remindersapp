@@ -1,0 +1,36 @@
+In client/src/components/BookDatePicker.tsx, make these changes to the left and right page fan layers and shadows only. Do not touch any logic, state, animations, props, callbacks, or any other part of the file.
+Left page — full replacement of all overlays and fan layers:
+Remove all existing fan layer divs and gradient overlay divs from the left page section. Replace them with exactly these, all with position:'absolute', top:0, bottom:0, pointerEvents:'none', zIndex:2:
+{ left:0,   width:6px, background:'#a88040' }
+{ left:3px, width:6px, background:'#c29860' }
+{ left:6px, width:6px, background:'#d0aa78' }
+{ left:9px, width:6px, background:'#d6b484' }
+{ left:12px, width:6px, background:'#dcbc90' }
+Then add these shadow overlays inside the left page (position absolute, pointerEvents none, zIndex 2):
+top:0, left:0, right:0, height:18px
+background: linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)
+
+bottom:0, left:0, right:0, height:18px
+background: linear-gradient(to top, rgba(60,25,5,0.18), transparent)
+
+top:0, bottom:0, left:0, width:12px
+background: linear-gradient(to right, rgba(60,25,5,0.18), transparent)
+Right page — full replacement of all overlays and fan layers:
+Remove all existing fan layer divs and gradient overlay divs from the right page section. Replace them with exactly these, all with position:'absolute', top:0, bottom:0, pointerEvents:'none', zIndex:2:
+{ right:0,   width:6px, background:'#dcbc90' }
+{ right:3px, width:6px, background:'#d6b484' }
+{ right:6px, width:6px, background:'#d0aa78' }
+{ right:9px, width:6px, background:'#c29860' }
+{ right:12px, width:6px, background:'#EFE5D0' }
+Then add these shadow overlays inside the right page (position absolute, pointerEvents none, zIndex 2):
+top:0, left:0, right:0, height:18px
+background: linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)
+
+bottom:0, left:0, right:0, height:18px
+background: linear-gradient(to top, rgba(60,25,5,0.18), transparent)
+
+top:0, bottom:0, right:0, width:12px
+background: linear-gradient(to left, rgba(60,25,5,0.18), transparent)
+Content zIndex — both pages:
+Make sure the content div inside each page (the one containing the date number, day name, and month text) has zIndex:3 and position:'relative' so it always renders above the fan layers and shadow overlays.
+Do not change any background colours of the main page areas, any logic, any state, any animations, or anything else in the file.
