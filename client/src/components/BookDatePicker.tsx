@@ -196,11 +196,40 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
     if (bookOpen) navigate(0);
   };
 
+  /* ─── sound ───────────────────────────────────────────────────────────── */
+  const playSound = (type: 'turn' | 'select') => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      if (type === 'turn') {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(180, ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.12);
+        gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.15);
+      } else {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(520, ctx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+        gainNode.gain.setValueAtTime(0.07, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.1);
+      }
+    } catch (e) {}
+  };
+
   /* ─── select / deselect ───────────────────────────────────────────────── */
   const handleSelectBtn = () => {
     if (displayIdx === 0) { navigate(1); return; }
     const pageDate = getPageDate(displayIdx);
     const already  = selectedDates.some(d => isSameDay(d, pageDate));
+    playSound('select');
     if (already) {
       const newDates = selectedDates.filter(d => !isSameDay(d, pageDate));
       setSelectedDates(newDates);
@@ -630,9 +659,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={selectedDates.length === 0}
           style={{
             minWidth: 46, height: 36, borderRadius: 20,
-            border: selectedDates.length > 0 ? '1.5px solid #F5B942' : '1.5px solid #FEF9C3',
-            background: selectedDates.length > 0 ? '#F5B942' : '#FEF9C3',
-            color: '#1a1a1a',
+            border: selectedDates.length > 0 ? '1.5px solid #b70d0d' : '1.5px solid #C9A063',
+            background: selectedDates.length > 0 ? '#b70d0d' : '#FDF3E3',
+            color: selectedDates.length > 0 ? '#ffffff' : '#111827',
             fontSize: 11, fontWeight: 500,
             padding: '0 10px', flexShrink: 0, cursor: 'pointer',
             opacity: selectedDates.length > 0 ? 1 : 0.4,
@@ -644,18 +673,18 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {/* ← */}
         <button
           type="button"
-          onClick={() => { direction.current = 'back'; navigate(Math.max(0, currentIdx - 1)); }}
+          onClick={() => { playSound('turn'); direction.current = 'back'; navigate(Math.max(0, currentIdx - 1)); }}
           disabled={currentIdx === 0}
           style={{
             width: 42, height: 36, flexShrink: 0,
-            background: '#FEF9C3', border: '1.5px solid #FEF9C3',
-            borderRadius: 20, color: '#1a1a1a', cursor: 'pointer',
+            background: '#FDF3E3', border: '1.5px solid #C9A063',
+            borderRadius: 20, color: '#111827', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            opacity: currentIdx === 0 ? 0.25 : 1,
+            opacity: currentIdx === 0 ? 0.4 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { if (currentIdx !== 0) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEF9C3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#111827'; }}
         >←</button>
 
         {/* Centre button */}
@@ -667,10 +696,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             fontSize: 12, fontWeight: 500, padding: '0 8px',
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
-              ? { background: '#FEF9C3', color: '#1a1a1a', border: '1.5px solid #FEF9C3' }
+              ? { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
               : currentDisplaySelected
-                ? { background: '#F5B942', color: '#1a1a1a', border: '1.5px solid #F5B942' }
-                : { background: '#FEF9C3', color: '#1a1a1a', border: '1.5px solid #FEF9C3' }
+                ? { background: '#b70d0d', color: '#ffffff', border: '1.5px solid #b70d0d' }
+                : { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
             ),
           }}
         >
@@ -682,18 +711,18 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {/* → */}
         <button
           type="button"
-          onClick={() => { direction.current = 'forward'; navigate(Math.min(7, currentIdx + 1)); }}
+          onClick={() => { playSound('turn'); direction.current = 'forward'; navigate(Math.min(7, currentIdx + 1)); }}
           disabled={currentIdx === 7}
           style={{
             width: 42, height: 36, flexShrink: 0,
-            background: '#FEF9C3', border: '1.5px solid #FEF9C3',
-            borderRadius: 20, color: '#1a1a1a', cursor: 'pointer',
+            background: '#FDF3E3', border: '1.5px solid #C9A063',
+            borderRadius: 20, color: '#111827', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            opacity: currentIdx === 7 ? 0.25 : 1,
+            opacity: currentIdx === 7 ? 0.4 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
           onMouseEnter={e => { if (currentIdx !== 7) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FEF9C3'; (e.currentTarget as HTMLButtonElement).style.color = '#1a1a1a'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#111827'; }}
         >→</button>
       </div>
 
