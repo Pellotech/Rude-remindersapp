@@ -506,9 +506,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 }} />
 
                 {/* Depth overlays */}
+                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to right, rgba(60,25,5,0.22), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to left, rgba(60,25,5,0.2), transparent)', zIndex: 4, pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to top, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 12, background: 'linear-gradient(to right, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(255,248,230,0.45) 0%, transparent 68%)', zIndex: 3, pointerEvents: 'none' }} />
 
                 {/* Ruled lines */}
                 <div style={{
