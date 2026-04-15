@@ -454,12 +454,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   : { transform: 'rotateY(0deg)', transition: 'none' }
                 ),
               }}>
-                {/* Right shadow overlay */}
-                <div style={{
-                  position: 'absolute', right: 0, top: 0, bottom: 0, width: 22,
-                  background: 'linear-gradient(to right, transparent, rgba(0,0,0,0.22))',
-                  zIndex: 5, pointerEvents: 'none',
-                }} />
+                {/* Depth overlays */}
+                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to right, rgba(60,25,5,0.22), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to left, rgba(60,25,5,0.2), transparent)', zIndex: 4, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(255,248,230,0.45) 0%, transparent 68%)', zIndex: 3, pointerEvents: 'none' }} />
                 {/* Ghost: previous page number + day */}
                 {ghostPage && (
                   <div style={{ position: 'relative', zIndex: 6, textAlign: 'center' }}>
@@ -508,8 +506,6 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 {/* Depth overlays */}
                 <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to right, rgba(60,25,5,0.22), transparent)', zIndex: 4, pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 20, background: 'linear-gradient(to left, rgba(60,25,5,0.2), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to bottom, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 18, background: 'linear-gradient(to top, rgba(60,25,5,0.18), transparent)', zIndex: 4, pointerEvents: 'none' }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(255,248,230,0.45) 0%, transparent 68%)', zIndex: 3, pointerEvents: 'none' }} />
 
                 {/* Ruled lines */}
@@ -527,10 +523,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 {displayIdx === 1 && (
                   <div style={{
                     position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', zIndex: 8,
-                    background: '#FDF3E3', color: '#6B3410',
-                    border: '1.5px solid #6B3410',
-                    fontSize: 9, fontWeight: 500,
-                    padding: '2px 6px', borderRadius: 3,
+                    background: '#FEF9C3', color: '#6B3410',
+                    fontSize: 9, fontWeight: 600,
+                    padding: '2px 8px', borderRadius: 20,
+                    whiteSpace: 'nowrap',
                   }}>Today</div>
                 )}
 
