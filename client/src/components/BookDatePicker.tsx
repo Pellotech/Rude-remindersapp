@@ -630,9 +630,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={selectedDates.length === 0}
           style={{
             minWidth: 46, height: 36, borderRadius: 20,
-            border: selectedDates.length > 0 ? '1.5px solid #b70d0d' : '1.5px solid #C9A063',
-            background: selectedDates.length > 0 ? '#b70d0d' : '#FDF3E3',
-            color: selectedDates.length > 0 ? '#ffffff' : '#111827',
+            border: '1.5px solid #C9A063',
+            background: '#FDF3E3',
+            color: '#111827',
             fontSize: 11, fontWeight: 500,
             padding: '0 10px', flexShrink: 0, cursor: 'pointer',
             opacity: selectedDates.length > 0 ? 1 : 0.4,
