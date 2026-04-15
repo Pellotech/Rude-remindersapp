@@ -446,6 +446,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 flex: 1, position: 'relative',
                 background: '#FFFFFF',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transformOrigin: 'right center',
+                transformStyle: 'preserve-3d',
+                perspective: 1200,
+                ...(isExiting && direction.current === 'back'
+                  ? { transform: 'rotateY(180deg)', transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }
+                  : { transform: 'rotateY(0deg)', transition: 'none' }
+                ),
               }}>
                 {/* Right shadow overlay */}
                 <div style={{
@@ -476,9 +483,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 transformOrigin: 'left center',
                 transformStyle: 'preserve-3d',
                 backfaceVisibility: 'hidden',
-                ...(isExiting
+                ...(isExiting && direction.current === 'forward'
                   ? {
-                      transform: direction.current === 'forward' ? 'rotateY(-180deg)' : 'rotateY(180deg)',
+                      transform: 'rotateY(-180deg)',
                       transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                     }
                   : {
