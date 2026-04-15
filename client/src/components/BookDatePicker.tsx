@@ -727,6 +727,28 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         </div>
 
       </div>
+
+      {/* ── DATE CHIPS ROW ─────────────────────────────────────────────────── */}
+      {selectedDates.length > 0 && (
+        <div style={{
+          display: 'flex', flexWrap: 'nowrap', gap: 4,
+          marginTop: 6, width: '100%', overflow: 'hidden',
+        }}>
+          {selectedDates.map((d, i) => (
+            <span key={i} style={{
+              flex: '1 1 0', minWidth: 0,
+              textAlign: 'center',
+              background: '#FEF9C3',
+              color: '#111827',
+              fontSize: 10, borderRadius: 8, padding: '2px 0',
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            }}>
+              {chipLabel(d)}
+            </span>
+          ))}
+        </div>
+      )}
+
       </div>{/* end controls + meta wrapper */}
 
       {/* ── HOUR PICKER (UNCHANGED) ───────────────────────────────────────── */}
