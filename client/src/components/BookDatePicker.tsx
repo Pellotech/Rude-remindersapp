@@ -622,14 +622,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={selectedDates.length === 0}
           style={{
             minWidth: 46, height: 36, borderRadius: 20,
-            border: selectedDates.length > 0 ? '1.5px solid #b70d0d' : '1.5px solid #C9A063',
-            background: 'transparent',
+            border: selectedDates.length > 0 ? '1.5px solid #F5B942' : '1.5px solid #FEF9C3',
+            background: selectedDates.length > 0 ? '#F5B942' : '#FEF9C3',
             color: '#1a1a1a',
             fontSize: 11, fontWeight: 500,
             padding: '0 10px', flexShrink: 0, cursor: 'pointer',
             opacity: selectedDates.length > 0 ? 1 : 0.4,
             pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
-            transition: 'border 0.15s, color 0.15s, opacity 0.15s',
+            transition: 'border 0.15s, background 0.15s, color 0.15s, opacity 0.15s',
           }}
         >Clear</button>
 
@@ -659,9 +659,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             fontSize: 13, fontWeight: 500,
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
-              ? { background: '#C9A063', color: '#1a1a1a', border: 'none' }
+              ? { background: '#FEF9C3', color: '#1a1a1a', border: '1.5px solid #FEF9C3' }
               : currentDisplaySelected
-                ? { background: '#fff', color: '#1a1a1a', border: '1.5px solid #b70d0d' }
+                ? { background: '#F5B942', color: '#1a1a1a', border: '1.5px solid #F5B942' }
                 : { background: '#FEF9C3', color: '#1a1a1a', border: '1.5px solid #FEF9C3' }
             ),
           }}
@@ -718,7 +718,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '60%' }}>
           {selectedDates.map((d, i) => (
             <span key={i} style={{
-              background: '#b70d0d', color: '#fff',
+              background: '#800020', color: '#fff',
               fontSize: 10, borderRadius: 8, padding: '2px 7px',
               animation: 'chipIn 0.2s ease',
             }}>
