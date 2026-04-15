@@ -410,6 +410,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             style={{
               position: 'relative',
               width: '100%',
+              height: '140px',
+              overflow: 'hidden',
               animation: 'bookOpenIn 0.3s ease both',
             }}
             onTouchStart={onTouchStart}
@@ -421,13 +423,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0,
               height: 6, background: '#6B3410',
-              borderRadius: 0,
+              borderRadius: 0, zIndex: 10,
             }} />
             {/* Bottom edge */}
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
               height: 6, background: '#6B3410',
-              borderRadius: 0,
+              borderRadius: 0, zIndex: 10,
             }} />
 
             {/* Open book */}
