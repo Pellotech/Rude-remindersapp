@@ -624,24 +624,6 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       {/* ── CONTROLS ROW ──────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36, marginTop: 10 }}>
 
-        {/* Clear button */}
-        <button
-          type="button"
-          onClick={handleClear}
-          disabled={selectedDates.length === 0}
-          style={{
-            minWidth: 46, height: 36, borderRadius: 20,
-            border: '1.5px solid #C9A063',
-            background: '#FDF3E3',
-            color: '#111827',
-            fontSize: 11, fontWeight: 500,
-            padding: '0 10px', flexShrink: 0, cursor: 'pointer',
-            opacity: selectedDates.length > 0 ? 1 : 0.4,
-            pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
-            transition: 'border 0.15s, background 0.15s, color 0.15s, opacity 0.15s',
-          }}
-        >Clear</button>
-
         {/* ← */}
         <button
           type="button"
@@ -699,10 +681,31 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       </div>
 
       {/* ── META ROW ──────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginTop: 6, minHeight: 28, position: 'relative' }}>
 
-        {/* Progress dots */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        {/* Clear button — left */}
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={selectedDates.length === 0}
+          style={{
+            minWidth: 46, height: 28, borderRadius: 20,
+            border: '1.5px solid #C9A063',
+            background: '#FDF3E3',
+            color: '#111827',
+            fontSize: 11, fontWeight: 500,
+            padding: '0 10px', flexShrink: 0, cursor: 'pointer',
+            opacity: selectedDates.length > 0 ? 1 : 0.4,
+            pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
+            transition: 'border 0.15s, background 0.15s, color 0.15s, opacity 0.15s',
+          }}
+        >Clear</button>
+
+        {/* Progress dots — absolutely centered */}
+        <div style={{
+          position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+          display: 'flex', alignItems: 'center', gap: 4,
+        }}>
           {Array.from({ length: 8 }, (_, i) => {
             const isCurrent   = i === currentIdx;
             const isDotCover  = i === 0;
@@ -723,8 +726,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           })}
         </div>
 
-        {/* Date chips */}
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '60%' }}>
+        {/* Date chips — right */}
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '50%' }}>
           {selectedDates.map((d, i) => (
             <span key={i} style={{
               background: '#800020', color: '#fff',
