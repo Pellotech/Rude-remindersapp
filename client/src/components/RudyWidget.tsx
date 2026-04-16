@@ -441,6 +441,14 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
 
   // ─── Nice Mode ─────────────────────────────────────────────────────────────
   const [niceMode, setNiceMode] = useState(() => localStorage.getItem('rudy_nice_mode') === 'true');
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setNiceMode((e as CustomEvent).detail);
+    };
+    window.addEventListener('rudy_nice_mode_changed', handler);
+    return () => window.removeEventListener('rudy_nice_mode_changed', handler);
+  }, []);
   useEffect(() => {
     const handleStorage = () => setNiceMode(localStorage.getItem('rudy_nice_mode') === 'true');
     window.addEventListener('storage', handleStorage);

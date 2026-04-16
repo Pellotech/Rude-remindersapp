@@ -50,6 +50,7 @@ export default function Appearance() {
   const handleNiceModeToggle = (checked: boolean) => {
     setNiceModeOn(checked);
     localStorage.setItem('rudy_nice_mode', checked ? 'true' : 'false');
+    window.dispatchEvent(new CustomEvent('rudy_nice_mode_changed', { detail: checked }));
   };
   
   const { data: user, isLoading } = useQuery<any>({
