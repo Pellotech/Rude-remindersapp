@@ -1,0 +1,50 @@
+I can see the exact bug. The form has a useEffect that runs on mount and sets scheduledFor to tomorrow 9am and setScheduleValid(true) — but when BookDatePicker fires onScheduleChange, it's setting scheduledFor correctly for single day, but for multi-day it sets scheduledFor to "" and relies on isMultiDay + selectedDays. The Zod validation schema should handle both, and it does — but there's one critical gap: the submit button check only uses scheduleValid, and scheduleValid correctly gets set. The real issue is in onSubmit — it reads form.getValues("scheduledFor") and wraps it in new Date(), but for multi-day reminders scheduledFor is empty, so it sends undefined to the API which likely expects either a date or the multi-day fields.
+Here's the precise fix:
+
+Paste this into Replit AI:
+
+In client/src/components/ReminderForm.tsx, make these 2 targeted fixes only. Do not touch anything else in the file.
+Fix 1 — Remove the auto-set useEffect that pre-fills tomorrow's date
+Find this useEffect and delete it entirely:
+useEffect(() => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(9, 0, 0, 0);
+  const isoString = tomorrow.toISOString().slice(0, 16);
+  form.setValue("scheduledFor", isoString);
+  setScheduleValid(true);
+}, [form]);
+This is causing scheduleValid to be true on mount before the user picks anything, and it pre-fills scheduledFor which can conflict with what BookDatePicker sets. Delete it completely.
+Then change the initial state of scheduleValid from:
+const [scheduleValid, setScheduleValid] = useState(false);
+to stay as false — just make sure the auto-fill useEffect is gone.
+
+Fix 2 — Fix the onSubmit to correctly handle both single and multi-day
+Find the onSubmit function. Find this block near the top:
+const scheduledDateTime = form.getValues("scheduledFor")
+  ? new Date(form.getValues("scheduledFor")).toISOString()
+  : undefined;
+Replace it with:
+const isMultiDay = form.getValues("isMultiDay");
+const scheduledForRaw = form.getValues("scheduledFor");
+const scheduledDateTime = (!isMultiDay && scheduledForRaw)
+  ? new Date(scheduledForRaw).toISOString()
+  : undefined;
+Then find the submissionData object inside onSubmit. Make sure it looks like this — specifically that scheduledFor is only set when NOT multi-day, and isMultiDay and selectedDays are always included:
+const submissionData = {
+  ...data,
+  scheduledFor: scheduledDateTime,
+  isMultiDay: form.getValues("isMultiDay") || false,
+  selectedDays: form.getValues("selectedDays") || [],
+  voiceCharacter: selectedVoice,
+  attachments: selectedAttachments,
+  motivationalQuote: finalMotivationalQuote,
+  browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
+  voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
+  emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+};
+This ensures that:
+
+Single day reminders send scheduledFor as a proper ISO string
+Multi-day reminders send isMultiDay: true and selectedDays: ["monday","tuesday",...] with scheduledFor: undefined
+The API receives the correct fields for both cases
