@@ -557,7 +557,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
       }}
     >
       {/* ── Rudy image + name tag ────────────────────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+      <div style={{ position: "relative", width: "80px", height: "80px", flexShrink: 0, alignSelf: "center" }}>
         <img
           src={rudyImg}
           alt="Rudy"
@@ -572,9 +572,12 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
           src="/rudy/rudy_nametag.png"
           alt="Rudy"
           style={{
-            width: "52px",
+            position: "absolute",
+            bottom: "-20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "68px",
             objectFit: "contain",
-            marginTop: "-4px",
           }}
         />
       </div>
