@@ -27,7 +27,7 @@ class SmartResponseService {
   }
   
   // Generate truly personalized AI responses using DeepSeek API for maximum freshness
-  async getPersonalizedResponse(reminder: Reminder, forceRefresh = false): Promise<string[]> {
+  async getPersonalizedResponse(reminder: Reminder, forceRefresh = false, clientLocalTime?: string): Promise<string[]> {
     // Check if user has premium access for AI generation
     const isPremium = await isUserPremium(reminder.userId);
     
@@ -41,8 +41,10 @@ class SmartResponseService {
     if (isPremium && this.deepseekService) {
       try {
         const user = await storage.getUser(reminder.userId);
-        const now = new Date();
-        const timeOfDay = this.getTimeOfDay(now);
+        // Use client's local time if provided, otherwise fall back to server UTC
+        const timeOfDay = clientLocalTime
+          ? this.getTimeOfDayFromString(clientLocalTime)
+          : this.getTimeOfDay(new Date());
         
         const context = {
           task: reminder.originalMessage,
@@ -51,7 +53,8 @@ class SmartResponseService {
           gender: user?.gender || undefined,
           genderSpecificReminders: user?.genderSpecificReminders || false,
           culturalBackground: user?.ethnicity || undefined,
-          timeOfDay
+          timeOfDay,
+          clientLocalTime
         };
         
         console.log(`\n🤖 Calling DeepSeek API with context:`, JSON.stringify(context, null, 2));
@@ -136,6 +139,21 @@ class SmartResponseService {
   // Helper method to determine time of day for context
   private getTimeOfDay(date: Date): string {
     const hour = date.getHours();
+    if (hour < 6) return 'early morning';
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    if (hour < 21) return 'evening';
+    return 'night';
+  }
+
+  private getTimeOfDayFromString(clientLocalTime: string): string {
+    // Parse hour from a string like "Thursday, April 16, 2026 at 6:14 AM"
+    const match = clientLocalTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!match) return 'morning';
+    let hour = parseInt(match[1]);
+    const isPM = match[3].toUpperCase() === 'PM';
+    if (isPM && hour !== 12) hour += 12;
+    if (!isPM && hour === 12) hour = 0;
     if (hour < 6) return 'early morning';
     if (hour < 12) return 'morning';
     if (hour < 17) return 'afternoon';

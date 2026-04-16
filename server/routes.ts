@@ -561,7 +561,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isMultiDay,
         browserNotification,
         voiceNotification, 
-        emailNotification
+        emailNotification,
+        clientLocalTime
       } = req.body;
 
       // Use notification settings from frontend (which includes user's preferences) or fallback to user profile
@@ -681,7 +682,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Generate AI response automatically during form submission
           try {
-            const generatedReminder = await reminderService.generateReminderResponse(reminder);
+            const generatedReminder = await reminderService.generateReminderResponse(reminder, clientLocalTime);
             reminder.rudeMessage = generatedReminder.rudeMessage;
             reminder.responses = generatedReminder.responses || [];
           } catch (error) {
@@ -819,7 +820,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Generate AI response automatically during form submission
         try {
-          const generatedReminder = await reminderService.generateReminderResponse(reminder);
+          const generatedReminder = await reminderService.generateReminderResponse(reminder, clientLocalTime);
           reminder.rudeMessage = generatedReminder.rudeMessage;
           reminder.responses = generatedReminder.responses || [];
         } catch (error) {

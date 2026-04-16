@@ -877,6 +877,10 @@ export default function ReminderForm({
       browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
       voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
       emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+      clientLocalTime: new Date().toLocaleString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true,
+      }),
     };
 
     console.log('Submitting reminder data:', submissionData);
@@ -1338,6 +1342,10 @@ export default function ReminderForm({
                                   browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
                                   voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
                                   emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+                                  clientLocalTime: new Date().toLocaleString('en-US', {
+                                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                                    hour: 'numeric', minute: '2-digit', hour12: true,
+                                  }),
                                 };
 
                                 createReminderMutation.mutate(quickReminderData);

@@ -151,12 +151,12 @@ class ReminderService {
 }
 
 // Generate AI response for an existing reminder
-async function generateReminderResponse(reminder: Reminder): Promise<Reminder> {
+async function generateReminderResponse(reminder: Reminder, clientLocalTime?: string): Promise<Reminder> {
   try {
     console.log(`Generating AI response for reminder: ${reminder.originalMessage}`);
 
     // Generate the personalized AI responses
-    const responses = await smartResponseService.getPersonalizedResponse(reminder, true);
+    const responses = await smartResponseService.getPersonalizedResponse(reminder, true, clientLocalTime);
     console.log(`✅ Received ${responses.length} responses for "${reminder.originalMessage}":`, responses);
     
     const rudeMessage = responses[0] || `Time to ${reminder.originalMessage}!`;

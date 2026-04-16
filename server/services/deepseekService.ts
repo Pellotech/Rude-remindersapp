@@ -26,6 +26,7 @@ interface ReminderContext {
   genderSpecificReminders?: boolean;
   culturalBackground?: string;
   timeOfDay: string;
+  clientLocalTime?: string;
 }
 
 export class DeepSeekService {
@@ -43,8 +44,8 @@ export class DeepSeekService {
     try {
       const prompt = this.buildPrompt(context, count);
 
-      const now = new Date();
-      const currentDateTimeStr = now.toLocaleString('en-US', {
+      // Use client's local time if provided; fall back to server UTC only as last resort
+      const currentDateTimeStr = context.clientLocalTime || new Date().toLocaleString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -65,7 +66,7 @@ export class DeepSeekService {
           messages: [
             {
               role: 'system',
-              content: `The current date and time is: ${currentDateTimeStr}. Use this to make your reminder message time-aware and accurate. Do NOT assume it is night, morning, or any specific time of day unless it matches this timestamp. Never say "before you sleep", "tonight", "this morning" etc. unless the current time actually supports that.\n\nYou are a motivational reminder assistant that generates fresh, personalized reminder messages. Be creative, engaging, and avoid repetitive patterns.`
+              content: `The current date and time for the user is: ${currentDateTimeStr}. Use this to make your reminder message time-aware and accurate. Do NOT assume it is night, morning, or any specific time of day unless it matches this timestamp. Never say "before you sleep", "tonight", "this morning" etc. unless the current time actually supports that.\n\nYou are a motivational reminder assistant that generates fresh, personalized reminder messages. Be creative, engaging, and avoid repetitive patterns.`
             },
             {
               role: 'user',
