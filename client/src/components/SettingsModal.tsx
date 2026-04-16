@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -35,6 +35,7 @@ const settingsSchema = z.object({
   voiceNotifications: z.boolean(),
   emailNotifications: z.boolean(),
   browserNotifications: z.boolean(),
+  defaultVoiceCharacter: z.string().optional(),
 });
 
 type SettingsData = z.infer<typeof settingsSchema>;
@@ -58,8 +59,22 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       voiceNotifications: user?.voiceNotifications ?? true,
       emailNotifications: user?.emailNotifications ?? false,
       browserNotifications: user?.browserNotifications ?? true,
+      defaultVoiceCharacter: (user as any)?.defaultVoiceCharacter || "default",
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        email: user.email || "",
+        defaultRudenessLevel: user.defaultRudenessLevel || 3,
+        voiceNotifications: user.voiceNotifications ?? true,
+        emailNotifications: user.emailNotifications ?? false,
+        browserNotifications: user.browserNotifications ?? true,
+        defaultVoiceCharacter: (user as any)?.defaultVoiceCharacter || "default",
+      });
+    }
+  }, [user]);
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: SettingsData) => {
@@ -71,6 +86,14 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         description: "Your preferences have been saved successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+
+      const savedLevel = form.getValues("defaultRudenessLevel");
+      localStorage.setItem('default_rudeness_level', String(savedLevel));
+      window.dispatchEvent(new CustomEvent('default_rudeness_changed', { detail: savedLevel }));
+
+      const savedVoice = form.getValues("defaultVoiceCharacter");
+      if (savedVoice) localStorage.setItem('default_voice_character', savedVoice);
+
       onClose();
     },
     onError: (error: Error) => {
@@ -96,19 +119,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const onSubmit = (data: SettingsData) => {
     updateSettingsMutation.mutate(data);
   };
-
-  // Update form values when user data changes
-  useState(() => {
-    if (user) {
-      form.reset({
-        email: user.email || "",
-        defaultRudenessLevel: user.defaultRudenessLevel || 3,
-        voiceNotifications: user.voiceNotifications ?? true,
-        emailNotifications: user.emailNotifications ?? false,
-        browserNotifications: user.browserNotifications ?? true,
-      });
-    }
-  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -168,6 +178,34 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                       <span>Savage</span>
                     </div>
                   </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Default Voice Character */}
+            <FormField
+              control={form.control}
+              name="defaultVoiceCharacter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Default Voice Character</FormLabel>
+                  <FormControl>
+                    <select
+                      value={field.value}
+                      onChange={field.onChange}
+                      style={{
+                        width: '100%', height: 40, borderRadius: 8,
+                        border: '1px solid #C9A063', padding: '0 12px',
+                        background: '#FDF3E3', color: '#111827', fontSize: 14,
+                      }}
+                    >
+                      <option value="default">Scarlett (Free)</option>
+                      <option value="confident-leader">Will (Premium)</option>
+                      <option value="british-butler">Gerald (Premium)</option>
+                      <option value="karen-nag">Karen (Premium)</option>
+                    </select>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

@@ -1,0 +1,67 @@
+
+In client/src/components/SettingsModal.tsx and related files, make these changes to ensure all settings save and apply correctly throughout the app. Do not touch any other files or logic unless listed here.
+Change 1 — Fix the form reset inside useState (wrong hook usage)
+Find this block near the bottom of the component:
+useState(() => {
+  if (user) {
+    form.reset({...})
+  }
+});
+This is using useState instead of useEffect — it never runs when user data loads. Replace it with:
+useEffect(() => {
+  if (user) {
+    form.reset({
+      email: user.email || "",
+      defaultRudenessLevel: user.defaultRudenessLevel || 3,
+      voiceNotifications: user.voiceNotifications ?? true,
+      emailNotifications: user.emailNotifications ?? false,
+      browserNotifications: user.browserNotifications ?? true,
+    });
+  }
+}, [user]);
+Add useEffect to the imports at the top if it is not already there.
+
+Change 2 — Broadcast defaultRudenessLevel change to the rest of the app on save
+In the onSuccess callback of updateSettingsMutation, after queryClient.invalidateQueries, add:
+const savedLevel = form.getValues("defaultRudenessLevel");
+localStorage.setItem('default_rudeness_level', String(savedLevel));
+window.dispatchEvent(new CustomEvent('default_rudeness_changed', { detail: savedLevel }));
+This makes the rudeness slider in ReminderForm and the badge colour in home-premium update immediately without needing a page reload.
+
+Change 3 — Add a defaultVoiceCharacter field to the settings
+In the Zod schema, add:
+defaultVoiceCharacter: z.string().optional(),
+In the form defaultValues, add:
+defaultVoiceCharacter: (user as any)?.defaultVoiceCharacter || "default",
+In the useEffect reset block (from Change 1), add:
+defaultVoiceCharacter: (user as any)?.defaultVoiceCharacter || "default",
+In the form JSX, after the Default Rudeness Level field and before the Notification Preferences section, add a voice character selector:
+<FormField
+  control={form.control}
+  name="defaultVoiceCharacter"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Default Voice Character</FormLabel>
+      <FormControl>
+        <select
+          value={field.value}
+          onChange={field.onChange}
+          style={{
+            width: '100%', height: 40, borderRadius: 8,
+            border: '1px solid #C9A063', padding: '0 12px',
+            background: '#FDF3E3', color: '#111827', fontSize: 14,
+          }}
+        >
+          <option value="default">Scarlett (Free)</option>
+          <option value="confident-leader">Will (Premium)</option>
+          <option value="british-butler">Gerald (Premium)</option>
+          <option value="karen-nag">Karen (Premium)</option>
+        </select>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+In onSuccess, also broadcast the voice change:
+const savedVoice = form.getValues("defaultVoiceCharacter");
+if (savedVoice) localStorage.setItem('default_voice_character', savedVoice);
