@@ -42,7 +42,18 @@ export class DeepSeekService {
   async generatePersonalizedResponses(context: ReminderContext, count: number = 4): Promise<string[]> {
     try {
       const prompt = this.buildPrompt(context, count);
-      
+
+      const now = new Date();
+      const currentDateTimeStr = now.toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+
       const response = await fetch(`${this.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -54,7 +65,7 @@ export class DeepSeekService {
           messages: [
             {
               role: 'system',
-              content: 'You are a motivational reminder assistant that generates fresh, personalized reminder messages. Be creative, engaging, and avoid repetitive patterns.'
+              content: `The current date and time is: ${currentDateTimeStr}. Use this to make your reminder message time-aware and accurate. Do NOT assume it is night, morning, or any specific time of day unless it matches this timestamp. Never say "before you sleep", "tonight", "this morning" etc. unless the current time actually supports that.\n\nYou are a motivational reminder assistant that generates fresh, personalized reminder messages. Be creative, engaging, and avoid repetitive patterns.`
             },
             {
               role: 'user',
