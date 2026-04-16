@@ -43,6 +43,16 @@ export default function Notifications() {
     window.dispatchEvent(new CustomEvent('default_rudeness_changed', { detail: level }));
   };
 
+  const [defaultVoice, setDefaultVoice] = useState(
+    () => localStorage.getItem('default_voice_character') || 'default'
+  );
+
+  const handleDefaultVoiceChange = (value: string) => {
+    setDefaultVoice(value);
+    localStorage.setItem('default_voice_character', value);
+    window.dispatchEvent(new CustomEvent('default_voice_changed', { detail: value }));
+  };
+
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
@@ -164,7 +174,7 @@ export default function Notifications() {
 
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Preferences</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden divide-y divide-[#38383A]">
               <div className="px-4 py-3">
                 <div className="mb-2">
                   <p className="text-white text-[17px]">Default Rudeness Level</p>
@@ -191,6 +201,33 @@ export default function Notifications() {
                   <option value={3}>3 — 😏 Sarcastic</option>
                   <option value={4}>4 — 😤 Harsh</option>
                   <option value={5}>5 — 🤬 Savage</option>
+                </select>
+              </div>
+              <div className="px-4 py-3">
+                <div className="mb-2">
+                  <p className="text-white text-[17px]">Default Voice Character</p>
+                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Voice used when reading your reminders aloud</p>
+                </div>
+                <select
+                  value={defaultVoice}
+                  onChange={(e) => handleDefaultVoiceChange(e.target.value)}
+                  style={{
+                    width: '100%',
+                    background: '#2C2C2E',
+                    color: 'white',
+                    border: '1px solid #333',
+                    borderRadius: '8px',
+                    padding: '10px 12px',
+                    fontSize: '15px',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <option value="default">Scarlett (Free)</option>
+                  <option value="confident-leader">Will (Premium)</option>
+                  <option value="british-butler">Gerald (Premium)</option>
+                  <option value="karen-nag">Karen (Premium)</option>
                 </select>
               </div>
             </div>
