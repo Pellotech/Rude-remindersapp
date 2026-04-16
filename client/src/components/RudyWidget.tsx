@@ -556,19 +556,28 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
         marginTop: "8px",
       }}
     >
-      {/* ── Rudy image (80×80, blend mode) ─────────────────────────────────── */}
-      <img
-        src={rudyImg}
-        alt="Rudy"
-        style={{
-          width: "80px",
-          height: "80px",
-          objectFit: "contain",
-          flexShrink: 0,
-          alignSelf: "center",
-          mixBlendMode: "multiply",
-        }}
-      />
+      {/* ── Rudy image + name tag ────────────────────────────────────────────── */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+        <img
+          src={rudyImg}
+          alt="Rudy"
+          style={{
+            width: "80px",
+            height: "80px",
+            objectFit: "contain",
+            mixBlendMode: "multiply",
+          }}
+        />
+        <img
+          src="/rudy/rudy_nametag.png"
+          alt="Rudy"
+          style={{
+            width: "52px",
+            objectFit: "contain",
+            marginTop: "-4px",
+          }}
+        />
+      </div>
 
       {/* ── Bubble column ───────────────────────────────────────────────────── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: 0 }}>
