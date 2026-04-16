@@ -302,7 +302,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             <div style={{
               width: '65%',
               height: 140,
-              boxShadow: '5px 5px 18px rgba(0,0,0,0.32), -1px 0 4px rgba(0,0,0,0.1)',
+              boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
               borderRadius: '5px 7px 7px 5px',
               display: 'flex',
               overflow: 'hidden',
@@ -430,6 +430,18 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               position: 'absolute', bottom: 0, left: 0, right: 0,
               height: 6, background: '#6B3410',
               borderRadius: 0, zIndex: 10,
+            }} />
+            {/* Left side shade */}
+            <div style={{
+              position: 'absolute', left: 0, top: 0, bottom: 0, width: 28,
+              background: 'linear-gradient(to right, rgba(0,0,0,0.22), transparent)',
+              zIndex: 5, pointerEvents: 'none',
+            }} />
+            {/* Right side shade */}
+            <div style={{
+              position: 'absolute', right: 0, top: 0, bottom: 0, width: 28,
+              background: 'linear-gradient(to left, rgba(0,0,0,0.22), transparent)',
+              zIndex: 5, pointerEvents: 'none',
             }} />
 
             {/* Open book */}
