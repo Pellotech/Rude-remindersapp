@@ -848,7 +848,7 @@ export default function ReminderForm({
 
     const isMultiDay = form.getValues("isMultiDay");
     const scheduledForRaw = form.getValues("scheduledFor");
-    const scheduledDateTime = (!isMultiDay && scheduledForRaw)
+    const scheduledDateTime = scheduledForRaw
       ? new Date(scheduledForRaw).toISOString()
       : undefined;
 

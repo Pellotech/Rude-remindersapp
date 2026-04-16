@@ -94,8 +94,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         dt.setHours(hour, minute, 0, 0);
         onScheduleChange({ scheduledFor: dt.toISOString(), isMultiDay: false, selectedDays: [], hasValidSchedule: true });
       } else {
+        // For multi-day, pass a time reference using the first selected date + chosen hour/minute
+        const timeRef = new Date(dates[0]);
+        timeRef.setHours(hour, minute, 0, 0);
         onScheduleChange({
-          scheduledFor: undefined,
+          scheduledFor: timeRef.toISOString(),
           isMultiDay: true,
           selectedDays: dates.map(d => DAY_NAMES[d.getDay()]),
           hasValidSchedule: true,

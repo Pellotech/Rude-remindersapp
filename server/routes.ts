@@ -1883,7 +1883,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 }
 
 // Helper function to get next occurrence of a specific day
-function getNextDayOccurrence(dayName: string, baseDateTime: string): Date {
+function getNextDayOccurrence(dayName: string, baseDateTime: string | undefined): Date {
   const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
   const targetDayIndex = dayNames.indexOf(dayName.toLowerCase());
 
@@ -1891,7 +1891,12 @@ function getNextDayOccurrence(dayName: string, baseDateTime: string): Date {
     throw new Error(`Invalid day name: ${dayName}`);
   }
 
-  const baseDate = new Date(baseDateTime);
+  // If no base time provided, default to 9:00 AM
+  const baseDate = baseDateTime ? new Date(baseDateTime) : (() => {
+    const d = new Date();
+    d.setHours(9, 0, 0, 0);
+    return d;
+  })();
   const currentDate = new Date();
 
   // Start from tomorrow to avoid scheduling for today if the base time has passed for today
