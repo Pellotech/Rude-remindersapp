@@ -302,17 +302,23 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
         {!bookOpen && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             {/* Closed book */}
-            <div style={{
-              width: '65%',
-              height: 140,
-              boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
-              borderRadius: '5px 7px 7px 5px',
-              display: 'flex',
-              overflow: 'hidden',
-              transform: closedExiting ? 'scale(0.95)' : 'scale(1)',
-              opacity: closedExiting ? 0 : 1,
-              transition: 'transform 0.2s ease, opacity 0.2s ease',
-            }}>
+            <div
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+              onMouseDown={onMouseDown}
+              onMouseUp={onMouseUp}
+              style={{
+                width: '65%',
+                height: 140,
+                boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
+                borderRadius: '5px 7px 7px 5px',
+                display: 'flex',
+                overflow: 'hidden',
+                transform: closedExiting ? 'scale(0.95)' : 'scale(1)',
+                opacity: closedExiting ? 0 : 1,
+                transition: 'transform 0.2s ease, opacity 0.2s ease',
+                cursor: 'grab',
+              }}>
 
               {/* Spine */}
               <div style={{
