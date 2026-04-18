@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -85,6 +85,7 @@ export default function Notifications() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setLocalSettings({});
       toast({
         title: "Saved",
         description: "Your preferences have been updated.",
@@ -100,6 +101,8 @@ export default function Notifications() {
   });
 
   const [localSettings, setLocalSettings] = useState<any>({});
+  const saveButtonRef = useRef<HTMLDivElement>(null);
+  const prevHasChanges = useRef(false);
 
   useEffect(() => {
     if (user) {
@@ -109,7 +112,6 @@ export default function Notifications() {
 
   const saveSettings = () => {
     updateSettingsMutation.mutate(localSettings);
-    setLocalSettings({});
   };
 
   const updateSetting = (key: string, value: any) => {
@@ -118,6 +120,15 @@ export default function Notifications() {
 
   const hasChanges = Object.keys(localSettings).length > 0;
   const currentSettings = { ...user, ...localSettings };
+
+  useEffect(() => {
+    if (hasChanges && !prevHasChanges.current) {
+      setTimeout(() => {
+        saveButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    }
+    prevHasChanges.current = hasChanges;
+  }, [hasChanges]);
 
   if (isLoading) {
     return (
@@ -245,12 +256,6 @@ export default function Notifications() {
                   <option value="karen-nag">Karen (Premium)</option>
                 </select>
               </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Rudy Behaviour</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
               <div className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <p className="text-white text-[17px]">Nice Rudy Mode</p>
@@ -261,16 +266,18 @@ export default function Notifications() {
             </div>
           </div>
 
-          {hasChanges && (
-            <button
-              onClick={saveSettings}
-              disabled={updateSettingsMutation.isPending}
-              className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
-              data-testid="button-save"
-            >
-              {updateSettingsMutation.isPending ? "Saving..." : "Save"}
-            </button>
-          )}
+          <div ref={saveButtonRef}>
+            {hasChanges && (
+              <button
+                onClick={saveSettings}
+                disabled={updateSettingsMutation.isPending}
+                className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
+                data-testid="button-save"
+              >
+                {updateSettingsMutation.isPending ? "Saving..." : "Save"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
