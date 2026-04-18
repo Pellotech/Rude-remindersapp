@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { getPlatformInfo } from "@/utils/platformDetection";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +18,7 @@ import {
 
 export default function Billing() {
   const { toast } = useToast();
+  const { isAndroid, isIOS } = getPlatformInfo();
   const queryClient = useQueryClient();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   
@@ -77,7 +79,7 @@ export default function Billing() {
           <h1 className="text-[34px] font-bold text-white px-4 pb-2">Payment & Billing</h1>
         </div>
 
-        <div className="py-6 px-4 space-y-8">
+        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
           {/* Current Plan Section */}
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Current Plan</h2>

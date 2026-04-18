@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Home } from "lucide-react";
 import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 interface ToggleProps {
   checked: boolean;
@@ -31,6 +32,7 @@ function Toggle({ checked, onChange }: ToggleProps) {
 export default function Notifications() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isAndroid, isIOS } = getPlatformInfo();
 
   const [defaultRudeness, setDefaultRudeness] = useState(
     () => parseInt(localStorage.getItem('default_rudeness_level') || '2')
@@ -151,7 +153,7 @@ export default function Notifications() {
           <h1 className="text-[34px] font-bold text-white px-4 pb-2">Notifications</h1>
         </div>
 
-        <div className="py-6 px-4 space-y-8">
+        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">

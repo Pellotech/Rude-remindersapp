@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, clearAuthToken } from "@/lib/queryClient";
+import { getPlatformInfo } from "@/utils/platformDetection";
 import { ChevronLeft, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft } from "lucide-react";
 
 const countryOptions = [
@@ -35,6 +36,7 @@ export default function PersonalInfo() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
+  const { isAndroid, isIOS } = getPlatformInfo();
   
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
@@ -125,7 +127,7 @@ export default function PersonalInfo() {
             </h1>
           </div>
 
-          <div className="py-6 px-4 space-y-6">
+          <div className="py-6 px-4 space-y-6" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
             <div className="bg-[#1C1C1E] rounded-xl p-4">
               <p className="text-[15px] text-gray-300 leading-relaxed">
                 This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
@@ -208,7 +210,7 @@ export default function PersonalInfo() {
           <h1 className="text-[34px] font-bold text-white px-4 pb-2">Personal Information</h1>
         </div>
 
-        <div className="py-6 px-4 space-y-6">
+        <div className="py-6 px-4 space-y-6" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
           <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-[#38383A]">
               <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">First Name</label>
