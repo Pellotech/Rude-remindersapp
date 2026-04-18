@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Home } from "lucide-react";
-import { getFullApiUrl } from "@/lib/queryClient";
+import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
 
 interface ToggleProps {
   checked: boolean;
@@ -36,31 +36,40 @@ export default function Notifications() {
     () => parseInt(localStorage.getItem('default_rudeness_level') || '2')
   );
 
-  const handleDefaultRudenessChange = (value: string) => {
+  const handleDefaultRudenessChange = async (value: string) => {
     const level = Number(value);
     setDefaultRudeness(level);
     localStorage.setItem('default_rudeness_level', String(level));
     window.dispatchEvent(new CustomEvent('default_rudeness_changed', { detail: level }));
+    try {
+      await apiRequest("/api/user/settings", { method: 'PATCH', body: { defaultRudenessLevel: level } as any });
+    } catch (_) {}
   };
 
   const [defaultVoice, setDefaultVoice] = useState(
     () => localStorage.getItem('default_voice_character') || 'default'
   );
 
-  const handleDefaultVoiceChange = (value: string) => {
+  const handleDefaultVoiceChange = async (value: string) => {
     setDefaultVoice(value);
     localStorage.setItem('default_voice_character', value);
     window.dispatchEvent(new CustomEvent('default_voice_changed', { detail: value }));
+    try {
+      await apiRequest("/api/user/settings", { method: 'PATCH', body: { defaultVoiceCharacter: value } as any });
+    } catch (_) {}
   };
 
   const [niceModeOn, setNiceModeOn] = useState(
     () => localStorage.getItem('rudy_nice_mode') === 'true'
   );
 
-  const handleNiceModeToggle = (checked: boolean) => {
+  const handleNiceModeToggle = async (checked: boolean) => {
     setNiceModeOn(checked);
     localStorage.setItem('rudy_nice_mode', checked ? 'true' : 'false');
     window.dispatchEvent(new CustomEvent('rudy_nice_mode_changed', { detail: checked }));
+    try {
+      await apiRequest("/api/user/settings", { method: 'PATCH', body: { niceMode: checked } as any });
+    } catch (_) {}
   };
 
   const { data: user, isLoading } = useQuery<any>({

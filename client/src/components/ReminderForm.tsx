@@ -390,6 +390,17 @@ export default function ReminderForm({
     return () => window.removeEventListener('default_rudeness_changed', handler);
   }, [form]);
 
+  // Live-sync voice character when default changes from settings page
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const newVoice = (e as CustomEvent).detail;
+      form.setValue("voiceCharacter", newVoice);
+      setSelectedVoice(newVoice);
+    };
+    window.addEventListener('default_voice_changed', handler);
+    return () => window.removeEventListener('default_voice_changed', handler);
+  }, [form]);
+
   const rudenessLevel = form.watch("rudenessLevel");
   const voiceCharacter = form.watch("voiceCharacter");
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const RUDY_IMAGES = {
   idle:                       "/rudy/Rudy_leaning_2_transparent.png",
@@ -441,6 +442,14 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
 
   // ─── Nice Mode ─────────────────────────────────────────────────────────────
   const [niceMode, setNiceMode] = useState(() => localStorage.getItem('rudy_nice_mode') === 'true');
+
+  const { data: userData } = useQuery<any>({ queryKey: ["/api/auth/user"] });
+  useEffect(() => {
+    if ((userData as any)?.niceMode !== undefined) {
+      setNiceMode((userData as any).niceMode);
+      localStorage.setItem('rudy_nice_mode', (userData as any).niceMode ? 'true' : 'false');
+    }
+  }, [(userData as any)?.niceMode]);
 
   useEffect(() => {
     const handler = (e: Event) => {

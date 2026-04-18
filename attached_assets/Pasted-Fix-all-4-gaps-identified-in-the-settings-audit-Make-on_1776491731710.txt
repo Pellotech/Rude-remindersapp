@@ -1,0 +1,61 @@
+Fix all 4 gaps identified in the settings audit. Make only the changes listed below. Do not touch any other logic, UI, or files not mentioned here.
+Fix 1 — shared/schema.ts — add niceMode column
+Find the users table definition. Add a niceMode boolean column with a default of false:
+niceMode: boolean("nice_mode").default(false).notNull(),
+After adding it, run the database migration so the column is created in the actual database.
+
+Fix 2 — server/routes.ts — add niceMode to the settings whitelist
+Find the PUT /api/settings route that has an explicit whitelist array of allowed fields. Add 'niceMode' to that array so the server accepts and saves it.
+Also verify that PATCH /api/user/settings passes the value through to updateUser. If it already passes all fields through without a whitelist, no change needed there.
+
+Fix 3 — Notifications.tsx — make all 3 handlers persist to the database
+Find these 3 handler functions:
+
+handleDefaultRudenessChange
+handleDefaultVoiceChange
+handleNiceModeToggle
+
+Each one currently only writes to localStorage and fires a custom event. Add an API call to each one so the change is also saved to the database. Use the same apiRequest pattern already used elsewhere in the file:
+await apiRequest("/api/user/settings", {
+  method: "PATCH",
+  body: { defaultRudenessLevel: value }   // swap key/value per handler
+});
+For handleDefaultRudenessChange: body is { defaultRudenessLevel: value }
+For handleDefaultVoiceChange: body is { defaultVoiceCharacter: value }
+For handleNiceModeToggle: body is { niceMode: checked }
+Wrap each API call in a try/catch so a failed save doesn't break the local toggle behaviour. The localStorage write and event dispatch should still happen regardless of whether the API call succeeds.
+
+Fix 4 — ReminderForm.tsx — add live listener for default voice changes
+Find the existing useEffect that listens for default_rudeness_changed:
+useEffect(() => {
+  const handler = (e: Event) => {
+    form.setValue("rudenessLevel", (e as CustomEvent).detail);
+  };
+  window.addEventListener('default_rudeness_changed', handler);
+  return () => window.removeEventListener('default_rudeness_changed', handler);
+}, [form]);
+Directly below it, add an identical one for voice changes:
+useEffect(() => {
+  const handler = (e: Event) => {
+    const newVoice = (e as CustomEvent).detail;
+    form.setValue("voiceCharacter", newVoice);
+    setSelectedVoice(newVoice);
+  };
+  window.addEventListener('default_voice_changed', handler);
+  return () => window.removeEventListener('default_voice_changed', handler);
+}, [form]);
+
+Also — load niceMode from server on app start
+In Appearance.tsx, find where niceModeOn is initialised from localStorage:
+const [niceModeOn, setNiceModeOn] = useState(
+  () => localStorage.getItem('rudy_nice_mode') === 'true'
+);
+After the const { data: user } query resolves, add a useEffect that syncs the server value into both state and localStorage so the toggle reflects the database truth on load:
+useEffect(() => {
+  if (user?.niceMode !== undefined) {
+    setNiceModeOn(user.niceMode);
+    localStorage.setItem('rudy_nice_mode', user.niceMode ? 'true' : 'false');
+  }
+}, [user?.niceMode]);
+Do the same sync in RudyWidget.tsx — after user data loads, if user.niceMode is defined, update the niceMode state and localStorage to match.
+Do not change any UI, any other settings fields, or any other files not listed above.

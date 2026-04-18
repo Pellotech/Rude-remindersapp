@@ -57,6 +57,13 @@ export default function Appearance() {
     queryKey: ["/api/auth/user"],
   });
 
+  useEffect(() => {
+    if ((user as any)?.niceMode !== undefined) {
+      setNiceModeOn((user as any).niceMode);
+      localStorage.setItem('rudy_nice_mode', (user as any).niceMode ? 'true' : 'false');
+    }
+  }, [(user as any)?.niceMode]);
+
   const updateSettingsMutation = useMutation({
     mutationFn: (settings: any) =>
       apiRequest("/api/settings", "PUT", settings),
