@@ -1,0 +1,49 @@
+
+In client/src/pages/Notifications.tsx, make these 3 small changes only. Do not touch any other files, any other settings, any logic, any features, or any UI outside of what is listed here.
+Change 1 — Add the toggle to local state
+Find where the other local toggles are initialised (like niceModeOn). Add one more:
+const [rudyWidgetOn, setRudyWidgetOn] = useState(
+  () => localStorage.getItem('rudy_widget_visible') !== 'false'
+);
+Note: default is true — Rudy shows unless the user has explicitly turned it off.
+Change 2 — Add a handler for the toggle
+Find where handleNiceModeToggle is defined. Directly below it add:
+const handleRudyWidgetToggle = (checked: boolean) => {
+  setRudyWidgetOn(checked);
+  localStorage.setItem('rudy_widget_visible', checked ? 'true' : 'false');
+  window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: checked }));
+  updateSetting("rudyWidgetVisible", checked);
+};
+Change 3 — Add the toggle to the UI
+Find the Nice Rudy Mode toggle row in the JSX — it is inside the "Rudy Behaviour" section. Directly below that row (but still inside the same container div), add:
+<div className="px-4 py-3 flex items-center justify-between border-t border-[#38383A]">
+  <div>
+    <p className="text-white text-[17px]">Rudy Widget</p>
+    <p className="text-[#8E8E93] text-[13px] mt-0.5">Show or hide the Rudy mascot</p>
+  </div>
+  <Toggle checked={rudyWidgetOn} onChange={handleRudyWidgetToggle} />
+</div>
+Change 4 — Wire it to the Save button
+In the onSuccess callback of updateSettingsMutation, alongside the existing niceMode sync block, add:
+if (localSettings.rudyWidgetVisible !== undefined) {
+  localStorage.setItem('rudy_widget_visible', localSettings.rudyWidgetVisible ? 'true' : 'false');
+  window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: localSettings.rudyWidgetVisible }));
+}
+Change 5 — Make RudyWidget respect the toggle
+In client/src/components/RudyWidget.tsx, find the top of the component where state is initialised. Add:
+const [widgetVisible, setWidgetVisible] = useState(
+  () => localStorage.getItem('rudy_widget_visible') !== 'false'
+);
+
+useEffect(() => {
+  const handler = (e: Event) => {
+    setWidgetVisible((e as CustomEvent).detail);
+  };
+  window.addEventListener('rudy_widget_visibility_changed', handler);
+  return () => window.removeEventListener('rudy_widget_visibility_changed', handler);
+}, []);
+Then find the outermost return statement of RudyWidget. Wrap the entire returned JSX in a visibility check:
+if (!widgetVisible) return null;
+Add this as the very first line inside the component function body, after the state declarations. This means when the toggle is off, the widget returns nothing — no layout shift, no performance cost, no side effects. All existing Rudy logic, animations, events, and bubble systems remain completely untouched.
+Do not add rudyWidgetVisible to the database schema. Do not call the API for this setting. localStorage and the live event are sufficient — this is a display preference only, not account data.
+Do not change anything else in either file.

@@ -68,6 +68,16 @@ export default function Notifications() {
     updateSetting('niceMode', checked);
   };
 
+  const [rudyFloatingOn, setRudyFloatingOn] = useState(
+    () => localStorage.getItem('rudy_widget_visible') !== 'false'
+  );
+
+  const handleRudyFloatingToggle = (checked: boolean) => {
+    setRudyFloatingOn(checked);
+    localStorage.setItem('rudy_widget_visible', checked ? 'true' : 'false');
+    window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: checked }));
+  };
+
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
@@ -224,6 +234,13 @@ export default function Notifications() {
                   <p className="text-[#8E8E93] text-[13px] mt-0.5">Switch Rudy to encouraging comments only</p>
                 </div>
                 <Toggle checked={niceModeOn} onChange={handleNiceModeToggle} />
+              </div>
+              <div className="px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p className="text-white text-[17px]">Floating Rudy</p>
+                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Show Rudy pinned to the top while scrolling</p>
+                </div>
+                <Toggle checked={rudyFloatingOn} onChange={handleRudyFloatingToggle} />
               </div>
             </div>
           </div>

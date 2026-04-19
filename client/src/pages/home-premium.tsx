@@ -111,6 +111,17 @@ export default function HomePremium() {
 
   const rudyRef = useRef<HTMLDivElement>(null);
   const [rudySticky, setRudySticky] = useState(false);
+  const [rudyFloatingEnabled, setRudyFloatingEnabled] = useState(
+    () => localStorage.getItem('rudy_widget_visible') !== 'false'
+  );
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setRudyFloatingEnabled((e as CustomEvent).detail);
+    };
+    window.addEventListener('rudy_widget_visibility_changed', handler);
+    return () => window.removeEventListener('rudy_widget_visibility_changed', handler);
+  }, []);
 
   useEffect(() => {
     if (badgeRudenessLevel === prevRudenessRef.current) return;
@@ -329,7 +340,7 @@ export default function HomePremium() {
               />
             )}
           </div>
-          {rudySticky && (
+          {rudySticky && rudyFloatingEnabled && (
             <div style={{
               position: 'fixed',
               top: '60px',
