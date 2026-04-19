@@ -9,6 +9,7 @@ import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
 import { getFullApiUrl } from "@/lib/queryClient";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
@@ -72,12 +73,25 @@ export function RichReminderNotification({
 }: RichReminderNotificationProps) {
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const { isAndroid, isIOS } = getPlatformInfo();
 
   const rudenessStyle = getRudenessStyle(reminder.rudenessLevel);
 
+  // Keep dialog clear of the ad banner + nav bar at the bottom
+  // Android: ad banner ~50px + nav bar ~56px + buffer = 220px total
+  // iOS: ad banner ~50px + home indicator ~34px + buffer = 140px total
+  const dialogMaxHeight = isAndroid
+    ? 'calc(100vh - 220px)'
+    : isIOS
+    ? 'calc(100vh - 140px)'
+    : '85vh';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 overflow-hidden max-h-[85vh] flex flex-col bg-white border-[6px] border-[#C9A063] rounded-[16px]">
+      <DialogContent
+        className="max-w-md p-0 overflow-hidden flex flex-col bg-white border-[6px] border-[#C9A063] rounded-[16px]"
+        style={{ maxHeight: dialogMaxHeight }}
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>Reminder</DialogTitle>
         </DialogHeader>
