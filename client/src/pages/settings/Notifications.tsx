@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Home } from "lucide-react";
-import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 
 interface ToggleProps {
@@ -74,14 +74,7 @@ export default function Notifications() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (settings: any) => {
-      const response = await fetch(getFullApiUrl("/api/settings"), {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("Failed to save");
-      return response;
+      return apiRequest("/api/settings", { method: "PUT", body: settings as any });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
