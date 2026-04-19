@@ -76,6 +76,7 @@ export default function Notifications() {
     setRudyFloatingOn(checked);
     localStorage.setItem('rudy_widget_visible', checked ? 'true' : 'false');
     window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: checked }));
+    updateSetting('rudyWidgetVisible', checked);
   };
 
   const { data: user, isLoading } = useQuery<any>({
