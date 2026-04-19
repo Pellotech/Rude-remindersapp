@@ -118,10 +118,18 @@ export default function Notifications() {
     if (hasChanges && !prevHasChanges.current) {
       setTimeout(() => {
         saveButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        // After scrollIntoView lands the button at viewport bottom, push the page
+        // further down so the button rises above the ad banner + nav bar.
+        const bannerOffset = isAndroid ? 130 : isIOS ? 90 : 0;
+        if (bannerOffset > 0) {
+          setTimeout(() => {
+            window.scrollBy({ top: bannerOffset, behavior: 'smooth' });
+          }, 450);
+        }
       }, 100);
     }
     prevHasChanges.current = hasChanges;
-  }, [hasChanges]);
+  }, [hasChanges, isAndroid, isIOS]);
 
   if (isLoading) {
     return (
@@ -152,45 +160,6 @@ export default function Notifications() {
         </div>
 
         <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Browser Notifications</span>
-                <Toggle
-                  checked={currentSettings.browserNotifications || false}
-                  onChange={(checked) => updateSetting("browserNotifications", checked)}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Playback</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Voice Announcements</span>
-                <Toggle
-                  checked={currentSettings.voiceNotifications || false}
-                  onChange={(checked) => updateSetting("voiceNotifications", checked)}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Email</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Notify me by Email</span>
-                <Toggle
-                  checked={currentSettings.emailNotifications || false}
-                  onChange={(checked) => updateSetting("emailNotifications", checked)}
-                />
-              </div>
-            </div>
-          </div>
-
           <div>
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Preferences</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden divide-y divide-[#38383A]">
@@ -255,6 +224,45 @@ export default function Notifications() {
                   <p className="text-[#8E8E93] text-[13px] mt-0.5">Switch Rudy to encouraging comments only</p>
                 </div>
                 <Toggle checked={niceModeOn} onChange={handleNiceModeToggle} />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-white text-[17px]">Browser Notifications</span>
+                <Toggle
+                  checked={currentSettings.browserNotifications || false}
+                  onChange={(checked) => updateSetting("browserNotifications", checked)}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Playback</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-white text-[17px]">Voice Announcements</span>
+                <Toggle
+                  checked={currentSettings.voiceNotifications || false}
+                  onChange={(checked) => updateSetting("voiceNotifications", checked)}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Email</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-white text-[17px]">Notify me by Email</span>
+                <Toggle
+                  checked={currentSettings.emailNotifications || false}
+                  onChange={(checked) => updateSetting("emailNotifications", checked)}
+                />
               </div>
             </div>
           </div>

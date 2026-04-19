@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -83,6 +83,8 @@ export default function PersonalInfo() {
   const [showDeleteScreen, setShowDeleteScreen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const saveButtonRef = useRef<HTMLDivElement>(null);
+  const prevHasChanges = useRef(false);
 
   useEffect(() => {
     if (user) {
@@ -101,6 +103,21 @@ export default function PersonalInfo() {
 
   const hasChanges = Object.keys(localSettings).length > 0;
   const currentSettings = { ...user, ...localSettings };
+
+  useEffect(() => {
+    if (hasChanges && !prevHasChanges.current) {
+      setTimeout(() => {
+        saveButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        const bannerOffset = isAndroid ? 130 : isIOS ? 90 : 0;
+        if (bannerOffset > 0) {
+          setTimeout(() => {
+            window.scrollBy({ top: bannerOffset, behavior: 'smooth' });
+          }, 450);
+        }
+      }, 100);
+    }
+    prevHasChanges.current = hasChanges;
+  }, [hasChanges, isAndroid, isIOS]);
 
   if (isLoading) {
     return (
@@ -322,16 +339,18 @@ export default function PersonalInfo() {
             </div>
           </div>
 
-          {hasChanges && (
-            <button
-              onClick={saveSettings}
-              disabled={updateSettingsMutation.isPending}
-              className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
-              data-testid="button-save"
-            >
-              {updateSettingsMutation.isPending ? "Saving..." : "Save"}
-            </button>
-          )}
+          <div ref={saveButtonRef}>
+            {hasChanges && (
+              <button
+                onClick={saveSettings}
+                disabled={updateSettingsMutation.isPending}
+                className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
+                data-testid="button-save"
+              >
+                {updateSettingsMutation.isPending ? "Saving..." : "Save"}
+              </button>
+            )}
+          </div>
 
           <div className="pt-4">
             <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Account Management</p>
