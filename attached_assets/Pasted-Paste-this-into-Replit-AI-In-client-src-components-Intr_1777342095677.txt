@@ -1,0 +1,109 @@
+Paste this into Replit AI:
+
+In client/src/components/IntroTour.tsx, replace the slide content only. Do not change the useIntroTour() hook, the isOpen prop, the onClose handler, the localStorage key hasSeenIntroTour, the HelpMenu trigger, or the mount point in home.tsx. Only the slides array and their visual content changes.
+Replace whatever slides currently exist with exactly these 6 slides, keeping the existing slide rendering system intact:
+
+Slide 1 — Meet Rudy + What is Rude Reminders
+
+Rudy image: Rudy_arms_crossed_transparent.png centered, width 140px, with entrance animation on slide enter
+App logo above Rudy, width 52px, src from existing logo import already in the file
+Headline: "Meet Rudy. Your new accountability partner."
+Body: "He doesn't sugarcoat. He doesn't let you off the hook. Rude Reminders delivers blunt, funny, AI-generated reminders that actually get you moving."
+Speech bubble above Rudy styled like a chat bubble (white bg, black border 1.5px, red bold text #b70d0d, border-radius 12px, padding 8px 14px): "You said you'd do it. So do it."
+
+
+Slide 2 — Choose Your Weapon (Rudeness Levels)
+
+Rudy image: Rudy_pointing_transparent.png width 110px, entrance animation
+Headline: "Choose your weapon"
+Body: "Pick how hard Rudy comes at you. Dial up or down any time."
+5 rudeness pills stacked vertically, full width, each with emoji + label + example. Border-radius 12px, padding 8px 14px, font-size 13px, font-weight 600, margin-bottom 6px:
+
+bg #38BDF8 — "😊 Gentle — Hey, don't forget your workout!"
+bg #22C55E — "🙂 Motivational — Time to get moving, you've got this!"
+bg #FDE047 — "😏 Sarcastic — Oh wow, still haven't done it. Shocking."
+bg #F97316 — "😠 Harsh — Stop making excuses and just do it."
+bg #b70d0d text white — "🤬 Savage — You absolute couch potato. Get. Up. Now."
+
+
+
+
+Slide 3 — How to Create a Reminder
+
+Rudy image: Rudy_sitting_upright_transparent.png width 110px, entrance animation
+Headline: "Creating your first reminder"
+3 step cards, each: bg #FDF3E3, border 1.5px solid #C9A063, border-radius 12px, padding 10px 14px, margin-bottom 8px, display flex, align-items center, gap 12px:
+
+Gold number circle (bg #C9A063, color #111827, width 24px, height 24px, border-radius 50%, font-weight 700, font-size 13px, flex-shrink 0)
+Step text right of circle
+Step 1: "Type what you need to be reminded about"
+Step 2: "Open the book — choose your day and time"
+Step 3: "Set your rudeness level and tap Create Reminder"
+
+
+Body below: "That's it. Rudy handles the rest."
+
+
+Slide 4 — The Manage Page
+
+Rudy image: Rudy_thumbs_up_transparent.png width 110px, entrance animation
+Headline: "Your reminders, all in one place"
+Body: "The Manage tab shows every reminder you've set. Tap Done or Missed to log it. Every action feeds your habit streak."
+Mock card: bg white, border 1.5px solid #C9A063, border-radius 14px, padding 12px 16px, margin-top 12px:
+
+Row 1: "🏋️ Gym session" left, "Today 7:00 AM" center small gray text, green ✅ button right (bg #22C55E, color white, border-radius 20px, font-size 11px, padding 4px 10px, border none)
+Divider: 1px solid #F0E8D8
+Row 2: "💊 Take vitamins" left, "Today 9:00 AM" center small gray text, red button right (bg #b70d0d, color white, same style, text "Missed")
+Each row: display flex, align-items center, justify-content space-between, padding 6px 0
+
+
+
+
+Slide 5 — Analytics + 66-Day Science
+
+Rudy image: Rudy_sitting_upright_transparent.png width 110px, entrance animation
+Headline: "Watch yourself actually change"
+Body: "Science says 66 days builds a real habit (Phillippa Lally, UCL). The Analytics tab tracks every completion and miss."
+Gold stat block: bg #FDF3E3, border 1.5px solid #C9A063, border-radius 12px, padding 10px 16px, text "Day 1 → Day 66 → Automatic", font-size 13px, color #6B3410, font-weight 600, text-align center, margin-bottom 10px
+Mini fake graph — flex row, align-items flex-end, height 60px, gap 4px, margin-top 8px, border-bottom 2px solid #374151:
+
+7 columns, each flex:1, display flex, flex-direction column, justify-content flex-end
+Above-baseline bars (bg #C53B3B, border-radius 3px 3px 0 0): heights 20px, 30px, 0, 40px, 25px, 0, 35px
+For zero-height bars show a below-baseline indicator (bg #9CA3AF, border-radius 0 0 3px 3px): 0, 0, 15px, 0, 0, 20px, 0
+
+
+
+
+Slide 6 — Photos + Quotes (Premium)
+
+Rudy image: Rudy_arms_crossed_transparent.png width 110px, entrance animation
+Headline: "Make it personal"
+Body: "Premium unlocks photo attachments and motivational quotes added to every reminder."
+Two cards side by side, flex row, gap 10px, margin-top 12px:
+
+Card 1: bg #FDF3E3, border 1.5px solid #C9A063, border-radius 12px, padding 14px, flex:1, text-align center — 📷 font-size 26px — "Photo Attachments" font-size 13px font-weight 600 — "Attach a photo to make it impossible to ignore" font-size 11px color #6B7280
+Card 2: same style — 💬 — "Motivational Quotes" — "Words from history's greatest minds" font-size 11px color #6B7280
+
+
+Below cards: "Start free. Upgrade when you're ready." color #8E8E93, font-size 13px, text-align center, margin-top 10px
+This is the last slide — the Next button becomes "Get Started" and calls onClose() when tapped
+
+
+Entrance animation for Rudy images:
+Add this keyframe if it does not already exist in the file:
+css@keyframes rudyEntrance {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+Apply it to every Rudy <img> using a key prop equal to the current slide index so React remounts the image on each slide change and the animation replays fresh every time.
+
+Do not change:
+
+useIntroTour() hook
+hasSeenIntroTour localStorage key
+isOpen / onClose props
+The HelpMenu trigger
+The mount point in home.tsx
+Any other file
+
+Only the slide content inside IntroTour.tsx changes.
