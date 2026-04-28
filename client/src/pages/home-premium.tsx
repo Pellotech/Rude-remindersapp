@@ -38,6 +38,7 @@ import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
+import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder } from "@shared/schema";
@@ -301,11 +302,14 @@ export default function HomePremium() {
 
 
 
+  const { showIntro, closeIntro } = useIntroTour();
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      <IntroTour isOpen={showIntro} onClose={closeIntro} />
       <MotivationalPopup
         userName={user?.firstName || user?.username || "there"}
-        blocked={!!(currentReminder && showRichNotification)}
+        blocked={showIntro || !!(currentReminder && showRichNotification)}
       />
       <Navigation />
 

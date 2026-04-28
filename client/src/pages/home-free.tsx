@@ -29,6 +29,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyWidget from "@/components/RudyWidget";
+import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -268,8 +269,11 @@ export default function HomeFree() {
 
 
 
+  const { showIntro, closeIntro } = useIntroTour();
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
+      <IntroTour isOpen={showIntro} onClose={closeIntro} />
       <Navigation />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">

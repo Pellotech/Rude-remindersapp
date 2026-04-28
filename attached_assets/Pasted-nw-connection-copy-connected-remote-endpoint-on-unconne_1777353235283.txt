@@ -1,0 +1,115 @@
+nw_connection_copy_connected_remote_endpoint on unconnected nw_connection
+SplashScreen.hideSplash: SplashScreen was automatically hidden after default timeout. You should call `SplashScreen.hide()` as soon as your web app is loaded (or increase the timeout). Read more at https://capacitorjs.com/docs/apis/splash-screen#hiding-the-splash-screen
+⚡️  TO JS {"display":"denied"}
+⚡️  [warn] - ⚠️ Notification permissions denied: denied
+⚡️  To Native ->  LocalNotifications removeAllListeners 8267055
+⚡️  TO JS undefined
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Reporter disconnected. { function=sendMessage, reporterID=97899484545027 }
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x132b381e0 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x132a72c00.width == _UIButtonBarButton:0x132987700.width   (active)>",
+    "<NSLayoutConstraint:0x132b38320 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x132b30380]   (active, names: '|':_UIButtonBarButton:0x132987700 )>",
+    "<NSLayoutConstraint:0x132b38370 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x132b30380]-(8)-|   (active, names: '|':_UIButtonBarButton:0x132987700 )>",
+    "<NSLayoutConstraint:0x132b388c0 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x132a72c00.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x132b38370 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x132b30380]-(8)-|   (active, names: '|':_UIButtonBarButton:0x132987700 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x132b38d20 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x132a73000.width == _UIButtonBarButton:0x132987c00.width   (active)>",
+    "<NSLayoutConstraint:0x132b38e60 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x132b30700]   (active, names: '|':_UIButtonBarButton:0x132987c00 )>",
+    "<NSLayoutConstraint:0x132b38eb0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x132b30700]-(8)-|   (active, names: '|':_UIButtonBarButton:0x132987c00 )>",
+    "<NSLayoutConstraint:0x132b39360 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x132a73000.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x132b38eb0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x132b30700]-(8)-|   (active, names: '|':_UIButtonBarButton:0x132987c00 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+Unable to simultaneously satisfy constraints.
+	Probably at least one of the constraints in the following list is one you don't want. 
+	Try this: 
+		(1) look at each constraint and try to figure out which you don't expect; 
+		(2) find the code that added the unwanted constraint or constraints and fix it. 
+(
+    "<NSLayoutConstraint:0x132b39770 _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x132a73400.width == _UIButtonBarButton:0x132968280.width   (active)>",
+    "<NSLayoutConstraint:0x132b39860 'IB_Leading_Leading' H:|-(8)-[_UIModernBarButton:0x132b30a80]   (active, names: '|':_UIButtonBarButton:0x132968280 )>",
+    "<NSLayoutConstraint:0x132b398b0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x132b30a80]-(8)-|   (active, names: '|':_UIButtonBarButton:0x132968280 )>",
+    "<NSLayoutConstraint:0x132b39d60 'UIView-Encapsulated-Layout-Width' _TtC5UIKitP33_DDE14AA6B49FCAFC5A54255A118E1D8713ButtonWrapper:0x132a73400.width == 0   (active)>"
+)
+
+Will attempt to recover by breaking constraint 
+<NSLayoutConstraint:0x132b398b0 'IB_Trailing_Trailing' H:[_UIModernBarButton:0x132b30a80]-(8)-|   (active, names: '|':_UIButtonBarButton:0x132968280 )>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 4055C888-0E71-46EA-BA8F-8E72B75D6F18
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 4055C888-0E71-46EA-BA8F-8E72B75D6F18
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+The variant selector cell index number could not be found.
+⚡️  To Native ->  Preferences set 8267056
+⚡️  [log] - LOGIN response.ok: true
+⚡️  [log] - LOGIN data: {"success":true,"message":"Logged in successfully","authToken":"e7f870860dd60f9134b038ec5e3d33aeec620219819534b7fbfda36d68cc1921","user":{"id":"local_1768724223377_tx9790aro","email":"loqvm1@gmail.com","firstName":"Mohammed","lastName":"Wenn","subscriptionStatus":"active","subscriptionPlan":"premium","isPremium":true}}
+⚡️  [log] - SAVING authToken to Preferences: exists
+⚡️  TO JS undefined
+⚡️  [log] - 🔑 Auth token saved to native storage
+⚡️  [log] - 📱 Global notification listener registered
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  [log] - [AdMob] Ad action count: 0 | showInterstitialOnAction=false | isPremium=true
+⚡️  To Native ->  LocalNotifications addListener 8267057
+⚡️  To Native ->  LocalNotifications addListener 8267058
+⚡️  To Native ->  AdMob initialize 8267059
+⚡️  TO JS {}
+⚡️  [log] - AdMob initialized successfully
+⚡️  To Native ->  AdMob showBanner 8267060
+AdMob: find subView
+⚡️  TO JS {}
+⚡️  [log] - Banner ad shown successfully (margin: 0px)
+⚡️  [log] - Disconnected from WebSocket
+bannerViewDidReceiveAd
+Error acquiring assertion: <Error Domain=RBSServiceErrorDomain Code=1 "((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))" UserInfo={NSLocalizedFailureReason=((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))}>
+0x117154600 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'WebProcess NearSuspended Assertion' for process with PID=22804, error: (null)
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  [log] - [home-premium] fireEvent: analytics_this_week
+⚡️  [log] - Rudy nudge fired: analytics_this_week 1
+⚡️  [log] - fireReaction called: A week of data. You're already building something. | visible: false | force: false
+⚡️  To Native ->  LocalNotifications removeAllListeners 8267061
+⚡️  TO JS undefined
+⚡️  [log] - Rudy nudge fired: analytics_this_week 1
+⚡️  [log] - fireReaction called: Seven days in. Every streak starts here. | visible: false | force: false
+⚡️  [log] - Rudy nudge fired: analytics_this_week 1
+⚡️  [log] - fireReaction called: Seven days in. Every streak starts here. | visible: false | force: false
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x125a2ccc0 {Error Domain=RBSRequestErrorDomain Code=3 "No such process found" UserInfo={NSLocalizedFailureReason=No such process found}}}
+⚡️  [log] - [home-premium] fireEvent: analytics_10_weeks
+⚡️  [log] - Rudy nudge fired: analytics_10_weeks 2
