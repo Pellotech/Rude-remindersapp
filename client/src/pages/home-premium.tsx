@@ -443,158 +443,6 @@ export default function HomePremium() {
                 >✕</button>
               </div>
             )}
-            {/* ── 66-DAY PROGRESS + LEVEL CARDS ── */}
-            {(() => {
-              const allReminders = reminders as any[];
-              const firstReminderDate = allReminders.length > 0
-                ? new Date(Math.min(...allReminders.map((r: any) => new Date(r.scheduledFor || r.createdAt).getTime())))
-                : null;
-              const daysActive = firstReminderDate
-                ? Math.min(66, Math.floor((Date.now() - firstReminderDate.getTime()) / (1000 * 60 * 60 * 24)))
-                : 0;
-              const progressPct = Math.round((daysActive / 66) * 100);
-              const ringCircumference = 2 * Math.PI * 18;
-
-              const getHabitLevel = (days: number) => {
-                if (days >= 66) return { label: 'Champion',      emoji: '🏆', color: '#C9A063', next: null as string | null,  nextAt: 66 };
-                if (days >= 45) return { label: 'Habit Builder', emoji: '⚡', color: '#F97316', next: 'Champion' as string | null,    nextAt: 66 };
-                if (days >= 21) return { label: 'Consistent',    emoji: '🔥', color: '#C53B3B', next: 'Habit Builder' as string | null, nextAt: 45 };
-                if (days >= 7)  return { label: 'Getting There', emoji: '💪', color: '#22C55E', next: 'Consistent' as string | null,  nextAt: 21 };
-                return            { label: 'Rookie',             emoji: '🌱', color: '#38BDF8', next: 'Getting There' as string | null, nextAt: 7 };
-              };
-              const level = getHabitLevel(daysActive);
-              const prevAtMap: Record<string, number> = { Rookie: 0, 'Getting There': 7, Consistent: 21, 'Habit Builder': 45, Champion: 66 };
-              const prevAt = prevAtMap[level.label] ?? 0;
-              const levelPct = level.next
-                ? Math.max(0, Math.min(100, Math.round(((daysActive - prevAt) / (level.nextAt - prevAt)) * 100)))
-                : 100;
-
-              const currentData: any[] = (graphData as any)?.[graphTab] ?? [];
-              const totalNet = currentData.reduce((sum: number, pt: any) => sum + (pt.completed ?? 0) + (pt.incomplete ?? 0), 0);
-              const hasData = currentData.some((pt: any) => (pt.completed ?? 0) !== 0 || (pt.incomplete ?? 0) !== 0);
-
-              let msg = "Every expert was once a beginner. Set your first reminder! 💪";
-              if (graphTab === "week") {
-                if (!hasData) msg = "Every expert was once a beginner. Set your first reminder! 💪";
-                else if (totalNet > 0) msg = "Strong week! You're above the line 🔥";
-                else if (totalNet === 0) msg = "Balanced week — push for more completions 🎯";
-                else msg = "Tough week — tomorrow is a fresh start 💪";
-              } else if (graphTab === "tenWeeks") {
-                const weeksActive = firstReminderDate
-                  ? Math.floor((Date.now() - firstReminderDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
-                  : 0;
-                if (!hasData || weeksActive < 1) msg = "Every expert was once a beginner. Set your first reminder! 💪";
-                else if (weeksActive < 5) msg = "You're in the early stages — consistency is everything right now 🌱";
-                else if (weeksActive < 10) msg = "You're approaching the habit formation zone — science says day 66 is where it clicks! 🔥";
-                else msg = "You've hit the 10 week mark — your habits are starting to form automatically ⚡";
-              } else {
-                const monthsActive = firstReminderDate
-                  ? Math.floor((Date.now() - firstReminderDate.getTime()) / (30 * 24 * 60 * 60 * 1000))
-                  : 0;
-                if (!hasData || monthsActive < 1) msg = "Every journey starts with a single step. You're building something real 🌱";
-                else if (monthsActive < 3) msg = "Every journey starts with a single step. You're building something real 🌱";
-                else if (monthsActive < 6) msg = "3+ months of accountability. You're in the top 20% of people who stick with it 💪";
-                else if (monthsActive < 9) msg = "Half a year of showing up. Your habits are genuinely changing who you are 👑";
-                else if (monthsActive < 12) msg = "Almost a full year. You've built something most people only dream about 🏆";
-                else msg = "One full year. You ARE the habit 🎯";
-              }
-
-              return (
-                <>
-                  {/* 66-day progress card */}
-                  <div style={{
-                    background: '#FDF3E3',
-                    border: '1.5px solid #C9A063',
-                    borderRadius: 12,
-                    padding: '10px 14px',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: '#6B3410' }}>66-Day Habit Challenge</span>
-                        <span style={{ fontSize: 11, color: '#C9A063' }}>Day {daysActive} of 66</span>
-                      </div>
-                      <svg width="44" height="44" viewBox="0 0 44 44">
-                        <circle cx="22" cy="22" r="18" fill="none" stroke="#E5E7EB" strokeWidth="4" />
-                        <circle
-                          cx="22" cy="22" r="18" fill="none"
-                          stroke="#C9A063" strokeWidth="4"
-                          strokeLinecap="round"
-                          strokeDasharray={`${ringCircumference}`}
-                          strokeDashoffset={`${ringCircumference * (1 - progressPct / 100)}`}
-                          transform="rotate(-90 22 22)"
-                          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
-                        />
-                        <text x="22" y="26" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6B3410">
-                          {progressPct}%
-                        </text>
-                      </svg>
-                    </div>
-                    <div style={{
-                      height: 6,
-                      borderRadius: 3,
-                      background: '#E5E7EB',
-                      marginTop: 8,
-                      overflow: 'hidden',
-                    }}>
-                      <div style={{
-                        height: '100%',
-                        width: `${progressPct}%`,
-                        background: 'linear-gradient(to right, #C9A063, #C53B3B)',
-                        borderRadius: 3,
-                        transition: 'width 0.6s ease',
-                      }} />
-                    </div>
-                  </div>
-
-                  {/* Level / motivation card */}
-                  <div style={{
-                    background: 'white',
-                    border: `1.5px solid ${level.color}`,
-                    borderRadius: 12,
-                    padding: '12px 14px',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 16, fontWeight: 700, color: level.color }}>
-                        {level.emoji} {level.label}
-                      </span>
-                      <span style={{
-                        background: `${level.color}26`,
-                        color: level.color,
-                        borderRadius: 20,
-                        padding: '2px 10px',
-                        fontSize: 11,
-                        fontWeight: 600,
-                      }}>
-                        Day {daysActive}
-                      </span>
-                    </div>
-                    <p style={{ fontSize: 13, color: '#374151', marginTop: 6, marginBottom: 0 }}>{msg}</p>
-                    {level.next && (
-                      <>
-                        <div style={{
-                          height: 4,
-                          borderRadius: 2,
-                          background: '#E5E7EB',
-                          marginTop: 10,
-                          overflow: 'hidden',
-                        }}>
-                          <div style={{
-                            height: '100%',
-                            width: `${levelPct}%`,
-                            background: level.color,
-                            borderRadius: 2,
-                            transition: 'width 0.6s ease',
-                          }} />
-                        </div>
-                        <p style={{ fontSize: 10, color: '#9CA3AF', marginTop: 4, marginBottom: 0 }}>
-                          {levelPct}% to {level.next}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </>
-              );
-            })()}
 
             {/* ── COMPLETION GRAPH ── */}
             <Card className="border border-[#C9A063] bg-[#FDF3E3]">
@@ -754,6 +602,158 @@ export default function HomePremium() {
                 </div>
               </CardContent>
             </Card>
+            {/* ── 66-DAY PROGRESS + LEVEL CARDS ── */}
+            {(() => {
+              const allReminders = reminders as any[];
+              const firstReminderDate = allReminders.length > 0
+                ? new Date(Math.min(...allReminders.map((r: any) => new Date(r.scheduledFor || r.createdAt).getTime())))
+                : null;
+              const daysActive = firstReminderDate
+                ? Math.min(66, Math.floor((Date.now() - firstReminderDate.getTime()) / (1000 * 60 * 60 * 24)))
+                : 0;
+              const progressPct = Math.round((daysActive / 66) * 100);
+              const ringCircumference = 2 * Math.PI * 18;
+
+              const getHabitLevel = (days: number) => {
+                if (days >= 66) return { label: 'Champion',      emoji: '🏆', color: '#C9A063', next: null as string | null,  nextAt: 66 };
+                if (days >= 45) return { label: 'Habit Builder', emoji: '⚡', color: '#F97316', next: 'Champion' as string | null,    nextAt: 66 };
+                if (days >= 21) return { label: 'Consistent',    emoji: '🔥', color: '#C53B3B', next: 'Habit Builder' as string | null, nextAt: 45 };
+                if (days >= 7)  return { label: 'Getting There', emoji: '💪', color: '#22C55E', next: 'Consistent' as string | null,  nextAt: 21 };
+                return            { label: 'Rookie',             emoji: '🌱', color: '#38BDF8', next: 'Getting There' as string | null, nextAt: 7 };
+              };
+              const level = getHabitLevel(daysActive);
+              const prevAtMap: Record<string, number> = { Rookie: 0, 'Getting There': 7, Consistent: 21, 'Habit Builder': 45, Champion: 66 };
+              const prevAt = prevAtMap[level.label] ?? 0;
+              const levelPct = level.next
+                ? Math.max(0, Math.min(100, Math.round(((daysActive - prevAt) / (level.nextAt - prevAt)) * 100)))
+                : 100;
+
+              const currentData: any[] = (graphData as any)?.[graphTab] ?? [];
+              const totalNet = currentData.reduce((sum: number, pt: any) => sum + (pt.completed ?? 0) + (pt.incomplete ?? 0), 0);
+              const hasData = currentData.some((pt: any) => (pt.completed ?? 0) !== 0 || (pt.incomplete ?? 0) !== 0);
+
+              let msg = "Every expert was once a beginner. Set your first reminder! 💪";
+              if (graphTab === "week") {
+                if (!hasData) msg = "Every expert was once a beginner. Set your first reminder! 💪";
+                else if (totalNet > 0) msg = "Strong week! You're above the line 🔥";
+                else if (totalNet === 0) msg = "Balanced week — push for more completions 🎯";
+                else msg = "Tough week — tomorrow is a fresh start 💪";
+              } else if (graphTab === "tenWeeks") {
+                const weeksActive = firstReminderDate
+                  ? Math.floor((Date.now() - firstReminderDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
+                  : 0;
+                if (!hasData || weeksActive < 1) msg = "Every expert was once a beginner. Set your first reminder! 💪";
+                else if (weeksActive < 5) msg = "You're in the early stages — consistency is everything right now 🌱";
+                else if (weeksActive < 10) msg = "You're approaching the habit formation zone — science says day 66 is where it clicks! 🔥";
+                else msg = "You've hit the 10 week mark — your habits are starting to form automatically ⚡";
+              } else {
+                const monthsActive = firstReminderDate
+                  ? Math.floor((Date.now() - firstReminderDate.getTime()) / (30 * 24 * 60 * 60 * 1000))
+                  : 0;
+                if (!hasData || monthsActive < 1) msg = "Every journey starts with a single step. You're building something real 🌱";
+                else if (monthsActive < 3) msg = "Every journey starts with a single step. You're building something real 🌱";
+                else if (monthsActive < 6) msg = "3+ months of accountability. You're in the top 20% of people who stick with it 💪";
+                else if (monthsActive < 9) msg = "Half a year of showing up. Your habits are genuinely changing who you are 👑";
+                else if (monthsActive < 12) msg = "Almost a full year. You've built something most people only dream about 🏆";
+                else msg = "One full year. You ARE the habit 🎯";
+              }
+
+              return (
+                <>
+                  {/* 66-day progress card */}
+                  <div style={{
+                    background: '#FDF3E3',
+                    border: '1.5px solid #C9A063',
+                    borderRadius: 12,
+                    padding: '10px 14px',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#6B3410' }}>66-Day Habit Challenge</span>
+                        <span style={{ fontSize: 11, color: '#C9A063' }}>Day {daysActive} of 66</span>
+                      </div>
+                      <svg width="44" height="44" viewBox="0 0 44 44">
+                        <circle cx="22" cy="22" r="18" fill="none" stroke="#E5E7EB" strokeWidth="4" />
+                        <circle
+                          cx="22" cy="22" r="18" fill="none"
+                          stroke="#C9A063" strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeDasharray={`${ringCircumference}`}
+                          strokeDashoffset={`${ringCircumference * (1 - progressPct / 100)}`}
+                          transform="rotate(-90 22 22)"
+                          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+                        />
+                        <text x="22" y="26" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6B3410">
+                          {progressPct}%
+                        </text>
+                      </svg>
+                    </div>
+                    <div style={{
+                      height: 6,
+                      borderRadius: 3,
+                      background: '#E5E7EB',
+                      marginTop: 8,
+                      overflow: 'hidden',
+                    }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${progressPct}%`,
+                        background: 'linear-gradient(to right, #C9A063, #C53B3B)',
+                        borderRadius: 3,
+                        transition: 'width 0.6s ease',
+                      }} />
+                    </div>
+                  </div>
+
+                  {/* Level / motivation card */}
+                  <div style={{
+                    background: 'white',
+                    border: `1.5px solid ${level.color}`,
+                    borderRadius: 12,
+                    padding: '12px 14px',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: level.color }}>
+                        {level.emoji} {level.label}
+                      </span>
+                      <span style={{
+                        background: `${level.color}26`,
+                        color: level.color,
+                        borderRadius: 20,
+                        padding: '2px 10px',
+                        fontSize: 11,
+                        fontWeight: 600,
+                      }}>
+                        Day {daysActive}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: 13, color: '#374151', marginTop: 6, marginBottom: 0 }}>{msg}</p>
+                    {level.next && (
+                      <>
+                        <div style={{
+                          height: 4,
+                          borderRadius: 2,
+                          background: '#E5E7EB',
+                          marginTop: 10,
+                          overflow: 'hidden',
+                        }}>
+                          <div style={{
+                            height: '100%',
+                            width: `${levelPct}%`,
+                            background: level.color,
+                            borderRadius: 2,
+                            transition: 'width 0.6s ease',
+                          }} />
+                        </div>
+                        <p style={{ fontSize: 10, color: '#9CA3AF', marginTop: 4, marginBottom: 0 }}>
+                          {levelPct}% to {level.next}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
 
             {/* ── STATS GRID ── */}
             <div className="grid grid-cols-2 gap-3">
