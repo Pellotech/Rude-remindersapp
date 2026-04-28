@@ -479,10 +479,17 @@ export default function HomePremium() {
               <CardContent className="px-2 pb-1">
                 <p className="text-[10px] text-gray-400 text-center mb-1">Gold = perfect day · Red = completed · Grey = missed</p>
                 {(() => {
-                  const pts = ((graphData as any)?.[graphTab] ?? []).map((pt: any) => ({
-                    ...pt,
-                    net: (pt.completed ?? 0) + (pt.incomplete ?? 0),
-                  }));
+                  const pts = ((graphData as any)?.[graphTab] ?? []).map((pt: any) => {
+                    const completed = pt.completed ?? 0;
+                    const missed = Math.abs(pt.incomplete ?? 0);
+                    let net = completed + (pt.incomplete ?? 0);
+                    // Ensure any active period renders a visible bar
+                    // (a true net of 0 with activity would otherwise be invisible)
+                    if (net === 0 && (completed > 0 || missed > 0)) {
+                      net = completed >= missed ? 0.4 : -0.4;
+                    }
+                    return { ...pt, net };
+                  });
                   const currentMonthAbbrev = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][new Date().getMonth()];
                   const needsScroll = graphTab !== "week";
                   const chartWidth = Math.max(320, pts.length * 48);
