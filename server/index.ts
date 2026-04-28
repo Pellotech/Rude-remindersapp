@@ -93,6 +93,10 @@ app.use((req, res, next) => {
  * This is safe to run on every startup — it skips reminders already logged.
  */
 async function backfillReminderEvents() {
+  // CRITICAL: reminder_events is the permanent analytics record.
+  // NEVER insert an event without first checking it doesn't already exist.
+  // Dedup key format: `${reminderId}:${action}` — must match exactly.
+  // Never auto-delete from this table. Never re-run backfill without dedup check.
   try {
     // Get all (reminderId, action) pairs already in the event log so we don't re-insert
     const existingEvents = await db
