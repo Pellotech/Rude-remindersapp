@@ -19,8 +19,9 @@ import {
   HelpCircle,
 } from "lucide-react";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -486,7 +487,7 @@ export default function HomePremium() {
                   const chartWidth = Math.max(320, pts.length * 48);
                   const margin = { top: 8, right: 12, left: -16, bottom: 0 };
                   const chartInternals = (w: number | undefined) => (
-                    <LineChart width={w} height={290} data={pts} margin={margin}>
+                    <BarChart width={w} height={290} data={pts} margin={margin}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
                       <XAxis
                         dataKey="name"
@@ -548,20 +549,19 @@ export default function HomePremium() {
                           );
                         }}
                       />
-                      <Line
-                        type="monotone"
+                      <Bar
                         dataKey="net"
-                        stroke="#C53B3B"
-                        strokeWidth={2.5}
-                        dot={(props: any) => {
-                          const { cx, cy, payload } = props;
-                          const color = payload.net >= 0 ? "#C53B3B" : "#9CA3AF";
-                          return <circle key={`dot-${cx}-${cy}`} cx={cx} cy={cy} r={3} fill={color} stroke={color} />;
-                        }}
-                        activeDot={{ r: 5, fill: "#C53B3B" }}
-                        name="net"
-                      />
-                    </LineChart>
+                        radius={[4, 4, 0, 0]}
+                        maxBarSize={10}
+                      >
+                        {pts.map((entry: any, index: number) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.net >= 0 ? '#C53B3B' : '#9CA3AF'}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
                   );
                   if (needsScroll) {
                     return (
