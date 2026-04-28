@@ -3,7 +3,7 @@ import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 const STORAGE_KEY_INDEX = "rudeReminders_motivationalIndex";
 const STORAGE_KEY_LAST_SHOWN = "rudeReminders_lastMotivationalShown";
-const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 const MESSAGES: Array<(name: string) => string> = [
   () =>
@@ -52,7 +52,7 @@ export function MotivationalPopup({
     const shouldShow =
       forceShow ||
       !lastShown ||
-      Date.now() - parseInt(lastShown, 10) >= TWO_DAYS_MS;
+      Date.now() - parseInt(lastShown, 10) >= THREE_DAYS_MS;
 
     if (shouldShow) {
       setPendingShow(true);
