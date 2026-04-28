@@ -569,7 +569,7 @@ export default function HomePremium() {
                       <Bar
                         dataKey="net"
                         radius={[4, 4, 0, 0]}
-                        maxBarSize={13}
+                        maxBarSize={15}
                       >
                         {pts.map((entry: any, index: number) => (
                           <Cell
