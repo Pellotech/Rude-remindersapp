@@ -1,0 +1,88 @@
+In client/src/pages/home-premium.tsx, improve the Analytics tab only. Do not touch any other tab, any other component, or any data fetching logic. All existing data (graphData, reminders, stats) is already available — do not add new API calls.
+
+Change 1 — Smarter bar colours
+Find the <Bar> with <Cell> inside the chart. Currently all positive bars are red and all negative are grey. Replace the colour logic with this 3-tier system:
+tsconst getBarColor = (entry: any) => {
+  const completed = entry.completed ?? 0;
+  const missed = Math.abs(entry.incomplete ?? 0);
+  if (completed > 0 && missed === 0) return '#C9A063'; // gold — perfect day
+  if (completed > 0) return '#C53B3B';                 // red — completed but had misses
+  if (missed > 0) return '#9CA3AF';                    // grey — all missed
+  return '#E5E7EB';                                    // light grey — no data
+};
+Apply it in the <Cell> fill: fill={getBarColor(entry)}
+Add a small colour legend directly below the chart, inline, left-aligned, font-size 10px, color #9CA3AF, gap 10px:
+🟡 Perfect  🔴 Completed  ⚪ Missed
+Also update the subtitle text from "Line rises when you complete, drops when you miss" to "Gold = perfect day · Red = completed · Grey = missed"
+
+Change 2 — 66-day progress bar (compact, above the graph card)
+Calculate days active from the earliest reminder date:
+tsconst allReminders = reminders as any[];
+const firstReminderDate = allReminders.length > 0
+  ? new Date(Math.min(...allReminders.map((r: any) => new Date(r.scheduledFor || r.createdAt).getTime())))
+  : null;
+const daysActive = firstReminderDate
+  ? Math.min(66, Math.floor((Date.now() - firstReminderDate.getTime()) / (1000 * 60 * 60 * 24)))
+  : 0;
+const progressPct = Math.round((daysActive / 66) * 100);
+Render this compact block directly ABOVE the graph <Card>, inside the analytics <TabsContent>:
+bg: #FDF3E3, border: 1.5px solid #C9A063, border-radius: 12px, padding: 10px 14px
+Layout — single row, space-between, align-items center:
+Left side:
+
+"66-Day Habit Challenge" — font-size 12px, font-weight 600, color #6B3410
+"Day {daysActive} of 66" — font-size 11px, color #C9A063
+
+Right side: circular progress ring using inline SVG, size 44px:
+tsx<svg width="44" height="44" viewBox="0 0 44 44">
+  <circle cx="22" cy="22" r="18" fill="none" stroke="#E5E7EB" strokeWidth="4" />
+  <circle
+    cx="22" cy="22" r="18" fill="none"
+    stroke="#C9A063" strokeWidth="4"
+    strokeLinecap="round"
+    strokeDasharray={`${2 * Math.PI * 18}`}
+    strokeDashoffset={`${2 * Math.PI * 18 * (1 - progressPct / 100)}`}
+    transform="rotate(-90 22 22)"
+    style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+  />
+  <text x="22" y="26" textAnchor="middle" fontSize="10" fontWeight="700" fill="#6B3410">
+    {progressPct}%
+  </text>
+</svg>
+Below the row, a full-width progress bar:
+height: 6px, border-radius: 3px
+background track: #E5E7EB
+fill: linear-gradient(to right, #C9A063, #C53B3B)
+width: {progressPct}%
+transition: width 0.6s ease
+
+Change 3 — Motivational level-up system
+Define levels based on daysActive:
+tsconst getHabitLevel = (days: number) => {
+  if (days >= 66) return { label: 'Champion',      emoji: '🏆', color: '#C9A063', next: null,        nextAt: 66  };
+  if (days >= 45) return { label: 'Habit Builder', emoji: '⚡', color: '#F97316', next: 'Champion',   nextAt: 66  };
+  if (days >= 21) return { label: 'Consistent',    emoji: '🔥', color: '#C53B3B', next: 'Habit Builder', nextAt: 45 };
+  if (days >= 7)  return { label: 'Getting There', emoji: '💪', color: '#22C55E', next: 'Consistent', nextAt: 21  };
+  return           { label: 'Rookie',              emoji: '🌱', color: '#38BDF8', next: 'Getting There', nextAt: 7 };
+};
+const level = getHabitLevel(daysActive);
+Replace the existing dynamic motivation message card (the one that shows msg) with this enhanced version:
+bg: white, border: 1.5px solid {level.color}, border-radius: 12px, padding: 12px 14px
+Layout:
+
+Top row: {level.emoji} {level.label} — font-size 16px, font-weight 700, color {level.color} on left. Small badge on right: bg {level.color} at 15% opacity, color {level.color}, border-radius 20px, padding 2px 10px, font-size 11px, font-weight 600: "Day {daysActive}"
+Middle: the existing dynamic msg text — font-size 13px, color #374151, margin-top 6px
+Bottom (only if level.next exists): thin progress bar showing progress to next level, height 4px, border-radius 2px, track #E5E7EB, fill {level.color}:
+
+ts  const prevAt = /* days at start of current level */
+  const levelPct = Math.round(((daysActive - prevAt) / (level.nextAt - prevAt)) * 100);
+Below bar: "{levelPct}% to {level.next}" — font-size 10px, color #9CA3AF, margin-top 4px
+The prevAt values per level:
+
+Rookie: 0, Getting There: 7, Consistent: 21, Habit Builder: 45, Champion: 66
+
+
+Change 4 — Keep layout tight (no scroll needed for key info)
+The 66-day bar and level card must sit ABOVE the graph card in the JSX order. The stats grid stays below as it is. No new API calls. No new npm packages. No changes to any other tab or component.
+Also update the CardContent subtitle text on the graph to reflect the new bar colours as noted in Change 1.
+Do not change anything else.
