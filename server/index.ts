@@ -94,9 +94,15 @@ app.use((req, res, next) => {
  */
 async function backfillReminderEvents() {
   try {
-    // Get all reminderId values already in the event log
-    const existingEvents = await db.select({ reminderId: reminderEvents.reminderId }).from(reminderEvents);
-    const alreadyLogged = new Set(existingEvents.map(e => e.reminderId).filter(Boolean));
+    // Get all (reminderId, action) pairs already in the event log so we don't re-insert
+    const existingEvents = await db
+      .select({ reminderId: reminderEvents.reminderId, action: reminderEvents.action })
+      .from(reminderEvents);
+    const alreadyLogged = new Set(
+      existingEvents
+        .filter(e => e.reminderId)
+        .map(e => `${e.reminderId}:${e.action}`)
+    );
 
     // Find completed reminders not yet in the event log
     const completedRows = await db
