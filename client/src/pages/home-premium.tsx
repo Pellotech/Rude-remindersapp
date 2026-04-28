@@ -542,6 +542,7 @@ export default function HomePremium() {
                       />
                       <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
                       <Tooltip
+                        cursor={false}
                         content={({ active, payload, label }: any) => {
                           if (!active || !payload?.[0]) return null;
                           const pt = payload[0].payload;
