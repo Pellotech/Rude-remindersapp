@@ -1068,8 +1068,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const now = new Date();
 
-      const clamp = (n: number) => Math.max(-6, Math.min(6, n));
-
       // Count 'missed' events whose scheduledFor falls in [start, end]
       const countIncomplete = (start: Date, end: Date) =>
         missedEvents.filter(e => {
@@ -1085,8 +1083,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }).length;
 
       const makePoint = (name: string, start: Date, end: Date) => {
-        const done = clamp(countCompleted(start, end));
-        const missed = clamp(countIncomplete(start, end));
+        const done = countCompleted(start, end);
+        const missed = countIncomplete(start, end);
         return { name, completed: done, incomplete: -missed };
       };
 

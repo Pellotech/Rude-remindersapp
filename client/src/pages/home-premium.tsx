@@ -481,7 +481,7 @@ export default function HomePremium() {
                 </div>
               </CardHeader>
               <CardContent className="px-2 pb-1">
-                <p className="text-[10px] text-gray-400 text-center mb-1">Gold = perfect day · Red = completed · Grey = missed</p>
+                <p className="text-[10px] text-gray-400 text-center mb-1">Blue = positive day · Red = missed day</p>
                 {(() => {
                   const pts = ((graphData as any)?.[graphTab] ?? []).map((pt: any) => {
                     const completed = pt.completed ?? 0;
@@ -499,13 +499,17 @@ export default function HomePremium() {
                   const chartWidth = Math.max(320, pts.length * 48);
                   const margin = { top: 8, right: 12, left: -16, bottom: 0 };
                   const getBarColor = (entry: any) => {
-                    const completed = entry.completed ?? 0;
-                    const missed = Math.abs(entry.incomplete ?? 0);
-                    if (completed > 0 && missed === 0) return '#C9A063';
-                    if (completed > 0) return '#C53B3B';
-                    if (missed > 0) return '#9CA3AF';
+                    // Positive net (more completed than missed) → blue
+                    // Negative or zero net with activity → red
+                    if (entry.net > 0) return '#0025CC';
+                    if (entry.net < 0) return '#C53B3B';
                     return '#E5E7EB';
                   };
+                  // Compute dynamic Y-axis bounds so bars are no longer capped at 6
+                  const maxCompleted = Math.max(0, ...pts.map((p: any) => p.completed ?? 0));
+                  const maxMissed = Math.max(0, ...pts.map((p: any) => Math.abs(p.incomplete ?? 0)));
+                  const yTop = Math.max(6, Math.ceil(maxCompleted * 1.1));
+                  const yBottom = -Math.max(4, Math.ceil(maxMissed * 1.1));
                   const chartInternals = (w: number | undefined) => (
                     <BarChart width={w} height={290} data={pts} margin={margin}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
@@ -546,8 +550,7 @@ export default function HomePremium() {
                         height={36}
                       />
                       <YAxis
-                        domain={[-4, 6]}
-                        ticks={[-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]}
+                        domain={[yBottom, yTop]}
                         allowDecimals={false}
                         tick={{ fontSize: 9, fill: "#9CA3AF" }}
                       />
@@ -608,9 +611,14 @@ export default function HomePremium() {
                   paddingTop: 4,
                   paddingBottom: 2,
                 }}>
-                  <span>🟡 Perfect</span>
-                  <span>🔴 Completed</span>
-                  <span>⚪ Missed</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#0025CC', display: 'inline-block' }} />
+                    Positive
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#C53B3B', display: 'inline-block' }} />
+                    Missed
+                  </span>
                 </div>
               </CardContent>
             </Card>
