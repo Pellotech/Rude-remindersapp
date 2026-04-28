@@ -668,7 +668,7 @@ export default function HomePremium() {
 
               return (
                 <>
-                  {/* 66-day progress card */}
+                  {/* 66-day progress card — HIDDEN, saved for later
                   <div style={{
                     background: '#FDF3E3',
                     border: '1.5px solid #C9A063',
@@ -712,6 +712,7 @@ export default function HomePremium() {
                       }} />
                     </div>
                   </div>
+                  */}
 
                   {/* Level / motivation card */}
                   <div style={{
