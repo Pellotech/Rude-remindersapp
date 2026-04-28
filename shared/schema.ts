@@ -4,6 +4,7 @@ import {
   jsonb,
   pgTable,
   timestamp,
+  uniqueIndex,
   varchar,
   text,
   integer,
@@ -123,6 +124,7 @@ export const reminderEvents = pgTable("reminder_events", {
 }, (table) => [
   index("IDX_reminder_events_user").on(table.userId),
   index("IDX_reminder_events_reminder").on(table.reminderId),
+  uniqueIndex("reminder_events_reminder_action_unique").on(table.reminderId, table.action),
 ]);
 
 // Auth tokens for mobile authentication (cross-origin cookie workaround)

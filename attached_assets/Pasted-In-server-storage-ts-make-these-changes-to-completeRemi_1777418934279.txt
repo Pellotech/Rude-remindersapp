@@ -1,0 +1,64 @@
+In server/storage.ts, make these changes to completeReminder, markReminderNotAccomplished, and logReminderEvent. Do not change any other logic, return values, or other functions in the file.
+Change 1 — Add warning comment to all 3 functions
+At the top of each of the 3 functions, add this comment:
+ts// CRITICAL: This writes to reminder_events — the permanent analytics record.
+// Never insert without checking for an existing (reminderId, action) row first.
+// Duplicates corrupt streak, completion rate, and graph data.
+Change 2 — Add dedup guard to completeReminder
+Before the line that inserts a 'completed' event into reminder_events, add a check:
+tsconst existingCompleted = await db
+  .select()
+  .from(reminderEvents)
+  .where(
+    and(
+      eq(reminderEvents.reminderId, id),
+      eq(reminderEvents.action, 'completed')
+    )
+  )
+  .limit(1);
+
+if (existingCompleted.length === 0) {
+  // insert the completed event here — wrap the existing insert in this block
+}
+Change 3 — Add dedup guard to markReminderNotAccomplished
+Same pattern — before the line that inserts a 'missed' event:
+tsconst existingMissed = await db
+  .select()
+  .from(reminderEvents)
+  .where(
+    and(
+      eq(reminderEvents.reminderId, id),
+      eq(reminderEvents.action, 'missed')
+    )
+  )
+  .limit(1);
+
+if (existingMissed.length === 0) {
+  // wrap the existing missed insert in this block
+}
+Change 4 — Add dedup guard to logReminderEvent
+This is the generic helper. Add the same check using whatever reminderId and action parameters it receives:
+tsconst existing = await db
+  .select()
+  .from(reminderEvents)
+  .where(
+    and(
+      eq(reminderEvents.reminderId, reminderId),
+      eq(reminderEvents.action, action)
+    )
+  )
+  .limit(1);
+
+if (existing.length > 0) {
+  // Already logged — skip insert, return early or return the existing row
+  return;
+}
+Change 5 — Add a unique constraint to the schema
+In shared/schema.ts, find the reminderEvents table definition. Add a unique index on (reminder_id, action) so the database itself enforces the dedup rule as a final safety net:
+tsuniqueIndex('reminder_events_reminder_action_unique').on(
+  reminderEvents.reminderId,
+  reminderEvents.action
+)
+After adding it, run the database migration so the constraint is applied to the actual database.
+This means even if the application-level guard is somehow bypassed, the database will reject the duplicate insert rather than silently corrupting the analytics data.
+Do not change any other tables, any other functions, or any other files.

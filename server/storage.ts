@@ -269,6 +269,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async completeReminder(id: string, userId: string): Promise<Reminder> {
+    // CRITICAL: This writes to reminder_events — the permanent analytics record.
+    // Never insert without checking for an existing (reminderId, action) row first.
+    // Duplicates corrupt streak, completion rate, and graph data.
     const [reminder] = await db
       .update(reminders)
       .set({ 
@@ -279,17 +282,33 @@ export class DatabaseStorage implements IStorage {
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
       .returning();
-    // Log the event so it survives future reminder deletion
-    await db.insert(reminderEvents).values({
-      userId,
-      reminderId: id,
-      action: 'completed',
-      scheduledFor: reminder.scheduledFor,
-    });
+    // Log the event so it survives future reminder deletion — but only once per reminder.
+    const existingCompleted = await db
+      .select()
+      .from(reminderEvents)
+      .where(
+        and(
+          eq(reminderEvents.reminderId, id),
+          eq(reminderEvents.action, 'completed')
+        )
+      )
+      .limit(1);
+
+    if (existingCompleted.length === 0) {
+      await db.insert(reminderEvents).values({
+        userId,
+        reminderId: id,
+        action: 'completed',
+        scheduledFor: reminder.scheduledFor,
+      });
+    }
     return reminder;
   }
 
   async markReminderNotAccomplished(id: string, userId: string): Promise<Reminder> {
+    // CRITICAL: This writes to reminder_events — the permanent analytics record.
+    // Never insert without checking for an existing (reminderId, action) row first.
+    // Duplicates corrupt streak, completion rate, and graph data.
     const [reminder] = await db
       .update(reminders)
       .set({ 
@@ -300,17 +319,50 @@ export class DatabaseStorage implements IStorage {
       })
       .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
       .returning();
-    // Log the event so it survives future reminder deletion
-    await db.insert(reminderEvents).values({
-      userId,
-      reminderId: id,
-      action: 'missed',
-      scheduledFor: reminder.scheduledFor,
-    });
+    // Log the event so it survives future reminder deletion — but only once per reminder.
+    const existingMissed = await db
+      .select()
+      .from(reminderEvents)
+      .where(
+        and(
+          eq(reminderEvents.reminderId, id),
+          eq(reminderEvents.action, 'missed')
+        )
+      )
+      .limit(1);
+
+    if (existingMissed.length === 0) {
+      await db.insert(reminderEvents).values({
+        userId,
+        reminderId: id,
+        action: 'missed',
+        scheduledFor: reminder.scheduledFor,
+      });
+    }
     return reminder;
   }
 
   async logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent> {
+    // CRITICAL: This writes to reminder_events — the permanent analytics record.
+    // Never insert without checking for an existing (reminderId, action) row first.
+    // Duplicates corrupt streak, completion rate, and graph data.
+    if (event.reminderId) {
+      const existing = await db
+        .select()
+        .from(reminderEvents)
+        .where(
+          and(
+            eq(reminderEvents.reminderId, event.reminderId),
+            eq(reminderEvents.action, event.action)
+          )
+        )
+        .limit(1);
+
+      if (existing.length > 0) {
+        // Already logged — return the existing row instead of inserting a duplicate.
+        return existing[0];
+      }
+    }
     const [row] = await db.insert(reminderEvents).values(event).returning();
     return row;
   }
