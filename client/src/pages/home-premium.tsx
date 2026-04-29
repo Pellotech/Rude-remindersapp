@@ -514,7 +514,7 @@ export default function HomePremium() {
                     ? 40
                     : Math.max(6, Math.ceil(maxCompleted * 1.1));
                   const yBottom = graphTab === "year"
-                    ? -40
+                    ? -15
                     : -Math.max(4, Math.ceil(maxMissed * 1.1));
                   const chartInternals = (w: number | undefined) => (
                     <BarChart width={w} height={290} data={pts} margin={margin}>
