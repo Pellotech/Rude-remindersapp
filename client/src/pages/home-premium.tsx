@@ -511,7 +511,7 @@ export default function HomePremium() {
                   const maxCompleted = Math.max(0, ...pts.map((p: any) => p.completed ?? 0));
                   const maxMissed = Math.max(0, ...pts.map((p: any) => Math.abs(p.incomplete ?? 0)));
                   const yTop = graphTab === "year"
-                    ? 40
+                    ? 25
                     : Math.max(6, Math.ceil(maxCompleted * 1.1));
                   const yBottom = graphTab === "year"
                     ? -15
