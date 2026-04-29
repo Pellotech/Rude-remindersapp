@@ -505,11 +505,17 @@ export default function HomePremium() {
                     if (entry.net < 0) return '#C53B3B';
                     return '#E5E7EB';
                   };
-                  // Compute dynamic Y-axis bounds so bars are no longer capped at 6
+                  // Y-axis bounds: fixed ±40 for the year view (bars stay proportional
+                  // across the whole year so growth is visible). Other tabs use a
+                  // dynamic bound so short ranges still read clearly.
                   const maxCompleted = Math.max(0, ...pts.map((p: any) => p.completed ?? 0));
                   const maxMissed = Math.max(0, ...pts.map((p: any) => Math.abs(p.incomplete ?? 0)));
-                  const yTop = Math.max(6, Math.ceil(maxCompleted * 1.1));
-                  const yBottom = -Math.max(4, Math.ceil(maxMissed * 1.1));
+                  const yTop = graphTab === "year"
+                    ? 40
+                    : Math.max(6, Math.ceil(maxCompleted * 1.1));
+                  const yBottom = graphTab === "year"
+                    ? -40
+                    : -Math.max(4, Math.ceil(maxMissed * 1.1));
                   const chartInternals = (w: number | undefined) => (
                     <BarChart width={w} height={290} data={pts} margin={margin}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
