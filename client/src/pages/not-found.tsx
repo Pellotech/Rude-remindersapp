@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { RoseLoader } from "@/components/SplashScreen";
 import { AlertCircle } from "lucide-react";
 import { Capacitor } from "@capacitor/core";
 import { useEffect } from "react";
@@ -19,8 +20,7 @@ export default function NotFound() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rude-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <RoseLoader size={64} label="Loading..." />
         </div>
       </div>
     );

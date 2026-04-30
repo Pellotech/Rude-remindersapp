@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import SplashScreen from "@/components/SplashScreen";
 import { Link, useLocation } from "wouter";
 import { ChevronLeft, Home, Search, Trash2, CircleSlash2 } from "lucide-react";
 import { useState } from "react";
@@ -155,9 +156,7 @@ export default function ReminderHistory() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
+      <SplashScreen />
     );
   }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RoseLoader } from "@/components/SplashScreen";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -91,7 +92,7 @@ export function DevTools({ isVisible, onToggle }: DevToolsProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {isLoading ? (
-            <div className="text-sm text-gray-500">Loading...</div>
+            <RoseLoader size={32} label="Loading..." />
           ) : (
             <>
               {/* Current Status */}

@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import SplashScreen from "@/components/SplashScreen";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -36,9 +37,7 @@ export default function Billing() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
+      <SplashScreen />
     );
   }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SplashScreen from "@/components/SplashScreen";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -121,9 +122,7 @@ export default function PersonalInfo() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
+      <SplashScreen />
     );
   }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SplashScreen from "@/components/SplashScreen";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -118,9 +119,7 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Loading...</div>
-      </div>
+      <SplashScreen />
     );
   }
 

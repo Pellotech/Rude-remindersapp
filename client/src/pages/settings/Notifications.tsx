@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SplashScreen from "@/components/SplashScreen";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -144,9 +145,7 @@ export default function Notifications() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
+      <SplashScreen />
     );
   }
 
