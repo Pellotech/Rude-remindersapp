@@ -1,0 +1,62 @@
+Perfect — let Replit handle the background removal. Here's the full prompt:
+
+Paste this into Replit AI:
+
+Do these 3 things in order. Do not change any other files.
+Step 1 — Remove the black background from the rose image
+Find the file Rude_remdrs.png (it may be in attached_assets/, public/, or client/public/). Remove the black background and save it as a transparent PNG at the same location or as rose_transparent.png in client/public/. Use sharp, jimp, or any available image processing library already in the project. If none are available install sharp and use it. The rose petals, stem, and leaves must be preserved exactly — only the solid black background is removed.
+Step 2 — Update the splash/loading screen component
+Find the loading screen or splash component. It is likely one of:
+
+client/src/components/SplashScreen.tsx
+A loading state in App.tsx
+The generic Loading... spinner shown on first load
+
+Replace whatever is currently showing with this:
+tsx<div style={{
+  position: 'fixed',
+  inset: 0,
+  background: '#FDF3E3',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 9999,
+}}>
+  <img
+    src="/rose_transparent.png"
+    alt="Rude Reminders"
+    style={{
+      width: 180,
+      height: 180,
+      objectFit: 'contain',
+      opacity: 0,
+      animation: 'roseAppear 1.2s ease forwards',
+    }}
+  />
+  <style>{`
+    @keyframes roseAppear {
+      0%   { opacity: 0; transform: scale(0.92); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+  `}</style>
+</div>
+The splash shows for 2 seconds then fades out and the app loads normally. Add a useEffect with a setTimeout of 2000ms to hide it — use a useState boolean like showSplash to control visibility. Fade out on hide using opacity: 0, transition: opacity 0.4s ease.
+Step 3 — Update Capacitor splash screen config
+In capacitor.config.ts, find or add the plugins.SplashScreen config:
+tsplugins: {
+  SplashScreen: {
+    launchShowDuration: 2000,
+    launchAutoHide: true,
+    backgroundColor: '#FDF3E3',
+    androidSplashResourceName: 'splash',
+    androidScaleType: 'CENTER_INSIDE',
+    showSpinner: false,
+    splashFullScreen: true,
+    splashImmersive: true,
+  }
+}
+Also copy the transparent rose PNG to:
+
+android/app/src/main/res/drawable/splash.png
+ios/App/App/Assets.xcassets/Splash.imageset/ (replace existing splash image)
+

@@ -23,11 +23,12 @@ import DeleteAccount from "@/pages/DeleteAccount";
 import DeleteAccountComplete from "@/pages/DeleteAccountComplete";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
-import { useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useCallback, useState, useSyncExternalStore } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import { initAuthToken } from "@/lib/queryClient";
+import SplashScreen from "@/components/SplashScreen";
 
 const useNormalizedLocation = (): [string, (to: string) => void] => {
   const navigate = useCallback((to: string) => {
@@ -58,14 +59,7 @@ function HomeRouter() {
 
   // Only show loading on initial mount, not for guest users
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rude-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   // Route based on premium status:
@@ -88,14 +82,7 @@ function AppRouter() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rude-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   return (
@@ -133,6 +120,8 @@ function AppRouter() {
 }
 
 function App() {
+  const [showInitialSplash, setShowInitialSplash] = useState(true);
+
   useEffect(() => {
     // Initialize auth token from persistent storage (important for iOS)
     initAuthToken().then(() => {
@@ -171,6 +160,9 @@ function App() {
           <NotificationProvider>
             <Toaster />
             <AppRouter />
+            {showInitialSplash && (
+              <SplashScreen onDone={() => setShowInitialSplash(false)} />
+            )}
           </NotificationProvider>
         </TooltipProvider>
       </WouterRouter>
