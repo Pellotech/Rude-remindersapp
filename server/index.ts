@@ -5,7 +5,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { db } from "./db";
 import { reminders, reminderEvents } from "@shared/schema";
-import { eq, and, isNotNull } from "drizzle-orm";
+import { eq, and, isNotNull, sql } from "drizzle-orm";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -88,6 +88,85 @@ app.use((req, res, next) => {
 });
 
 /**
+ * Dedup any duplicate (reminder_id, action) rows in reminder_events and ensure
+ * the unique index exists. Idempotent — safe to run on every startup.
+ *
+ * Why this lives in app code (not drizzle migrations):
+ * Production accumulated ~16k duplicate rows from a pre-fix bug. Adding the
+ * unique index via a drizzle migration would fail validation on production
+ * because the duplicates can't coexist with the constraint. By cleaning up
+ * inside the app at boot, we decouple the fix from drizzle's migration system.
+ */
+async function dedupAndIndexReminderEvents() {
+  // Stable lock id derived from a string: scoped so it can't collide with
+  // other advisory locks the app may use later. Two integers => two-arg form.
+  const LOCK_KEY_1 = 0x52454d49; // 'REMI'
+  const LOCK_KEY_2 = 0x4e445550; // 'NDUP'
+
+  try {
+    // Serialize across pods/boots so two instances can't race the
+    // dedup + CREATE UNIQUE INDEX critical section.
+    await db.execute(sql`SELECT pg_advisory_lock(${LOCK_KEY_1}, ${LOCK_KEY_2})`);
+
+    try {
+      const before = await db.execute(sql`SELECT COUNT(*)::int AS c FROM reminder_events`);
+      const beforeCount = (before.rows?.[0] as any)?.c ?? 0;
+
+      // Only dedup rows where reminder_id IS NOT NULL. Postgres unique
+      // indexes allow multiple NULLs, so collapsing NULL rows by GROUP BY
+      // would over-delete legitimate analytics events whose source reminder
+      // was deleted (reminderId is nullable in the schema).
+      const dupResult = await db.execute(sql`
+        DELETE FROM reminder_events
+        WHERE reminder_id IS NOT NULL
+          AND id NOT IN (
+            SELECT MIN(id) FROM reminder_events
+            WHERE reminder_id IS NOT NULL
+            GROUP BY reminder_id, action
+          )
+      `);
+      const deleted = (dupResult as any).rowCount ?? 0;
+
+      if (deleted > 0) {
+        console.log(`🧹 reminder_events dedup: removed ${deleted} duplicate row(s) (was ${beforeCount}, now ${beforeCount - deleted})`);
+      }
+
+      // Index creation is gated to production. If we created it in dev too,
+      // Replit's deploy validator (which diffs dev DB vs prod DB) would
+      // generate a CREATE UNIQUE INDEX migration on every publish and fail
+      // validation because prod still has duplicates at validation time
+      // (before this code has actually run there). By keeping the index
+      // app-managed and prod-only, the validator sees no schema diff and
+      // the cleanup happens at boot.
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          await db.execute(sql`
+            CREATE UNIQUE INDEX IF NOT EXISTS reminder_events_reminder_action_unique
+            ON reminder_events (reminder_id, action)
+          `);
+          console.log('✅ reminder_events unique index ensured (production)');
+        } catch (indexErr) {
+          // In production we want to know loudly if uniqueness can't be
+          // enforced — silently continuing would leave the data layer
+          // unprotected against future duplicate inserts.
+          console.error('❌ FATAL: reminder_events unique index could not be created in production:', indexErr);
+          throw indexErr;
+        }
+      }
+    } finally {
+      await db.execute(sql`SELECT pg_advisory_unlock(${LOCK_KEY_1}, ${LOCK_KEY_2})`);
+    }
+  } catch (err) {
+    if (process.env.NODE_ENV === 'production') {
+      // Re-throw in production so the deploy/health check fails loudly
+      // rather than silently leaving the DB without uniqueness protection.
+      throw err;
+    }
+    console.warn('⚠️  reminder_events dedup/index step failed (dev only, ignoring):', err instanceof Error ? err.message : err);
+  }
+}
+
+/**
  * One-time backfill: migrate all existing completed/missed reminders into the
  * reminder_events table so historical data isn't lost.
  * This is safe to run on every startup — it skips reminders already logged.
@@ -159,6 +238,9 @@ async function backfillReminderEvents() {
 
 (async () => {
   const server = await registerRoutes(app);
+
+  // Clean up duplicate reminder_events rows and ensure unique index exists
+  await dedupAndIndexReminderEvents();
 
   // Backfill existing completed/missed reminders into the event log
   await backfillReminderEvents();

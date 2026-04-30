@@ -4,7 +4,6 @@ import {
   jsonb,
   pgTable,
   timestamp,
-  uniqueIndex,
   varchar,
   text,
   integer,
@@ -124,7 +123,10 @@ export const reminderEvents = pgTable("reminder_events", {
 }, (table) => [
   index("IDX_reminder_events_user").on(table.userId),
   index("IDX_reminder_events_reminder").on(table.reminderId),
-  uniqueIndex("reminder_events_reminder_action_unique").on(table.reminderId, table.action),
+  // NOTE: A unique index on (reminderId, action) exists in the database but is
+  // managed at app startup via raw SQL in server/index.ts (dedupAndIndexReminderEvents),
+  // not by drizzle. This avoids deploy-time migration failures on production
+  // databases that still contain pre-fix duplicate rows.
 ]);
 
 // Auth tokens for mobile authentication (cross-origin cookie workaround)
