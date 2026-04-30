@@ -23,7 +23,7 @@ import DeleteAccount from "@/pages/DeleteAccount";
 import DeleteAccountComplete from "@/pages/DeleteAccountComplete";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
-import { useEffect, useMemo, useCallback, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
@@ -120,8 +120,6 @@ function AppRouter() {
 }
 
 function App() {
-  const [showInitialSplash, setShowInitialSplash] = useState(true);
-
   useEffect(() => {
     // Initialize auth token from persistent storage (important for iOS)
     initAuthToken().then(() => {
@@ -160,9 +158,6 @@ function App() {
           <NotificationProvider>
             <Toaster />
             <AppRouter />
-            {showInitialSplash && (
-              <SplashScreen onDone={() => setShowInitialSplash(false)} />
-            )}
           </NotificationProvider>
         </TooltipProvider>
       </WouterRouter>

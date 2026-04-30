@@ -1,28 +1,4 @@
-import { useEffect, useState } from "react";
-
-interface SplashScreenProps {
-  onDone?: () => void;
-  durationMs?: number;
-}
-
-export default function SplashScreen({ onDone, durationMs = 2000 }: SplashScreenProps) {
-  const [hiding, setHiding] = useState(false);
-  const [removed, setRemoved] = useState(false);
-
-  useEffect(() => {
-    const hideTimer = setTimeout(() => setHiding(true), durationMs);
-    const removeTimer = setTimeout(() => {
-      setRemoved(true);
-      onDone?.();
-    }, durationMs + 400);
-    return () => {
-      clearTimeout(hideTimer);
-      clearTimeout(removeTimer);
-    };
-  }, [durationMs, onDone]);
-
-  if (removed) return null;
-
+export default function SplashScreen() {
   return (
     <div
       style={{
@@ -33,8 +9,6 @@ export default function SplashScreen({ onDone, durationMs = 2000 }: SplashScreen
         alignItems: "center",
         justifyContent: "center",
         zIndex: 9999,
-        opacity: hiding ? 0 : 1,
-        transition: "opacity 0.4s ease",
       }}
     >
       <img
@@ -45,7 +19,7 @@ export default function SplashScreen({ onDone, durationMs = 2000 }: SplashScreen
           height: 180,
           objectFit: "contain",
           opacity: 0,
-          animation: "roseAppear 1.2s ease forwards",
+          animation: "roseAppear 0.5s ease forwards",
         }}
       />
       <style>{`
