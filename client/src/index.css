@@ -291,9 +291,15 @@ input::-webkit-contacts-auto-fill-button {
   0%, 100% { opacity: 0.5; transform: scale(0.94); }
   50%      { opacity: 1;   transform: scale(1.04); }
 }
+@keyframes roseSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 @media (prefers-reduced-motion: reduce) {
   .rose-appear { animation: none !important; opacity: 1 !important; }
   .rose-pulse  { animation: none !important; opacity: 1 !important; }
+  .rose-spin   { animation: none !important; }
 }
 .rose-appear { animation: roseAppear 0.5s ease forwards; }
 .rose-pulse  { animation: rosePulse 1.4s ease-in-out infinite; }
+.rose-spin   { animation: roseSpin 4s linear infinite; }

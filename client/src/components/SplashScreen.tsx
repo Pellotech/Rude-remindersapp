@@ -32,31 +32,31 @@ interface RoseLoaderProps {
   className?: string;
 }
 
-export function RoseLoader({ size = 48, label, className }: RoseLoaderProps) {
+export function RoseLoader(_props: RoseLoaderProps = {}) {
   return (
     <div
-      className={className}
       style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(253, 243, 227, 0.55)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 8,
+        zIndex: 9999,
       }}
     >
       <img
         src="/rose_transparent.png"
-        alt={label ?? "Loading"}
-        className="rose-pulse"
+        alt="Loading"
+        className="rose-spin"
         style={{
-          width: size,
-          height: size,
+          width: 140,
+          height: 140,
           objectFit: "contain",
         }}
       />
-      {label ? (
-        <span style={{ fontSize: 12, color: "#9CA3AF" }}>{label}</span>
-      ) : null}
     </div>
   );
 }
