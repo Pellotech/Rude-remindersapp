@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { addDays, isSameDay, format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -56,6 +56,32 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
   const [animDir, setAnimDir]             = useState<'forward' | 'backward'>('forward');
   const [bookOpen, setBookOpen]           = useState(false);
   const [closedExiting, setClosedExiting] = useState(false);
+
+  /* ─── one-time-per-session swipe hints ─────────────────────────────── */
+  const [showSwipeHand, setShowSwipeHand] = useState(
+    () => sessionStorage.getItem('book_swipe_shown') !== 'true'
+  );
+  const [showSwipeLabel, setShowSwipeLabel] = useState(
+    () => sessionStorage.getItem('book_label_shown') !== 'true'
+  );
+
+  useEffect(() => {
+    if (!showSwipeHand) return;
+    const timer = setTimeout(() => {
+      setShowSwipeHand(false);
+      sessionStorage.setItem('book_swipe_shown', 'true');
+    }, 2600);
+    return () => clearTimeout(timer);
+  }, [showSwipeHand]);
+
+  useEffect(() => {
+    if (!showSwipeLabel) return;
+    const timer = setTimeout(() => {
+      setShowSwipeLabel(false);
+      sessionStorage.setItem('book_label_shown', 'true');
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [showSwipeLabel]);
 
   /* ─── selection state ────────────────────────────────────────────────── */
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -291,6 +317,12 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           60%  { transform: translateX(0)  scale(1);    opacity: 0.6; }
           100% { transform: translateX(0)  scale(1);    opacity: 0.6; }
         }
+        @keyframes sweepAcross {
+          0%   { left: 5%;   opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { left: 85%;  opacity: 0; }
+        }
       `}</style>
 
       {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
@@ -362,11 +394,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
                 {/* Logo — no ring */}
                 <div style={{
-                  width: 64,
-                  height: 64,
+                  width: 54,
+                  height: 54,
                   background: '#8B5A2B',
                   borderRadius: 6,
-                  border: '1.5px solid rgba(201,160,99,0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -376,7 +407,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 }}>
                   <img
                     src={rudeRemindersLogo}
-                    style={{ width: 56, height: 56, objectFit: 'contain' }}
+                    style={{ width: 46, height: 46, objectFit: 'contain' }}
                     alt=""
                   />
                 </div>
@@ -427,33 +458,36 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   ))}
                 </div>
 
-                {/* Swipe indicator — bottom of closed book */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 12,
-                  left: 0,
-                  right: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 4,
-                  zIndex: 2,
-                }}>
-                  {/* Animated hand swipe icon */}
+                {/* One-time-per-session sweeping hand across the closed book */}
+                {showSwipeHand && (
                   <div style={{
-                    fontSize: 18,
-                    animation: 'swipeHand 1.8s ease-in-out infinite',
+                    position: 'absolute',
+                    top: '50%',
+                    left: 0,
+                    transform: 'translateY(-50%)',
+                    fontSize: 20,
+                    zIndex: 9,
+                    pointerEvents: 'none',
+                    animation: 'sweepAcross 1.2s ease-in-out 2 forwards',
                   }}>👆</div>
-                  {/* Label */}
-                  <div style={{
-                    color: 'rgba(201,160,99,0.85)',
-                    fontSize: 9,
-                    fontWeight: 500,
-                    letterSpacing: '0.08em',
-                  }}>swipe to open</div>
-                </div>
+                )}
               </div>
             </div>
+
+            {/* One-time-per-session "swipe to open" label below book */}
+            {showSwipeLabel && (
+              <div style={{
+                alignSelf: 'flex-end',
+                marginTop: 4,
+                color: 'rgba(201,160,99,0.85)',
+                fontSize: 9,
+                fontWeight: 500,
+                letterSpacing: '0.08em',
+                fontFamily: 'sans-serif',
+                transition: 'opacity 0.5s ease',
+                opacity: showSwipeLabel ? 1 : 0,
+              }}>swipe to open</div>
+            )}
 
           </div>
         )}

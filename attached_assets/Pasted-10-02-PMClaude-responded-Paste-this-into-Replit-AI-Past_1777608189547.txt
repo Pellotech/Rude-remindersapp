@@ -1,0 +1,76 @@
+10:02 PMClaude responded: Paste this into Replit AI:Paste this into Replit AI:
+
+In client/src/components/BookDatePicker.tsx, make these targeted changes to the closed book cover only. Do not touch anything else.
+Change 1 — Restore logo to original size
+Find the logo <img> inside the square wrapper. Change it back to:
+width: 46, height: 46, objectFit: 'contain'
+Make the square wrapper tight around it — just 4px padding on each side:
+width: 54, height: 54
+Change 2 — Remove the border from the square wrapper
+Find border: '1.5px solid rgba(201,160,99,0.4)' on the square wrapper div. Remove it entirely. No border on the square.
+Change 3 — Remove the swipe hand emoji and "swipe to open" text from inside the book
+Find the swipe indicator div inside the closed book cover that contains the hand emoji (👆) and the "swipe to open" text. Delete the entire div. Do not leave any remnant of it inside the book JSX.
+Change 4 — Add a one-time swipe hand animation that sweeps across the book twice then disappears
+Add a useState for the hand animation visibility. Use sessionStorage (not localStorage) so it shows once per app open, not once ever:
+tsxconst [showSwipeHand, setShowSwipeHand] = useState(
+  () => sessionStorage.getItem('book_swipe_shown') !== 'true'
+);
+When showSwipeHand is true, render the sweeping hand INSIDE the book cover (position absolute, vertically centered, starting from left edge). After 2 full sweeps across the book (each sweep ~1.2s, so total 2.4s), set showSwipeHand to false and write to sessionStorage:
+tsxuseEffect(() => {
+  if (!showSwipeHand) return;
+  const timer = setTimeout(() => {
+    setShowSwipeHand(false);
+    sessionStorage.setItem('book_swipe_shown', 'true');
+  }, 2600);
+  return () => clearTimeout(timer);
+}, [showSwipeHand]);
+The hand element:
+tsx{showSwipeHand && (
+  <div style={{
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    transform: 'translateY(-50%)',
+    fontSize: 20,
+    zIndex: 9,
+    pointerEvents: 'none',
+    animation: 'sweepAcross 1.2s ease-in-out 2 forwards',
+  }}>👆</div>
+)}
+Add this keyframe to the existing style block:
+css@keyframes sweepAcross {
+  0%   { left: 5%;   opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: 85%;  opacity: 0; }
+}
+Change 5 — Add "swipe to open" text BELOW the book, bottom-right, disappears after 6 seconds
+Add a separate useState:
+tsxconst [showSwipeLabel, setShowSwipeLabel] = useState(
+  () => sessionStorage.getItem('book_label_shown') !== 'true'
+);
+After 6 seconds set it false and write to sessionStorage:
+tsxuseEffect(() => {
+  if (!showSwipeLabel) return;
+  const timer = setTimeout(() => {
+    setShowSwipeLabel(false);
+    sessionStorage.setItem('book_label_shown', 'true');
+  }, 6000);
+  return () => clearTimeout(timer);
+}, [showSwipeLabel]);
+Render it OUTSIDE the book div, below the book container, aligned to the bottom right:
+tsx{showSwipeLabel && (
+  <div style={{
+    alignSelf: 'flex-end',
+    marginTop: 4,
+    color: 'rgba(201,160,99,0.85)',
+    fontSize: 9,
+    fontWeight: 500,
+    letterSpacing: '0.08em',
+    fontFamily: 'sans-serif',
+    transition: 'opacity 0.5s ease',
+    opacity: showSwipeLabel ? 1 : 0,
+  }}>swipe to open</div>
+)}
+Both sessionStorage keys reset when the app is fully closed and reopened — so the animations show once per session, not once ever and not on every page visit.
+Do not change the "your week ahead" text, the "RUDE REMINDERS" text, the divider line, the page edge strip, or any other part of the file.
