@@ -412,10 +412,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   position: 'relative',
                   zIndex: 1,
                   flexShrink: 0,
+                  overflow: 'visible',
                 }}>
                   <img
                     src={rudeRemindersLogo}
-                    style={{ width: 54, height: 54, objectFit: 'contain' }}
+                    style={{ width: 54, height: 54, objectFit: 'contain', flexShrink: 0, maxWidth: 'none' }}
                     alt=""
                   />
                 </div>
