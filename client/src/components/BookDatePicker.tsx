@@ -402,8 +402,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
                 {/* Logo — no ring */}
                 <div style={{
-                  width: 54,
-                  height: 54,
+                  width: 50,
+                  height: 50,
                   background: '#8B5A2B',
                   borderRadius: 6,
                   display: 'flex',
@@ -415,7 +415,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 }}>
                   <img
                     src={rudeRemindersLogo}
-                    style={{ width: 54, height: 54, objectFit: 'contain' }}
+                    style={{ width: 50, height: 50, objectFit: 'contain' }}
                     alt=""
                   />
                 </div>
