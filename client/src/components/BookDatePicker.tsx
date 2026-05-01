@@ -402,8 +402,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
                 {/* Logo — no ring */}
                 <div style={{
-                  width: 50,
-                  height: 50,
+                  width: 46,
+                  height: 46,
                   background: '#8B5A2B',
                   borderRadius: 6,
                   display: 'flex',
