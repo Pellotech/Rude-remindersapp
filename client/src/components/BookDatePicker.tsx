@@ -400,20 +400,32 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   background: 'rgba(0,0,0,0.15)',
                 }} />
 
-                {/* Logo — no box, no ring */}
-                <img
-                  src={rudeRemindersLogo}
-                  style={{
-                    width: 60,
-                    height: 60,
-                    objectFit: 'contain',
-                    flexShrink: 0,
-                    maxWidth: 'none',
-                    position: 'relative',
-                    zIndex: 1,
-                  }}
-                  alt=""
-                />
+                {/* Logo — brown box behind, logo overhangs */}
+                <div style={{
+                  width: 36,
+                  height: 36,
+                  background: '#8B5A2B',
+                  borderRadius: 6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  zIndex: 1,
+                  flexShrink: 0,
+                  overflow: 'visible',
+                }}>
+                  <img
+                    src={rudeRemindersLogo}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      objectFit: 'contain',
+                      flexShrink: 0,
+                      maxWidth: 'none',
+                    }}
+                    alt=""
+                  />
+                </div>
                 {/* Divider */}
                 <div style={{ width: 26, height: 1, background: 'rgba(201,160,99,0.3)', position: 'relative', zIndex: 1 }} />
                 {/* Title */}
