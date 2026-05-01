@@ -285,6 +285,12 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           0%,100% { opacity: 0.5; transform: translateX(0); }
           50%      { opacity: 1;   transform: translateX(4px); }
         }
+        @keyframes swipeHand {
+          0%   { transform: translateX(0)  scale(1);    opacity: 0.6; }
+          30%  { transform: translateX(8px) scale(1.1); opacity: 1;   }
+          60%  { transform: translateX(0)  scale(1);    opacity: 0.6; }
+          100% { transform: translateX(0)  scale(1);    opacity: 0.6; }
+        }
       `}</style>
 
       {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
@@ -405,6 +411,32 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                       opacity: 1 - i * 0.25,
                     }} />
                   ))}
+                </div>
+
+                {/* Swipe indicator — bottom of closed book */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: 12,
+                  left: 0,
+                  right: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 4,
+                  zIndex: 2,
+                }}>
+                  {/* Animated hand swipe icon */}
+                  <div style={{
+                    fontSize: 18,
+                    animation: 'swipeHand 1.8s ease-in-out infinite',
+                  }}>👆</div>
+                  {/* Label */}
+                  <div style={{
+                    color: 'rgba(201,160,99,0.85)',
+                    fontSize: 9,
+                    fontWeight: 500,
+                    letterSpacing: '0.08em',
+                  }}>swipe to open</div>
                 </div>
               </div>
             </div>
