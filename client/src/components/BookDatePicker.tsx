@@ -58,30 +58,38 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
   const [closedExiting, setClosedExiting] = useState(false);
 
   /* ─── one-time-per-session swipe hints ─────────────────────────────── */
-  const [showSwipeHand, setShowSwipeHand] = useState(
-    () => sessionStorage.getItem('book_swipe_shown') !== 'true'
-  );
-  const [showSwipeLabel, setShowSwipeLabel] = useState(
-    () => sessionStorage.getItem('book_label_shown') !== 'true'
-  );
+  /* Both start hidden, then appear after a delay so intros / loaders /
+     splash overlays have time to settle before the hint plays. */
+  const [showSwipeHand, setShowSwipeHand] = useState(false);
+  const [showSwipeLabel, setShowSwipeLabel] = useState(false);
 
   useEffect(() => {
-    if (!showSwipeHand) return;
-    const timer = setTimeout(() => {
+    if (sessionStorage.getItem('book_swipe_shown') === 'true') return;
+    // Wait for intros to settle, then play the sweep animation
+    const startTimer = setTimeout(() => setShowSwipeHand(true), 2000);
+    // 3 sweeps × 1.6s = 4.8s of animation; +200ms buffer before clearing
+    const endTimer = setTimeout(() => {
       setShowSwipeHand(false);
       sessionStorage.setItem('book_swipe_shown', 'true');
-    }, 2600);
-    return () => clearTimeout(timer);
-  }, [showSwipeHand]);
+    }, 2000 + 4800 + 200);
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(endTimer);
+    };
+  }, []);
 
   useEffect(() => {
-    if (!showSwipeLabel) return;
-    const timer = setTimeout(() => {
+    if (sessionStorage.getItem('book_label_shown') === 'true') return;
+    const startTimer = setTimeout(() => setShowSwipeLabel(true), 2000);
+    const endTimer = setTimeout(() => {
       setShowSwipeLabel(false);
       sessionStorage.setItem('book_label_shown', 'true');
-    }, 6000);
-    return () => clearTimeout(timer);
-  }, [showSwipeLabel]);
+    }, 2000 + 6000);
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(endTimer);
+    };
+  }, []);
 
   /* ─── selection state ────────────────────────────────────────────────── */
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -318,10 +326,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           100% { transform: translateX(0)  scale(1);    opacity: 0.6; }
         }
         @keyframes sweepAcross {
-          0%   { left: 5%;   opacity: 0; }
+          0%   { left: 85%;  opacity: 0; }
           15%  { opacity: 1; }
           85%  { opacity: 1; }
-          100% { left: 85%;  opacity: 0; }
+          100% { left: 5%;   opacity: 0; }
         }
       `}</style>
 
@@ -338,7 +346,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
         {/* ══ CLOSED STATE ══════════════════════════════════════════════ */}
         {!bookOpen && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', position: 'relative' }}>
             {/* Closed book */}
             <div
               onTouchStart={onTouchStart}
@@ -468,17 +476,19 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     fontSize: 20,
                     zIndex: 9,
                     pointerEvents: 'none',
-                    animation: 'sweepAcross 1.2s ease-in-out 2 forwards',
+                    animation: 'sweepAcross 1.6s ease-in-out 3 forwards',
                   }}>👆</div>
                 )}
               </div>
             </div>
 
-            {/* One-time-per-session "swipe to open" label below book */}
+            {/* One-time-per-session "swipe to open" label —
+                parallel to the book, sitting in the right gutter at the bottom. */}
             {showSwipeLabel && (
               <div style={{
-                alignSelf: 'flex-end',
-                marginTop: 4,
+                position: 'absolute',
+                right: 8,
+                bottom: 4,
                 color: 'rgba(201,160,99,0.85)',
                 fontSize: 9,
                 fontWeight: 500,
@@ -486,6 +496,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 fontFamily: 'sans-serif',
                 transition: 'opacity 0.5s ease',
                 opacity: showSwipeLabel ? 1 : 0,
+                pointerEvents: 'none',
               }}>swipe to open</div>
             )}
 
