@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -75,6 +75,19 @@ export function RichReminderNotification({
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { isAndroid, isIOS } = getPlatformInfo();
 
+  const [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
+    () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
+  );
+
+  useEffect(() => {
+    const handler = (e: Event) => setTextSize((e as CustomEvent).detail);
+    window.addEventListener('text_size_changed', handler);
+    return () => window.removeEventListener('text_size_changed', handler);
+  }, []);
+
+  const textSizeMap = { default: 15, larger: 19, blind: 24 };
+  const notifFontSize = textSizeMap[textSize];
+
   const rudenessStyle = getRudenessStyle(reminder.rudenessLevel);
 
   // Keep dialog clear of the ad banner + nav bar at the bottom
@@ -120,7 +133,7 @@ export function RichReminderNotification({
           {/* Main rude message bubble */}
           {reminder.rudeMessage && (
             <div className="p-3 rounded-xl bg-[#FDF3E3]">
-              <p className="text-sm font-medium text-[#1a1a1a]">
+              <p className="text-sm font-medium text-[#1a1a1a]" style={{ fontSize: notifFontSize }}>
                 {reminder.rudeMessage}
               </p>
             </div>

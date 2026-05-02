@@ -80,6 +80,17 @@ export default function Notifications() {
     updateSetting('rudyWidgetVisible', checked);
   };
 
+  const [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
+    () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
+  );
+
+  const handleTextSizeChange = (size: 'default' | 'larger' | 'blind') => {
+    setTextSize(size);
+    localStorage.setItem('text_size_preference', size);
+    window.dispatchEvent(new CustomEvent('text_size_changed', { detail: size }));
+    updateSetting("textSize", size);
+  };
+
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
@@ -89,6 +100,10 @@ export default function Notifications() {
       return apiRequest("/api/settings", { method: "PUT", body: settings as any });
     },
     onSuccess: () => {
+      if (localSettings.textSize !== undefined) {
+        localStorage.setItem('text_size_preference', localSettings.textSize);
+        window.dispatchEvent(new CustomEvent('text_size_changed', { detail: localSettings.textSize }));
+      }
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setLocalSettings({});
       toast({
@@ -241,6 +256,57 @@ export default function Notifications() {
                   <p className="text-[#8E8E93] text-[13px] mt-0.5">Show Rudy pinned to the top while scrolling</p>
                 </div>
                 <Toggle checked={rudyFloatingOn} onChange={handleRudyFloatingToggle} />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Text Size</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="px-4 py-3">
+                <p className="text-white text-[17px] mb-3">Notification Text Size</p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {(['default', 'larger', 'blind'] as const).map((size) => {
+                    const labels = { default: 'Default', larger: 'Larger', blind: 'Blind' };
+                    const previews = { default: 'Aa', larger: 'Aa', blind: 'Aa' };
+                    const fontSizes = { default: 16, larger: 22, blind: 30 };
+                    const isSelected = textSize === size;
+                    return (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => handleTextSizeChange(size)}
+                        style={{
+                          flex: 1,
+                          background: isSelected ? '#C9A063' : '#38383A',
+                          border: isSelected ? '2px solid #C9A063' : '2px solid transparent',
+                          borderRadius: 12,
+                          padding: '10px 6px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: 6,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <span style={{
+                          fontSize: fontSizes[size],
+                          fontWeight: 600,
+                          color: isSelected ? '#111827' : '#ffffff',
+                          lineHeight: 1,
+                        }}>{previews[size]}</span>
+                        <span style={{
+                          fontSize: 11,
+                          color: isSelected ? '#111827' : '#8E8E93',
+                          fontWeight: 500,
+                        }}>{labels[size]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
+                  Affects reminder notification text and message display size.
+                </p>
               </div>
             </div>
           </div>
