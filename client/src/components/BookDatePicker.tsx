@@ -689,14 +689,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {isPageSelected(displayIdx) && (
                     <>
                       <circle cx="23" cy="21" r="12"
-                        stroke="#b70d0d" strokeWidth="1.8" strokeLinecap="round"
+                        stroke="#1B2A5E" strokeWidth="1.8" strokeLinecap="round"
                         strokeDasharray="300" strokeDashoffset="300"
                         style={{ animation: 'scribble 0.65s ease forwards' }}
                       />
-                      <circle cx="19" cy="18" r="1.8" fill="#b70d0d" />
-                      <circle cx="27" cy="18" r="1.8" fill="#b70d0d" />
+                      <circle cx="19" cy="18" r="1.8" fill="#1B2A5E" />
+                      <circle cx="27" cy="18" r="1.8" fill="#1B2A5E" />
                       <path d="M18 25 Q23 30 28 25"
-                        stroke="#b70d0d" strokeWidth="1.8" strokeLinecap="round"
+                        stroke="#1B2A5E" strokeWidth="1.8" strokeLinecap="round"
                         strokeDasharray="300" strokeDashoffset="300"
                         style={{ animation: 'scribble 0.65s ease forwards 0.2s' }}
                       />
