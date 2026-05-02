@@ -267,7 +267,7 @@ export default function Notifications() {
                 <p className="text-white text-[17px] mb-3">Notification Text Size</p>
                 <div style={{ display: 'flex', gap: 8 }}>
                   {(['default', 'larger', 'blind'] as const).map((size) => {
-                    const labels = { default: 'Default', larger: 'Larger', blind: 'Billboard 😜' };
+                    const labels = { default: 'Default', larger: 'Large', blind: 'Billboard 😜' };
                     const previews = { default: 'Aa', larger: 'Aa', blind: 'Aa' };
                     const fontSizes = { default: 16, larger: 20, blind: 24 };
                     const isSelected = textSize === size;
