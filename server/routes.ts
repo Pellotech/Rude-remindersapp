@@ -1178,6 +1178,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AdMob config endpoint — returns publishable AdMob IDs from server-side secrets.
+  // Public on purpose: ad unit IDs are visible inside any compiled app binary.
+  app.get('/api/config/admob', (_req, res) => {
+    res.json({
+      appId: process.env.ADMOB_APP_ID || '',
+      ios: {
+        banner: process.env.ADMOB_IOS_BANNER_ID || '',
+        interstitial: process.env.ADMOB_IOS_INTERSTITIAL_ID || '',
+        reward: process.env.ADMOB_IOS_REWARD_ID || '',
+      },
+      android: {
+        banner: process.env.ADMOB_ANDROID_BANNER_ID || '',
+        interstitial: process.env.ADMOB_ANDROID_INTERSTITIAL_ID || '',
+        reward: process.env.ADMOB_ANDROID_REWARD_ID || '',
+      },
+    });
+  });
+
   // Voice characters endpoint
   app.get('/api/voices', async (req, res) => {
     try {

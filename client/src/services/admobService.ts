@@ -5,21 +5,24 @@ import { SafeArea } from 'capacitor-plugin-safe-area';
 export class AdMobService {
   private static instance: AdMobService;
   private isInitialized = false;
-  
-  // Real Ad Unit IDs from environment variables
-  private readonly adUnitIds = {
+
+  // Ad Unit IDs are loaded from the server at initialize() so we can keep them
+  // in server-side secrets (ADMOB_IOS_BANNER_ID, ADMOB_ANDROID_BANNER_ID, etc.)
+  // without requiring VITE_ env vars baked into the bundle. Fallbacks are
+  // Google's official test IDs in case the fetch fails — never real revenue.
+  private adUnitIds = {
     banner: {
-      android: import.meta.env.VITE_ADMOB_ANDROID_BANNER_ID || 'ca-app-pub-3940256099942544/6300978111',
-      ios: import.meta.env.VITE_ADMOB_IOS_BANNER_ID || 'ca-app-pub-3940256099942544/2934735716'
+      android: 'ca-app-pub-3940256099942544/6300978111',
+      ios: 'ca-app-pub-3940256099942544/2934735716',
     },
     interstitial: {
-      android: import.meta.env.VITE_ADMOB_ANDROID_INTERSTITIAL_ID || 'ca-app-pub-3940256099942544/1033173712',
-      ios: import.meta.env.VITE_ADMOB_IOS_INTERSTITIAL_ID || 'ca-app-pub-3940256099942544/4411468910'
+      android: 'ca-app-pub-3940256099942544/1033173712',
+      ios: 'ca-app-pub-3940256099942544/4411468910',
     },
     reward: {
-      android: import.meta.env.VITE_ADMOB_ANDROID_REWARD_ID || 'ca-app-pub-3940256099942544/5224354917',
-      ios: import.meta.env.VITE_ADMOB_IOS_REWARD_ID || 'ca-app-pub-3940256099942544/1712485313'
-    }
+      android: 'ca-app-pub-3940256099942544/5224354917',
+      ios: 'ca-app-pub-3940256099942544/1712485313',
+    },
   };
 
   public static getInstance(): AdMobService {
@@ -29,17 +32,42 @@ export class AdMobService {
     return AdMobService.instance;
   }
 
+  private async loadAdUnitIds(): Promise<void> {
+    try {
+      const res = await fetch('/api/config/admob');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const cfg = await res.json() as {
+        ios: { banner: string; interstitial: string; reward: string };
+        android: { banner: string; interstitial: string; reward: string };
+      };
+      // Only overwrite when server returned a non-empty value; otherwise keep test fallback.
+      if (cfg.ios?.banner)        this.adUnitIds.banner.ios = cfg.ios.banner;
+      if (cfg.ios?.interstitial)  this.adUnitIds.interstitial.ios = cfg.ios.interstitial;
+      if (cfg.ios?.reward)        this.adUnitIds.reward.ios = cfg.ios.reward;
+      if (cfg.android?.banner)        this.adUnitIds.banner.android = cfg.android.banner;
+      if (cfg.android?.interstitial)  this.adUnitIds.interstitial.android = cfg.android.interstitial;
+      if (cfg.android?.reward)        this.adUnitIds.reward.android = cfg.android.reward;
+      const platform = Capacitor.getPlatform() as 'ios' | 'android';
+      const usingReal = !this.adUnitIds.banner[platform].startsWith('ca-app-pub-3940256099942544');
+      console.log(`[AdMob] Loaded ad unit IDs from server (${platform}, real=${usingReal})`);
+    } catch (err) {
+      console.warn('[AdMob] Failed to load ad unit IDs from server, falling back to test IDs:', err);
+    }
+  }
+
   async initialize(): Promise<void> {
     if (!Capacitor.isNativePlatform()) {
       return;
     }
 
     try {
+      await this.loadAdUnitIds();
+
       await AdMob.initialize({
         testingDevices: [],
         initializeForTesting: false,
       });
-      
+
       this.isInitialized = true;
       console.log('AdMob initialized successfully');
     } catch (error) {
