@@ -269,7 +269,7 @@ export default function Notifications() {
                   {(['default', 'larger', 'blind'] as const).map((size) => {
                     const labels = { default: 'Default', larger: 'Larger', blind: 'Billboard 😜' };
                     const previews = { default: 'Aa', larger: 'Aa', blind: 'Aa' };
-                    const fontSizes = { default: 16, larger: 22, blind: 30 };
+                    const fontSizes = { default: 16, larger: 20, blind: 24 };
                     const isSelected = textSize === size;
                     return (
                       <button
