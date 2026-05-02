@@ -748,26 +748,46 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#111827'; }}
         >←</button>
 
+        {/* Spacer (left) — shrinks Select button by ~25% total */}
+        <div style={{ flex: 1 }} />
+
         {/* Centre button */}
         <button
           type="button"
           onClick={handleSelectBtn}
           style={{
-            flex: 1, height: 36, borderRadius: 20, cursor: 'pointer',
+            flex: 6, height: 36, borderRadius: 20, cursor: 'pointer',
             fontSize: 12, fontWeight: 500, padding: '0 8px',
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
               ? { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
               : currentDisplaySelected
-                ? { background: '#b70d0d', color: '#ffffff', border: '1.5px solid #b70d0d' }
+                ? { background: '#1B2A5E', color: '#ffffff', border: '1.5px solid #C9A063' }
                 : { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
             ),
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.background = '#C9A063';
+            (e.currentTarget as HTMLButtonElement).style.color = '#fff';
+          }}
+          onMouseLeave={e => {
+            const btn = e.currentTarget as HTMLButtonElement;
+            if (displayIdx !== 0 && currentDisplaySelected) {
+              btn.style.background = '#1B2A5E';
+              btn.style.color = '#ffffff';
+            } else {
+              btn.style.background = '#FDF3E3';
+              btn.style.color = '#111827';
+            }
           }}
         >
           {displayIdx === 0
             ? 'Open cover'
             : currentDisplaySelected ? 'Deselect' : 'Select'}
         </button>
+
+        {/* Spacer (right) */}
+        <div style={{ flex: 1 }} />
 
         {/* → */}
         <button
@@ -847,8 +867,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               <span key={i} style={{
                 flex: '1 1 0', minWidth: 0,
                 textAlign: 'center',
-                background: '#FEF9C3',
-                color: '#111827',
+                background: '#ffffff',
+                color: '#000000',
+                border: '1.5px solid #FDF3E3',
                 fontSize: 10, borderRadius: 8, padding: '2px 0',
                 whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
               }}>
