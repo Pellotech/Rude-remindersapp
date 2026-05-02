@@ -1,0 +1,60 @@
+11:34 PM
+Claude responded: Perfect — webhook is fully secured.
+Perfect — webhook is fully secured. Now let's go through the final App Store Connect checklist before you submit.
+
+Go to App Store Connect now and check these:
+
+Step 1 — Check your IAP products:
+
+Go to your app → Monetization → In-App Purchases
+You should see your monthly and yearly subscription products
+Both need to show status "Ready to Submit"
+Take a screenshot and show me what you see — I need to confirm they're set up correctly before you submit
+Step 2 — Check your 1.0.1 version:
+
+Go to your app → Distribution → iOS → 1.0.1 Prepare for Submission
+Scroll down to the Build section — confirm your new build is attached
+Scroll down to In-App Purchases section — confirm your IAP products are added to this version
+Step 3 — What's New text: Make sure you have something in the "What's New" field. You can use this:
+
+- New book-style date picker for scheduling reminders
+- Rudy mascot with live reactions
+- Improved analytics with habit tracking
+- Bug fixes and performance improvements
+Show me a screenshot of your IAP products screen first — that's the most common launch blocker and I want to make sure those are green before you hit submit.
+
+You said: ok i need to upload if this latesdt version is good to go
+ok i need to upload if this latesdt version is good to go
+
+11:35 PM
+Claude responded: Before you archive and upload, let's do a quick final check.
+Before you archive and upload, let's do a quick final check. Run these commands in your Mac Terminal in order:
+
+bash
+cd /Users/macbookpro/Documents/GitHub/Rude-remindersapp
+bash
+cat capacitor.config.ts
+This will show you the capacitor config. Confirm there is NO server.url line in it. That's the critical rule from all your handoff docs — if server.url is present the App Store build will fail or get rejected.
+
+If it looks clean, then run:
+
+bash
+npm run build
+bash
+npx cap sync ios
+bash
+npx cap open ios
+Then in Xcode:
+
+Product → Clean Build Folder
+Product → Archive
+Organizer opens → Distribute App → App Store Connect → Upload
+Wait 5-15 minutes for it to process in App Store Connect
+Go to your 1.0.1 Prepare for Submission page
+Click + next to Build and select the new build
+Hit Submit for Review
+One thing to paste here before you archive — can you run this and show me the output:
+
+bash
+cat capacitor.config.ts
+Just want to confirm that config is clean before you build. That one check has saved the previous iOS submission and I don't want it to catc
