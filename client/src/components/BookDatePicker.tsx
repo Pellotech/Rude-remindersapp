@@ -404,7 +404,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 <div style={{
                   width: 46,
                   height: 46,
-                  background: '#A0522D',
+                  background: 'transparent', // secondary option: '#A0522D' (sienna brown)
                   borderRadius: 8,
                   flexShrink: 0,
                   position: 'relative',
