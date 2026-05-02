@@ -402,10 +402,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
                 {/* Logo overlapping a smaller gold box (logo size is fixed, independent of box size) */}
                 <div style={{
-                  width: 36,
-                  height: 36,
+                  width: 40,
+                  height: 40,
                   background: '#C9A063',
-                  borderRadius: 6,
+                  borderRadius: 7,
                   flexShrink: 0,
                   position: 'relative',
                   zIndex: 1,
