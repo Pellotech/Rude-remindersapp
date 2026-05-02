@@ -68,6 +68,26 @@ function getAuthUserId(req: any): string | null {
   return req.tokenUserId || req.session?.userId || req.user?.claims?.sub || null;
 }
 
+// Admin gate — only the production admin email is allowed past this middleware
+const ADMIN_EMAIL = 'loqvm1@gmail.com';
+async function isAdmin(req: any, res: any, next: any) {
+  const userId = getAuthUserId(req);
+  if (!userId) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+  try {
+    const user = await storage.getUser(userId);
+    if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+      console.warn('[Admin] Forbidden access attempt by user:', userId, 'email:', user?.email);
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    next();
+  } catch (e) {
+    console.error('[Admin] Authorization check failed:', e);
+    return res.status(500).json({ message: 'Authorization check failed' });
+  }
+}
+
 // Revoke auth token (for logout)
 async function revokeAuthToken(token: string): Promise<void> {
   await db.delete(authTokens).where(eq(authTokens.token, token));
@@ -1805,7 +1825,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes for managing premium email whitelist
-  app.get('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const emails = await getWhitelistedEmails();
       res.json({ 
@@ -1818,7 +1838,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
+  app.post('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const { email, password } = req.body;
       const userId = getAuthUserId(req);
@@ -1860,7 +1880,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/admin/whitelist', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const { email } = req.body;
 
