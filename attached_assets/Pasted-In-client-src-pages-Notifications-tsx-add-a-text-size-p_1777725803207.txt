@@ -1,0 +1,87 @@
+In client/src/pages/Notifications.tsx, add a text size preference setting to the existing settings page. Do not touch any other file or any other setting.
+Change 1 — Add the state and handler
+Near the top where other local settings states are declared, add:
+tsconst [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
+  () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
+);
+
+const handleTextSizeChange = (size: 'default' | 'larger' | 'blind') => {
+  setTextSize(size);
+  localStorage.setItem('text_size_preference', size);
+  window.dispatchEvent(new CustomEvent('text_size_changed', { detail: size }));
+  updateSetting("textSize", size);
+};
+Change 2 — Add the UI below the Nice Rudy Mode and Rudy Widget toggles
+Find the "Rudy Behaviour" section. Directly below the last toggle in that section, add a new section:
+tsx<div>
+  <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Text Size</h2>
+  <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+    <div className="px-4 py-3">
+      <p className="text-white text-[17px] mb-3">Notification Text Size</p>
+      <div style={{ display: 'flex', gap: 8 }}>
+        {(['default', 'larger', 'blind'] as const).map((size) => {
+          const labels = { default: 'Default', larger: 'Larger', blind: 'Blind' };
+          const previews = { default: 'Aa', larger: 'Aa', blind: 'Aa' };
+          const fontSizes = { default: 16, larger: 22, blind: 30 };
+          const isSelected = textSize === size;
+          return (
+            <button
+              key={size}
+              type="button"
+              onClick={() => handleTextSizeChange(size)}
+              style={{
+                flex: 1,
+                background: isSelected ? '#C9A063' : '#38383A',
+                border: isSelected ? '2px solid #C9A063' : '2px solid transparent',
+                borderRadius: 12,
+                padding: '10px 6px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 6,
+                cursor: 'pointer',
+              }}
+            >
+              <span style={{
+                fontSize: fontSizes[size],
+                fontWeight: 600,
+                color: isSelected ? '#111827' : '#ffffff',
+                lineHeight: 1,
+              }}>{previews[size]}</span>
+              <span style={{
+                fontSize: 11,
+                color: isSelected ? '#111827' : '#8E8E93',
+                fontWeight: 500,
+              }}>{labels[size]}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
+        Affects reminder notification text and message display size.
+      </p>
+    </div>
+  </div>
+</div>
+Change 3 — Wire it to the Save button
+In the onSuccess callback of updateSettingsMutation, alongside the other sync blocks, add:
+tsif (localSettings.textSize !== undefined) {
+  localStorage.setItem('text_size_preference', localSettings.textSize);
+  window.dispatchEvent(new CustomEvent('text_size_changed', { detail: localSettings.textSize }));
+}
+Change 4 — Apply the text size to the RichReminderNotification component
+In client/src/components/RichReminderNotification.tsx, add a text size listener near the top of the component:
+tsconst [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
+  () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
+);
+
+useEffect(() => {
+  const handler = (e: Event) => setTextSize((e as CustomEvent).detail);
+  window.addEventListener('text_size_changed', handler);
+  return () => window.removeEventListener('text_size_changed', handler);
+}, []);
+
+const textSizeMap = { default: 15, larger: 19, blind: 24 };
+const notifFontSize = textSizeMap[textSize];
+Then apply fontSize: notifFontSize to the main reminder message text element — the one that shows rudeMessage or the AI responses. Apply it only to the message text, not to buttons, titles, or other UI elements.
+Do not change any other component, any other setting, or any other file.
