@@ -400,27 +400,30 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   background: 'rgba(0,0,0,0.15)',
                 }} />
 
-                {/* Logo in gold box */}
+                {/* Logo overlapping a smaller gold box (logo size is fixed, independent of box size) */}
                 <div style={{
                   width: 46,
                   height: 46,
                   background: '#C9A063',
                   borderRadius: 8,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   flexShrink: 0,
                   position: 'relative',
                   zIndex: 1,
+                  overflow: 'visible',
                 }}>
                   <img
                     src={rudeRemindersLogo}
                     style={{
-                      width: 38,
-                      height: 38,
+                      width: 60,
+                      height: 60,
                       objectFit: 'contain',
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
                       flexShrink: 0,
                       maxWidth: 'none',
+                      pointerEvents: 'none',
                     }}
                     alt=""
                   />
