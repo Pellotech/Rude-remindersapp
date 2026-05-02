@@ -1715,11 +1715,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // RevenueCat webhook handler
   app.post('/api/webhooks/revenuecat', async (req, res) => {
+    // Verify RevenueCat webhook authorization header
+    const webhookSecret = process.env.REVENUECAT_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const authHeader = req.headers['authorization'];
+      if (!authHeader || authHeader !== webhookSecret) {
+        console.warn('[Webhook] Unauthorized request rejected — bad or missing auth header');
+        return res.status(401).send('Unauthorized');
+      }
+    }
+
     const rcEvent = req.body;
 
     try {
-      // RevenueCat webhook events don't require signature verification by default
-      // but you can add authorization header validation if needed
       if (!rcEvent || !rcEvent.event || !rcEvent.event.app_user_id) {
         return res.status(400).send('Invalid RevenueCat webhook payload');
       }
