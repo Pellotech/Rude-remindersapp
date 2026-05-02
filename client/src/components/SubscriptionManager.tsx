@@ -43,6 +43,7 @@ async function loadOfferingsSafe() {
 export default function SubscriptionManager({ isAuthenticated = false, user }: SubscriptionManagerProps) {
   const [loading, setLoading] = useState(false);
   const [offeringsError, setOfferingsError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [showPlans, setShowPlans] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [monthlyPrice, setMonthlyPrice] = useState<string | null>(null);
@@ -102,6 +103,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
   const handlePurchase = async () => {
     setLoading(true);
     setOfferingsError(false);
+    setError(null);
     try {
       if (platform.isNative) {
         // loadOfferingsSafe() already ensures RevenueCat is initialized
@@ -145,6 +147,11 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           }
           toast({ title: "Purchase Failed", description: "Please try again.", variant: "destructive" });
         }
+      } else {
+        // Web — purchases only available through the mobile app
+        setError("Purchases are only available through the iOS App Store or Google Play Store. Please download the Rude Reminders app to subscribe.");
+        setLoading(false);
+        return;
       }
     } finally {
       setLoading(false);
@@ -247,9 +254,23 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             <p className="text-sm text-[#92400E]">Please sign into a Sandbox App Store account to test purchases.</p>
           </div>
         )}
-        <Button onClick={handlePurchase} disabled={loading || (platform.isNative && pricesLoading)} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-continue-purchase">
-          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : pricesLoading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Loading prices...</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
+        <Button onClick={handlePurchase} disabled={loading || (platform.isNative && pricesLoading) || !platform.isNative} className={`w-full text-white text-lg py-6 rounded-[14px] h-[52px] ${platform.isNative ? 'bg-[#C53B3B] hover:bg-[#A83232]' : 'bg-[#C53B3B]/40 cursor-not-allowed'}`} size="lg" data-testid="button-continue-purchase">
+          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : pricesLoading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Loading prices...</>) : !platform.isNative ? (<>Mobile App Only</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
+        {error && (
+          <div style={{
+            background: '#FDF3E3',
+            border: '1.5px solid #C9A063',
+            borderRadius: 12,
+            padding: '10px 14px',
+            fontSize: 13,
+            color: '#6B3410',
+            textAlign: 'center',
+            marginTop: 10,
+          }}>
+            {error}
+          </div>
+        )}
         <p className="text-xs text-[#6B7280]">
           {selectedPlan === 'yearly' && yearlyPrice
             ? `Rude Reminders Premium · ${yearlyPrice}/year · ` 
