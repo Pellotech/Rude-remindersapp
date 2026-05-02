@@ -1645,25 +1645,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Sync subscription status from mobile app after successful purchase
-  // This provides immediate feedback before RevenueCat webhook arrives
+  // Verifies entitlements directly with RevenueCat — never trusts the client payload
   app.post('/api/sync-subscription', isAuthenticated, async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);
-      const { subscriptionStatus, subscriptionPlan } = req.body;
-      
-      if (subscriptionStatus === 'active' && subscriptionPlan === 'premium') {
+      if (!userId) {
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+      }
+
+      // Verify entitlements directly from RevenueCat — never trust the client
+      const rcResponse = await fetch(
+        `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.REVENUECAT_SECRET_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!rcResponse.ok) {
+        console.error('RevenueCat verification failed:', rcResponse.status);
+        return res.status(402).json({ success: false, message: 'Could not verify subscription' });
+      }
+
+      const rcData = await rcResponse.json();
+      const entitlements = rcData?.subscriber?.entitlements || {};
+      const isPremium = Object.values(entitlements).some(
+        (e: any) => e.expires_date === null || new Date(e.expires_date) > new Date()
+      );
+
+      if (isPremium) {
         await storage.updateUser(userId, {
           subscriptionStatus: 'active',
-          subscriptionPlan: 'premium'
+          subscriptionPlan: 'premium',
         });
-        
-        res.json({ success: true, message: 'Subscription synced' });
+        res.json({ success: true, message: 'Subscription verified and synced' });
       } else {
-        res.json({ success: false, message: 'Invalid subscription data' });
+        res.json({ success: false, message: 'No active entitlements found' });
       }
     } catch (error: any) {
       console.error('Error syncing subscription:', error);
-      res.status(500).json({ error: { message: error.message } });
+      res.status(500).json({ error: error.message });
     }
   });
 

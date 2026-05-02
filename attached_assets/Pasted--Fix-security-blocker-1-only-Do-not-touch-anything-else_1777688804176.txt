@@ -1,0 +1,47 @@
+
+Fix security blocker #1 only. Do not touch anything else.
+The problem: POST /api/sync-subscription in server/routes.ts currently trusts whatever the client sends. Any logged-in user can call it with {subscriptionStatus: "active", subscriptionPlan: "premium"} from a browser console and get Premium for free.
+The fix: Instead of trusting the client's payload, verify the user's actual entitlements directly against RevenueCat's REST API using the REVENUECAT_SECRET_KEY already stored in environment variables. Only grant premium if RevenueCat confirms it.
+Replace the current POST /api/sync-subscription handler with this logic:
+tsapp.post('/api/sync-subscription', isAuthenticated, async (req: any, res) => {
+  try {
+    const userId = getAuthUserId(req);
+
+    // Verify entitlements directly from RevenueCat — never trust the client
+    const rcResponse = await fetch(
+      `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.REVENUECAT_SECRET_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!rcResponse.ok) {
+      console.error('RevenueCat verification failed:', rcResponse.status);
+      return res.status(402).json({ success: false, message: 'Could not verify subscription' });
+    }
+
+    const rcData = await rcResponse.json();
+    const entitlements = rcData?.subscriber?.entitlements || {};
+    const isPremium = Object.values(entitlements).some(
+      (e: any) => e.expires_date === null || new Date(e.expires_date) > new Date()
+    );
+
+    if (isPremium) {
+      await storage.updateUser(userId, {
+        subscriptionStatus: 'active',
+        subscriptionPlan: 'premium',
+      });
+      res.json({ success: true, message: 'Subscription verified and synced' });
+    } else {
+      res.json({ success: false, message: 'No active entitlements found' });
+    }
+  } catch (error: any) {
+    console.error('Error syncing subscription:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+The client no longer sends subscriptionStatus or subscriptionPlan — it just calls the endpoint and the server checks RevenueCat directly. The client payload is completely ignored.
+Do not change any other route, any other file, or the RevenueCat webhook handler. We will fix that separately.
