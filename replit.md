@@ -44,7 +44,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
   - **Monthly Reminder Limits**: Free users: 15/month, Premium users: 120/month. Tracked in `monthlyReminderUsage` JSON field on users table. Resets automatically on the 1st of each month. Limit check runs before creation for both single and multi-day reminders (`server/utils/premiumCheck.ts`).
   - **Automatic Expiration Handling**: Daily cleanup task (runs at 2 AM) automatically downgrades expired subscriptions to free tier
   - **Premium Whitelist**: Test accounts (testuserzzwai_@rudereminders.com, appstoreuser@rudereminders.com) always receive premium features
-  - **Admin Access**: Only ruderemindersinfo@gmail.com has access to the admin panel to manage whitelist
+  - **Admin Access**: Only loqvm1@gmail.com has access to the admin panel to manage whitelist. Enforced both client-side (`client/src/pages/admin.tsx`) and server-side via the `isAdmin` middleware in `server/routes.ts` (constant `ADMIN_EMAIL`). All `/api/admin/*` routes require both `isAuthenticated` AND `isAdmin`.
   - **RevenueCat Webhooks**: Real-time subscription updates via webhooks for instant premium status changes
   - **Graceful Degradation**: Users retain login access and data when subscription expires; only premium features are restricted
 - **Analytics Event Log**: A separate `reminder_events` table persists completion/missed history independently from reminders. Graph data survives reminder deletion. Events are written atomically when marking complete or missed. A one-time backfill at server startup migrates all existing completed/missed reminders to the event log (idempotent). The `/api/stats/completion-graph` endpoint reads exclusively from this table.
