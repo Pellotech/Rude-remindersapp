@@ -85,7 +85,7 @@ export function RichReminderNotification({
     return () => window.removeEventListener('text_size_changed', handler);
   }, []);
 
-  const textSizeMap = { default: 15, larger: 18, blind: 21 };
+  const textSizeMap = { default: 14, larger: 18, blind: 21 };
   const notifFontSize = textSizeMap[textSize];
 
   const rudenessStyle = getRudenessStyle(reminder.rudenessLevel);
