@@ -404,7 +404,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 <div style={{
                   width: 46,
                   height: 46,
-                  background: '#C9A063',
+                  background: 'transparent',
                   borderRadius: 8,
                   flexShrink: 0,
                   position: 'relative',
