@@ -402,10 +402,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
                 {/* Logo in gold box */}
                 <div style={{
-                  width: 72,
-                  height: 72,
+                  width: 46,
+                  height: 46,
                   background: '#C9A063',
-                  borderRadius: 12,
+                  borderRadius: 8,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -416,8 +416,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   <img
                     src={rudeRemindersLogo}
                     style={{
-                      width: 60,
-                      height: 60,
+                      width: 38,
+                      height: 38,
                       objectFit: 'contain',
                       flexShrink: 0,
                       maxWidth: 'none',
