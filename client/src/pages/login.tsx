@@ -271,10 +271,10 @@ export default function LoginPage() {
         <div style={{
           background: '#C9853A',
           borderRadius: 16,
-          padding: '14px 16px',
+          padding: '14px 16px 14px 8px',
           display: 'flex',
           alignItems: 'flex-start',
-          gap: 12,
+          gap: 6,
           marginBottom: 20,
         }}>
           <img
