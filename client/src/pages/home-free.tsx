@@ -33,7 +33,6 @@ import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
-import { guestStorage } from "@/services/guestStorage";
 
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
   if (voiceType === 'british-male') {
@@ -60,7 +59,7 @@ const FREE_LIMITS = {
 };
 
 export default function HomeFree() {
-  const { user, isGuest } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [wsConnection, setWsConnection] = useState<WebSocket | null>(null);
@@ -98,19 +97,12 @@ export default function HomeFree() {
     return () => observer.disconnect();
   }, []);
 
-  // For guest users, use localStorage; for authenticated users, use API
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
-    queryKey: isGuest ? ["guest-reminders"] : ["/api/reminders"],
-    queryFn: isGuest 
-      ? async () => guestStorage.getReminders()
-      : undefined, // Use default fetcher for authenticated users
+    queryKey: ["/api/reminders"],
   });
 
   const { data: stats } = useQuery<{ total: number; completed: number; pending: number; overdue: number; monthlyReminderUsage?: Record<string, number> }>({
-    queryKey: isGuest ? ["guest-stats"] : ["/api/stats"],
-    queryFn: isGuest
-      ? async () => guestStorage.getStats()
-      : undefined, // Use default fetcher for authenticated users
+    queryKey: ["/api/stats"],
   });
 
   const { data: voices = [] } = useQuery<{ id: string; name: string; }[]>({
@@ -282,7 +274,7 @@ export default function HomeFree() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
-                <span className="truncate">{isGuest ? "Hey Guest" : `Hey ${(user as any)?.firstName || (user as any)?.username || 'there'}`}</span>
+                <span className="truncate">{`Hey ${(user as any)?.firstName || (user as any)?.username || 'there'}`}</span>
                 <Badge className="bg-green-400 text-white text-xs flex-shrink-0 border-0">
                   <Star className="h-3 w-3 mr-1" />
                   Free

@@ -133,11 +133,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleContinueAsGuest = () => {
-    toast({ title: "Welcome!", description: "Your reminders will be stored locally." });
-    setLocation("/");
-  };
-
   const handleResendVerification = async () => {
     if (!verificationEmail) return;
     setResendLoading(true);
@@ -200,24 +195,6 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <AppHeader className="mb-4" />
-
-        {/* Primary CTA - Start Using App */}
-        <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
-          <CardContent className="pt-6 pb-6">
-            <Button 
-              onClick={handleContinueAsGuest}
-              className="w-full bg-white hover:bg-gray-50 text-[#111827] text-lg py-6 rounded-[14px] h-[52px] border-2 border-[#EAEAEA] font-semibold"
-              size="lg"
-              data-testid="button-continue-guest"
-            >
-              <Sparkles className="mr-2 h-5 w-5 text-[#111827]" />
-              Start Using App
-            </Button>
-            <p className="text-sm text-[#6B7280] text-center mt-3">
-              Free Access
-            </p>
-          </CardContent>
-        </Card>
 
         {/* Login/Register Form */}
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">

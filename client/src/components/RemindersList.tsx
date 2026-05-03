@@ -4,8 +4,6 @@ import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { useAuth } from "@/hooks/useAuth";
-import { guestStorage } from "@/services/guestStorage";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +50,6 @@ interface RemindersListProps {
 export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isGuest } = useAuth();
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState<"upcoming" | "past">("past");
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,12 +58,10 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const [showRudyTooltip, setShowRudyTooltip] = useState(() => !localStorage.getItem('manage_tooltip_seen'));
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
 
-  const { data: reminders = [], isLoading } = useQuery({
-    queryKey: isGuest ? ["guest-reminders"] : ["/api/reminders"],
-    queryFn: isGuest ? async () => guestStorage.getReminders() : undefined,
-    refetchInterval: isGuest ? 1000 : undefined,
-    staleTime: 0,          // Always treat cached data as stale so a fresh fetch runs on every mount
-    refetchOnMount: true,  // Always re-fetch when the component mounts
+  const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
+    queryKey: ["/api/reminders"],
+    staleTime: 0,
+    refetchOnMount: true,
   });
 
   // One-time Rudy tooltip — stays until user taps X (no auto-dismiss)
@@ -86,7 +81,6 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
 
   const completeReminderMutation = useMutation({
     mutationFn: async (id: string) => {
-      if (isGuest) return guestStorage.completeReminder(id);
       return apiRequest(`/api/reminders/${id}/complete`, { method: "PATCH" });
     },
     onSuccess: async (_, id) => {
@@ -96,13 +90,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
         try { await cancelNativeNotification(id); } catch {}
       }
       toast({ title: "Reminder completed!", description: "Great job! Keep up the good work." });
-      if (isGuest) {
-        queryClient.invalidateQueries({ queryKey: ["guest-reminders"] });
-        queryClient.invalidateQueries({ queryKey: ["guest-stats"] });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-        queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
-      }
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
@@ -116,7 +105,6 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
 
   const deleteReminderMutation = useMutation({
     mutationFn: async (id: string) => {
-      if (isGuest) { guestStorage.deleteReminder(id); return id; }
       await apiRequest(`/api/reminders/${id}`, { method: "DELETE" });
       return id;
     },
@@ -125,13 +113,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
         try { await cancelNativeNotification(id); } catch {}
       }
       toast({ title: "Deleted!", description: "Reminder has been deleted." });
-      if (isGuest) {
-        await queryClient.refetchQueries({ queryKey: ["guest-reminders"] });
-        await queryClient.refetchQueries({ queryKey: ["guest-stats"] });
-      } else {
-        await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
-      }
+      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
@@ -145,7 +128,6 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
 
   const markNotAccomplishedMutation = useMutation({
     mutationFn: async (id: string) => {
-      if (isGuest) return Promise.resolve(guestStorage.updateReminder(id, { notAccomplished: true } as any));
       return apiRequest(`/api/reminders/${id}/not-accomplished`, { method: "PATCH" });
     },
     onSuccess: async (_, id) => {
@@ -155,13 +137,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
         try { await cancelNativeNotification(id); } catch {}
       }
       toast({ title: "Noted", description: "Tracking what didn't get done builds awareness too." });
-      if (isGuest) {
-        await queryClient.refetchQueries({ queryKey: ["guest-reminders"] });
-        await queryClient.refetchQueries({ queryKey: ["guest-stats"] });
-      } else {
-        await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
-      }
+      await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {

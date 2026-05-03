@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import { NOTIFICATION_RECEIVED_EVENT, NotificationReceivedDetail } from "@/components/MobileNotifications";
 import { Reminder } from "@shared/schema";
-import { guestStorage } from "@/services/guestStorage";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -48,7 +47,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [currentReminder, setCurrentReminder] = useState<Reminder | null>(null);
   const [showRichNotification, setShowRichNotification] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
-  const { isGuest, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const autoPlayedRef = useRef<string | null>(null);
@@ -71,22 +70,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       
       const { reminderId } = customEvent.detail;
       if (!reminderId) return;
-      
-      if (isGuest) {
-        const guestReminders = guestStorage.getReminders();
-        const reminder = guestReminders.find(r => r.id === reminderId);
-        if (reminder) {
-          showNotification(reminder);
-        } else {
-          toast({
-            title: "Reminder not found",
-            description: "The notification refers to a reminder that no longer exists",
-            variant: "destructive",
-          });
-        }
-        return;
-      }
-      
+
       try {
         // Use apiRequest to properly fetch with token + base URL for Capacitor
         console.log('POPUP fetch reminderId:', reminderId);
@@ -110,7 +94,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     return () => {
       window.removeEventListener(NOTIFICATION_RECEIVED_EVENT, handleNotificationReceived);
     };
-  }, [isGuest, showNotification, queryClient, toast]);
+  }, [showNotification, queryClient, toast]);
 
   useEffect(() => {
     if (showRichNotification && currentReminder && currentReminder.rudeMessage) {
@@ -152,15 +136,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     if (!currentReminder) return;
 
     try {
-      if (isGuest) {
-        guestStorage.completeReminder(currentReminder.id);
-      } else {
-        await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
-      }
-      
+      await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
+
       await queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-      await queryClient.invalidateQueries({ queryKey: ["guest-reminders"] });
-      
+
       closeNotification();
       toast({
         title: "Reminder Completed",

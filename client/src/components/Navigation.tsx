@@ -9,7 +9,7 @@ import logoImage from "@assets/translusant_logo2_1767108484844.png";
 import { clearAuthToken, apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function Navigation() {
-  const { user, isGuest } = useAuth() as { user: User | undefined; isGuest: boolean };
+  const { user } = useAuth() as { user: User | undefined };
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [location, navigate] = useLocation();
   
@@ -57,44 +57,34 @@ export default function Navigation() {
               </Link>
             )}
 
-            {isGuest ? (
-              <Button
-                onClick={() => navigate('/login')}
-                className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white font-semibold h-9 px-4"
-                data-testid="button-nav-signin"
-              >
-                Sign In
-              </Button>
-            ) : (
-              <div className="flex items-center gap-2">
-                {user?.profileImageUrl && (
-                  <img
-                    src={user.profileImageUrl}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
-                  />
-                )}
-                <Link href="/settings">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className={`bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0 ${location === "/settings" ? "bg-[#C53B3B] text-white border-[#C53B3B]" : ""}`}
-                    data-testid="button-nav-settings"
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </Link>
+            <div className="flex items-center gap-2">
+              {user?.profileImageUrl && (
+                <img
+                  src={user.profileImageUrl}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
+                />
+              )}
+              <Link href="/settings">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleLogout}
-                  className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
-                  data-testid="button-nav-logout"
+                  className={`bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0 ${location === "/settings" ? "bg-[#C53B3B] text-white border-[#C53B3B]" : ""}`}
+                  data-testid="button-nav-settings"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <Settings className="h-4 w-4" />
                 </Button>
-              </div>
-            )}
+              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
+                data-testid="button-nav-logout"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
         

@@ -3,7 +3,7 @@
 ## Overview
 The Rude Daily Reminder App is a full-stack application that provides daily reminders with a humorous, "rude" twist, allowing users to customize the rudeness level. It aims to transform standard reminders into motivational notifications. The project, originally a web application, has been converted into native iOS and Android mobile apps using Capacitor, offering cross-platform synchronization and rich native mobile notifications. Key capabilities include photo/video attachments, historical motivational quotes, voice character selection, and an adjustable humor level via AI. The business vision is to deliver a unique, engaging, and motivating reminder experience.
 
-Guest users have limited free access, while all authenticated users (including developers) experience the premium interface.
+All users must authenticate (Apple/Google/Facebook social or email/password) before accessing the app. Guest mode has been removed entirely. App Store reviewers use the whitelisted account `appstoreuser@rudereminders.com` (permanent premium via whitelist) instead of guest mode.
 
 ### Rudy Character System
 - **RudyWidget** (`client/src/components/RudyWidget.tsx`): Interactive mascot widget replacing old slogan banners on both home pages. Shows Rudy image (64×64, `mix-blend-mode: multiply`) with animated speech bubble. Idle cycle rotates through 3 images every 12s (leaning_2 → sitting_floor → idle_smile). Slogans rotate every 8s.

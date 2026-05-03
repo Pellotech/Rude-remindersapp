@@ -26,7 +26,11 @@ export default function Subscribe() {
 
       try {
         const currentUser = await apiRequest("/api/auth/user", { method: 'GET' });
-        const userId = currentUser?.id || `guest-${Date.now()}`;
+        if (!currentUser?.id) {
+          console.warn('No authenticated user — skipping RevenueCat configuration');
+          return;
+        }
+        const userId = currentUser.id;
         
         Purchases.configure({
           apiKey: apiKey,

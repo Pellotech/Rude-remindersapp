@@ -35,7 +35,6 @@ export function useAuth() {
     user,
     isLoading,
     isAuthenticated: !!user,
-    isGuest: !user,
     refetch,
   };
 }

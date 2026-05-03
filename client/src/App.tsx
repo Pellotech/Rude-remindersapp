@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/components/NotificationProvider";
 import { useAuth } from "@/hooks/useAuth";
-import Home from "@/pages/home";
 import HomeFree from "@/pages/home-free";
 import HomePremium from "@/pages/home-premium";
 import Settings from "@/pages/SettingsLanding";
@@ -56,17 +55,19 @@ const useNormalizedLocation = (): [string, (to: string) => void] => {
 
 function HomeRouter() {
   const { user, isLoading, isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
 
-  // Only show loading on initial mount, not for guest users
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      setLocation('/login');
+    }
+  }, [isLoading, isAuthenticated, setLocation]);
+
+  if (isLoading || !isAuthenticated) {
     return <SplashScreen />;
   }
 
-  // Route based on premium status:
-  // - Premium users (authenticated + premium) → HomePremium
-  // - Free users (authenticated + not premium) → HomeFree
-  // - Guest users (not authenticated) → HomeFree
-  const isPremium = isAuthenticated && user?.subscriptionPlan === 'premium';
+  const isPremium = user?.subscriptionPlan === 'premium';
   return isPremium ? <HomePremium /> : <HomeFree />;
 }
 

@@ -53,18 +53,6 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
   const [, setLocation] = useLocation();
   const platform = getPlatformInfo();
 
-  // Handle guest users - force login before subscribing
-  const handleGuestSubscribe = () => {
-    toast({
-      title: "Sign in Required",
-      description: "Create an account to subscribe.",
-      variant: "default",
-    });
-    setTimeout(() => {
-      setLocation('/login');
-    }, 500);
-  };
-
   const handleSubscribe = async () => {
     setLoading(true);
     setOfferingsError(false);
@@ -255,9 +243,6 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
                 <h1 className="text-3xl font-bold text-[#111827] mb-2">
                   Unlock Premium
                 </h1>
-                <p className="font-bold text-[#C53B3B]">
-                  Please create an account before subscribing
-                </p>
               </div>
 
               {offeringsError && (
@@ -270,7 +255,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
               
               <div className="space-y-3">
                 <Button 
-                  onClick={isAuthenticated ? handleSubscribe : handleGuestSubscribe}
+                  onClick={handleSubscribe}
                   disabled={loading}
                   className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]"
                   size="lg"
@@ -283,7 +268,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
                     </>
                   ) : (
                     <>
-                      {isAuthenticated ? 'Subscribe Now' : 'Create Account'}
+                      Subscribe Now
                     </>
                   )}
                 </Button>

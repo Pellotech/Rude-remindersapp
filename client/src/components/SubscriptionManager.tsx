@@ -90,13 +90,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
     }
   }, []);
 
-  const handleGuestSubscribe = () => {
-    toast({ title: "Sign in Required", description: "Create an account to subscribe." });
-    setTimeout(() => { setLocation('/login'); }, 500);
-  };
-
   const handleShowPlans = () => {
-    if (!isAuthenticated) { handleGuestSubscribe(); return; }
     setShowPlans(true);
   };
 
@@ -188,9 +182,6 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             </div>
           ))}
         </div>
-        {!isAuthenticated && (
-          <p className="font-bold text-[#C53B3B] text-sm">Please create an account before subscribing</p>
-        )}
         <Button onClick={handleShowPlans} className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]" size="lg" data-testid="button-subscribe-now">
           <Crown className="h-5 w-5 mr-2" />
           Subscribe Now

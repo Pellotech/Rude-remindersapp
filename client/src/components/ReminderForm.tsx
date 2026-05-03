@@ -9,7 +9,6 @@ import { useLocation } from "wouter";
 import { apiRequest, getFullApiUrl, getAuthToken } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { guestStorage } from "@/services/guestStorage";
 import {
   Form,
   FormControl,
@@ -214,7 +213,7 @@ export default function ReminderForm({
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user, isGuest } = useAuth();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { scheduleReminder: scheduleNativeNotification, requestPermissions } = useMobileNotifications();
 
@@ -467,23 +466,6 @@ export default function ReminderForm({
 
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      // For guest users, store reminders in localStorage
-      if (isGuest) {
-        const guestReminder = guestStorage.addReminder({
-          title: data.originalMessage,
-          scheduledFor: data.scheduledFor || new Date().toISOString(),
-          rudeMessage: previewMessage || `${data.originalMessage}, get it done!`,
-          motivationLevel: data.rudenessLevel,
-          isMultiDay: data.isMultiDay,
-          selectedDays: data.selectedDays,
-          voiceCharacter: data.voiceCharacter,
-          browserNotification: true,
-          voiceNotification: false,
-        });
-        return guestReminder;
-      }
-
-      // For authenticated users, use API
       const submissionData = {
         ...data,
         title: data.originalMessage, // Use the original message as the title
@@ -587,14 +569,8 @@ export default function ReminderForm({
       setSelectedContextCategory("");
       setScheduleValid(false);
 
-      // Invalidate the correct query based on guest mode
-      if (isGuest) {
-        queryClient.invalidateQueries({ queryKey: ["guest-reminders"] });
-        queryClient.invalidateQueries({ queryKey: ["guest-stats"] });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-        queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
-      }
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {

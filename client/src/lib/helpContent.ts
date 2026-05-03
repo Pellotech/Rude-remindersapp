@@ -28,31 +28,15 @@ export const helpCategories: HelpCategory[] = [
     description: "Learn the basics of Rude Reminders",
     articles: [
       {
-        id: "guest-mode",
-        title: "Start Using App (Guest)",
-        icon: "User",
-        keywords: ["guest", "start", "begin", "new"],
-        steps: [
-          "Open the app and tap 'Continue as Guest'",
-          "You can create reminders immediately without an account",
-          "Guest data is stored locally on your device only",
-          "To sync across devices, create an account later"
-        ],
-        faqs: [
-          { question: "Will I lose my reminders as a guest?", answer: "Guest reminders are stored locally. If you uninstall the app, they will be lost. Create an account to sync and backup." },
-          { question: "Can I upgrade from guest to account?", answer: "Yes! Tap the profile icon and select 'Create Account' to keep all your existing reminders." }
-        ]
-      },
-      {
         id: "create-account",
         title: "Creating an Account",
         icon: "UserPlus",
         keywords: ["account", "signup", "register", "login", "sync"],
         steps: [
-          "Tap the Sign In button in the top right corner",
+          "Open the app — you'll be taken to the sign-in screen",
           "Choose Apple, Google, Facebook, or email to register",
-          "Your reminders will now sync across all your devices",
-          "Logged-in users get the full premium interface automatically"
+          "Your reminders sync across all your devices",
+          "An account is required to use Rude Reminders"
         ],
         faqs: [
           { question: "Which login method is best?", answer: "Apple Sign-In is fastest on iOS devices and keeps your email private. All methods work equally well." },
@@ -515,7 +499,7 @@ export const helpCategories: HelpCategory[] = [
         ],
         faqs: [
           { question: "Will signing out delete my reminders?", answer: "No. Reminders are saved to your account and return when you sign back in." },
-          { question: "Should I reinstall the app?", answer: "Only as a last resort. Account data is safe, but guest-only data may be lost." }
+          { question: "Should I reinstall the app?", answer: "Only as a last resort. Your account data is safely stored on the server and will return after re-login." }
         ]
       }
     ]
