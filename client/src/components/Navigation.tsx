@@ -97,7 +97,7 @@ export default function Navigation() {
                     <LogOut className="h-4 w-4" />
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="bg-[#FDF3E3]">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
                     <AlertDialogDescription>
