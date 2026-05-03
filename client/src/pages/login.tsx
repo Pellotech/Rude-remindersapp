@@ -311,7 +311,7 @@ export default function LoginPage() {
               color: '#111827',
               lineHeight: 1.4,
             }}>
-              Oi! You get <span style={{ color: '#b70d0d', fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go Premium = unlimited. Pick your poison.
+              Oi! You get <span style={{ color: '#b70d0d', fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go Premium = mind blowing reminders. Pick your poison.
             </p>
           </div>
         </div>
