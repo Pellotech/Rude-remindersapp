@@ -427,15 +427,15 @@ export default function LoginPage() {
                 </form>
               </TabsContent>
             </Tabs>
+          </CardContent>
+        </Card>
 
-            {/* Social login divider — muted gold stripe */}
-            <div className="my-5 flex items-center gap-3">
-              <div className="flex-1 h-[3px] rounded-full bg-[#C9A063]/60" />
-              <span className="text-xs font-medium text-[#C9A063] uppercase tracking-wide">or continue with</span>
-              <div className="flex-1 h-[3px] rounded-full bg-[#C9A063]/60" />
-            </div>
-
-            {/* Social login buttons */}
+        {/* Social Sign-In — separate card */}
+        <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+          <CardContent className="pt-6 pb-6">
+            <p className="text-xs font-medium text-[#C9A063] uppercase tracking-wide text-center mb-4">
+              Or continue with
+            </p>
             <div className="flex flex-col gap-2.5">
               {Capacitor.getPlatform() === "ios" && (
                 <button
@@ -485,6 +485,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Footer */}
+
         <div className="text-center text-sm text-[#6B7280] space-y-2">
           <p className="flex items-center justify-center gap-2 flex-wrap">
             <span>By continuing, you agree to our</span>
