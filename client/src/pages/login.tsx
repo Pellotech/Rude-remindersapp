@@ -267,6 +267,16 @@ export default function LoginPage() {
         {/* Header */}
         <AppHeader className="mb-4" />
 
+        {/* Tagline */}
+        <div className="text-center px-2">
+          <p className="text-[#1B2A5E] font-bold text-lg leading-snug">
+            Go super max premium! Or just free, you choose.
+          </p>
+          <p className="text-[#C53B3B] font-semibold text-base mt-1 italic">
+            Sign in... if you dare...
+          </p>
+        </div>
+
         {/* Login/Register Form */}
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
