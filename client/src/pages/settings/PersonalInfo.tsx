@@ -5,7 +5,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, clearAuthToken } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
-import { ChevronLeft, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft } from "lucide-react";
+import { ChevronLeft, ChevronDown, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft, Lock } from "lucide-react";
 
 export default function PersonalInfo() {
   const { toast } = useToast();
@@ -60,6 +60,7 @@ export default function PersonalInfo() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const [showDeleteScreen, setShowDeleteScreen] = useState(false);
 
   const isOAuthOnly = !!user && !user.passwordHash;
@@ -277,17 +278,37 @@ export default function PersonalInfo() {
           </div>
 
           <div>
-            <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Change Password</p>
             {isOAuthOnly ? (
-              <div className="bg-[#1C1C1E] rounded-xl px-4 py-3">
-                <p className="text-[15px] text-[#8E8E93]">
-                  Your account uses social sign-in. Manage your password with your sign-in provider.
-                </p>
-              </div>
+              <>
+                <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Change Password</p>
+                <div className="bg-[#1C1C1E] rounded-xl px-4 py-3">
+                  <p className="text-[15px] text-[#8E8E93]">
+                    Your account uses social sign-in. Manage your password with your sign-in provider.
+                  </p>
+                </div>
+              </>
             ) : (
-              <div className="bg-[#1C1C1E] rounded-xl overflow-hidden divide-y divide-[#2C2C2E]">
-                <div className="px-4 py-3">
-                  <label className="text-[12px] text-[#8E8E93]">Current password</label>
+              <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setPasswordOpen((v) => !v)}
+                  className="w-full flex items-center justify-between px-4 py-3.5 text-left"
+                  aria-expanded={passwordOpen}
+                  data-testid="toggle-change-password"
+                >
+                  <div className="flex items-center gap-3">
+                    <Lock className="h-5 w-5 text-[#C9A063]" />
+                    <span className="text-[17px] text-white font-medium">Change Password</span>
+                  </div>
+                  <ChevronDown
+                    className={`h-5 w-5 text-[#8E8E93] transition-transform duration-200 ${passwordOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {passwordOpen && (
+                  <div className="border-t border-[#2C2C2E] divide-y divide-[#2C2C2E]">
+                    <div className="px-4 py-3">
+                      <label className="text-[12px] text-[#8E8E93]">Current password</label>
                   <div className="relative mt-1">
                     <input
                       type={showCurrent ? "text" : "password"}
@@ -360,18 +381,20 @@ export default function PersonalInfo() {
                     <p className="text-[12px] text-[#FF6B6B] mt-1">Passwords don't match.</p>
                   )}
                 </div>
-              </div>
-            )}
 
-            {!isOAuthOnly && (
-              <button
-                onClick={() => changePasswordMutation.mutate()}
-                disabled={!canSubmitPassword || changePasswordMutation.isPending}
-                className="w-full mt-3 py-3 bg-[#C9A063] text-black font-semibold text-[15px] rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
-                data-testid="button-update-password"
-              >
-                {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
-              </button>
+                    <div className="px-4 py-3">
+                      <button
+                        onClick={() => changePasswordMutation.mutate()}
+                        disabled={!canSubmitPassword || changePasswordMutation.isPending}
+                        className="w-full py-3 bg-[#C9A063] text-black font-semibold text-[15px] rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                        data-testid="button-update-password"
+                      >
+                        {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
