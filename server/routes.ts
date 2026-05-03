@@ -384,6 +384,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/account/change-password', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getAuthUserId(req);
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current and new password are required" });
+      }
+
+      if (typeof newPassword !== 'string' || newPassword.length < 8) {
+        return res.status(400).json({ message: "New password must be at least 8 characters" });
+      }
+
+      if (currentPassword === newPassword) {
+        return res.status(400).json({ message: "New password must be different from your current password" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (!user.passwordHash) {
+        return res.status(400).json({ message: "Your account uses social sign-in. Password change is not available." });
+      }
+
+      const matches = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!matches) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+
+      const newHash = await bcrypt.hash(newPassword, 10);
+      await storage.updateUser(userId, { passwordHash: newHash } as any);
+
+      const clientIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+      console.log(`[AUDIT] Password change: userId=${userId}, email=${user.email || 'unknown'}, ip=${clientIp}, timestamp=${new Date().toISOString()}`);
+
+      res.json({ message: "Password updated successfully" });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
+
   app.delete('/api/account', async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);

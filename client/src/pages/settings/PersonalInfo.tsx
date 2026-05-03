@@ -54,8 +54,47 @@ export default function PersonalInfo() {
   });
 
   const [localSettings, setLocalSettings] = useState<any>({});
-  const [showPassword, setShowPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [showDeleteScreen, setShowDeleteScreen] = useState(false);
+
+  const isOAuthOnly = !!user && !user.passwordHash;
+  const newPwTooShort = newPassword.length > 0 && newPassword.length < 8;
+  const pwMismatch = confirmPassword.length > 0 && confirmPassword !== newPassword;
+  const canSubmitPassword =
+    !isOAuthOnly &&
+    currentPassword.length > 0 &&
+    newPassword.length >= 8 &&
+    confirmPassword === newPassword &&
+    currentPassword !== newPassword;
+
+  const changePasswordMutation = useMutation({
+    mutationFn: () =>
+      apiRequest("/api/account/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      }),
+    onSuccess: () => {
+      toast({ title: "Password updated", description: "Your password has been changed." });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    },
+    onError: (err: any) => {
+      const message = err?.message?.replace(/^\d+:\s*/, "") || "Failed to change password";
+      let description = message;
+      try {
+        const parsed = JSON.parse(message);
+        if (parsed?.message) description = parsed.message;
+      } catch {}
+      toast({ title: "Couldn't update password", description, variant: "destructive" });
+    },
+  });
+
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const saveButtonRef = useRef<HTMLDivElement>(null);
@@ -237,28 +276,103 @@ export default function PersonalInfo() {
             </div>
           </div>
 
-          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-            <div className="px-4 py-3">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Change Password</label>
-              <div className="relative mt-1">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={currentSettings.newPassword || ""}
-                  onChange={(e) => updateSetting("newPassword", e.target.value)}
-                  className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
-                  placeholder="New password (optional)"
-                  autoComplete="new-password"
-                  data-testid="input-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
+          <div>
+            <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Change Password</p>
+            {isOAuthOnly ? (
+              <div className="bg-[#1C1C1E] rounded-xl px-4 py-3">
+                <p className="text-[15px] text-[#8E8E93]">
+                  Your account uses social sign-in. Manage your password with your sign-in provider.
+                </p>
               </div>
-            </div>
+            ) : (
+              <div className="bg-[#1C1C1E] rounded-xl overflow-hidden divide-y divide-[#2C2C2E]">
+                <div className="px-4 py-3">
+                  <label className="text-[12px] text-[#8E8E93]">Current password</label>
+                  <div className="relative mt-1">
+                    <input
+                      type={showCurrent ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                      placeholder="Enter current password"
+                      autoComplete="current-password"
+                      data-testid="input-current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrent(!showCurrent)}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                      aria-label={showCurrent ? "Hide password" : "Show password"}
+                    >
+                      {showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="px-4 py-3">
+                  <label className="text-[12px] text-[#8E8E93]">New password</label>
+                  <div className="relative mt-1">
+                    <input
+                      type={showNew ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                      placeholder="At least 8 characters"
+                      autoComplete="new-password"
+                      data-testid="input-new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNew(!showNew)}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                      aria-label={showNew ? "Hide password" : "Show password"}
+                    >
+                      {showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {newPwTooShort && (
+                    <p className="text-[12px] text-[#FF6B6B] mt-1">Must be at least 8 characters.</p>
+                  )}
+                </div>
+
+                <div className="px-4 py-3">
+                  <label className="text-[12px] text-[#8E8E93]">Confirm new password</label>
+                  <div className="relative mt-1">
+                    <input
+                      type={showConfirm ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                      placeholder="Re-enter new password"
+                      autoComplete="new-password"
+                      data-testid="input-confirm-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm(!showConfirm)}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                      aria-label={showConfirm ? "Hide password" : "Show password"}
+                    >
+                      {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {pwMismatch && (
+                    <p className="text-[12px] text-[#FF6B6B] mt-1">Passwords don't match.</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {!isOAuthOnly && (
+              <button
+                onClick={() => changePasswordMutation.mutate()}
+                disabled={!canSubmitPassword || changePasswordMutation.isPending}
+                className="w-full mt-3 py-3 bg-[#C9A063] text-black font-semibold text-[15px] rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                data-testid="button-update-password"
+              >
+                {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+              </button>
+            )}
           </div>
 
           <div ref={saveButtonRef}>
