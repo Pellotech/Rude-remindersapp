@@ -281,8 +281,8 @@ export default function LoginPage() {
             src="/rudy/Rudy_confident_arms_crossed_transparent.png"
             alt="Rudy"
             style={{
-              width: 56,
-              height: 56,
+              width: 88,
+              height: 88,
               objectFit: 'contain',
               flexShrink: 0,
             }}
