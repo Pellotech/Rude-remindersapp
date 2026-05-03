@@ -7,24 +7,6 @@ import { apiRequest, clearAuthToken } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { ChevronLeft, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft } from "lucide-react";
 
-const countryOptions = [
-  { value: "us", label: "United States" },
-  { value: "uk", label: "United Kingdom" },
-  { value: "ca", label: "Canada" },
-  { value: "au", label: "Australia" },
-  { value: "de", label: "Germany" },
-  { value: "fr", label: "France" },
-  { value: "es", label: "Spain" },
-  { value: "it", label: "Italy" },
-  { value: "jp", label: "Japan" },
-  { value: "kr", label: "South Korea" },
-  { value: "cn", label: "China" },
-  { value: "in", label: "India" },
-  { value: "br", label: "Brazil" },
-  { value: "mx", label: "Mexico" },
-  { value: "other", label: "Other" },
-];
-
 export default function PersonalInfo() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -276,25 +258,6 @@ export default function PersonalInfo() {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-            </div>
-          </div>
-
-          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-            <div className="px-4 py-3">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Country</label>
-              <select
-                value={currentSettings.country || ""}
-                onChange={(e) => updateSetting("country", e.target.value)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none appearance-none cursor-pointer"
-                data-testid="select-country"
-              >
-                <option value="" className="bg-[#1C1C1E]">Select country</option>
-                {countryOptions.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-[#1C1C1E]">
-                    {option.label}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
 
