@@ -25,14 +25,6 @@ const countryOptions = [
   { value: "other", label: "Other" },
 ];
 
-const genderOptions = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "non-binary", label: "Non-binary" },
-  { value: "other", label: "Other" },
-  { value: "prefer-not-to-say", label: "Prefer not to say" },
-];
-
 export default function PersonalInfo() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -288,19 +280,6 @@ export default function PersonalInfo() {
           </div>
 
           <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#38383A]">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Age</label>
-              <input
-                type="number"
-                min="13"
-                max="120"
-                value={currentSettings.age || ""}
-                onChange={(e) => updateSetting("age", e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
-                placeholder="Enter age"
-                data-testid="input-age"
-              />
-            </div>
             <div className="px-4 py-3">
               <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Country</label>
               <select
@@ -311,25 +290,6 @@ export default function PersonalInfo() {
               >
                 <option value="" className="bg-[#1C1C1E]">Select country</option>
                 {countryOptions.map((option) => (
-                  <option key={option.value} value={option.value} className="bg-[#1C1C1E]">
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-            <div className="px-4 py-3">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Gender Identity</label>
-              <select
-                value={currentSettings.gender || ""}
-                onChange={(e) => updateSetting("gender", e.target.value)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none appearance-none cursor-pointer"
-                data-testid="select-gender"
-              >
-                <option value="" className="bg-[#1C1C1E]">Select gender</option>
-                {genderOptions.map((option) => (
                   <option key={option.value} value={option.value} className="bg-[#1C1C1E]">
                     {option.label}
                   </option>
