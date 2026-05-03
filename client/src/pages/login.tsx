@@ -21,7 +21,7 @@ export default function LoginPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState("register");
+  const [activeTab, setActiveTab] = useState("login");
 
   // Get redirect URL from query params
   const getRedirectUrl = () => {
@@ -267,14 +267,54 @@ export default function LoginPage() {
         {/* Header */}
         <AppHeader className="mb-4" />
 
-        {/* Tagline */}
-        <div className="text-center px-2">
-          <p className="text-[#1B2A5E] font-bold text-lg leading-snug">
-            Go super max premium! Or just free, you choose.
-          </p>
-          <p className="text-[#C53B3B] font-semibold text-base mt-1 italic">
-            Sign in... if you dare...
-          </p>
+        {/* Rudy speech bubble banner */}
+        <div style={{
+          background: '#C9853A',
+          borderRadius: 16,
+          padding: '14px 16px',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 12,
+          marginBottom: 20,
+        }}>
+          <img
+            src="/rudy/Rudy_confident_arms_crossed_transparent.png"
+            alt="Rudy"
+            style={{
+              width: 56,
+              height: 56,
+              objectFit: 'contain',
+              flexShrink: 0,
+              mixBlendMode: 'multiply',
+            }}
+          />
+          <div style={{
+            background: 'white',
+            borderRadius: '0 14px 14px 14px',
+            padding: '10px 14px',
+            position: 'relative',
+            flex: 1,
+          }}>
+            <div style={{
+              position: 'absolute',
+              left: -8,
+              top: 10,
+              width: 0,
+              height: 0,
+              borderTop: '8px solid transparent',
+              borderBottom: '8px solid transparent',
+              borderRight: '8px solid white',
+            }} />
+            <p style={{
+              margin: 0,
+              fontSize: 14,
+              fontWeight: 500,
+              color: '#111827',
+              lineHeight: 1.4,
+            }}>
+              Oi! You get <span style={{ color: '#b70d0d', fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go Premium = unlimited. Pick your poison.
+            </p>
+          </div>
         </div>
 
         {/* Login/Register Form */}
