@@ -428,11 +428,11 @@ export default function LoginPage() {
               </TabsContent>
             </Tabs>
 
-            {/* Social login divider */}
-            <div className="flex items-center gap-2 my-4">
-              <div className="flex-1 h-px bg-[#E5E7EB]" />
-              <span className="text-xs text-[#9CA3AF]">or continue with</span>
-              <div className="flex-1 h-px bg-[#E5E7EB]" />
+            {/* Social login divider — muted gold stripe */}
+            <div className="my-5 flex items-center gap-3">
+              <div className="flex-1 h-[3px] rounded-full bg-[#C9A063]/60" />
+              <span className="text-xs font-medium text-[#C9A063] uppercase tracking-wide">or continue with</span>
+              <div className="flex-1 h-[3px] rounded-full bg-[#C9A063]/60" />
             </div>
 
             {/* Social login buttons */}
