@@ -285,7 +285,6 @@ export default function LoginPage() {
               height: 56,
               objectFit: 'contain',
               flexShrink: 0,
-              mixBlendMode: 'multiply',
             }}
           />
           <div style={{
