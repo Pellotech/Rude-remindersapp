@@ -468,6 +468,7 @@ export default function LoginPage() {
                 Continue with Google
               </button>
 
+              {/* Facebook Sign-In hidden for launch — handler retained for easy re-enable
               <button
                 type="button"
                 onClick={handleFacebookSignIn}
@@ -480,6 +481,7 @@ export default function LoginPage() {
                 </svg>
                 Continue with Facebook
               </button>
+              */}
             </div>
           </CardContent>
         </Card>
