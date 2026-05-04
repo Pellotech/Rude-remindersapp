@@ -1,0 +1,97 @@
+⚡️  TO JS undefined
+⚡️  To Native ->  Browser addListener 111073485
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+⚡️  TO JS {"url":"rudereminders:\/\/auth-callback?success=true&token=d5c9f6b6af39700d7c2e17b4bc5ad180ed7ecf80d57d7185540e363b47378b47","iosSourceApplication":"com.apple.SafariViewService","iosOpenInPlace":""}
+⚡️  To Native ->  Browser close 111073486
+⚡️  TO JS undefined
+⚡️  To Native ->  Preferences set 111073487
+⚡️  TO JS undefined
+⚡️  [log] - 🔑 Auth token saved to native storage
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - [AdMob] Ad action count: 0 | showInterstitialOnAction=true | isPremium=false
+⚡️  To Native ->  LocalNotifications addListener 111073488
+⚡️  To Native ->  LocalNotifications addListener 111073489
+⚡️  [warn] - [AdMob] Failed to load ad unit IDs from server, falling back to test IDs: {"line":7870,"column":4621,"sourceURL":"capacitor://localhost/assets/index-BcvdcXcL.js"}
+⚡️  To Native ->  AdMob initialize 111073490
+⚡️  TO JS {}
+⚡️  [log] - AdMob initialized successfully
+⚡️  To Native ->  AdMob showBanner 111073491
+AdMob: find subView
+⚡️  TO JS {}
+⚡️  [log] - Banner ad shown successfully (margin: 0px)
+⚡️  [log] - Disconnected from WebSocket
+bannerViewDidReceiveAd
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - Rudy nudge fired: undefined undefined
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - RevenueCat: Loading offerings...
+⚡️  To Native ->  LocalNotifications removeAllListeners 111073492
+⚡️  To Native ->  Purchases getOfferings 111073493
+⚡️  TO JS undefined
+DEBUG: ℹ️ Vending Offerings from memory cache
+⚡️  TO JS {"current":{"serverDescription":"The standard set of packages","annual":{"packageType":"ANNUAL","presentedOfferingContext":{"targetingContext":null,"offeringIdentifier":"default","placementIdentifier":null},"offeringIdentifier":"default","identifier":"$rc_
+⚡️  [log] - RevenueCat: Offerings result: [{"id":"$rc_monthly","type":"MONTHLY","price":"$5.99"},{"id":"$rc_annual","type":"ANNUAL","price":"$44.99"}]
+⚡️  To Native ->  Purchases getOfferings 111073494
+DEBUG: ℹ️ Vending Offerings from memory cache
+⚡️  TO JS {"all":{"Rude_test_offer":{"serverDescription":"Test Offering","availablePackages":[{"offeringIdentifier":"Rude_test_offer","packageType":"ANNUAL","presentedOfferingContext":{"targetingContext":null,"offeringIdentifier":"Rude_test_offer","placementIdentifi
+⚡️  To Native ->  Purchases purchasePackage 111073495
+DEBUG: ℹ️ Vending Offerings from memory cache
+INFO: 💰 Purchasing Product 'com.goosebumpsmw.rudereminders.yearly' from package in Offering 'default'
+DEBUG: ℹ️ Found 0 unsynced attributes for App User ID: $RCAnonymousID:d4d705f3364448cb93e7f475d3552522
+DEBUG: ℹ️ TransactionPoster: handling transaction '0' for product 'com.goosebumpsmw.rudereminders.monthly' (date: 2026-05-04 13:26:03 +0000)
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly"]
+DEBUG: ℹ️ PostReceiptDataOperation: Started
+DEBUG: ℹ️ PostReceiptDataOperation: Posting StoreKit 2 receipt (source: 'purchase'):
+{
+  "bundle_id" : "com.goosebumpsmw.rudereminders",
+  "environment" : "xcode",
+  "original_application_version" : "1.0",
+  "original_purchase_date" : "1970-01-01T00:00:00Z",
+  "subscription_status" : {
+    "21481740" : [
+      {
+        "renewal_info" : "eyJraWQiOiJBcHBsZV9YY29kZV9LZXkiLCJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlCeXpDQ0FYR2dBd0lCQWdJQkFUQUtCZ2dxaGtqT1BRUURBakJJTVNJd0lBWURWUVFERXhsVGRHOXlaVXRwZENCVVpYTjBhVzVuSUdsdUlGaGpiMlJsTVNJd0lBWURWUVFLRXhsVGRHOXlaVXRwZENCVVpYTjBhVzVuSUdsdUlGaGpiMlJsTUI0WERUSTFNVEl3TmpBMk1EWTFObG9YRFRJMk1USXdOakEyTURZMU5sb3dTREVpTUNBR0ExVUVBeE1aVTNSdmNtVkxhWFFnVkdWemRHbHVaeUJwYmlCWVkyOWtaVEVpTUNBR0ExVUVDaE1aVTNSdmNtVkxhWFFnVkdWemRHbHVaeUJwYmlCWVkyOWtaVEJaTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCR2d2UGp2QVBabkRod0tsTGkybmVsUDlNbzQ0b3RTN1pzbHV6aHNoMzhzNkt5Q0tnN3BySVp2RFRPOHNnTnBkSjllWWJrQlhXRitBeDRjMGFQZFJ5T21qVERCS01CSUdBMVVkRXdFQlwvd1FJTUFZQkFmOENBUUF3SkFZRFZSMFJCQjB3RzRFWlUzUnZjbVZMYVhRZ1ZHVnpkR2x1WnlCcGJpQllZMjlrWlRBT0JnTlZIUThCQWY4RUJBTUNCNEF3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnUG14SmVTM25jTm8rZ2R6UXhWWG0zTlhxS0R1ckVqTTIyQmlaa1VCRHhSb0NJUUN6ZExFR2pJRVwvN1UyQnlkaTMzbENkVVpnN1NQRUZwSHQ5OFMxcWxSMkZKdz09Il19.eyJyZW5ld2FsRGF0ZSI6MTc4MDU3OTU2MzEwMSwiZW52aXJvbm1lbnQiOiJYY29kZSIsImVsaWdpYmxlV2luQmFja09mZmVySWRzIjpbXSwiZGV2aWNlVmVyaWZpY2F0aW9uTm9uY2UiOiJkZDViM2EwNC0yZDFhLTRhZTgtOWJiOC0yNGU0YzY4MzAxZDYiLCJjdXJyZW5jeSI6IlVTRCIsInJlY2VudFN1YnNjcmlwdGlvblN0YXJ0RGF0ZSI6MTc3NzkwMTE2MzEwMSwib3JpZ2luYWxUcmFuc2FjdGlvbklkIjoiMCIsInJlbmV3YWxQcmljZSI6NTk5MCwiZGV2aWNlVmVyaWZpY2F0aW9uIjoiNmczUmt5UXdITGI3SFNkUnhhMUVGSzg4a05EOE91SlRwaDRLSnd1Q1kxMFFuam1mOFVnM1E3bmF6TitFU3BzdiIsInNpZ25lZERhdGUiOjE3Nzc5MDEzNTkwMTMsImF1dG9SZW5ld1Byb2R1Y3RJZCI6ImNvbS5nb29zZWJ1bXBzbXcucnVkZXJlbWluZGVycy55ZWFybHkiLCJwcm9kdWN0SWQiOiJjb20uZ29vc2VidW1wc213LnJ1ZGVyZW1pbmRlcnMubW9udGhseSIsImF1dG9SZW5ld1N0YXR1cyI6MSwiYXBwVHJhbnNhY3Rpb25JZCI6IjAifQ.7LkZYKqk49t0DMvTS7kGbO_Ibue5bZA7iiywAFy6HwHZ77Jr9Olw0ClYdZ0eKeMocvlzkaeT61gmr3y43MkkjA",
+        "state" : 1,
+        "transaction" : "eyJraWQiOiJBcHBsZV9YY29kZV9LZXkiLCJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlCeXpDQ0FYR2dBd0lCQWdJQkFUQUtCZ2dxaGtqT1BRUURBakJJTVNJd0lBWURWUVFERXhsVGRHOXlaVXRwZENCVVpYTjBhVzVuSUdsdUlGaGpiMlJsTVNJd0lBWURWUVFLRXhsVGRHOXlaVXRwZENCVVpYTjBhVzVuSUdsdUlGaGpiMlJsTUI0WERUSTFNVEl3TmpBMk1EWTFObG9YRFRJMk1USXdOakEyTURZMU5sb3dTREVpTUNBR0ExVUVBeE1aVTNSdmNtVkxhWFFnVkdWemRHbHVaeUJwYmlCWVkyOWtaVEVpTUNBR0ExVUVDaE1aVTNSdmNtVkxhWFFnVkdWemRHbHVaeUJwYmlCWVkyOWtaVEJaTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCR2d2UGp2QVBabkRod0tsTGkybmVsUDlNbzQ0b3RTN1pzbHV6aHNoMzhzNkt5Q0tnN3BySVp2RFRPOHNnTnBkSjllWWJrQlhXRitBeDRjMGFQZFJ5T21qVERCS01CSUdBMVVkRXdFQlwvd1FJTUFZQkFmOENBUUF3SkFZRFZSMFJCQjB3RzRFWlUzUnZjbVZMYVhRZ1ZHVnpkR2x1WnlCcGJpQllZMjlrWlRBT0JnTlZIUThCQWY4RUJBTUNCNEF3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnUG14SmVTM25jTm8rZ2R6UXhWWG0zTlhxS0R1ckVqTTIyQmlaa1VCRHhSb0NJUUN6ZExFR2pJRVwvN1UyQnlkaTMzbENkVVpnN1NQRUZwSHQ5OFMxcWxSMkZKdz09Il19.eyJidW5kbGVJZCI6ImNvbS5nb29zZWJ1bXBzbXcucnVkZXJlbWluZGVycyIsImVudmlyb25tZW50IjoiWGNvZGUiLCJpbkFwcE93bmVyc2hpcFR5cGUiOiJQVVJDSEFTRUQiLCJxdWFudGl0eSI6MSwib3JpZ2luYWxQdXJjaGFzZURhdGUiOjE3Nzc5MDExNjMxMDEsInN0b3JlZnJvbnRJZCI6IjE0MzQ0MSIsImRldmljZVZlcmlmaWNhdGlvbk5vbmNlIjoiMDg1MjI4YzktMGIwOC00NTE0LThkNTQtMGIwOWI5NWNlZDJiIiwiY3VycmVuY3kiOiJVU0QiLCJvcmlnaW5hbFRyYW5zYWN0aW9uSWQiOiIwIiwid2ViT3JkZXJMaW5lSXRlbUlkIjoiMCIsInB1cmNoYXNlRGF0ZSI6MTc3NzkwMTE2MzEwMSwic3RvcmVmcm9udCI6IlVTQSIsImRldmljZVZlcmlmaWNhdGlvbiI6IjhsZTV5Z1ZGK05MSDhvT1pnZEtpeDdiVm8xMWRQb29NUVwvYlg0ZXgrdFVRYlwvVkpiTkhlQ3Nxd1wvM2hYSE1FcFoiLCJwcmljZSI6NTk5MCwic3Vic2NyaXB0aW9uR3JvdXBJZGVudGlmaWVyIjoiMjE0ODE3NDAiLCJ0cmFuc2FjdGlvbklkIjoiMCIsInNpZ25lZERhdGUiOjE3Nzc5MDEzNTg0NTUsImV4cGlyZXNEYXRlIjoxNzgwNTc5NTYzMTAxLCJ0eXBlIjoiQXV0by1SZW5ld2FibGUgU3Vic2NyaXB0aW9uIiwicHJvZHVjdElkIjoiY29tLmdvb3NlYnVtcHNtdy5ydWRlcmVtaW5kZXJzLm1vbnRobHkiLCJ0cmFuc2FjdGlvblJlYXNvbiI6IlBVUkNIQVNFIiwiYXBwVHJhbnNhY3Rpb25JZCI6IjAiLCJpc1VwZ3JhZGVkIjpmYWxzZX0.7b3R4JBlM55iCeEPER9LR6NWyFUdyNdkDjMLssPfQDGK-eCaC5nlctFuIF37Qq8VoQBWzXg6wr75xMxL4_oIug"
+      }
+    ]
+  },
+  "transactions" : [
+    "eyJraWQiOiJBcHBsZV9YY29kZV9LZXkiLCJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsIng1YyI6WyJNSUlCeXpDQ0FYR2dBd0lCQWdJQkFUQUtCZ2dxaGtqT1BRUURBakJJTVNJd0lBWURWUVFERXhsVGRHOXlaVXRwZENCVVpYTjBhVzVuSUdsdUlGaGpiMlJsTVNJd0lBWURWUVFLRXhsVGRHOXlaVXRwZENCVVpYTjBhVzVuSUdsdUlGaGpiMlJsTUI0WERUSTFNVEl3TmpBMk1EWTFObG9YRFRJMk1USXdOakEyTURZMU5sb3dTREVpTUNBR0ExVUVBeE1aVTNSdmNtVkxhWFFnVkdWemRHbHVaeUJwYmlCWVkyOWtaVEVpTUNBR0ExVUVDaE1aVTNSdmNtVkxhWFFnVkdWemRHbHVaeUJwYmlCWVkyOWtaVEJaTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEEwSUFCR2d2UGp2QVBabkRod0tsTGkybmVsUDlNbzQ0b3RTN1pzbHV6aHNoMzhzNkt5Q0tnN3BySVp2RFRPOHNnTnBkSjllWWJrQlhXRitBeDRjMGFQZFJ5T21qVERCS01CSUdBMVVkRXdFQlwvd1FJTUFZQkFmOENBUUF3SkFZRFZSMFJCQjB3RzRFWlUzUnZjbVZMYVhRZ1ZHVnpkR2x1WnlCcGJpQllZMjlrWlRBT0JnTlZIUThCQWY4RUJBTUNCNEF3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUlnUG14SmVTM25jTm8rZ2R6UXhWWG0zTlhxS0R1ckVqTTIyQmlaa1VCRHhSb0NJUUN6ZExFR2pJRVwvN1UyQnlkaTMzbENkVVpnN1NQRUZwSHQ5OFMxcWxSMkZKdz09Il19.eyJidW5kbGVJZCI6ImNvbS5nb29zZWJ1bXBzbXcucnVkZXJlbWluZGVycyIsImVudmlyb25tZW50IjoiWGNvZGUiLCJpbkFwcE93bmVyc2hpcFR5cGUiOiJQVVJDSEFTRUQiLCJxdWFudGl0eSI6MSwib3JpZ2luYWxQdXJjaGFzZURhdGUiOjE3Nzc5MDExNjMxMDEsInN0b3JlZnJvbnRJZCI6IjE0MzQ0MSIsImRldmljZVZlcmlmaWNhdGlvbk5vbmNlIjoiMDg1MjI4YzktMGIwOC00NTE0LThkNTQtMGIwOWI5NWNlZDJiIiwiY3VycmVuY3kiOiJVU0QiLCJvcmlnaW5hbFRyYW5zYWN0aW9uSWQiOiIwIiwid2ViT3JkZXJMaW5lSXRlbUlkIjoiMCIsInB1cmNoYXNlRGF0ZSI6MTc3NzkwMTE2MzEwMSwic3RvcmVmcm9udCI6IlVTQSIsImRldmljZVZlcmlmaWNhdGlvbiI6IjhsZTV5Z1ZGK05MSDhvT1pnZEtpeDdiVm8xMWRQb29NUVwvYlg0ZXgrdFVRYlwvVkpiTkhlQ3Nxd1wvM2hYSE1FcFoiLCJwcmljZSI6NTk5MCwic3Vic2NyaXB0aW9uR3JvdXBJZGVudGlmaWVyIjoiMjE0ODE3NDAiLCJ0cmFuc2FjdGlvbklkIjoiMCIsInNpZ25lZERhdGUiOjE3Nzc5MDEzNTg0NTUsImV4cGlyZXNEYXRlIjoxNzgwNTc5NTYzMTAxLCJ0eXBlIjoiQXV0by1SZW5ld2FibGUgU3Vic2NyaXB0aW9uIiwicHJvZHVjdElkIjoiY29tLmdvb3NlYnVtcHNtdy5ydWRlcmVtaW5kZXJzLm1vbnRobHkiLCJ0cmFuc2FjdGlvblJlYXNvbiI6IlBVUkNIQVNFIiwiYXBwVHJhbnNhY3Rpb25JZCI6IjAiLCJpc1VwZ3JhZGVkIjpmYWxzZX0.7b3R4JBlM55iCeEPER9LR6NWyFUdyNdkDjMLssPfQDGK-eCaC5nlctFuIF37Qq8VoQBWzXg6wr75xMxL4_oIug"
+  ]
+}
+DEBUG: ℹ️ There are no requests currently running, starting request POST /v1/receipts
+DEBUG: ℹ️ API request started: POST '/v1/receipts'
+DEBUG: ℹ️ API request completed: POST '/v1/receipts' (200)
+DEBUG: ℹ️ PostReceiptDataOperation: Finished
+INFO: 💰 Finishing transaction '0' for product 'com.goosebumpsmw.rudereminders.monthly'
+DEBUG: ℹ️ Serial request done: POST /v1/receipts, 0 requests left in the queue
+INFO: 😻💰 Purchased product - 'com.goosebumpsmw.rudereminders.yearly'
+⚡️  TO JS {"productIdentifier":"com.goosebumpsmw.rudereminders.monthly","customerInfo":{"firstSeen":"2026-05-04T02:48:54Z","allPurchasedProductIdentifiers":["com.goosebumpsmw.rudereminders.monthly"],"latestExpirationDateMillis":1780579563000,"allExpirationDatesMilli
+⚡️  [log] - apiRequest fullUrl: https://rude-reminders.replit.app/api/sync-subscription
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - [AdMob] Ad action count: 0 | showInterstitialOnAction=true | isPremium=false
+⚡️  To Native ->  LocalNotifications addListener 111073496
+⚡️  To Native ->  LocalNotifications addListener 111073497
+⚡️  [warn] - [AdMob] Failed to load ad unit IDs from server, falling back to test IDs: {"line":7870,"column":4621,"sourceURL":"capacitor://localhost/assets/index-BcvdcXcL.js"}
+⚡️  To Native ->  AdMob initialize 111073498
+⚡️  TO JS {}
+⚡️  [log] - AdMob initialized successfully
+⚡️  To Native ->  AdMob showBanner 111073499
+AdMob: find subView
+⚡️  TO JS {}
+⚡️  [log] - Banner ad shown successfully (margin: 0px)
+⚡️  [log] - Disconnected from WebSocket
+bannerViewDidReceiveAd
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+Error acquiring assertion: <Error Domain=RBSServiceErrorDomain Code=1 "((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))" UserInfo={NSLocalizedFailureReason=((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))}>
+0x118150600 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'XPCConnectionTerminationWatchdog' for process with PID=30348, error: (null)
+Error acquiring assertion: <Error Domain=RBSServiceErrorDomain Code=1 "((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))" UserInfo={NSLocalizedFailureReason=((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))}>
+
+0x1181506c0 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'WebProcess NearSuspended Assertion' for process with PID=30348, error: (null)
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x12635b7b0 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
