@@ -311,7 +311,7 @@ export default function LoginPage() {
               color: '#111827',
               lineHeight: 1.4,
             }}>
-              Oi! You get <span style={{ color: '#b70d0d', fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go Premium = mind blowing reminders. Pick your poison.
+              Oi! You get <span style={{ color: '#b70d0d', fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go <span style={{ color: '#b70d0d', fontWeight: 700 }}>PREMIUM</span> = mind blowing reminders. Pick your poison.
             </p>
           </div>
         </div>
@@ -320,10 +320,10 @@ export default function LoginPage() {
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
             <h2 className="text-base font-semibold text-[#111827] text-center">
-              Your free account awaits
+              Go premium (go big) or go free (no credit card)
             </h2>
             <p className="text-xs text-[#6B7280] text-center mt-1 mb-4">
-              15 reminders/month free · No credit card needed
+              Just sign up
             </p>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
