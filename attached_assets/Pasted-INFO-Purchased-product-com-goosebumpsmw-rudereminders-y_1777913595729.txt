@@ -1,0 +1,77 @@
+INFO: 😻💰 Purchased product - 'com.goosebumpsmw.rudereminders.yearly'
+⚡️  TO JS {"productIdentifier":"com.goosebumpsmw.rudereminders.monthly","transaction":{"transactionIdentifier":"0","revenueCatId":"0","productId":"com.goosebumpsmw.rudereminders.monthly","purchaseDateMillis":1777901163101,"purchaseDate":"2026-05-04T13:26:03Z","produ
+⚡️  [log] - apiRequest fullUrl: https://rude-reminders.replit.app/api/sync-subscription
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  [log] - [AdMob] Ad action count: 0 | showInterstitialOnAction=false | isPremium=true
+⚡️  To Native ->  LocalNotifications addListener 109953297
+⚡️  To Native ->  LocalNotifications addListener 109953298
+⚡️  To Native ->  Purchases logIn 109953299
+⚡️  To Native ->  Purchases logIn 109953300
+⚡️  To Native ->  Purchases logIn 109953301
+⚡️  To Native ->  Purchases logIn 109953302
+⚡️  To Native ->  Purchases logIn 109953303
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+⚡️  TO JS {"created":false,"customerInfo":{"requestDate":"2026-05-04T16:05:53Z","allPurchasedProductIdentifiers":["com.goosebumpsmw.rudereminders.monthly"],"subscriptionsByProductIdentifier":{"com.goosebumpsmw.rudereminders.monthly":{"store":"APP_STORE","unsubscribe
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+⚡️  TO JS {"customerInfo":{"requestDate":"2026-05-04T16:05:53Z","allPurchasedProductIdentifiers":["com.goosebumpsmw.rudereminders.monthly"],"subscriptionsByProductIdentifier":{"com.goosebumpsmw.rudereminders.monthly":{"store":"APP_STORE","unsubscribeDetectedAt":null
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+⚡️  TO JS {"customerInfo":{"originalAppUserId":"$RCAnonymousID:d4d705f3364448cb93e7f475d3552522","latestExpirationDateMillis":1780579563000,"entitlements":{"verification":"VERIFIED","all":{"Premium":{"isSandbox":true,"unsubscribeDetectedAt":null,"unsubscribeDetected
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+⚡️  TO JS {"customerInfo":{"requestDate":"2026-05-04T16:05:53Z","allPurchasedProductIdentifiers":["com.goosebumpsmw.rudereminders.monthly"],"subscriptionsByProductIdentifier":{"com.goosebumpsmw.rudereminders.monthly":{"price":{"amount":5.9900000000000002,"currency":
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+DEBUG: ℹ️ GetOfferingsOperation: Started
+⚡️  TO JS {"created":false,"customerInfo":{"requestDate":"2026-05-04T16:05:53Z","allPurchasedProductIdentifiers":["com.goosebumpsmw.rudereminders.monthly"],"subscriptionsByProductIdentifier":{"com.goosebumpsmw.rudereminders.monthly":{"store":"APP_STORE","unsubscribe
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/google_112260235785071756164/offerings
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/google_112260235785071756164/offerings'
+⚡️  [warn] - [AdMob] Failed to load ad unit IDs from server, falling back to test IDs: {"line":7870,"column":4621,"sourceURL":"capacitor://localhost/assets/index-CeECftR5.js"}
+⚡️  To Native ->  AdMob initialize 109953304
+⚡️  TO JS {}
+⚡️  [log] - RevenueCat: logIn success for google_112260235785071756164 created: false
+⚡️  [log] - RevenueCat: logIn success for google_112260235785071756164 created: false
+⚡️  [log] - RevenueCat: logIn success for google_112260235785071756164 created: false
+⚡️  [log] - RevenueCat: logIn success for google_112260235785071756164 created: false
+⚡️  [log] - RevenueCat: logIn success for google_112260235785071756164 created: false
+⚡️  [log] - AdMob initialized successfully
+⚡️  To Native ->  AdMob showBanner 109953305
+AdMob: find subView
+⚡️  TO JS {}
+⚡️  [log] - Banner ad shown successfully (margin: 0px)
+⚡️  [log] - Disconnected from WebSocket
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/google_112260235785071756164/offerings' (304)
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.yearly", "com.goosebumpsmw.rudereminders.monthly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.yearly", "com.goosebumpsmw.rudereminders.monthly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.yearly", "com.goosebumpsmw.rudereminders.monthly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/google_112260235785071756164/offerings, 0 requests left in the queue
+bannerViewDidReceiveAd
+Error acquiring assertion: <Error Domain=RBSAssertionErrorDomain Code=2 "Specified target process 31417 does not exist" UserInfo={NSLocalizedFailureReason=Specified target process 31417 does not exist}>
+0x118144600 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'XPCConnectionTerminationWatchdog' for process with PID=31417, error: (null)
+Error acquiring assertion: <Error Domain=RBSAssertionErrorDomain Code=2 "Specified target process 31417 does not exist" UserInfo={NSLocalizedFailureReason=Specified target process 31417 does not exist}>
+0x1181446c0 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'WebProcess NearSuspended Assertion' for process with PID=31417, error: (null)
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  [log] - Rudy nudge fired: null 0
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x127475980 {Error Domain=RBSRequestErrorDomain Code=3 "No such process found" UserInfo={NSLocalizedFailureReason=No such process found}}}
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  [log] - Rudy nudge fired: null 0
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x1274748d0 {Error Domain=RBSRequestErrorDomain Code=3 "No such process found" UserInfo={NSLocalizedFailureReason=No such process found}}}
+[MADService] Client XPC connection invalidated
+DEBUG: ℹ️ applicationWillEnterForeground
+⚡️  [log] - Rudy nudge fired: null 0
+⚡️  To Native ->  Browser removeListener 109953306
