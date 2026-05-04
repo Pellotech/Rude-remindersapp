@@ -262,7 +262,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 32px)' }}>
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <AppHeader className="mb-4" />
@@ -320,10 +320,10 @@ export default function LoginPage() {
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
             <h2 className="text-base font-semibold text-[#111827] text-center">
-              Go premium (go big) or go free (no credit card)
+              Go Big or Go Free
             </h2>
             <p className="text-xs text-[#6B7280] text-center mt-1 mb-4">
-              Just sign up
+              Just sign in
             </p>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
