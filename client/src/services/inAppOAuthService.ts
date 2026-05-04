@@ -16,8 +16,12 @@ class InAppOAuthService {
     return Capacitor.isNativePlatform() && Capacitor.getPlatform() === "ios";
   }
 
+  isNativeMobile(): boolean {
+    return Capacitor.isNativePlatform() && (Capacitor.getPlatform() === "ios" || Capacitor.getPlatform() === "android");
+  }
+
   async initialize(): Promise<void> {
-    if (this.listenerRegistered || !this.isNativeIOS()) {
+    if (this.listenerRegistered || !this.isNativeMobile()) {
       return;
     }
 
@@ -54,7 +58,7 @@ class InAppOAuthService {
   }
 
   async signInWithGoogle(baseUrl: string): Promise<{ success: boolean; error?: string }> {
-    if (!this.isNativeIOS()) {
+    if (!this.isNativeMobile()) {
       window.location.href = "/api/auth/google";
       return { success: true };
     }
@@ -68,7 +72,7 @@ class InAppOAuthService {
   }
 
   async signInWithFacebook(baseUrl: string): Promise<{ success: boolean; error?: string }> {
-    if (!this.isNativeIOS()) {
+    if (!this.isNativeMobile()) {
       window.location.href = "/api/auth/facebook";
       return { success: true };
     }

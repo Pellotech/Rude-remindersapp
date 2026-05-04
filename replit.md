@@ -94,6 +94,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` environment variables
     - Uses Google OAuth2 code flow with ID token verification via `google-auth-library`
     - **iOS Native**: Uses Capacitor Browser plugin (SFSafariViewController) - user never leaves app UI (Guideline 4.0 compliant)
+    - **Android Native**: Uses Capacitor Browser plugin (Chrome Custom Tabs) with `rudereminders://` deep link (intent-filter in `AndroidManifest.xml`); `inAppOAuthService.isNativeMobile()` covers both iOS and Android so the same in-app browser flow runs on both platforms
     - **Web**: Uses standard redirect flow
     - Custom URL scheme `rudereminders://` for native callback handling
     - State parameter validation prevents CSRF attacks
