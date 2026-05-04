@@ -1,0 +1,34 @@
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/$RCAnonymousID%3Ad4d705f3364448cb93e7f475d3552522/health_report, 0 requests left in the queue
+INFO: ℹ️ ✅ RevenueCat SDK is configured correctly
+⚡️  To Native ->  SignInWithApple authorize 24743675
+⚡️  TO JS {"response":{"user":"000621.bdf39265783d4985b6c5a41de173aa7d.0502","email":null,"givenName":null,"authorizationCode":"c2e216fde272545cf95717965d49f8056.0.swsr.kNZu7oBtaLQpLDe-OJrdmQ","familyName":null,"identityToken":"eyJraWQiOiI1UkZPU2lOSVVtIiwiYWxnIjoiUl
+⚡️  [log] - ✅ Apple Sign-In successful: {"user":"000621.bdf39265783d4985b6c5a41de173aa7d.0502","email":null,"givenName":null,"familyName":null}
+⚡️  [error] - ❌ Backend authentication error: {}
+⚡️  To Native ->  SignInWithApple authorize 24743676
+⚡️  TO JS {"response":{"identityToken":"eyJraWQiOiIxRTZWaW9JYU5JIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLmdvb3NlYnVtcHNtdy5ydWRlcmVtaW5kZXJzIiwiZXhwIjoxNzc3OTU5MTcyLCJpYXQiOjE3Nzc4NzI3NzIsInN1YiI6IjAwMDYyMS5iZGYzOTI2NTc4M2Q
+⚡️  [log] - ✅ Apple Sign-In successful: {"user":"000621.bdf39265783d4985b6c5a41de173aa7d.0502","email":null,"givenName":null,"familyName":null}
+⚡️  [error] - ❌ Backend authentication error: {}
+⚡️  To Native ->  App addListener 24743677
+⚡️  To Native ->  Browser open 24743678
+Setting modalPresentationStyle once <SFSafariViewController: 0x107b9b200> has been presented will have no effect until it is dismissed and presented again.
+(501) personaAttributesForPersonaType for type:0 failed with error Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.mobile.usermanagerd.xpc was invalidated: Connection init failed at lookup with error 159 - Sandbox restriction." UserInfo={NSDebugDescription=The connection to service named com.apple.mobile.usermanagerd.xpc was invalidated: Connection init failed at lookup with error 159 - Sandbox restriction.}
+(501) Invalidation handler invoked, clearing connection
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+Received port for identifier response: <(null)> with error:Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.process-state, NSLocalizedFailureReason=Client not entitled, RBSPermanent=false}
+elapsedCPUTimeForFrontBoard couldn't generate a task port
+⚡️  TO JS undefined
+⚡️  To Native ->  Browser addListener 24743679
+⚡️  TO JS undefined
+⚡️  To Native ->  Browser removeListener 24743680
+⚡️  To Native ->  Browser open 24743681
+Setting modalPresentationStyle once <SFSafariViewController: 0x118acc000> has been presented will have no effect until it is dismissed and presented again.
+⚡️  TO JS undefined
+⚡️  To Native ->  Browser addListener 24743682
+⚡️  TO JS {"iosOpenInPlace":"","url":"rudereminders:\/\/auth-callback?success=false&error=token_failed","iosSourceApplication":"com.apple.SafariViewService"}
+⚡️  To Native ->  Browser close 24743683
+⚡️  TO JS undefined

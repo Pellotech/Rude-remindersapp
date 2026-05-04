@@ -26,7 +26,7 @@ class AppleSignInService {
   async signIn(): Promise<AppleAuthResponse> {
     try {
       const options: SignInWithAppleOptions = {
-        clientId: 'com.rudereminders.app', // Your app's bundle ID
+        clientId: 'com.goosebumpsmw.rudereminders', // Your app's bundle ID (must match Xcode PRODUCT_BUNDLE_IDENTIFIER)
         redirectURI: 'https://rudereminders.app/auth/apple/callback', // Your redirect URI
         scopes: 'email name', // Request email and name
         state: Math.random().toString(36).substring(7), // Random state for security

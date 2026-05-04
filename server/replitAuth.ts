@@ -570,7 +570,11 @@ export async function setupAuth(app: Express) {
       }
 
       // Validate audience matches our bundle ID (for native iOS)
-      const expectedBundleId = "com.rudereminders.app";
+      // NOTE: This must match the actual iOS bundle identifier in Xcode
+      // (ios/App/App.xcodeproj/project.pbxproj → PRODUCT_BUNDLE_IDENTIFIER),
+      // NOT the Capacitor appId. Apple signs the identityToken with the
+      // device's real bundle ID regardless of what we pass as clientId.
+      const expectedBundleId = "com.goosebumpsmw.rudereminders";
       if (!validateAppleTokenAudience(verifiedPayload, expectedBundleId)) {
         console.error(
           "❌ Token audience mismatch. Expected:",
@@ -1067,6 +1071,7 @@ export async function setupAuth(app: Express) {
       const tokens = (await tokenResponse.json()) as any;
 
       if (!tokens.id_token) {
+        console.error("❌ Google token exchange failed:", JSON.stringify(tokens), "redirect_uri sent:", redirectUri);
         return res.redirect(
           `${nativeCallback}?success=false&error=token_failed`,
         );
@@ -1225,6 +1230,7 @@ export async function setupAuth(app: Express) {
       const tokens = (await tokenResponse.json()) as any;
 
       if (!tokens.access_token) {
+        console.error("❌ Facebook token exchange failed:", JSON.stringify(tokens), "redirect_uri sent:", redirectUri);
         return res.redirect(
           `${nativeCallback}?success=false&error=token_failed`,
         );
