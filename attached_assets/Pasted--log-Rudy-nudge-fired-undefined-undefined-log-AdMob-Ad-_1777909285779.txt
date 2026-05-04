@@ -1,0 +1,69 @@
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - [AdMob] Ad action count: 0 | showInterstitialOnAction=true | isPremium=false
+⚡️  To Native ->  LocalNotifications addListener 119854013
+⚡️  To Native ->  LocalNotifications addListener 119854014
+⚡️  To Native ->  Purchases logIn 119854015
+⚡️  To Native ->  Purchases logIn 119854016
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+⚡️  To Native ->  Purchases logIn 119854017
+⚡️  To Native ->  Purchases logIn 119854018
+⚡️  To Native ->  Purchases logIn 119854019
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+⚡️  TO JS {"customerInfo":{"managementURL":"https:\/\/apps.apple.com\/account\/subscriptions","originalAppUserId":"apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502","allPurchaseDates":{"com.goosebumpsmw.rudereminders.monthly":"2026-05-04T13:26:03Z"},"latestExpirat
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+DEBUG: ℹ️ Offerings cache is stale, updating from network in foreground
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+⚡️  TO JS {"customerInfo":{"latestExpirationDateMillis":1780579563000,"allExpirationDates":{"com.goosebumpsmw.rudereminders.monthly":"2026-06-04T13:26:03Z"},"managementURL":"https:\/\/apps.apple.com\/account\/subscriptions","entitlements":{"active":{"Premium":{"expi
+⚡️  To Native ->  AdMob initialize 119854020
+⚡️  [warn] - [AdMob] Failed to load ad unit IDs from server, falling back to test IDs: {"line":7870,"column":4621,"sourceURL":"capacitor://localhost/assets/index-CeECftR5.js"}
+⚡️  TO JS {"created":false,"customerInfo":{"allPurchasedProductIdentifiers":["com.goosebumpsmw.rudereminders.monthly"],"originalAppUserId":"apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502","allExpirationDates":{"com.goosebumpsmw.rudereminders.monthly":"2026-06-04
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+WARN: ⚠️ The appUserID passed to logIn is the same as the one already cached. No action will be taken.
+⚡️  TO JS {"created":false,"customerInfo":{"latestExpirationDateMillis":1780579563000,"requestDateMillis":1777909235000,"subscriptionsByProductIdentifier":{"com.goosebumpsmw.rudereminders.monthly":{"billingIssuesDetectedAt":null,"isActive":true,"purchaseDate":"2026-
+DEBUG: ℹ️ Vending CustomerInfo from cache.
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+DEBUG: ℹ️ GetOfferingsOperation: Started
+⚡️  TO JS {}
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+⚡️  TO JS {"created":false,"customerInfo":{"entitlements":{"verification":"VERIFIED","active":{"Premium":{"isSandbox":true,"latestPurchaseDateMillis":1777901163000,"isActive":true,"expirationDate":"2026-06-04T13:26:03Z","productIdentifier":"com.goosebumpsmw.ruderemi
+DEBUG: ℹ️ Network operation 'GetOfferingsOperation' found with the same cache key 'GetOfferingsOpe…'. Skipping request.
+⚡️  [log] - RevenueCat: logIn success for apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502 created: false
+⚡️  [log] - RevenueCat: logIn success for apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502 created: false
+⚡️  [log] - RevenueCat: logIn success for apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502 created: false
+⚡️  [log] - RevenueCat: logIn success for apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502 created: false
+⚡️  [log] - AdMob initialized successfully
+⚡️  [log] - RevenueCat: logIn success for apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502 created: false
+⚡️  To Native ->  AdMob showBanner 119854021
+AdMob: find subView
+DEBUG: ℹ️ There are no requests currently running, starting request GET /v1/subscribers/apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502/offerings
+⚡️  TO JS {}
+⚡️  [log] - Banner ad shown successfully (margin: 0px)
+DEBUG: ℹ️ API request started: GET '/v1/subscribers/apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502/offerings'
+⚡️  [log] - Disconnected from WebSocket
+DEBUG: ℹ️ API request completed: GET '/v1/subscribers/apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502/offerings' (304)
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ Skipping products request for these products because they were already cached: ["com.goosebumpsmw.rudereminders.monthly", "com.goosebumpsmw.rudereminders.yearly"]
+DEBUG: 😻 Offerings updated from network.
+DEBUG: ℹ️ GetOfferingsOperation: Finished
+DEBUG: ℹ️ Serial request done: GET /v1/subscribers/apple_000621.bdf39265783d4985b6c5a41de173aa7d.0502/offerings, 0 requests left in the queue
+bannerViewDidReceiveAd
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x11fbbf570 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x11fbbf570 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
+Error acquiring assertion: <Error Domain=RBSServiceErrorDomain Code=1 "((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))" UserInfo={NSLocalizedFailureReason=((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))}>
+0x10c14c540 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'XPCConnectionTerminationWatchdog' for process with PID=31215, error: (null)
+Error acquiring assertion: <Error Domain=RBSServiceErrorDomain Code=1 "((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))" UserInfo={NSLocalizedFailureReason=((target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.rendering AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.networking AND target is not running or doesn't have entitlement com.apple.developer.web-browser-engine.webcontent))}>
+0x10c14c6c0 - ProcessAssertion::acquireSync Failed to acquire RBS assertion 'WebProcess NearSuspended Assertion' for process with PID=31215, error: (null)
+⚡️  [log] - Rudy nudge fired: undefined undefined
+⚡️  [log] - Rudy nudge fired: undefined undefined
+Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x11fbbf570 {Error Domain=RBSServiceErrorDomain Code=1 "Client not entitled" UserInfo={RBSEntitlement=com.apple.runningboard.terminateprocess, NSLocalizedFailureReason=Client not entitled, RBSPermanent=true}}}
