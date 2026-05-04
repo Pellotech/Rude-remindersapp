@@ -320,10 +320,10 @@ export default function LoginPage() {
         <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
             <h2 className="text-base font-semibold text-[#111827] text-center">
-              Go Big or Go Free
+              <span style={{ color: '#b70d0d' }}>Go Big</span> or <span style={{ color: '#b70d0d' }}>Go Free</span>
             </h2>
             <p className="text-xs text-[#6B7280] text-center mt-1 mb-4">
-              Just sign in
+              Just sign up
             </p>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
