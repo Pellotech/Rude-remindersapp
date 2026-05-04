@@ -458,30 +458,10 @@ export default function HomeFree() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
-                <h3 className="font-semibold text-[#111827]">Free Plan Usage</h3>
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Bell className="h-4 w-4 text-[#C53B3B]" />
-                    <span className="text-[#6B7280]">{freeUsage.reminders}/{freeUsage.effectiveLimit} reminders this month</span>
-                    {rewardedFeatures.extraReminders > 0 && (
-                      <span className="text-xs bg-[#F9FAFB] text-[#111827] px-2 py-1 rounded-full border border-[#EAEAEA]">
-                        +{rewardedFeatures.extraReminders} bonus
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {/* Progress bar for reminders */}
-                <div className="w-48">
-                  <div className="flex justify-between text-xs text-blue-600 mb-1">
-                    <span>Reminders Used</span>
-                    <span>{Math.round((freeUsage.reminders / freeUsage.effectiveLimit) * 100)}%</span>
-                  </div>
-                  <div className="w-full bg-blue-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${Math.min((freeUsage.reminders / freeUsage.effectiveLimit) * 100, 100)}%` }}
-                    />
-                  </div>
+                <h3 className="font-semibold text-[#111827]">Free Plan</h3>
+                <div className="flex items-center gap-2 text-sm">
+                  <Bell className="h-4 w-4 text-[#C53B3B]" />
+                  <span className="text-[#6B7280]">6 months of free tier but your missing out, big time.</span>
                 </div>
               </div>
               <Button 
