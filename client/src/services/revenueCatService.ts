@@ -98,6 +98,29 @@ export class RevenueCatService {
   }
 
 
+  async logIn(userId: string): Promise<void> {
+    if (!Capacitor.isNativePlatform() || !userId) return;
+    try {
+      await this.initialize();
+      const { Purchases } = await import('@revenuecat/purchases-capacitor');
+      const result: any = await Purchases.logIn({ appUserID: userId });
+      console.log('RevenueCat: logIn success for', userId, 'created:', result?.created);
+    } catch (error) {
+      console.error('RevenueCat logIn failed:', error);
+    }
+  }
+
+  async logOut(): Promise<void> {
+    if (!Capacitor.isNativePlatform()) return;
+    try {
+      const { Purchases } = await import('@revenuecat/purchases-capacitor');
+      await Purchases.logOut();
+      console.log('RevenueCat: logOut success');
+    } catch (error) {
+      console.error('RevenueCat logOut failed:', error);
+    }
+  }
+
   async restorePurchases(): Promise<boolean> {
     if (!Capacitor.isNativePlatform()) {
       return false;

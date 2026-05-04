@@ -30,6 +30,12 @@ export default function Navigation() {
     } catch {
       // Ignore errors - we're logging out anyway
     }
+    try {
+      const { revenueCatService } = await import('@/services/revenueCatService');
+      await revenueCatService.logOut();
+    } catch {
+      // Ignore - logout shouldn't be blocked by RC errors
+    }
     await clearAuthToken();
     await queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
     await queryClient.invalidateQueries({ queryKey: ['/api/user/premium-status'] });
