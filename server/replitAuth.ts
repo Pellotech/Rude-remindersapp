@@ -137,7 +137,7 @@ const getOidcConfig = memoize(
 );
 
 export function getSession() {
-  const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
+  const sessionTtl = 14 * 24 * 60 * 60 * 1000; // 2 weeks
 
   // Try to use PostgreSQL sessions, fallback to memory for development
   let sessionStore;
@@ -249,11 +249,11 @@ export async function setupAuth(app: Express) {
               first_name: user.firstName,
               last_name: user.lastName,
               profile_image_url: user.profileImageUrl,
-              exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
+              exp: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60, // 2 weeks
             },
             access_token: "local-auth",
             refresh_token: null,
-            expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+            expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
           };
 
           return done(null, sessionUser);
@@ -637,11 +637,11 @@ export async function setupAuth(app: Express) {
           first_name: existingUser?.firstName || givenName,
           last_name: existingUser?.lastName || familyName,
           profile_image_url: "",
-          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 1 week
+          exp: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60, // 2 weeks
         },
         access_token: "apple-auth",
         refresh_token: "apple-auth",
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+        expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
       req.logIn(userSession, (err) => {
@@ -797,11 +797,11 @@ export async function setupAuth(app: Express) {
           first_name: existingUser?.firstName || payload.given_name,
           last_name: existingUser?.lastName || payload.family_name,
           profile_image_url: payload.picture || "",
-          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+          exp: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
         },
         access_token: "google-auth",
         refresh_token: "google-auth",
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+        expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
       req.logIn(userSession, (err) => {
@@ -948,11 +948,11 @@ export async function setupAuth(app: Express) {
           first_name: existingUser?.firstName || userData.first_name,
           last_name: existingUser?.lastName || userData.last_name,
           profile_image_url: userData.picture?.data?.url || "",
-          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+          exp: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
         },
         access_token: "facebook-auth",
         refresh_token: "facebook-auth",
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+        expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
       req.logIn(userSession, (err) => {
@@ -1102,11 +1102,11 @@ export async function setupAuth(app: Express) {
           first_name: existingUser?.firstName || payload.given_name,
           last_name: existingUser?.lastName || payload.family_name,
           profile_image_url: payload.picture || "",
-          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+          exp: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
         },
         access_token: "google-auth",
         refresh_token: "google-auth",
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+        expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
       req.logIn(userSession, (err) => {
@@ -1254,11 +1254,11 @@ export async function setupAuth(app: Express) {
           first_name: existingUser?.firstName || userData.first_name,
           last_name: existingUser?.lastName || userData.last_name,
           profile_image_url: userData.picture?.data?.url || "",
-          exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+          exp: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
         },
         access_token: "facebook-auth",
         refresh_token: "facebook-auth",
-        expires_at: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+        expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
       req.logIn(userSession, (err) => {

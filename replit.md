@@ -105,7 +105,7 @@ UI/UX: Remove intro/landing page - direct authentication flow preferred.
     - Custom URL scheme `rudereminders://` for native callback handling
     - State parameter validation prevents CSRF attacks
     - Native callback: `/api/auth/facebook/native/callback` → `rudereminders://auth-callback`
-  - **Session Management**: 1-week session expiry for all OAuth-authenticated users
+  - **Session Management**: 2-week session expiry for all authenticated users (sessions slide-renew on activity)
   - **Security**: All OAuth flows use cryptographically random state parameters stored in session for CSRF protection
 - **UI/UX**: Eliminated browser autofill popups across all major browsers for a cleaner login experience. Ensured Apple Guideline 2.3.10 compliance with platform-specific UI rendering.
 
