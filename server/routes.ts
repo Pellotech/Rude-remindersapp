@@ -492,18 +492,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      const { getFreeTierExpiryDate, isFreeTrialExpired, isUserPremium } = await import('./utils/premiumCheck');
+      const { isUserPremium } = await import('./utils/premiumCheck');
       const isPremium = await isUserPremium(user.id);
-      const freeTierExpiresAt = getFreeTierExpiryDate(user.createdAt);
-      const freeTrialExpired = !isPremium && isFreeTrialExpired(user.createdAt);
 
       res.json({
         ...user,
         subscriptionStatus: isPremium ? 'active' : (user.subscriptionStatus || 'free'),
         subscriptionPlan: isPremium ? 'premium' : (user.subscriptionPlan || 'free'),
         isPremium: isPremium,
-        freeTierExpiresAt: freeTierExpiresAt ? freeTierExpiresAt.toISOString() : null,
-        freeTrialExpired,
       });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -635,12 +631,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (isMultiDay && selectedDays && selectedDays.length > 0) {
         const limitCheck = await checkMonthlyReminderLimit(user.id);
-        if (limitCheck.trialExpired) {
-          return res.status(402).json({
-            error: "Your 6-month free trial has ended. Upgrade to Premium to keep creating reminders.",
-            code: 'FREE_TRIAL_EXPIRED'
-          });
-        }
         if (limitCheck.currentCount + selectedDays.length > limitCheck.limit) {
           return res.status(403).json({
             error: `You've reached your ${limitCheck.limit} reminder limit for this month. Your limit resets on ${limitCheck.resetDate}.`,
@@ -772,12 +762,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           const dayLimitResult = await atomicIncrementAndCheck(user.id, 1);
           if (!dayLimitResult.allowed) {
-            if (dayLimitResult.trialExpired) {
-              return res.status(402).json({
-                error: "Your 6-month free trial has ended. Upgrade to Premium to keep creating reminders.",
-                code: 'FREE_TRIAL_EXPIRED'
-              });
-            }
             break;
           }
 
@@ -916,12 +900,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         const limitResult = await atomicIncrementAndCheck(user.id, 1);
         if (!limitResult.allowed) {
-          if (limitResult.trialExpired) {
-            return res.status(402).json({
-              error: "Your 6-month free trial has ended. Upgrade to Premium to keep creating reminders.",
-              code: 'FREE_TRIAL_EXPIRED'
-            });
-          }
           return res.status(403).json({
             error: `You've reached your ${limitResult.limit} reminder limit for this month. Your limit resets on ${limitResult.resetDate}.`,
             code: 'REMINDER_LIMIT_EXCEEDED',

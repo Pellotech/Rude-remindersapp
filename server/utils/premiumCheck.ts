@@ -7,8 +7,13 @@ function getCurrentMonthKey(): string {
 }
 
 const FREE_MONTHLY_LIMIT = 15;
+const POST_TRIAL_FREE_MONTHLY_LIMIT = 10;
 const PREMIUM_MONTHLY_LIMIT = 120;
 const FREE_TIER_DURATION_MONTHS = 6;
+
+function getFreeLimitForUser(createdAt: Date | string | null | undefined): number {
+  return isFreeTrialExpired(createdAt) ? POST_TRIAL_FREE_MONTHLY_LIMIT : FREE_MONTHLY_LIMIT;
+}
 
 export function getMonthlyResetDate(): string {
   const now = new Date();
@@ -41,19 +46,16 @@ function formatExpiryDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExceeded: boolean, currentCount: number, limit: number, resetDate: string, trialExpired?: boolean}> {
+export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExceeded: boolean, currentCount: number, limit: number, resetDate: string}> {
   try {
     const isPremium = await isUserPremium(userId);
-    const limit = isPremium ? PREMIUM_MONTHLY_LIMIT : FREE_MONTHLY_LIMIT;
     const resetDate = getMonthlyResetDate();
     const currentMonth = getCurrentMonthKey();
 
+    let limit = PREMIUM_MONTHLY_LIMIT;
     if (!isPremium) {
       const user = await storage.getUser(userId);
-      if (user && isFreeTrialExpired(user.createdAt)) {
-        console.log(`⏳ User ${userId} free tier expired (createdAt=${user.createdAt})`);
-        return { hasExceeded: true, currentCount: 0, limit, resetDate, trialExpired: true };
-      }
+      limit = getFreeLimitForUser(user?.createdAt);
     }
 
     const result = await pool.query(
@@ -73,7 +75,7 @@ export async function checkMonthlyReminderLimit(userId: string): Promise<{hasExc
 
 export { checkMonthlyReminderLimit as checkFreeUserMonthlyLimit };
 
-export async function atomicIncrementAndCheck(userId: string, count: number = 1): Promise<{allowed: boolean, newCount: number, limit: number, resetDate: string, trialExpired?: boolean}> {
+export async function atomicIncrementAndCheck(userId: string, count: number = 1): Promise<{allowed: boolean, newCount: number, limit: number, resetDate: string}> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -89,15 +91,11 @@ export async function atomicIncrementAndCheck(userId: string, count: number = 1)
     }
 
     const isPremium = await isUserPremium(userId);
-    const limit = isPremium ? PREMIUM_MONTHLY_LIMIT : FREE_MONTHLY_LIMIT;
+    const limit = isPremium
+      ? PREMIUM_MONTHLY_LIMIT
+      : getFreeLimitForUser(lockResult.rows[0].created_at);
     const resetDate = getMonthlyResetDate();
     const currentMonth = getCurrentMonthKey();
-
-    if (!isPremium && isFreeTrialExpired(lockResult.rows[0].created_at)) {
-      await client.query('ROLLBACK');
-      console.log(`⏳ User ${userId} free tier expired (createdAt=${lockResult.rows[0].created_at})`);
-      return { allowed: false, newCount: 0, limit, resetDate, trialExpired: true };
-    }
 
     const monthlyUsage: Record<string, number> = (lockResult.rows[0].monthly_reminder_usage as Record<string, number>) || {};
     const currentCount = monthlyUsage[currentMonth] || 0;
