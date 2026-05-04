@@ -1,6 +1,7 @@
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import { App, URLOpenListenerEvent } from "@capacitor/app";
+import { setAuthToken, queryClient } from "@/lib/queryClient";
 
 const CUSTOM_URL_SCHEME = "rudereminders";
 
@@ -49,6 +50,16 @@ class InAppOAuthService {
     if (path === "auth-callback" || path === "//auth-callback") {
       const success = params.get("success") === "true";
       const error = params.get("error") || undefined;
+      const token = params.get("token");
+
+      if (success && token) {
+        try {
+          await setAuthToken(token);
+          await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        } catch (e) {
+          console.error("Failed to persist OAuth auth token:", e);
+        }
+      }
 
       if (this.authCallbackPromise) {
         this.authCallbackPromise.resolve({ success, error });

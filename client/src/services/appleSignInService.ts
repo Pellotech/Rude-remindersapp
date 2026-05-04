@@ -1,6 +1,6 @@
 import { SignInWithApple, SignInWithAppleOptions, SignInWithAppleResponse } from '@capacitor-community/apple-sign-in';
 import { Capacitor } from '@capacitor/core';
-import { getFullApiUrl } from '@/lib/queryClient';
+import { getFullApiUrl, setAuthToken, queryClient } from '@/lib/queryClient';
 
 export interface AppleAuthResponse {
   identityToken: string;
@@ -87,7 +87,12 @@ class AppleSignInService {
       }
 
       const data = await response.json();
-      console.log('✅ Backend authentication successful:', data);
+      console.log('✅ Backend authentication successful');
+      const token = data.authToken ?? data.token ?? data.accessToken;
+      if (token) {
+        await setAuthToken(token);
+      }
+      await queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
       return true;
     } catch (error: any) {
       console.error('❌ Backend authentication error:', error);

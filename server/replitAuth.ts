@@ -558,7 +558,7 @@ export async function setupAuth(app: Express) {
 
       // SECURITY: Verify the identity token with Apple's public keys
       const { verifyAppleToken, validateAppleTokenAudience } = await import(
-        "./services/appleAuthService"
+        "./appleAuth"
       );
 
       let verifiedPayload;
@@ -644,17 +644,24 @@ export async function setupAuth(app: Express) {
         expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
-      req.logIn(userSession, (err) => {
+      req.logIn(userSession, async (err) => {
         if (err) {
           console.error("Login session error:", err);
           return res.status(500).json({ message: "Failed to create session" });
         }
 
         console.log("✅ Apple Sign-In successful");
-        res.json({
-          success: true,
-          message: "Signed in with Apple successfully",
-        });
+        try {
+          const authToken = await createAuthToken(userId);
+          res.json({
+            success: true,
+            message: "Signed in with Apple successfully",
+            authToken,
+          });
+        } catch (tokenErr) {
+          console.error("Failed to create auth token for Apple user:", tokenErr);
+          res.status(500).json({ message: "Failed to create auth token" });
+        }
       });
     } catch (error: any) {
       console.error("Apple Sign-In error:", error);
@@ -1109,14 +1116,20 @@ export async function setupAuth(app: Express) {
         expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
-      req.logIn(userSession, (err) => {
+      req.logIn(userSession, async (err) => {
         if (err) {
           return res.redirect(
             `${nativeCallback}?success=false&error=session_failed`,
           );
         }
         console.log("✅ Google Native Sign-In successful");
-        res.redirect(`${nativeCallback}?success=true`);
+        try {
+          const authToken = await createAuthToken(userId);
+          res.redirect(`${nativeCallback}?success=true&token=${encodeURIComponent(authToken)}`);
+        } catch (tokenErr) {
+          console.error("Failed to create auth token for Google user:", tokenErr);
+          res.redirect(`${nativeCallback}?success=false&error=token_failed`);
+        }
       });
     } catch (error: any) {
       console.error("Google Native Sign-In error:", error);
@@ -1261,14 +1274,20 @@ export async function setupAuth(app: Express) {
         expires_at: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
       };
 
-      req.logIn(userSession, (err) => {
+      req.logIn(userSession, async (err) => {
         if (err) {
           return res.redirect(
             `${nativeCallback}?success=false&error=session_failed`,
           );
         }
         console.log("✅ Facebook Native Sign-In successful");
-        res.redirect(`${nativeCallback}?success=true`);
+        try {
+          const authToken = await createAuthToken(userId);
+          res.redirect(`${nativeCallback}?success=true&token=${encodeURIComponent(authToken)}`);
+        } catch (tokenErr) {
+          console.error("Failed to create auth token for Facebook user:", tokenErr);
+          res.redirect(`${nativeCallback}?success=false&error=token_failed`);
+        }
       });
     } catch (error: any) {
       console.error("Facebook Native Sign-In error:", error);
