@@ -358,7 +358,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
             )}
           </div>
         </div>
-        <div className="flex items-center justify-center p-4 pt-8">
+        <div className="flex items-center justify-center p-4 pt-8" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
           <div className="w-full max-w-md">
             {isSubscribed ? renderPremiumDashboard() : showPlans ? renderAvailablePlans() : renderUnlockPremium()}
           </div>

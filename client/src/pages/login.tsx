@@ -226,7 +226,7 @@ export default function LoginPage() {
   // Verification pending screen
   if (showVerificationScreen) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
         <div className="w-full max-w-md space-y-6">
           <AppHeader className="mb-4" />
           <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
@@ -262,7 +262,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 32px)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <AppHeader className="mb-4" />

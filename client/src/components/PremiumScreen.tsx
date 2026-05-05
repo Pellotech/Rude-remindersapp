@@ -232,7 +232,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
         customBackLabel="Back" 
         showMainPageButton={false}
       />
-      <div className="flex items-center justify-center p-4 pt-8">
+      <div className="flex items-center justify-center p-4 pt-8" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
         <div className="w-full max-w-md">
           <div className="bg-white rounded-[24px] overflow-hidden p-8">
             <div className="text-center space-y-6">
