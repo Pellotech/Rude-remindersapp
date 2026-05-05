@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import RoseSpinner from "@/components/RoseSpinner";
 
 const settingsSchema = z.object({
   email: z.string().email("Please enter a valid email address").optional().or(z.literal("")),
@@ -301,7 +302,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               >
                 {updateSettingsMutation.isPending ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    <RoseSpinner size={18} className="mr-2" />
                     Saving...
                   </>
                 ) : (

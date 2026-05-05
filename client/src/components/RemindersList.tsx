@@ -17,6 +17,7 @@ import { supportsNotifications } from "@/utils/platformDetection";
 import { SwipeableReminderCard } from "./SwipeableReminderCard";
 import { playCompletedSound, playNotAccomplishedSound } from "@/lib/soundEffects";
 import { format } from "date-fns";
+import RoseSpinner from "@/components/RoseSpinner";
 
 const rudenessLevelColors = {
   1: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
@@ -176,7 +177,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
     return (
       <Card className="border border-[#C9A063] bg-[#FDF3E3]">
         <CardContent className="p-12 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A063] mx-auto mb-4" />
+          <RoseSpinner size={36} className="mx-auto mb-4" />
           <p className="text-gray-500">Loading your reminders...</p>
         </CardContent>
       </Card>

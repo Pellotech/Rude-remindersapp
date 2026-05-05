@@ -8,6 +8,7 @@ import { getPlatformInfo } from '@/utils/platformDetection';
 import { BackNavigation } from "@/components/BackNavigation";
 import { revenueCatService } from "@/services/revenueCatService";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import RoseSpinner from "@/components/RoseSpinner";
 
 interface PremiumScreenProps {
   isPremium: boolean;
@@ -263,7 +264,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      <RoseSpinner size={20} className="mr-2" />
                       Loading...
                     </>
                   ) : (

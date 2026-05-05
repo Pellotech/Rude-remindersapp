@@ -8,6 +8,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { revenueCatService } from "@/services/revenueCatService";
 import { Capacitor } from '@capacitor/core';
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import RoseSpinner from "@/components/RoseSpinner";
 
 interface SubscriptionManagerProps {
   isAuthenticated?: boolean;
@@ -246,7 +247,7 @@ export default function SubscriptionManager({ isAuthenticated = false, user }: S
           </div>
         )}
         <Button onClick={handlePurchase} disabled={loading || (platform.isNative && pricesLoading) || !platform.isNative} className={`w-full text-white text-lg py-6 rounded-[14px] h-[52px] ${platform.isNative ? 'bg-[#C53B3B] hover:bg-[#A83232]' : 'bg-[#C53B3B]/40 cursor-not-allowed'}`} size="lg" data-testid="button-continue-purchase">
-          {loading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Processing...</>) : pricesLoading ? (<><Loader2 className="h-5 w-5 mr-2 animate-spin" />Loading prices...</>) : !platform.isNative ? (<>Mobile App Only</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
+          {loading ? (<><RoseSpinner size={20} className="mr-2" />Processing...</>) : pricesLoading ? (<><RoseSpinner size={20} className="mr-2" />Loading prices...</>) : !platform.isNative ? (<>Mobile App Only</>) : (<>Continue<ChevronRight className="h-5 w-5 ml-2" /></>)}
         </Button>
         {error && (
           <div style={{

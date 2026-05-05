@@ -36,6 +36,7 @@ import { Label } from "@/components/ui/label";
 import { useMobileNotifications } from "./MobileNotifications";
 import { usePaywallGate } from "@/components/PaywallGate";
 import { isFeatureDisabled } from "@/config/featureFlags";
+import RoseSpinner from "@/components/RoseSpinner";
 
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
@@ -1259,7 +1260,7 @@ export default function ReminderForm({
             >
               {createReminderMutation.isPending ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  <RoseSpinner size={20} className="mr-2" />
                   Creating Reminder...
                 </>
               ) : (
