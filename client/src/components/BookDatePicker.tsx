@@ -449,13 +449,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   position: 'absolute', right: 0, top: 0, bottom: 0, width: 7,
                   display: 'flex', flexDirection: 'row', overflow: 'hidden',
                   borderRadius: '0 7px 7px 0',
-                  background: '#F5EFE6',
+                  background: '#FFFFFF',
                 }}>
-                  {Array.from({ length: 8 }).map((_, i) => (
+                  {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} style={{
                       flex: 1,
-                      background: '#F5EFE6',
-                      borderRight: i < 7 ? '1px solid rgba(0,0,0,0.22)' : 'none',
+                      background: '#FFFFFF',
+                      borderRight: i < 5 ? '1px solid rgba(120,80,30,0.28)' : 'none',
                     }} />
                   ))}
                 </div>
