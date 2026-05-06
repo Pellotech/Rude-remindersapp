@@ -554,6 +554,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
   }
 
   // ─── Render ────────────────────────────────────────────────────────────────
+  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768;
   return (
     <div
       onClick={handleTap}
@@ -571,6 +572,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
         cursor: "pointer",
         userSelect: "none",
         marginTop: "8px",
+        ...(isTablet ? { width: "50%", maxWidth: "50%", alignSelf: "flex-start" } : {}),
       }}
     >
       {/* ── Rudy image + name tag ────────────────────────────────────────────── */}
