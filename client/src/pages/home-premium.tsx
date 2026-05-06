@@ -342,6 +342,7 @@ export default function HomePremium() {
                 nudgeEvent={lastEvent}
                 nudgeKey={eventKey}
                 onNudgeHandled={() => setLastEvent(null)}
+                borderColor={badgeColor}
               />
             )}
           </div>
@@ -362,6 +363,7 @@ export default function HomePremium() {
                 nudgeEvent={lastEvent}
                 nudgeKey={eventKey}
                 onNudgeHandled={() => setLastEvent(null)}
+                borderColor={badgeColor}
               />
             </div>
           )}

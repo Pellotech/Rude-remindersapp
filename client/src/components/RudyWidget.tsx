@@ -436,9 +436,10 @@ export interface RudyWidgetProps {
   showReactionBubble?: boolean;
   showPremiumButton?: boolean;
   onPremiumPress?: () => void;
+  borderColor?: string;
 }
 
-export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showReactionBubble, showPremiumButton, onPremiumPress }: RudyWidgetProps) {
+export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showReactionBubble, showPremiumButton, onPremiumPress, borderColor }: RudyWidgetProps) {
 
   // ─── Nice Mode ─────────────────────────────────────────────────────────────
   const [niceMode, setNiceMode] = useState(() => localStorage.getItem('rudy_nice_mode') === 'true');
@@ -561,8 +562,9 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
       style={{
         minHeight: "120px",
         background: "#FDF3E3",
-        border: "1px solid #C9A063",
+        border: `2px solid ${borderColor || "#C9A063"}`,
         borderRadius: "12px",
+        transition: "border-color 0.3s ease",
         padding: "10px 12px",
         display: "flex",
         flexDirection: "row",
