@@ -27,9 +27,9 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#FDF3E3] border-2 border-[#C9A063] text-[#1B2A5E] ring-2 ring-[#C53B3B] ring-offset-2 ring-offset-[#FDF3E3]",
+        default: "bg-[#da7f7f] border-2 border-[#C9A063] text-black ring-2 ring-[#C53B3B] ring-offset-2 ring-offset-[#FDF3E3]",
         destructive:
-          "destructive group border-2 border-[#C53B3B] bg-[#C53B3B] text-white ring-2 ring-[#C9A063] ring-offset-2",
+          "destructive group border-2 border-[#C9A063] bg-[#C53B3B] text-black ring-2 ring-[#C53B3B] ring-offset-2 ring-offset-[#FDF3E3]",
       },
     },
     defaultVariants: {
