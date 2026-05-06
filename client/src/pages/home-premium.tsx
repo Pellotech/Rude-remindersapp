@@ -314,7 +314,7 @@ export default function HomePremium() {
       <Navigation />
 
       <div
-        className="container mx-auto px-4 pt-8 max-w-7xl"
+        className="container mx-auto px-4 md:px-[20%] pt-8 max-w-7xl"
         style={{ paddingBottom: isAndroid ? '120px' : '80px' }}
       >
         {/* Welcome Header - Mobile Optimized */}

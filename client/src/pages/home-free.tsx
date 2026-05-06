@@ -268,7 +268,7 @@ export default function HomeFree() {
       <IntroTour isOpen={showIntro} onClose={closeIntro} />
       <Navigation />
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 md:px-[20%] py-8 max-w-7xl">
         {/* Welcome Header - Mobile Optimized */}
         <div className="mb-3 sm:mb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
@@ -451,7 +451,7 @@ export default function HomeFree() {
 
       {/* Free Plan Usage Overview - Bottom Section */}
       <div
-        className="container mx-auto px-4 max-w-7xl"
+        className="container mx-auto px-4 md:px-[20%] max-w-7xl"
         style={{ paddingBottom: Capacitor.getPlatform() === 'android' ? '120px' : '80px' }}
       >
         <Card className="bg-white border-[#EAEAEA] rounded-[20px] shadow-[var(--rr-card-shadow)]">

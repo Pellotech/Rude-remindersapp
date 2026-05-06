@@ -879,7 +879,7 @@ export default function ReminderForm({
 
 
   return (
-    <Card className="mt-4 bg-white border-2 border-[#FDF3E3] rounded-[24px] shadow-[var(--rr-card-shadow)] ring-2 ring-[#C53B3B] ring-offset-2">
+    <Card className="mt-4 bg-white border-2 border-[#FDF3E3] rounded-[24px] shadow-[var(--rr-card-shadow)]">
       <CardContent className="pt-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
