@@ -355,7 +355,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               onMouseDown={onMouseDown}
               onMouseUp={onMouseUp}
               style={{
-                width: isTablet ? '36%' : '33%',
+                width: isTablet ? '40%' : '33%',
                 minWidth: isTablet ? undefined : 145,
                 height: isTablet ? 260 : 168,
                 boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
@@ -522,7 +522,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             key={`open-${openKey.current}`}
             style={{
               position: 'relative',
-              width: isTablet ? '56%' : '56%',
+              width: isTablet ? '67%' : '56%',
               minWidth: isTablet ? undefined : 230,
               height: isTablet ? '260px' : '168px',
               animation: 'bookOpenIn 0.3s ease both',
