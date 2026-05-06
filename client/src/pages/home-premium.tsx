@@ -381,6 +381,31 @@ export default function HomePremium() {
           }}
           className="space-y-6"
         >
+          {/* Always-visible Rudeness indicator */}
+          <div
+            className="flex items-center justify-between px-3 py-2 rounded-lg border-2"
+            style={{
+              backgroundColor: '#FDF3E3',
+              borderColor: badgeColor,
+              transition: 'border-color 0.3s ease',
+            }}
+            data-testid="rudeness-indicator"
+          >
+            <span className="text-xs font-semibold uppercase tracking-wide text-[#1B2A5E]">
+              Current Rudeness
+            </span>
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{
+                backgroundColor: badgeColor,
+                color: badgeTextColor,
+                transition: 'background-color 0.3s ease, color 0.3s ease',
+              }}
+            >
+              {(['😊 Gentle','🙂 Motivational','😏 Sarcastic','😠 Harsh','🤬 Savage'][badgeRudenessLevel - 1]) || 'Sarcastic'}
+            </span>
+          </div>
+
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
             <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <Bell className="h-4 w-4" />
