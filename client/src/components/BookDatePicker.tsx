@@ -392,8 +392,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 5,
-                padding: 10,
+                gap: isTablet ? 8 : 5,
+                padding: isTablet ? 16 : 10,
               }}>
                 {/* Inner spine shadow */}
                 <div style={{
@@ -403,8 +403,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
                 {/* Logo overlapping a smaller gold box (logo size is fixed, independent of box size) */}
                 <div style={{
-                  width: 46,
-                  height: 46,
+                  width: isTablet ? 70 : 46,
+                  height: isTablet ? 70 : 46,
                   background: 'transparent', // secondary option: '#A0522D' (sienna brown)
                   borderRadius: 8,
                   flexShrink: 0,
@@ -415,8 +415,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   <img
                     src={rudeRemindersLogo}
                     style={{
-                      width: 60,
-                      height: 60,
+                      width: isTablet ? 92 : 60,
+                      height: isTablet ? 92 : 60,
                       objectFit: 'contain',
                       position: 'absolute',
                       top: '50%',
@@ -430,16 +430,16 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   />
                 </div>
                 {/* Divider */}
-                <div style={{ width: 26, height: 1, background: 'rgba(201,160,99,0.3)', position: 'relative', zIndex: 1 }} />
+                <div style={{ width: isTablet ? 40 : 26, height: 1, background: 'rgba(201,160,99,0.3)', position: 'relative', zIndex: 1 }} />
                 {/* Title */}
                 <div style={{
-                  color: '#C9A063', fontSize: 8, letterSpacing: '0.12em',
+                  color: '#C9A063', fontSize: isTablet ? 13 : 8, letterSpacing: '0.12em',
                   fontWeight: 500, textAlign: 'center', lineHeight: 1.7,
                   position: 'relative', zIndex: 1,
                 }}>RUDE REMINDERS</div>
                 {/* Sub */}
                 <div style={{
-                  color: 'rgba(201,160,99,0.5)', fontSize: 7,
+                  color: 'rgba(201,160,99,0.5)', fontSize: isTablet ? 11 : 7,
                   letterSpacing: '0.07em', position: 'relative', zIndex: 1,
                 }}>your week ahead</div>
 
