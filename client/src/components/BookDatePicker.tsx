@@ -451,11 +451,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   borderRadius: '0 7px 7px 0',
                   background: '#F5EFE6',
                 }}>
-                  {Array.from({ length: 12 }).map((_, i) => (
+                  {Array.from({ length: 8 }).map((_, i) => (
                     <div key={i} style={{
                       flex: 1,
                       background: '#F5EFE6',
-                      borderRight: i < 11 ? '1px solid rgba(0,0,0,0.22)' : 'none',
+                      borderRight: i < 7 ? '1px solid rgba(0,0,0,0.22)' : 'none',
                     }} />
                   ))}
                 </div>
