@@ -574,7 +574,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
         cursor: "pointer",
         userSelect: "none",
         marginTop: "8px",
-        ...(isTablet ? { width: "50%", maxWidth: "50%", alignSelf: "flex-start" } : {}),
+        ...(isTablet ? { width: "75%", maxWidth: "75%", alignSelf: "flex-start" } : {}),
       }}
     >
       {/* ── Rudy image + name tag ────────────────────────────────────────────── */}

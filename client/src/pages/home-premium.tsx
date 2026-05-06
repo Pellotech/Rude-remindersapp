@@ -381,7 +381,7 @@ export default function HomePremium() {
         >
           {/* Always-visible Rudeness indicator — matches Rudy widget width on tablet */}
           <div
-            className="flex items-center justify-between px-3 py-2 rounded-lg border-2 md:w-1/2 md:max-w-[50%] md:self-start"
+            className="flex items-center justify-between px-3 py-2 rounded-lg border-2 md:w-3/4 md:max-w-[75%] md:self-start"
             style={{
               backgroundColor: '#FDF3E3',
               borderColor: badgeColor,
