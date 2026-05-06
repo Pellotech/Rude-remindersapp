@@ -455,7 +455,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     <div key={i} style={{
                       flex: 1,
                       background: '#F5EFE6',
-                      borderRight: i < 11 ? '1px solid rgba(0,0,0,0.06)' : 'none',
+                      borderRight: i < 11 ? '1px solid rgba(0,0,0,0.22)' : 'none',
                     }} />
                   ))}
                 </div>
