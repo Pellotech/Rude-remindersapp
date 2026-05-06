@@ -914,7 +914,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       {selectedDates.length > 0 && selectedHour !== null && (
         <Card className="border-[#C9A063]">
           <CardContent className="pt-3 pb-3">
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            <div className={cn("flex gap-2 overflow-x-auto pb-1 scrollbar-hide", isTablet && "justify-center")}>
               {QUARTER_SLOTS.map((slot) => {
                 const isSel  = selectedMinute === slot.value && selectedHour !== null;
                 const isPast = isTimeInPast(selectedHour!, slot.value);
