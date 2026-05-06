@@ -355,9 +355,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               onMouseDown={onMouseDown}
               onMouseUp={onMouseUp}
               style={{
-                width: isTablet ? '43%' : '30%',
+                width: isTablet ? '36%' : '30%',
                 minWidth: isTablet ? undefined : 132,
-                height: isTablet ? 312 : 168,
+                height: isTablet ? 260 : 168,
                 boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
                 borderRadius: '5px 7px 7px 5px',
                 display: 'flex',
@@ -521,9 +521,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             key={`open-${openKey.current}`}
             style={{
               position: 'relative',
-              width: isTablet ? '67%' : '47%',
+              width: isTablet ? '56%' : '47%',
               minWidth: isTablet ? undefined : 192,
-              height: isTablet ? '312px' : '168px',
+              height: isTablet ? '260px' : '168px',
               animation: 'bookOpenIn 0.3s ease both',
               boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
             }}
@@ -546,7 +546,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             }} />
             {/* Open book */}
             <div style={{
-              width: '100%', height: isTablet ? 312 : 168,
+              width: '100%', height: isTablet ? 260 : 168,
               display: 'flex',
               borderRadius: 0,
               overflow: 'hidden',
@@ -670,21 +670,21 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 >
                   {/* Day number */}
                   <div style={{
-                    fontSize: isTablet ? 80 : 54, fontWeight: 500, lineHeight: 1,
+                    fontSize: isTablet ? 80 : 41, fontWeight: 500, lineHeight: 1,
                     color: '#1a1a1a',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
                   </div>
                   {/* Day name */}
                   <div style={{
-                    fontSize: isTablet ? 20 : 14,
+                    fontSize: isTablet ? 20 : 13,
                     color: isPageSelected(displayIdx) ? 'rgba(183,13,13,0.78)' : '#3d2010',
                     transition: 'color 0.2s',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'EEEE') : ''}
                   </div>
                   {/* Month */}
-                  <div style={{ fontSize: isTablet ? 16 : 12, fontWeight: 500, color: '#C9A063' }}>
+                  <div style={{ fontSize: isTablet ? 16 : 11, fontWeight: 500, color: '#C9A063' }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'MMM') : ''}
                   </div>
                 </div>
