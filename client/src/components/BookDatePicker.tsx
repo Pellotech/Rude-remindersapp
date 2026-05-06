@@ -444,20 +444,18 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   letterSpacing: '0.07em', position: 'relative', zIndex: 1,
                 }}>your week ahead</div>
 
-                {/* Right page edge — stacked lines (vertical, worn paper look) */}
+                {/* Right page edge — stacked vertical lines (uniform across phone/tablet) */}
                 <div style={{
                   position: 'absolute', right: 0, top: 0, bottom: 0, width: 7,
                   display: 'flex', flexDirection: 'row', overflow: 'hidden',
                   borderRadius: '0 7px 7px 0',
-                  background: '#D9CDB0',
-                  boxShadow: 'inset 0 0 4px rgba(80,55,20,0.25)',
+                  background: '#F5EFE6',
                 }}>
-                  {Array.from({ length: 7 }).map((_, i) => (
+                  {Array.from({ length: 12 }).map((_, i) => (
                     <div key={i} style={{
                       flex: 1,
-                      background: i % 2 === 0 ? '#D9CDB0' : '#C9BB99',
-                      borderRight: i < 6 ? '1px solid rgba(80,55,20,0.18)' : 'none',
-                      opacity: 0.85 + (i % 3) * 0.05,
+                      background: '#F5EFE6',
+                      borderRight: i < 11 ? '1px solid rgba(0,0,0,0.06)' : 'none',
                     }} />
                   ))}
                 </div>
