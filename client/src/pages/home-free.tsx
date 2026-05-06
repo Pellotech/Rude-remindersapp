@@ -79,6 +79,34 @@ export default function HomeFree() {
     () => localStorage.getItem('rudy_widget_visible') !== 'false'
   );
 
+  // Dynamic badge color based on rudeness level — kept in sync with home-premium
+  const rudeLevelColors: Record<number, string> = {
+    1: '#38BDF8',
+    2: '#22C55E',
+    3: '#FDE047',
+    4: '#F97316',
+    5: '#C53B3B',
+  };
+  const [badgeRudenessLevel, setBadgeRudenessLevel] = useState<number>(
+    (user as any)?.defaultRudenessLevel || parseInt(localStorage.getItem('default_rudeness_level') || '2')
+  );
+  const badgeColor = rudeLevelColors[badgeRudenessLevel] ?? rudeLevelColors[3];
+  const badgeTextColor = [1, 3].includes(badgeRudenessLevel) ? '#111827' : '#FFFFFF';
+
+  useEffect(() => {
+    if ((user as any)?.defaultRudenessLevel) {
+      setBadgeRudenessLevel((user as any).defaultRudenessLevel);
+    }
+  }, [(user as any)?.defaultRudenessLevel]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setBadgeRudenessLevel((e as CustomEvent).detail);
+    };
+    window.addEventListener('default_rudeness_changed', handler);
+    return () => window.removeEventListener('default_rudeness_changed', handler);
+  }, []);
+
   useEffect(() => {
     const handler = (e: Event) => {
       setRudyFloatingEnabled((e as CustomEvent).detail);
@@ -275,7 +303,14 @@ export default function HomeFree() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
                 <span className="truncate">{`Hey ${(user as any)?.firstName || (user as any)?.username || 'there'}`}</span>
-                <Badge className="bg-green-400 text-white text-xs flex-shrink-0 border-0">
+                <Badge
+                  className="text-xs flex-shrink-0 border-0"
+                  style={{
+                    backgroundColor: badgeColor,
+                    color: badgeTextColor,
+                    transition: 'background-color 0.3s ease, color 0.3s ease',
+                  }}
+                >
                   <Star className="h-3 w-3 mr-1" />
                   Free
                 </Badge>
@@ -288,6 +323,7 @@ export default function HomeFree() {
                 showReactionBubble={false}
                 showPremiumButton={true}
                 onPremiumPress={() => setLocation('/subscribe')}
+                borderColor={badgeColor}
               />
             )}
           </div>
@@ -308,6 +344,7 @@ export default function HomeFree() {
                 showReactionBubble={false}
                 showPremiumButton={true}
                 onPremiumPress={() => setLocation('/subscribe')}
+                borderColor={badgeColor}
               />
             </div>
           )}
