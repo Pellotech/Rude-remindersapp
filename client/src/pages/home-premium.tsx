@@ -386,7 +386,8 @@ export default function HomePremium() {
             className="flex items-center justify-between px-3 py-2 rounded-lg border-2"
             style={{
               backgroundColor: '#FDF3E3',
-              borderColor: '#C9A063',
+              borderColor: badgeColor,
+              transition: 'border-color 0.3s ease',
             }}
             data-testid="rudeness-indicator"
           >
