@@ -355,7 +355,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               onMouseDown={onMouseDown}
               onMouseUp={onMouseUp}
               style={{
-                width: '65%',
+                width: isTablet ? '45.5%' : '65%',
                 height: isTablet ? 260 : 140,
                 boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
                 borderRadius: '5px 7px 7px 5px',
