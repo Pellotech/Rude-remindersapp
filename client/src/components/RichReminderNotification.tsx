@@ -240,29 +240,31 @@ export function RichReminderNotification({
             {new Date(reminder.scheduledFor).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} {' • '} {new Date(reminder.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
           </p>
 
-          {/* Action buttons — unchanged */}
-          <div className="flex flex-col gap-2 pt-2 border-t">
-            <Button
-              onClick={onComplete}
-              className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
-              data-testid="button-complete"
-            >
-              It's done 👊 or I'm doing it.
-            </Button>
-            <Button
-              onClick={onMissed}
-              className="w-full h-10 text-sm font-semibold bg-[#C53B3B] hover:bg-[#a83030] text-white"
-              data-testid="button-missed"
-            >
-              Button doesn't work, reminds me of someone 🙄
-            </Button>
-            <Button
-              onClick={onClose}
-              className="w-full h-9 text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 text-gray-900"
-              data-testid="button-dismiss"
-            >
-              Let me know later 🔔
-            </Button>
+          {/* Action buttons */}
+          <div className="pt-2 border-t">
+            <div className="flex flex-col gap-2 w-1/2 mx-auto">
+              <Button
+                onClick={onComplete}
+                className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
+                data-testid="button-complete"
+              >
+                Got it done 👊
+              </Button>
+              <Button
+                onClick={onClose}
+                className="w-full h-10 text-sm font-semibold bg-[#FDF3E3] hover:bg-[#F5EDE0] text-[#1B2A5E] border border-[#C9A063]"
+                data-testid="button-dismiss"
+              >
+                Let you know later
+              </Button>
+              <Button
+                onClick={onMissed}
+                className="w-full h-9 text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 text-gray-900"
+                data-testid="button-missed"
+              >
+                Didn't do it.
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
