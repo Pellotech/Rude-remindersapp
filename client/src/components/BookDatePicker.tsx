@@ -671,7 +671,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 >
                   {/* Day number */}
                   <div style={{
-                    fontSize: isTablet ? 80 : 41, fontWeight: 500, lineHeight: 1,
+                    fontSize: isTablet ? 64 : 41, fontWeight: 500, lineHeight: 1,
                     color: '#1a1a1a',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
