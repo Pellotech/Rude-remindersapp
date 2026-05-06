@@ -49,6 +49,7 @@ const RIGHT_FAN = [
 ];
 
 export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDatePickerProps) {
+  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768;
   /* ─── navigation state ───────────────────────────────────────────────── */
   const [currentIdx, setCurrentIdx]       = useState(0);
   const [displayIdx, setDisplayIdx]       = useState(0);
@@ -355,7 +356,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               onMouseUp={onMouseUp}
               style={{
                 width: '65%',
-                height: 140,
+                height: isTablet ? 260 : 140,
                 boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
                 borderRadius: '5px 7px 7px 5px',
                 display: 'flex',
@@ -519,7 +520,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             style={{
               position: 'relative',
               width: '100%',
-              height: '140px',
+              height: isTablet ? '260px' : '140px',
               animation: 'bookOpenIn 0.3s ease both',
               boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
             }}
@@ -542,7 +543,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             }} />
             {/* Open book */}
             <div style={{
-              width: '100%', height: 140,
+              width: '100%', height: isTablet ? 260 : 140,
               display: 'flex',
               borderRadius: 0,
               overflow: 'hidden',
@@ -655,21 +656,21 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 >
                   {/* Day number */}
                   <div style={{
-                    fontSize: 54, fontWeight: 500, lineHeight: 1,
+                    fontSize: isTablet ? 80 : 54, fontWeight: 500, lineHeight: 1,
                     color: '#1a1a1a',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
                   </div>
                   {/* Day name */}
                   <div style={{
-                    fontSize: 14,
+                    fontSize: isTablet ? 20 : 14,
                     color: isPageSelected(displayIdx) ? 'rgba(183,13,13,0.78)' : '#3d2010',
                     transition: 'color 0.2s',
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'EEEE') : ''}
                   </div>
                   {/* Month */}
-                  <div style={{ fontSize: 12, fontWeight: 500, color: '#C9A063' }}>
+                  <div style={{ fontSize: isTablet ? 16 : 12, fontWeight: 500, color: '#C9A063' }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'MMM') : ''}
                   </div>
                 </div>
@@ -729,7 +730,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       <div style={{ width: '100%', maxWidth: '100%', alignSelf: 'center' }}>
 
       {/* ── CONTROLS ROW ──────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 36, marginTop: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: isTablet ? 48 : 36, marginTop: 10 }}>
 
         {/* ← */}
         <button
@@ -737,7 +738,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           onClick={() => { direction.current = 'back'; navigate(Math.max(0, currentIdx - 1)); }}
           disabled={currentIdx === 0}
           style={{
-            width: 42, height: 36, flexShrink: 0,
+            width: isTablet ? 80 : 42, height: isTablet ? 48 : 36, flexShrink: 0,
             background: '#FDF3E3', border: '1.5px solid #C9A063',
             borderRadius: 20, color: '#111827', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -756,8 +757,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           type="button"
           onClick={handleSelectBtn}
           style={{
-            flex: 6, height: 36, borderRadius: 20, cursor: 'pointer',
-            fontSize: 12, fontWeight: 500, padding: '0 8px',
+            flex: 6, height: isTablet ? 48 : 36, borderRadius: 20, cursor: 'pointer',
+            fontSize: isTablet ? 14 : 12, fontWeight: 500, padding: '0 8px',
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
               ? { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
@@ -795,7 +796,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           onClick={() => { direction.current = 'forward'; navigate(Math.min(7, currentIdx + 1)); }}
           disabled={currentIdx === 7}
           style={{
-            width: 42, height: 36, flexShrink: 0,
+            width: isTablet ? 80 : 42, height: isTablet ? 48 : 36, flexShrink: 0,
             background: '#FDF3E3', border: '1.5px solid #C9A063',
             borderRadius: 20, color: '#111827', cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
