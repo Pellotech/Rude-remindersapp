@@ -560,8 +560,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               }} />
 
               {/* Left page section */}
+              {/* (right outer cover strip is rendered after the right page below) */}
               <div style={{
-                flex: 1, position: 'relative',
+                flex: '1 1 0',
+                minWidth: 0,
+                width: 0,
+                overflow: 'hidden',
+                boxSizing: 'border-box',
+                position: 'relative',
                 background: '#FFFFFF',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transformOrigin: 'right center',
@@ -591,7 +597,12 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
               {/* Right page section */}
               <div style={{
-                flex: 1, position: 'relative',
+                flex: '1 1 0',
+                minWidth: 0,
+                width: 0,
+                overflow: 'hidden',
+                boxSizing: 'border-box',
+                position: 'relative',
                 background: '#FFFFFF',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 4,
