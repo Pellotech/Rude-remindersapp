@@ -328,24 +328,22 @@ export default function HomeFree() {
             )}
           </div>
           {rudySticky && rudyFloatingEnabled && (
-            <div style={{
-              position: 'fixed',
-              top: '60px',
-              left: 0,
-              right: 0,
-              zIndex: 50,
-              padding: '0 16px',
-              backgroundColor: '#FDF3E3',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              transition: 'transform 0.2s ease, opacity 0.2s ease',
-              animation: 'rudySlideIn 0.2s ease',
-            }}>
-              <RudyWidget
-                showReactionBubble={false}
-                showPremiumButton={true}
-                onPremiumPress={() => setLocation('/subscribe')}
-                borderColor={badgeColor}
-              />
+            <div
+              className="fixed top-[60px] left-0 right-0 z-50 px-4 md:px-[20%]"
+              style={{
+                backgroundColor: 'transparent',
+                transition: 'transform 0.2s ease, opacity 0.2s ease',
+                animation: 'rudySlideIn 0.2s ease',
+                pointerEvents: 'none',
+              }}>
+              <div style={{ pointerEvents: 'auto' }}>
+                <RudyWidget
+                  showReactionBubble={false}
+                  showPremiumButton={true}
+                  onPremiumPress={() => setLocation('/subscribe')}
+                  borderColor={badgeColor}
+                />
+              </div>
             </div>
           )}
         </div>

@@ -58,8 +58,8 @@ export default function Navigation() {
             </Link>
           </div>
 
-          {/* Action buttons — pinned to bottom-right of header */}
-          <div className="absolute bottom-1 right-4 flex items-center gap-2">
+          {/* Action buttons — pinned to bottom-right, aligned with body padding on tablet/iPad */}
+          <div className="absolute bottom-1 right-4 md:right-[20%] flex items-center gap-2">
             {/* Show Home button when not on home page */}
             {location !== "/" && (
               <Link href="/">
