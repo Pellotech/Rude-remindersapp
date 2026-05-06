@@ -521,8 +521,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             key={`open-${openKey.current}`}
             style={{
               position: 'relative',
-              width: isTablet ? '56%' : '47%',
-              minWidth: isTablet ? undefined : 192,
+              width: isTablet ? '56%' : '56%',
+              minWidth: isTablet ? undefined : 230,
               height: isTablet ? '260px' : '168px',
               animation: 'bookOpenIn 0.3s ease both',
               boxShadow: '6px 6px 18px rgba(0,0,0,0.32), -6px 6px 18px rgba(0,0,0,0.22)',
