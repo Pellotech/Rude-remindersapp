@@ -1,5 +1,7 @@
 import { Link } from "wouter";
 import { ChevronLeft, ChevronRight, User, Bell, CreditCard } from "lucide-react";
+import { SettingsIntro } from "@/components/SettingsIntro";
+import { useIntroTour } from "@/components/IntroTour";
 
 interface SettingsRowProps {
   icon: React.ReactNode;
@@ -27,8 +29,14 @@ function SettingsRow({ icon, title, href }: SettingsRowProps) {
 }
 
 export default function SettingsLanding() {
+  const { showIntro, closeIntro } = useIntroTour({
+    storageKey: 'settingsIntroShownCount',
+    maxShows: 3,
+  });
+
   return (
     <div className="min-h-screen bg-black">
+      <SettingsIntro isOpen={showIntro} onClose={closeIntro} />
       <div className="max-w-lg mx-auto">
         <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
           <div className="flex items-center px-4 py-3">

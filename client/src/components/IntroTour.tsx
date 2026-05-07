@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -163,14 +164,19 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 14 }}>
-              Creating your first reminder
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 6 }}>
+              Hey first-timer 👋
             </h2>
+            <p style={{ fontSize: 13, color: '#4B5563', lineHeight: 1.4, marginBottom: 12 }}>
+              Here's how to set your first reminder:
+            </p>
             <div style={{ textAlign: 'left' }}>
               {[
-                'Type what you need to be reminded about',
-                'Open the book — choose your day and time',
-                'Set your rudeness level and tap Create Reminder',
+                'Write what you want to be reminded about in the box below',
+                'Flip through the book — pick a date, an hour, and a quarter-minute',
+                'Choose your rudeness level — Gentle to Savage',
+                'Add some spice: a picture, a voice character, a quote, and more',
+                'Hit Create Reminder… and watch out 🔥',
               ].map((step, i) => (
                 <div
                   key={i}
@@ -430,6 +436,9 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
 
         <DialogHeader className="sr-only">
           <DialogTitle>Welcome to Rude Reminders</DialogTitle>
+          <DialogDescription>
+            A short tour of how to create reminders, set rudeness levels, and track your habit progress.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
@@ -484,25 +493,31 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   );
 }
 
-// Hook to manage intro tour state
-export function useIntroTour() {
+// Hook to manage intro tour state — shows the popup for the first `maxShows` visits
+export function useIntroTour(opts?: { storageKey?: string; maxShows?: number }) {
+  const storageKey = opts?.storageKey ?? 'introTourShownCount';
+  const maxShows = opts?.maxShows ?? 3;
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
-    // Check if user has seen the intro before
-    const hasSeenIntro = localStorage.getItem('hasSeenIntroTour');
-    if (!hasSeenIntro) {
-      // Show intro after a short delay to let the page load
-      const timer = setTimeout(() => {
-        setShowIntro(true);
-      }, 1000);
+    // Backwards compat: migrate the legacy boolean flag for the main intro tour
+    if (storageKey === 'introTourShownCount') {
+      const legacy = localStorage.getItem('hasSeenIntroTour');
+      if (legacy === 'true' && !localStorage.getItem(storageKey)) {
+        localStorage.setItem(storageKey, String(maxShows));
+      }
+    }
+    const count = parseInt(localStorage.getItem(storageKey) || '0', 10);
+    if (count < maxShows) {
+      const timer = setTimeout(() => setShowIntro(true), 1000);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [storageKey, maxShows]);
 
   const closeIntro = () => {
     setShowIntro(false);
-    localStorage.setItem('hasSeenIntroTour', 'true');
+    const count = parseInt(localStorage.getItem(storageKey) || '0', 10);
+    localStorage.setItem(storageKey, String(count + 1));
   };
 
   const showIntroManually = () => {
