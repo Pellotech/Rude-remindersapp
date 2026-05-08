@@ -11,8 +11,9 @@ export default function AdminPage() {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Only allow access to admin email
-  const isAuthorized = user?.email === 'loqvm1@gmail.com';
+  // Only allow access to admin email (kept in sync with server `ADMIN_EMAIL` in routes.ts)
+  const ADMIN_EMAIL = 'letmeknow6@icloud.com';
+  const isAuthorized = user?.email?.toLowerCase() === ADMIN_EMAIL;
 
   // Show loading while checking auth
   if (isLoading) {
@@ -37,7 +38,7 @@ export default function AdminPage() {
               Please log in with your admin account to access the admin panel.
             </p>
             <Button 
-              onClick={() => setLocation("/login?redirect=/admin")}
+              onClick={() => setLocation("/login?redirect=/admin/whitelist")}
               className="w-full bg-purple-600 hover:bg-purple-700"
             >
               <LogIn className="h-4 w-4 mr-2" />

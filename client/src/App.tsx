@@ -106,12 +106,13 @@ function AppRouter() {
           <Route path="/settings/history" component={ReminderHistory} />
           <Route path="/settings" component={Settings} />
           <Route path="/dev-preview" component={DevPreview} />
+          <Route path="/admin/whitelist" component={AdminPage} />
           <Route path="/admin" component={AdminPage} />
-          <Route path="/secret-admin-panel-b5ac04f4" component={AdminPage} />
         </>
       ) : (
         <>
           <Route path="/settings/:rest*" component={RedirectToLogin} />
+          <Route path="/admin/whitelist" component={RedirectToLogin} />
           <Route path="/admin" component={RedirectToLogin} />
         </>
       )}

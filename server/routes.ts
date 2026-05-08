@@ -68,8 +68,9 @@ function getAuthUserId(req: any): string | null {
   return req.tokenUserId || req.session?.userId || req.user?.claims?.sub || null;
 }
 
-// Admin gate — only the production admin email is allowed past this middleware
-const ADMIN_EMAIL = 'loqvm1@gmail.com';
+// Admin gate — only the production admin email is allowed past this middleware.
+// Override via ADMIN_EMAIL env var; falls back to the hard-coded owner address.
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'letmeknow6@icloud.com').toLowerCase();
 async function isAdmin(req: any, res: any, next: any) {
   const userId = getAuthUserId(req);
   if (!userId) {
