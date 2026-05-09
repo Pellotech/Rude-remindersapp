@@ -107,12 +107,14 @@ function AppRouter() {
           <Route path="/settings" component={Settings} />
           <Route path="/dev-preview" component={DevPreview} />
           <Route path="/admin/whitelist" component={AdminPage} />
+          <Route path="/admin/users" component={AdminPage} />
+          <Route path="/admin/toggles" component={AdminPage} />
           <Route path="/admin" component={AdminPage} />
         </>
       ) : (
         <>
           <Route path="/settings/:rest*" component={RedirectToLogin} />
-          <Route path="/admin/whitelist" component={RedirectToLogin} />
+          <Route path="/admin/:rest*" component={RedirectToLogin} />
           <Route path="/admin" component={RedirectToLogin} />
         </>
       )}

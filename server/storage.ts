@@ -4,6 +4,7 @@ import {
   reminderEvents,
   rudePhrasesData,
   premiumWhitelist,
+  featureFlags,
   type User,
   type UpsertUser,
   type Reminder,
@@ -15,6 +16,7 @@ import {
   type InsertPremiumWhitelist,
   type ReminderEvent,
   type InsertReminderEvent,
+  type FeatureFlag,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
@@ -63,6 +65,11 @@ export interface IStorage {
   addEmailToWhitelist(email: string, addedBy: string): Promise<boolean>;
   removeEmailFromWhitelist(email: string): Promise<boolean>;
   isEmailWhitelisted(email: string): Promise<boolean>;
+
+  // Feature flag operations
+  getFeatureFlags(): Promise<FeatureFlag[]>;
+  setFeatureFlag(key: string, enabled: boolean, updatedBy: string, description?: string): Promise<FeatureFlag>;
+  getFeatureFlag(key: string): Promise<FeatureFlag | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -519,6 +526,33 @@ export class DatabaseStorage implements IStorage {
     const [entry] = await db.select().from(premiumWhitelist).where(eq(premiumWhitelist.email, normalizedEmail));
     return !!entry;
   }
+
+  // Feature flag operations
+  async getFeatureFlags(): Promise<FeatureFlag[]> {
+    return await db.select().from(featureFlags);
+  }
+
+  async getFeatureFlag(key: string): Promise<FeatureFlag | undefined> {
+    const [flag] = await db.select().from(featureFlags).where(eq(featureFlags.key, key));
+    return flag;
+  }
+
+  async setFeatureFlag(key: string, enabled: boolean, updatedBy: string, description?: string): Promise<FeatureFlag> {
+    const existing = await this.getFeatureFlag(key);
+    if (existing) {
+      const [updated] = await db
+        .update(featureFlags)
+        .set({ enabled, updatedBy, updatedAt: new Date(), ...(description ? { description } : {}) })
+        .where(eq(featureFlags.key, key))
+        .returning();
+      return updated;
+    }
+    const [created] = await db
+      .insert(featureFlags)
+      .values({ key, enabled, updatedBy, description: description ?? null })
+      .returning();
+    return created;
+  }
 }
 
 // In-memory storage implementation for development
@@ -900,6 +934,30 @@ class MemoryStorage implements IStorage {
     return this.whitelistEmails.has(normalizedEmail);
   }
 
+  // Feature flags (in-memory)
+  private flags: Map<string, FeatureFlag> = new Map();
+
+  async getFeatureFlags(): Promise<FeatureFlag[]> {
+    return Array.from(this.flags.values());
+  }
+
+  async getFeatureFlag(key: string): Promise<FeatureFlag | undefined> {
+    return this.flags.get(key);
+  }
+
+  async setFeatureFlag(key: string, enabled: boolean, updatedBy: string, description?: string): Promise<FeatureFlag> {
+    const existing = this.flags.get(key);
+    const flag: FeatureFlag = {
+      key,
+      enabled,
+      description: description ?? existing?.description ?? null,
+      updatedAt: new Date(),
+      updatedBy,
+    };
+    this.flags.set(key, flag);
+    return flag;
+  }
+
   async logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent> {
     const row: ReminderEvent = {
       id: crypto.randomUUID(),
@@ -1014,10 +1072,22 @@ export const storage = {
   async isEmailWhitelisted(email: string) {
     return (await getStorage()).isEmailWhitelisted(email);
   },
+  async getFeatureFlags() {
+    return (await getStorage()).getFeatureFlags();
+  },
+  async getFeatureFlag(key: string) {
+    return (await getStorage()).getFeatureFlag(key);
+  },
+  async setFeatureFlag(key: string, enabled: boolean, updatedBy: string, description?: string) {
+    return (await getStorage()).setFeatureFlag(key, enabled, updatedBy, description);
+  },
   async logReminderEvent(event: InsertReminderEvent) {
     return (await getStorage()).logReminderEvent(event);
   },
   async getReminderEvents(userId: string) {
     return (await getStorage()).getReminderEvents(userId);
+  },
+  async deleteUser(id: string) {
+    return (await getStorage()).deleteUser(id);
   },
 };

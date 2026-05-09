@@ -129,6 +129,15 @@ export const reminderEvents = pgTable("reminder_events", {
   // databases that still contain pre-fix duplicate rows.
 ]);
 
+// Feature flags — admin-controlled on/off switches for app features
+export const featureFlags = pgTable("feature_flags", {
+  key: varchar("key").primaryKey(),
+  enabled: boolean("enabled").notNull().default(false),
+  description: text("description"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: varchar("updated_by"),
+});
+
 // Auth tokens for mobile authentication (cross-origin cookie workaround)
 export const authTokens = pgTable("auth_tokens", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -202,6 +211,7 @@ export type RudePhrase = typeof rudePhrasesData.$inferSelect;
 export type InsertRudePhrase = z.infer<typeof insertRudePhraseSchema>;
 export type PremiumWhitelist = typeof premiumWhitelist.$inferSelect;
 export type InsertPremiumWhitelist = z.infer<typeof insertPremiumWhitelistSchema>;
+export type FeatureFlag = typeof featureFlags.$inferSelect;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 
