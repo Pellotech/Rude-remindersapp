@@ -290,6 +290,7 @@ export default function HomeFree() {
 
 
   const { showIntro, closeIntro } = useIntroTour();
+  const [showCreateTooltip, setShowCreateTooltip] = useState(() => typeof window !== 'undefined' && !localStorage.getItem('create_form_tooltip_seen'));
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -358,6 +359,40 @@ export default function HomeFree() {
           }}
           className="space-y-6"
         >
+          {/* One-time first-timer tip — same style as Manage/Analytics tooltips, persists dismissed */}
+          {showCreateTooltip && (
+            <div style={{
+              background: 'white',
+              border: '2px solid #C9A063',
+              borderRadius: '12px',
+              padding: '10px 12px',
+              fontSize: '11px',
+              color: '#333',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '8px',
+              position: 'relative',
+            }} data-testid="card-create-tooltip">
+              <img
+                src="/rudy/Rudy_leaning_2_transparent.png"
+                alt="Rudy"
+                style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }}
+              />
+              <span style={{ flex: 1, paddingRight: 16 }}>
+                <strong>First reminder?</strong> Type what you want to remember above, open the book to pick a date, hour and minute, slide the rudeness from Gentle to Savage, then add a photo, voice or quote if you want. Hit <strong>Create Reminder</strong> when you're ready.
+              </span>
+              <button
+                onClick={() => {
+                  localStorage.setItem('create_form_tooltip_seen', 'true');
+                  setShowCreateTooltip(false);
+                }}
+                style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', fontSize: '14px', cursor: 'pointer', color: '#999', lineHeight: 1 }}
+                data-testid="button-dismiss-create-tooltip"
+                aria-label="Dismiss tip"
+              >✕</button>
+            </div>
+          )}
+
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
             <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <Bell className="h-4 w-4" />
