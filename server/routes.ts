@@ -68,9 +68,13 @@ function getAuthUserId(req: any): string | null {
   return req.tokenUserId || req.session?.userId || req.user?.claims?.sub || null;
 }
 
-// Admin gate — only the production admin email is allowed past this middleware.
-// Override via ADMIN_EMAIL env var; falls back to the hard-coded owner address.
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'letmeknow6@icloud.com').toLowerCase();
+// Admin gate — only the configured admin emails are allowed past this middleware.
+// Override via ADMIN_EMAIL env var (comma-separated for multiple); falls back to the
+// hard-coded owner addresses (dev: letmeknow6@icloud.com, prod: loqvm1@gmail.com).
+const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || 'letmeknow6@icloud.com,loqvm1@gmail.com')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 async function isAdmin(req: any, res: any, next: any) {
   const userId = getAuthUserId(req);
   if (!userId) {
@@ -78,7 +82,8 @@ async function isAdmin(req: any, res: any, next: any) {
   }
   try {
     const user = await storage.getUser(userId);
-    if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+    const email = user?.email?.toLowerCase();
+    if (!user || !email || !ADMIN_EMAILS.includes(email)) {
       console.warn('[Admin] Forbidden access attempt by user:', userId, 'email:', user?.email);
       return res.status(403).json({ message: 'Forbidden' });
     }

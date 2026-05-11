@@ -8,7 +8,7 @@ import { AdminEnvBadge } from '@/components/admin/AdminEnvBadge';
 import { Shield, ChevronLeft, LogIn, Loader2, Crown, Users, ToggleLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
-const ADMIN_EMAIL = 'letmeknow6@icloud.com'.toLowerCase();
+const ADMIN_EMAILS = ['letmeknow6@icloud.com', 'loqvm1@gmail.com'].map((e) => e.toLowerCase());
 
 interface NavItem {
   href: string;
@@ -57,7 +57,7 @@ export default function AdminPage() {
     if (location === '/admin') setLocation('/admin/whitelist');
   }, [location, setLocation]);
 
-  const isAuthorized = user?.email?.toLowerCase() === ADMIN_EMAIL;
+  const isAuthorized = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
 
   if (isLoading) {
     return (
