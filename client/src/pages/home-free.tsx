@@ -29,7 +29,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyWidget from "@/components/RudyWidget";
-import { IntroTour, useUserIntroTour } from "@/components/IntroTour";
+import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder, User } from "@shared/schema";
@@ -289,7 +289,7 @@ export default function HomeFree() {
 
 
 
-  const { showIntro, closeIntro } = useUserIntroTour();
+  const { showIntro, closeIntro } = useIntroTour();
   const [showCreateTooltip, setShowCreateTooltip] = useState(() => {
     if (typeof window === 'undefined') return false;
     if (localStorage.getItem('create_form_tooltip_seen')) return false;
