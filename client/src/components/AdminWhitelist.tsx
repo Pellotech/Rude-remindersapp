@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, Plus, Crown, Mail } from 'lucide-react';
+import { Trash2, Plus, Crown, Mail, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -18,6 +18,7 @@ export function AdminWhitelist() {
   const queryClient = useQueryClient();
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Fetch current whitelist
   const { data: whitelist, isLoading } = useQuery<WhitelistResponse>({
@@ -141,16 +142,28 @@ export function AdminWhitelist() {
             </div>
             <div>
               <Label htmlFor="new-password" className="text-sm">Password (min 8 characters)</Label>
-              <Input
-                id="new-password"
-                type="password"
-                placeholder="Enter password for this test user"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
-                data-testid="input-whitelist-password"
-                autoComplete="off"
-              />
+              <div className="relative">
+                <Input
+                  id="new-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter password for this test user"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
+                  data-testid="input-whitelist-password"
+                  autoComplete="off"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  data-testid="button-toggle-whitelist-password"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
             <Button 
               onClick={handleAddEmail}
