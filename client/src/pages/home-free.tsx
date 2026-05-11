@@ -392,7 +392,7 @@ export default function HomeFree() {
                 style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }}
               />
               <span style={{ flex: 1, paddingRight: 16 }}>
-                <strong>First reminder?</strong> Type what you want to remember above, open the book to pick a date, hour and minute, slide the rudeness from Gentle to Savage, then add a photo, voice or quote if you want. Hit <strong>Create Reminder</strong> when you're ready.
+                <strong>First reminder?</strong> Type what you want to be reminded about below, open the book to pick a date, hour and minute, slide the rudeness from Gentle to Savage, then add a photo, voice or quote if you want. Hit <strong>Create Reminder</strong> when you're ready.
               </span>
               <button
                 onClick={() => {
