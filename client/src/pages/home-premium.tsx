@@ -38,7 +38,7 @@ import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
-import { IntroTour, useIntroTour } from "@/components/IntroTour";
+import { IntroTour, useUserIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Reminder } from "@shared/schema";
@@ -70,7 +70,20 @@ export default function HomePremium() {
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [graphTab, setGraphTab] = useState<"week" | "year" | "tenWeeks">("week");
   const [showAnalyticsTooltip, setShowAnalyticsTooltip] = useState(() => !localStorage.getItem('analytics_tooltip_seen'));
-  const [showCreateTooltip, setShowCreateTooltip] = useState(() => typeof window !== 'undefined' && !localStorage.getItem('create_form_tooltip_seen'));
+  const [showCreateTooltip, setShowCreateTooltip] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (localStorage.getItem('create_form_tooltip_seen')) return false;
+    let firstSeen = localStorage.getItem('create_form_tooltip_first_seen_at');
+    if (!firstSeen) {
+      firstSeen = String(Date.now());
+      localStorage.setItem('create_form_tooltip_first_seen_at', firstSeen);
+    }
+    if (Date.now() - parseInt(firstSeen, 10) > 3 * 24 * 60 * 60 * 1000) {
+      localStorage.setItem('create_form_tooltip_seen', 'true');
+      return false;
+    }
+    return true;
+  });
   const graphScrollRef = useRef<HTMLDivElement>(null);
 
   // Dynamic badge color based on rudeness level
@@ -303,7 +316,7 @@ export default function HomePremium() {
 
 
 
-  const { showIntro, closeIntro } = useIntroTour();
+  const { showIntro, closeIntro } = useUserIntroTour();
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

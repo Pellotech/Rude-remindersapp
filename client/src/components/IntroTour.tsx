@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   Dialog,
   DialogContent,
@@ -491,6 +493,35 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
       </DialogContent>
     </Dialog>
   );
+}
+
+// Per-user variant of the intro tour hook — backed by the user's account in the DB.
+// Shows the modal once per user (not per device), so a new account on the same browser
+// will still see it, and an existing account on a fresh browser won't see it again.
+export function useUserIntroTour() {
+  const { user, isLoading } = useAuth() as { user: any; isLoading: boolean };
+  const [showIntro, setShowIntro] = useState(false);
+  const closedThisSessionRef = useRef(false);
+
+  useEffect(() => {
+    if (isLoading || !user || closedThisSessionRef.current) return;
+    if (user.hasSeenIntroTour) return;
+    const timer = setTimeout(() => setShowIntro(true), 1000);
+    return () => clearTimeout(timer);
+  }, [isLoading, user?.id, user?.hasSeenIntroTour]);
+
+  const closeIntro = async () => {
+    closedThisSessionRef.current = true;
+    setShowIntro(false);
+    try {
+      await apiRequest('/api/auth/mark-intro-seen', { method: 'POST' });
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
+    } catch (e) {
+      console.warn('[IntroTour] Failed to mark as seen:', e);
+    }
+  };
+
+  return { showIntro, closeIntro, showIntroManually: () => setShowIntro(true) };
 }
 
 // Hook to manage intro tour state — shows the popup for the first `maxShows` visits

@@ -62,6 +62,9 @@ export const users = pgTable("users", {
   resetToken: text("reset_token"),
   resetTokenExpiry: timestamp("reset_token_expiry"),
 
+  // Onboarding flags — per-user (so intro tour follows the account, not the device)
+  hasSeenIntroTour: boolean("has_seen_intro_tour").default(false).notNull(),
+
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

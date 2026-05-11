@@ -513,6 +513,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Mark the per-user intro tour as seen (one-time)
+  app.post('/api/auth/mark-intro-seen', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getAuthUserId(req);
+      if (!userId) return res.status(401).json({ message: 'Not authenticated' });
+      await storage.updateUser(userId, { hasSeenIntroTour: true } as any);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error marking intro tour as seen:', error);
+      res.status(500).json({ message: 'Failed to mark intro tour as seen' });
+    }
+  });
+
   // User settings routes
   app.patch('/api/user/settings', isAuthenticated, async (req: any, res) => {
     try {
