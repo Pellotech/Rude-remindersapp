@@ -496,7 +496,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
 // Hook to manage intro tour state — shows the popup for the first `maxShows` visits
 export function useIntroTour(opts?: { storageKey?: string; maxShows?: number }) {
   const storageKey = opts?.storageKey ?? 'introTourShownCount';
-  const maxShows = opts?.maxShows ?? 3;
+  const maxShows = opts?.maxShows ?? 1;
   const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {

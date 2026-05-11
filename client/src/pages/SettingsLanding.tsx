@@ -31,7 +31,7 @@ function SettingsRow({ icon, title, href }: SettingsRowProps) {
 export default function SettingsLanding() {
   const { showIntro, closeIntro } = useIntroTour({
     storageKey: 'settingsIntroShownCount',
-    maxShows: 3,
+    maxShows: 1,
   });
 
   return (
