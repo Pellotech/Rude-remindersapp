@@ -28,6 +28,7 @@ import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import { initAuthToken } from "@/lib/queryClient";
 import SplashScreen from "@/components/SplashScreen";
+import OfflineScreen from "@/components/OfflineScreen";
 
 const useNormalizedLocation = (): [string, (to: string) => void] => {
   const navigate = useCallback((to: string) => {
@@ -80,10 +81,26 @@ function RedirectToLogin() {
 }
 
 function AppRouter() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isError, error, refetch } = useAuth();
 
   if (isLoading) {
     return <SplashScreen />;
+  }
+
+  // If the auth check failed because of a network issue (and we have no
+  // cached user to fall back on), show an offline screen with a Retry
+  // button instead of looping on the splash forever.
+  if (isError && !isAuthenticated) {
+    const msg = (error as Error | undefined)?.message?.toLowerCase() ?? "";
+    const isNetwork =
+      !navigator.onLine ||
+      msg.includes("failed to fetch") ||
+      msg.includes("networkerror") ||
+      msg.includes("network request failed") ||
+      msg.includes("load failed");
+    if (isNetwork) {
+      return <OfflineScreen onRetry={refetch} />;
+    }
   }
 
   return (

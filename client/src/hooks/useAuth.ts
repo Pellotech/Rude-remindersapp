@@ -10,7 +10,7 @@ const syncedUserIds = new Set<string>();
 const inFlightSync = new Map<string, Promise<void>>();
 
 export function useAuth() {
-  const { data: user, isLoading, refetch } = useQuery({
+  const { data: user, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       const token = getAuthToken();
@@ -36,6 +36,7 @@ export function useAuth() {
       return await res.json();
     },
     retry: false,
+    retryOnMount: false,
     refetchOnWindowFocus: false,
   });
 
@@ -86,6 +87,8 @@ export function useAuth() {
   return {
     user,
     isLoading,
+    isError,
+    error,
     isAuthenticated: !!user,
     refetch,
   };
