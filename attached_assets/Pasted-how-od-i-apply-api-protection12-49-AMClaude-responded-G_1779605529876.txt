@@ -1,0 +1,73 @@
+how od i apply api protection12:49 AMClaude responded: Great question — API protection has several layers.Great question — API protection has several layers. Here's what applies to your app specifically, from most to least important:
+
+Layer 1 — Authentication (already done ✅)
+Your routes already use isAuthenticated middleware. This is the most important layer — unauthenticated users can't hit protected endpoints.
+
+Layer 2 — Rate Limiting (most important to add now)
+Prevents someone from hammering your API with thousands of requests. Without this someone can spam your AI generation endpoint and rack up huge bills.
+Paste this into Replit AI:
+
+Add rate limiting to the Express server. Install the express-rate-limit package and apply it in server/index.ts.
+Add three tiers:
+Global limit — all routes:
+tsimport rateLimit from 'express-rate-limit';
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per IP per 15 min
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(globalLimiter);
+Auth routes — stricter:
+tsconst authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10, // 10 login attempts per 15 min
+  message: { error: 'Too many login attempts, please try again later.' },
+});
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+AI generation — strictest:
+tsconst aiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 20, // 20 AI calls per hour per IP
+  message: { error: 'AI generation limit reached, please try again later.' },
+});
+app.use('/api/reminders', aiLimiter);
+Do not change any existing routes or functionality.
+
+Layer 3 — Input Validation (important)
+Prevents malformed or malicious data being sent to your server. You already have Zod schemas on the frontend — make sure they're enforced server-side too.
+Paste this into Replit AI:
+
+Audit server/routes.ts and confirm that all POST and PATCH endpoints validate their request body before processing. For any endpoint that doesn't validate input, add basic checks:
+
+originalMessage must be a non-empty string under 500 characters
+rudenessLevel must be a number between 1 and 5
+scheduledFor must be a valid ISO date string if provided
+voiceCharacter must be one of the known voice IDs
+
+Reject requests that fail validation with HTTP 400 and a clear error message. Do not change any existing validation that already works.
+
+Layer 4 — Security Headers (quick win)
+Paste this into Replit AI:
+
+Install the helmet package and add it to server/index.ts:
+tsimport helmet from 'helmet';
+app.use(helmet());
+This adds security headers that protect against common web attacks like XSS and clickjacking. One line, no configuration needed.
+
+Layer 5 — CORS (verify it's correct)
+Paste this into Replit AI:
+
+Check the CORS configuration in server/index.ts. Make sure the allowed origins are restricted to:
+
+https://rude-reminders.replit.app
+capacitor://localhost (for iOS)
+http://localhost (for Android)
+
+If CORS is currently set to allow all origins (*), restrict it to only these three. Do not change anything else.
+
+Priority Order for You Right Now:
+LayerPriorityEffortRate limiting🔴 Do this first15 minSecurity headers🟡 Quick win5 minInput validation🟡 Important30 minCORS restriction🟢 Verify10 min
