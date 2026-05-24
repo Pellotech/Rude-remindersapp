@@ -1,4 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { log as slog } from "./utils/logger";
@@ -12,6 +14,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Security headers. CSP is disabled because the app loads inline scripts
+// (Vite dev HMR + Capacitor webview) and a strict CSP would block them.
+// COEP is disabled so cross-origin assets (images, fonts) still load.
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // === CORS + Preflight (must be first middleware) ===
 app.use((req, res, next) => {
@@ -244,6 +256,25 @@ async function backfillReminderEvents() {
     console.warn('⚠️  reminder_events backfill skipped:', err instanceof Error ? err.message : err);
   }
 }
+
+// Rate-limit only the credential-handling auth endpoints to block
+// brute-force / password-stuffing. Other routes are unaffected.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per IP per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many attempts, please try again in a few minutes." },
+  handler: (req, res, _next, options) => {
+    slog.warn("rate_limited", { path: req.path, ip: req.ip });
+    res.status(options.statusCode).json(options.message);
+  },
+});
+
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/forgot-password", authLimiter);
+app.use("/api/auth/reset-password", authLimiter);
 
 (async () => {
   const server = await registerRoutes(app);
