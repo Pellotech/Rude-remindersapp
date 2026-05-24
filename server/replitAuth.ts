@@ -1,3 +1,4 @@
+import { log as slog } from "./utils/logger";
 import * as client from "openid-client";
 import { Strategy, type VerifyFunction } from "openid-client/passport";
 import { Strategy as LocalStrategy } from "passport-local";
@@ -470,12 +471,17 @@ export async function setupAuth(app: Express) {
       if (!user) {
         // Special case: email not verified
         if (info?.message === "EMAIL_NOT_VERIFIED") {
+          slog.warn("auth_failure", { provider: "email", reason: "email_not_verified" });
           return res.status(403).json({
             message: "Please check your email and click the verification link to continue",
             error_code: "email_not_verified",
             email: req.body.email,
           });
         }
+        slog.warn("auth_failure", {
+          provider: "email",
+          reason: info?.message || "invalid_credentials",
+        });
         return res
           .status(401)
           .json({ message: info?.message || "Invalid credentials" });
@@ -518,6 +524,8 @@ export async function setupAuth(app: Express) {
 
         // Generate auth token for mobile apps
         const authToken = await createAuthToken(userId);
+
+        slog.info("auth_success", { provider: "email", userId });
 
         res.json({
           success: true,
@@ -654,7 +662,7 @@ export async function setupAuth(app: Express) {
           return res.status(500).json({ message: "Failed to create session" });
         }
 
-        console.log("✅ Apple Sign-In successful");
+        slog.info("auth_success", { provider: "apple", userId });
         try {
           const authToken = await createAuthToken(userId);
           res.json({
@@ -668,7 +676,10 @@ export async function setupAuth(app: Express) {
         }
       });
     } catch (error: any) {
-      console.error("Apple Sign-In error:", error);
+      slog.error("auth_failure", {
+        provider: "apple",
+        reason: error?.message || "unknown",
+      });
       res
         .status(500)
         .json({ message: error.message || "Failed to sign in with Apple" });
@@ -723,7 +734,7 @@ export async function setupAuth(app: Express) {
       const storedProvider = (req.session as any).oauthProvider;
 
       if (!state || state !== storedState || storedProvider !== "google") {
-        console.error("❌ Google OAuth state mismatch - possible CSRF attack");
+        slog.error("auth_failure", { provider: "google", reason: "state_mismatch" });
         return res.redirect("/login?error=state_mismatch");
       }
 
@@ -759,7 +770,7 @@ export async function setupAuth(app: Express) {
       const tokens = (await tokenResponse.json()) as any;
 
       if (!tokens.id_token) {
-        console.error("Google OAuth failed: No ID token returned");
+        slog.error("auth_failure", { provider: "google", reason: "no_id_token" });
         return res.redirect("/login?error=token_failed");
       }
 
@@ -820,11 +831,14 @@ export async function setupAuth(app: Express) {
           console.error("Google login session error:", err);
           return res.redirect("/login?error=session_failed");
         }
-        console.log("✅ Google Sign-In successful");
+        slog.info("auth_success", { provider: "google" });
         res.redirect("/");
       });
     } catch (error: any) {
-      console.error("Google Sign-In error:", error);
+      slog.error("auth_failure", {
+        provider: "google",
+        reason: error?.message || "unknown",
+      });
       res.redirect("/login?error=failed");
     }
   });
@@ -971,11 +985,14 @@ export async function setupAuth(app: Express) {
           console.error("Facebook login session error:", err);
           return res.redirect("/login?error=session_failed");
         }
-        console.log("✅ Facebook Sign-In successful");
+        slog.info("auth_success", { provider: "facebook" });
         res.redirect("/");
       });
     } catch (error: any) {
-      console.error("Facebook Sign-In error:", error);
+      slog.error("auth_failure", {
+        provider: "facebook",
+        reason: error?.message || "unknown",
+      });
       res.redirect("/login?error=failed");
     }
   });
@@ -1127,7 +1144,7 @@ export async function setupAuth(app: Express) {
             `${nativeCallback}?success=false&error=session_failed`,
           );
         }
-        console.log("✅ Google Native Sign-In successful");
+        slog.info("auth_success", { provider: "google_native", userId });
         try {
           const authToken = await createAuthToken(userId);
           res.redirect(`${nativeCallback}?success=true&token=${encodeURIComponent(authToken)}`);
@@ -1137,7 +1154,10 @@ export async function setupAuth(app: Express) {
         }
       });
     } catch (error: any) {
-      console.error("Google Native Sign-In error:", error);
+      slog.error("auth_failure", {
+        provider: "google_native",
+        reason: error?.message || "unknown",
+      });
       res.redirect(`${nativeCallback}?success=false&error=failed`);
     }
   });
@@ -1286,7 +1306,7 @@ export async function setupAuth(app: Express) {
             `${nativeCallback}?success=false&error=session_failed`,
           );
         }
-        console.log("✅ Facebook Native Sign-In successful");
+        slog.info("auth_success", { provider: "facebook_native", userId });
         try {
           const authToken = await createAuthToken(userId);
           res.redirect(`${nativeCallback}?success=true&token=${encodeURIComponent(authToken)}`);
@@ -1296,7 +1316,10 @@ export async function setupAuth(app: Express) {
         }
       });
     } catch (error: any) {
-      console.error("Facebook Native Sign-In error:", error);
+      slog.error("auth_failure", {
+        provider: "facebook_native",
+        reason: error?.message || "unknown",
+      });
       res.redirect(`${nativeCallback}?success=false&error=failed`);
     }
   });

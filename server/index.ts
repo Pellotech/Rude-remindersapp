@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { log as slog } from "./utils/logger";
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { db } from "./db";
@@ -71,15 +72,23 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
+      // Structured JSON log line for filtering/search.
+      slog.info("http_request", {
+        method: req.method,
+        path,
+        status: res.statusCode,
+        latencyMs: duration,
+        userId: (req as any).user?.claims?.sub ?? (req as any).user?.id,
+      });
+
+      // Keep the pretty single-line log too for local dev readability.
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
       log(logLine);
     }
   });
@@ -245,13 +254,18 @@ async function backfillReminderEvents() {
   // Backfill existing completed/missed reminders into the event log
   await backfillReminderEvents();
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-    
+
     // Log error but don't throw (can crash process)
-    console.error('Server error:', err.message);
-    
+    slog.error("server_error", {
+      method: req.method,
+      path: req.path,
+      status,
+      message: err.message,
+    });
+
     res.status(status).json({ message });
   });
 

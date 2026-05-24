@@ -13,6 +13,7 @@ import { isUserPremium, addEmailToWhitelist, removeEmailFromWhitelist, getWhitel
 import crypto from 'crypto';
 import { DeepSeekService } from './services/deepseekService';
 import bcrypt from 'bcryptjs';
+import { log as slog } from './utils/logger';
 
 // Generate cryptographically secure auth token
 function generateSecureToken(): string {
@@ -638,6 +639,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isMultiDay && selectedDays && selectedDays.length > 0) {
         const limitCheck = await checkMonthlyReminderLimit(user.id);
         if (limitCheck.currentCount + selectedDays.length > limitCheck.limit) {
+          slog.warn('reminder_limit_reached', {
+            userId: user.id,
+            currentCount: limitCheck.currentCount,
+            limit: limitCheck.limit,
+            attempted: selectedDays.length,
+            isMultiDay: true,
+          });
           return res.status(403).json({
             error: `You've reached your ${limitCheck.limit} reminder limit for this month. Your limit resets on ${limitCheck.resetDate}.`,
             code: 'REMINDER_LIMIT_EXCEEDED',
@@ -774,6 +782,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.createReminder(userId, reminder);
           reminderService.scheduleReminder(reminder);
           createdReminders.push(reminder);
+          slog.info('reminder_created', {
+            userId,
+            reminderId: reminder.id,
+            rudenessLevel: reminder.rudenessLevel,
+            isMultiDay: true,
+          });
         }
 
         if (createdReminders.length === 0) {
@@ -906,6 +920,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         const limitResult = await atomicIncrementAndCheck(user.id, 1);
         if (!limitResult.allowed) {
+          slog.warn('reminder_limit_reached', {
+            userId: user.id,
+            currentCount: limitResult.newCount,
+            limit: limitResult.limit,
+            attempted: 1,
+            isMultiDay: false,
+          });
           return res.status(403).json({
             error: `You've reached your ${limitResult.limit} reminder limit for this month. Your limit resets on ${limitResult.resetDate}.`,
             code: 'REMINDER_LIMIT_EXCEEDED',
@@ -918,6 +939,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createReminder(userId, reminder);
 
         reminderService.scheduleReminder(reminder);
+
+        slog.info('reminder_created', {
+          userId,
+          reminderId: reminder.id,
+          rudenessLevel: reminder.rudenessLevel,
+          isMultiDay: false,
+        });
 
         res.json(reminder);
       }
@@ -1746,7 +1774,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       if (!rcResponse.ok) {
-        console.error('RevenueCat verification failed:', rcResponse.status);
+        slog.error('subscription_sync_failed', {
+          userId,
+          source: 'revenuecat',
+          status: rcResponse.status,
+        });
         return res.status(402).json({ success: false, message: 'Could not verify subscription' });
       }
 
@@ -1761,8 +1793,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           subscriptionStatus: 'active',
           subscriptionPlan: 'premium',
         });
+        slog.info('subscription_synced', {
+          userId,
+          plan: 'premium',
+          source: 'revenuecat',
+        });
         res.json({ success: true, message: 'Subscription verified and synced' });
       } else {
+        slog.info('subscription_synced', {
+          userId,
+          plan: 'free',
+          source: 'revenuecat',
+          reason: 'no_active_entitlements',
+        });
         res.json({ success: false, message: 'No active entitlements found' });
       }
     } catch (error: any) {

@@ -1,0 +1,55 @@
+Add structured logging to the server without adding any new paid services. Use the existing console infrastructure but make it consistent and useful.
+What to add:
+
+A simple logger utility at server/utils/logger.ts:
+
+tsexport const log = {
+  info: (event: string, data?: object) => console.log(JSON.stringify({ level: 'INFO', event, timestamp: new Date().toISOString(), ...data })),
+  error: (event: string, data?: object) => console.error(JSON.stringify({ level: 'ERROR', event, timestamp: new Date().toISOString(), ...data })),
+  warn: (event: string, data?: object) => console.warn(JSON.stringify({ level: 'WARN', event, timestamp: new Date().toISOString(), ...data })),
+};
+
+A request logging middleware in server/index.ts that logs every incoming request with method, path, user ID if authenticated, and response time:
+
+tsapp.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    log.info('http_request', {
+      method: req.method,
+      path: req.path,
+      status: res.statusCode,
+      latencyMs: Date.now() - start,
+      userId: (req as any).user?.id,
+    });
+  });
+  next();
+});
+
+Replace all existing console.log and console.error calls in these high-value areas with the new logger:
+
+server/routes.ts — reminder creation, auth routes, subscription sync
+server/replitAuth.ts — Google/Apple sign-in success and failure
+Any AI/DeepSeek API calls — log prompt sent, tokens used, latency, errors
+
+
+Add specific event logging for:
+
+reminder_created — include user ID, rudeness level, is_multi_day
+auth_success — include provider (google/apple/email)
+auth_failure — include reason
+subscription_synced — include plan, source
+ai_generation_failed — include error, retry count
+reminder_limit_reached — include user ID, current count
+
+
+
+Do not add Datadog, Logtail, or any external logging service. Keep everything in Replit's built-in console output which is already visible in the deployment logs. Do not change any existing functionality.
+
+Why this is better for you right now:
+
+Free — uses Replit's existing log viewer
+Structured JSON means you can search and filter logs easily
+Covers your actual pain points — auth failures, AI errors, subscription issues
+When you're ready to scale up to Datadog or Logtail later, you just swap the logger output — the instrumentation is already in place
+
+Want me to also write a second prompt for setting up log-based alerts when you're ready for that step?Sonnet 4.6

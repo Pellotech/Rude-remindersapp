@@ -92,7 +92,14 @@ export class DeepSeekService {
       const parsed = this.parseResponses(content, count);
       return this.scoreAndRankResponses(parsed, context.rudenessLevel, context.task);
     } catch (error) {
-      console.error('DeepSeek API error:', error);
+      const { log: slog } = await import('../utils/logger');
+      slog.error('ai_generation_failed', {
+        provider: 'deepseek',
+        task: context.task,
+        rudenessLevel: context.rudenessLevel,
+        retryCount: 0,
+        error: error instanceof Error ? error.message : String(error),
+      });
       // Fallback to basic responses if API fails
       return this.generateFallbackResponses(context, count);
     }
