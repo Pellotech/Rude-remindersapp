@@ -67,7 +67,7 @@ function HomeRouter() {
     return <SplashScreen />;
   }
 
-  const isPremium = user?.subscriptionPlan === 'premium';
+  const isPremium = false; // TEMP: testing free plan — restore: user?.subscriptionPlan === 'premium';
   return <Home isPremium={isPremium} />;
 }
 
