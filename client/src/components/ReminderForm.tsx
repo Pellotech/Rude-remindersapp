@@ -78,6 +78,8 @@ interface ReminderFormProps {
   onQuotesTap?: () => void;
   onRudenessChange?: (level: number) => void;
   onMultiDayToggle?: (on: boolean) => void;
+  /** When provided, the page owns the rudeness level: the in-form slider is hidden and the form follows this value. */
+  externalRudenessLevel?: number;
 }
 
 // Context categories for quick selection
@@ -202,6 +204,7 @@ export default function ReminderForm({
   onQuotesTap,
   onRudenessChange,
   onMultiDayToggle,
+  externalRudenessLevel,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -357,6 +360,13 @@ export default function ReminderForm({
     },
   });
 
+  // When the page owns the slider, keep the form's rudeness in sync with it
+  useEffect(() => {
+    if (externalRudenessLevel != null) {
+      form.setValue("rudenessLevel", externalRudenessLevel);
+    }
+  }, [externalRudenessLevel, form]);
+
   // Update form defaults when user settings change
   useEffect(() => {
     if (userNotificationSettings) {
@@ -365,7 +375,10 @@ export default function ReminderForm({
       const defaultVoice = userData?.defaultVoiceCharacter || "default";
 
       // Update form values with user's saved preferences
-      form.setValue("rudenessLevel", defaultRudeness);
+      // (skip rudeness when the page owns the slider — the page handles settings sync)
+      if (externalRudenessLevel == null) {
+        form.setValue("rudenessLevel", defaultRudeness);
+      }
       form.setValue("voiceCharacter", defaultVoice);
       setSelectedVoice(defaultVoice);
     }
@@ -373,12 +386,13 @@ export default function ReminderForm({
 
   // Live-sync form rudeness when default changes from settings page
   useEffect(() => {
+    if (externalRudenessLevel != null) return; // page owns the slider
     const handler = (e: Event) => {
       form.setValue("rudenessLevel", (e as CustomEvent).detail);
     };
     window.addEventListener('default_rudeness_changed', handler);
     return () => window.removeEventListener('default_rudeness_changed', handler);
-  }, [form]);
+  }, [form, externalRudenessLevel]);
 
   // Live-sync voice character when default changes from settings page
   useEffect(() => {
@@ -917,25 +931,28 @@ export default function ReminderForm({
               </FormControl>
             </FormItem>
 
-            {/* Rudeness Level Slider — standalone component, movable anywhere */}
-            <FormField
-              control={form.control}
-              name="rudenessLevel"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <RudenessSlider
-                      value={field.value}
-                      onChange={(newLevel) => {
-                        field.onChange(newLevel);
-                        onRudenessChange?.(newLevel);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Rudeness Level Slider — standalone component, movable anywhere.
+                Hidden when the page renders its own slider (externalRudenessLevel provided). */}
+            {externalRudenessLevel == null && (
+              <FormField
+                control={form.control}
+                name="rudenessLevel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <RudenessSlider
+                        value={field.value}
+                        onChange={(newLevel) => {
+                          field.onChange(newLevel);
+                          onRudenessChange?.(newLevel);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Summary bubble — sits below Rudeness Level */}
             {scheduleValid && (

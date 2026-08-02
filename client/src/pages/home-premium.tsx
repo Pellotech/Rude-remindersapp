@@ -37,6 +37,7 @@ import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
+import { RudenessSlider } from "@/components/RudenessSlider";
 import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
@@ -381,7 +382,11 @@ export default function HomePremium() {
           )}
         </div>
 
-
+        {/* Rudeness slider — page-level, sits right below Rudy */}
+        <RudenessSlider
+          value={badgeRudenessLevel}
+          onChange={setBadgeRudenessLevel}
+        />
 
         {/* Main Content Tabs */}
         <Tabs
@@ -393,31 +398,6 @@ export default function HomePremium() {
           }}
           className="space-y-6"
         >
-          {/* Always-visible Rudeness indicator — matches Rudy widget width on tablet */}
-          <div
-            className="flex items-center justify-between px-3 py-2 rounded-lg border-2 md:w-3/4 md:max-w-[75%] md:self-start"
-            style={{
-              backgroundColor: '#FDF3E3',
-              borderColor: badgeColor,
-              transition: 'border-color 0.3s ease',
-            }}
-            data-testid="rudeness-indicator"
-          >
-            <span className="text-xs font-semibold uppercase tracking-wide text-[#1B2A5E]">
-              Current Rudeness
-            </span>
-            <span
-              className="text-xs font-bold px-2 py-0.5 rounded-full"
-              style={{
-                backgroundColor: badgeColor,
-                color: badgeTextColor,
-                transition: 'background-color 0.3s ease, color 0.3s ease',
-              }}
-            >
-              {(['😊 Gentle','🙂 Motivational','😏 Sarcastic','😠 Harsh','🤬 Savage'][badgeRudenessLevel - 1]) || 'Sarcastic'}
-            </span>
-          </div>
-
           {/* One-time first-timer tip — same style as Manage/Analytics tooltips, persists dismissed */}
           {showCreateTooltip && (
             <div style={{
@@ -477,7 +457,7 @@ export default function HomePremium() {
               onVoiceTap={() => fireEvent("voice")}
               onPhotoTap={() => fireEvent("photo")}
               onQuotesTap={() => fireEvent("quotes")}
-              onRudenessChange={(level) => setBadgeRudenessLevel(level)}
+              externalRudenessLevel={badgeRudenessLevel}
               onMultiDayToggle={(on) => fireEvent(on ? "multiple_days_on" : "multiple_days_off")}
               onTitleChange={(title) => {
                 if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);

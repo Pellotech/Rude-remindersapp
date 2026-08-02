@@ -29,6 +29,7 @@ import { RichReminderNotification } from "@/components/RichReminderNotification"
 import { HelpMenu } from "@/components/HelpMenu";
 import { AdMobManager } from "@/components/AdMobManager";
 import RudyWidget from "@/components/RudyWidget";
+import { RudenessSlider } from "@/components/RudenessSlider";
 import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -362,7 +363,11 @@ export default function HomeFree() {
           )}
         </div>
 
-
+        {/* Rudeness slider — page-level, sits right below Rudy */}
+        <RudenessSlider
+          value={badgeRudenessLevel}
+          onChange={setBadgeRudenessLevel}
+        />
 
         {/* Main Content Tabs */}
         <Tabs
@@ -426,6 +431,7 @@ export default function HomeFree() {
               isFreePlan={true} 
               currentReminderCount={freeUsage.reminders}
               maxReminders={freeUsage.effectiveLimit}
+              externalRudenessLevel={badgeRudenessLevel}
               onReminderCreated={() => {
                 setAdActionCount(prev => {
                   const next = prev + 1;
