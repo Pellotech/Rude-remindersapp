@@ -1608,6 +1608,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Developer endpoint to toggle premium status (only for development)
   app.post('/api/dev/toggle-premium', isAuthenticated, async (req: any, res) => {
     try {
+      // Security: dev-only endpoint — must never work in production
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(404).json({ message: 'Not found' });
+      }
       const userId = getAuthUserId(req);
       const { isPremium } = req.body;
 
