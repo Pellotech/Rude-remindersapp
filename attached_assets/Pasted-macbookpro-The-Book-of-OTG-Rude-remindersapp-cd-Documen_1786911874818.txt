@@ -1,0 +1,50 @@
+macbookpro@The-Book-of-OTG Rude-remindersapp % cd ~/Documents/GitHub/Rude-remindersapp
+git push origin main
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 337 bytes | 337.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/Pellotech/Rude-remindersapp.git
+   b03d89a..24aa251  main -> main
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm install
+npm error code ENOTFOUND
+npm error syscall getaddrinfo
+npm error errno ENOTFOUND
+npm error network request to http://package-firewall.replit.local/npm/tar/-/tar-7.5.22.tgz failed, reason: getaddrinfo ENOTFOUND package-firewall.replit.local
+npm error network This is a problem related to network connectivity.
+npm error network In most cases you are behind a proxy or have bad network settings.
+npm error network
+npm error network If you are behind a proxy, please make sure that the
+npm error network 'proxy' config is set properly.  See: 'npm help config'
+npm error A complete log of this run can be found in: /Users/macbookpro/.npm/_logs/2026-08-16T20_15_32_224Z-debug-0.log
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm config list
+; node bin location = /usr/local/bin/node
+; node version = v22.19.0
+; npm local prefix = /Users/macbookpro/Documents/GitHub/Rude-remindersapp
+; npm version = 10.9.3
+; cwd = /Users/macbookpro/Documents/GitHub/Rude-remindersapp
+; HOME = /Users/macbookpro
+; Run `npm config ls -l` to show all defaults.
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm install
+
+changed 1 package, and audited 1151 packages in 2s
+
+145 packages are looking for funding
+  run `npm fund` for details
+
+31 vulnerabilities (2 low, 11 moderate, 17 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+macbookpro@The-Book-of-OTG Rude-remindersapp % 
