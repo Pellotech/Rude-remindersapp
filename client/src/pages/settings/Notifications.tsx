@@ -106,6 +106,22 @@ export default function Notifications() {
     queryKey: ["/api/auth/user"],
   });
 
+  // The dropdown/toggle state above only reads localStorage on first mount,
+  // so on a fresh device/reinstall (empty localStorage) it was showing the
+  // hardcoded fallback instead of the value actually saved on the account.
+  // Once the real user record loads, pull it in as the source of truth.
+  useEffect(() => {
+    if (!user) return;
+    if (user.defaultRudenessLevel != null && user.defaultRudenessLevel !== defaultRudeness) {
+      setDefaultRudeness(user.defaultRudenessLevel);
+      localStorage.setItem('default_rudeness_level', String(user.defaultRudenessLevel));
+    }
+    if (user.defaultVoiceCharacter && user.defaultVoiceCharacter !== defaultVoice) {
+      setDefaultVoice(user.defaultVoiceCharacter);
+      localStorage.setItem('default_voice_character', user.defaultVoiceCharacter);
+    }
+  }, [user?.defaultRudenessLevel, user?.defaultVoiceCharacter]);
+
   const updateSettingsMutation = useMutation({
     mutationFn: async (settings: any) => {
       return apiRequest("/api/settings", { method: "PUT", body: settings as any });

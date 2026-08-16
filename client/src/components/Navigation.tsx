@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Settings, Home, LogOut } from "lucide-react";
-import SettingsModal from "./SettingsModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +19,6 @@ import { clearAuthToken, apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function Navigation() {
   const { user } = useAuth() as { user: User | undefined };
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [location, navigate] = useLocation();
   
   const handleLogout = async () => {
@@ -129,11 +126,6 @@ export default function Navigation() {
         {/* Subtle bottom separator */}
         <div className="h-[1px] bg-gradient-to-r from-transparent via-[#111827]/10 to-transparent" />
       </header>
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-      />
     </>
   );
 }
