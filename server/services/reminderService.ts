@@ -100,8 +100,25 @@ class ReminderService {
       // const { followUpService } = await import('./followupService');
 
       // Get personalized and contextual responses
-      const personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
+      let personalizedResponses = await smartResponseService.getPersonalizedResponse(reminder);
       const contextualRemarks = await smartResponseService.getContextualRemarks(reminder);
+
+      // This regenerates a FRESH response independent of whatever was checked
+      // at creation time, so it needs its own moderation pass before it goes
+      // out in a real notification. Falls back to the already-approved
+      // rudeMessage from creation time rather than blocking the notification
+      // entirely — the user still gets reminded, just with safe text.
+      if (personalizedResponses[0]) {
+        const outputCheck = await moderationService.checkContent(personalizedResponses[0]);
+        if (outputCheck.flagged) {
+          slog.warn('content_blocked', {
+            reminderId: reminder.id,
+            categories: outputCheck.categories,
+            stage: 'trigger_regeneration',
+          });
+          personalizedResponses = [reminder.rudeMessage || `Time to ${reminder.originalMessage}!`];
+        }
+      }
 
       // Create enhanced reminder with multiple response options
       const enhancedReminder = {

@@ -2,6 +2,8 @@ import { storage } from "../storage";
 import type { Reminder } from "@shared/schema";
 import { DeepSeekService } from './deepseekService.js';
 import { isUserPremium } from '../utils/premiumCheck.js';
+import { moderationService } from './moderationService.js';
+import { log as slog } from '../utils/logger.js';
 
 interface UserBehaviorData {
   userId: string;
@@ -59,11 +61,34 @@ class SmartResponseService {
         
         console.log(`\n🤖 Calling DeepSeek API with context:`, JSON.stringify(context, null, 2));
         const deepseekResponses = await this.deepseekService.generatePersonalizedResponses(context, 4);
-        
+
         if (deepseekResponses.length > 0) {
           console.log(`\n✅ SUCCESS: Generated ${deepseekResponses.length} fresh DeepSeek AI responses:`);
           deepseekResponses.forEach((resp, idx) => console.log(`   ${idx + 1}. "${resp}"`));
-          return deepseekResponses;
+
+          // Central moderation checkpoint — every caller of getPersonalizedResponse
+          // (creation, notification trigger, "more responses", etc.) funnels
+          // through here, so checking once here covers all of them instead of
+          // relying on each call site to remember to check separately.
+          const checkResults = await Promise.all(
+            deepseekResponses.map((resp) => moderationService.checkContent(resp))
+          );
+          const safeResponses = deepseekResponses.filter((_, i) => !checkResults[i].flagged);
+          const blockedCount = deepseekResponses.length - safeResponses.length;
+          if (blockedCount > 0) {
+            slog.warn('content_blocked', {
+              userId: reminder.userId,
+              reminderId: reminder.id,
+              stage: 'ai_response_generation',
+              blockedCount,
+              categories: checkResults.filter((r) => r.flagged).flatMap((r) => r.categories),
+            });
+          }
+
+          if (safeResponses.length > 0) {
+            return safeResponses;
+          }
+          console.warn('\n⚠️ All DeepSeek responses were blocked by moderation, falling back to templates');
         } else {
           console.warn('\n⚠️ DeepSeek returned empty responses array, falling back to templates');
         }

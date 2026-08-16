@@ -4,3 +4,11 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+.env
+*.js
+*.mjs
+
+# JetBrains/Android Studio local IDE metadata — machine-specific, not used
+# by the actual Gradle build, shouldn't be shared or versioned.
+.idea/
+android/.idea/
