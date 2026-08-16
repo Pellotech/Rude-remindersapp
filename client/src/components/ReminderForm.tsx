@@ -880,7 +880,7 @@ export default function ReminderForm({
 
 
   return (
-    <Card className="mt-4 bg-white border-2 border-[#FDF3E3] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+    <Card className="mt-4 bg-white border-2 border-[#FDF3E3] rounded-[24px] shadow-[var(--rr-card-shadow)] dark:bg-transparent dark:border-transparent dark:shadow-none">
       <CardContent className="pt-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -890,7 +890,7 @@ export default function ReminderForm({
               name="originalMessage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What do you need to be reminded about?</FormLabel>
+                  <FormLabel className="dark:text-white">What do you need to be reminded about?</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="✏️ Write your reminder here..."
