@@ -17,7 +17,8 @@ without losing context. Read this first before starting new work.
 2. ✅ Reorder tabs (Manage moved behind Analytics)
 3. ✅ "It Hit" reminder feedback feature
 4. ✅ (Optional) welcome bubble frequency
-5. ⏳ **IN PROGRESS** — Android target API 36 update. Code/config side is done (see below); you still need to sync, open in Android Studio, and upload. Deadline **Aug 31, 2026**.
+5. ⏳ **IN PROGRESS** — Android target API 36 update. Code/config side is done (see below); you still need to sync, open in Android Studio, and upload. Deadline **Aug 31, 2026**. **Priority — finish this before 5.1.**
+5.1. 🅿️ Parked until Android ships — optional dark background toggle. See "Idea logged" note below.
 6. 🅿️ Parked, not urgent — protect sacred religious sites/artifacts/texts in moderation
 
 ## What's been built
@@ -68,6 +69,50 @@ You've cared specifically about keeping the app modular/independently editable, 
 - TypeScript: `cd ~/Documents/GitHub/Rude-remindersapp && npx tsc --noEmit -p .`
 - **Baseline is 72 pre-existing errors**, unrelated to any of this work (mostly `string | null` strictness issues in older auth/storage code). Any new change should keep this exact count unless you're intentionally fixing one of the baseline errors.
 - A full `vite build` needs a Linux-native `node_modules` (the Mac-installed one has incompatible native binaries in a sandboxed environment) — wasn't repeated for every small change; `tsc` alone was sufficient signal throughout.
+
+## Step 5.1 (idea, not built) — dark backdrop toggle for the main screen
+
+Logged Aug 16, 2026, not implemented — Android ships first.
+
+**What you asked for:** an optional dark background (slate grey, not pure black) for the *outer page backdrop only* on the main Create/Manage/Analytics screen — not the tan header, not the yellow Rudy speech-bubble card, not the cream input boxes. On/off toggle in Settings → Notifications (the same screen as Nice Rudy Banner / Floating Rudy), applied when the user hits Save.
+
+**What I found checking the code:** this is smaller than it sounds.
+- Your Settings pages (`Notifications.tsx`, `SettingsLanding.tsx`, `Billing.tsx`, `PersonalInfo.tsx`, etc.) are *already* on `bg-black` — dark already.
+- The one screen still on a plain light background is `home.tsx` (the screen in your screenshot) — and its root wrapper already has `className="min-h-screen bg-white dark:bg-gray-900"`. That `dark:bg-gray-900` is dead code sitting there unused from some earlier pass — nothing currently ever adds a `dark` class to the page, so it never activates.
+- Tailwind is already configured for class-based dark mode (`darkMode: ["class"]`), so the plumbing to support this exists, it's just not wired to anything.
+
+**What it'd actually take:**
+1. Toggle UI in `Notifications.tsx` — same on/off switch + description pattern as the existing toggles.
+2. A small bit of logic to add/remove a `dark` class on `<html>` (or similar) based on the saved preference, on app load — nothing does this today.
+3. Swap `dark:bg-gray-900` for an actual slate shade (Tailwind's `slate` palette — e.g. `dark:bg-slate-800` — rather than `gray`) to match "dark slate grey" specifically.
+4. Everything else (header, cards, buttons) keeps its explicit hex colors untouched — those were never given `dark:` variants, so they won't be affected unless deliberately added.
+
+Contained, well-scoped change — not a full theme system. Good candidate for right after the Android/iOS releases ship.
+
+**Confirmed scope (Aug 16, 2026), from three annotated screenshots across Create/Manage/Analytics:** every bordered/pill/filled element stays exactly as-is — header, Rudy card, rudeness pill, tab bar, Past/Upcoming toggle, search box, tip card, individual reminder cards, Share button, the green/red emoji buttons, and every Analytics metric card + chart card. Only the bare canvas behind/between them changes. Confirms the small-scope read above: since every card already has its own explicit background color in the code, this is genuinely just the one root wrapper background per screen, nothing else.
+
+**Naming:** the black option is called "Zero Dark Thirty" (not just "black"). Slate option name still TBD.
+
+**Toggle behavior — decided:** three-way picker, not a simple on/off. Light / Zero Dark Thirty (or slate) / Auto, where Auto follows the device's system light/dark setting. More settings UI and states to test than a plain toggle, but it's what the user wants.
+
+## iOS — brought up to Capacitor 8 alongside Android (Aug 16, 2026)
+
+No Apple deadline is forcing this (unlike Android's Aug 31 cutoff) — did it now since the `package.json` bump to Capacitor 8 already applies to iOS too (it's one shared dependency manifest), and leaving the native iOS project on old settings while the JS side moved to 8 would've left things inconsistent.
+
+### What's done
+- `ios/App/Podfile`: `platform :ios` 14.0 → **15.0** (Capacitor 8's required minimum)
+- `ios/App/App.xcodeproj/project.pbxproj`: `IPHONEOS_DEPLOYMENT_TARGET` 14.0 → **15.0** (all 4 build config occurrences). `SWIFT_VERSION` was already 5.0, no change needed there.
+- `npx cap sync ios` run — resolved all 19 plugins at their Capacitor-8-compatible versions cleanly, same list as Android. Web asset copy and plugin registration succeeded; the "pod install" step itself was skipped since this sandbox has no CocoaPods/macOS — that part has to run on your Mac.
+- Confirmed your app already targets both iPhone and iPad (`TARGETED_DEVICE_FAMILY = "1,2"` in the Xcode project) — nothing iPad-specific needed beyond the above.
+- Checked `revenueCatService.ts` — it calls `Purchases.configure({ apiKey })` with no explicit StoreKit version override, so RevenueCat 13.x's default-to-StoreKit-2 behavior applies with no code change needed.
+
+### What's NOT done — needs your Mac
+1. Pull these changes, `npm install`.
+2. Open `ios/App/App.xcworkspace` in Xcode (not the `.xcodeproj` — CocoaPods projects always open via the `.xcworkspace`). **Capacitor 8 requires Xcode 26.0+** — check your version first.
+3. Run `pod install` in `ios/App` (or let Xcode/CocoaPods do it on open) to pull the updated native pod versions matching the new `package.json`.
+4. **RevenueCat dashboard action (not code):** since v13 defaults to StoreKit 2, make sure your In-App Purchase Key is configured in the RevenueCat dashboard, or purchases could fail on iOS. See RevenueCat's StoreKit 2 docs if you haven't set this before.
+5. Build and test on a real device or simulator — specifically in-app purchases, apple sign-in, and anything camera/notification related, since those pods all moved major versions too.
+6. No Play-Store-style deadline here, but Apple does eventually require newer Xcode/SDK builds for App Store submissions too — worth shipping this in your next normal iOS release rather than sitting on it indefinitely.
 
 ## Step 5 — Android API 36 (in progress, updated Aug 16, 2026)
 

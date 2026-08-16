@@ -1,56 +1,58 @@
 PODS:
-  - Capacitor (7.4.2):
+  - Capacitor (8.5.0):
     - CapacitorCordova
-  - CapacitorApp (7.1.0):
+  - CapacitorApp (8.1.1):
     - Capacitor
-  - CapacitorAppLauncher (7.0.2):
+  - CapacitorAppLauncher (8.0.1):
     - Capacitor
-  - CapacitorBrowser (7.0.2):
+  - CapacitorBrowser (8.0.4):
     - Capacitor
-  - CapacitorCamera (7.0.2):
+  - CapacitorCamera (8.2.2):
     - Capacitor
-  - CapacitorCommunityAdmob (7.0.3):
+    - IONCameraLib (~> 1.0.5)
+  - CapacitorCommunityAdmob (8.1.0):
     - Capacitor
-    - Google-Mobile-Ads-SDK (= 11.3.0)
-    - GoogleUserMessagingPlatform (< 3.0.0, >= 2.7.0)
+    - Google-Mobile-Ads-SDK (= 13.6.0)
+    - GoogleUserMessagingPlatform (~> 3.1)
   - CapacitorCommunityAppleSignIn (7.1.0):
     - Capacitor
-  - CapacitorCommunityTextToSpeech (6.1.0):
+  - CapacitorCommunityTextToSpeech (8.0.2):
     - Capacitor
-  - CapacitorCordova (7.4.2)
-  - CapacitorDevice (7.0.2):
+  - CapacitorCordova (8.5.0)
+  - CapacitorDevice (8.0.3):
     - Capacitor
-  - CapacitorFilesystem (7.1.4):
+  - CapacitorFilesystem (8.1.2):
     - Capacitor
-    - IONFilesystemLib (~> 1.0.1)
-  - CapacitorHaptics (7.0.5):
+    - IONFilesystemLib (~> 1.1.1)
+  - CapacitorHaptics (8.0.2):
     - Capacitor
-  - CapacitorLocalNotifications (7.0.2):
+  - CapacitorLocalNotifications (8.3.0):
     - Capacitor
-  - CapacitorNetwork (7.0.2):
+  - CapacitorNetwork (8.0.1):
     - Capacitor
-  - CapacitorPluginSafeArea (4.0.3):
+  - CapacitorPluginSafeArea (5.0.1):
     - Capacitor
-  - CapacitorPreferences (7.0.3):
+  - CapacitorPreferences (8.0.1):
     - Capacitor
-  - CapacitorShare (7.0.3):
+  - CapacitorShare (8.0.1):
     - Capacitor
-  - CapacitorSplashScreen (7.0.2):
+  - CapacitorSplashScreen (8.0.2):
     - Capacitor
-  - CapacitorStatusBar (7.0.2):
+  - CapacitorStatusBar (8.0.3):
     - Capacitor
-  - CapawesomeCapacitorFilePicker (7.2.0):
+  - CapawesomeCapacitorFilePicker (8.0.4):
     - Capacitor
-  - Google-Mobile-Ads-SDK (11.3.0):
+  - Google-Mobile-Ads-SDK (13.6.0):
     - GoogleUserMessagingPlatform (>= 1.1)
-  - GoogleUserMessagingPlatform (2.7.0)
-  - IONFilesystemLib (1.0.1)
-  - PurchasesHybridCommon (17.6.0):
-    - RevenueCat (= 5.38.2)
-  - RevenueCat (5.38.2)
-  - RevenuecatPurchasesCapacitor (11.2.1):
+  - GoogleUserMessagingPlatform (3.1.0)
+  - IONCameraLib (1.0.5)
+  - IONFilesystemLib (1.1.2)
+  - PurchasesHybridCommon (18.29.0):
+    - RevenueCat (= 5.83.0)
+  - RevenueCat (5.83.0)
+  - RevenuecatPurchasesCapacitor (13.4.0):
     - Capacitor
-    - PurchasesHybridCommon (= 17.6.0)
+    - PurchasesHybridCommon (= 18.29.0)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
@@ -79,6 +81,7 @@ SPEC REPOS:
   trunk:
     - Google-Mobile-Ads-SDK
     - GoogleUserMessagingPlatform
+    - IONCameraLib
     - IONFilesystemLib
     - PurchasesHybridCommon
     - RevenueCat
@@ -128,33 +131,34 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@revenuecat/purchases-capacitor"
 
 SPEC CHECKSUMS:
-  Capacitor: 156d98aba46ec01dde72c4bbb92fa626837cad29
-  CapacitorApp: 846d4b4a1dbb19dd1e9029c08ba6f028aa7be862
-  CapacitorAppLauncher: 96930b89740f1deabc737df750dbc3e9a0430f34
-  CapacitorBrowser: 45c681e7abc3b4384e54eb52bafeef1347d98fa8
-  CapacitorCamera: 6e18d54c8ab30d7dc7b8cd93d96f9b4f57e9202a
-  CapacitorCommunityAdmob: 9267ae3b473314fa65765ce4bead9a9175902ab2
+  Capacitor: 34ed46c7364734d8d92feb1949ba731013acc93e
+  CapacitorApp: 9fd99482b6536ddf1a54721ce678145fc7fa3418
+  CapacitorAppLauncher: fc7c313549920528d0f28493b60d20de679deba4
+  CapacitorBrowser: 553fcb154526484a5d12efc38093d3f781cb6a82
+  CapacitorCamera: bf2f2528dc2429c658f25e804fd771b95ea07333
+  CapacitorCommunityAdmob: 86d26ffc39ca501ca9a2602f8b23bfb778cb8270
   CapacitorCommunityAppleSignIn: 59bc8ade5677e6ea60a14bdca8d3f4bdc91069e2
-  CapacitorCommunityTextToSpeech: f024b1587fd68b74180c8b132d603b44be81cda3
-  CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
-  CapacitorDevice: a50a45f0d075e55e2392c7a4be5404d4f69515de
-  CapacitorFilesystem: ac0a386949ed6c295a3dffa129ecd26b881ae5be
-  CapacitorHaptics: ec024a10130c230743219149c76a02da5cff6aed
-  CapacitorLocalNotifications: 0964df8c14ec51aadf2bb4fd6d55fdb1ccfd6721
-  CapacitorNetwork: 9b9eaeb417ec0ffa22e2bc33a4c71df10e1d6f06
-  CapacitorPluginSafeArea: 0b05430642c0da92b5f174e900ccecf39a71e2c3
-  CapacitorPreferences: 688a15748e6fb91d52c7563e5f2df3be503dd694
-  CapacitorShare: eac8c1e192dbbb0737a84a50552ffe12398cb11f
-  CapacitorSplashScreen: 8d6c8cb0542a8e81585c593815db8785ed8ce454
-  CapacitorStatusBar: 5526833b87fa9c96a2a90c1322bb1f663c04505f
-  CapawesomeCapacitorFilePicker: 005c33082078c1dd528ba9204aa49e97d62b68b7
-  Google-Mobile-Ads-SDK: 301a16c461c331ba34ff4dab40a22ab7c147af61
-  GoogleUserMessagingPlatform: a8b56893477f67212fbc8411c139e61d463349f5
-  IONFilesystemLib: 89258b8e3e85465da93127d25d7ce37f977e8a6f
-  PurchasesHybridCommon: 3e27aec7bccba3d3d34cd66a7033ba9b268caa5e
-  RevenueCat: f6b7c7e55f548a2bf304a3abbed0cc2447364427
-  RevenuecatPurchasesCapacitor: 8e063564e6c44a23642d6080dde6299180f94c07
+  CapacitorCommunityTextToSpeech: 72600fe4b9045c6447a02e5f04601e7bb2612eb4
+  CapacitorCordova: 9d3acbb574048e7167d2af127a0af2123e619f2f
+  CapacitorDevice: e5599fa82274e59220170995826a16095ad20c40
+  CapacitorFilesystem: 7d3e3df84be4f0d999a5d6baa23aeb30c2de6450
+  CapacitorHaptics: 4e1e84c2b74fb5918e403fb8f0e73a07d05937df
+  CapacitorLocalNotifications: c2354fb1d452274a71db8dd3ace0dc7df2b00f5b
+  CapacitorNetwork: 7afc28ed4d9abe1d9801264fa485db32e4420546
+  CapacitorPluginSafeArea: 46cae430c3e91399b0fb6f280bdac626198bbff6
+  CapacitorPreferences: 0fa33b3affebf12d96358b491ed7c2b39bec3270
+  CapacitorShare: 8a565649d321a05a1ae8b525b2a9b4f2d92c70ce
+  CapacitorSplashScreen: 120117d1b2264bba31a6e6f998f51e510144dd12
+  CapacitorStatusBar: 40bdc21352ecc617ec71c45ea06d669cdd2da8df
+  CapawesomeCapacitorFilePicker: 051438760aacbdc54e389320a7e88fb117390360
+  Google-Mobile-Ads-SDK: 6e501ace4af8d63e967bd45497c8b2b05821163d
+  GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
+  IONCameraLib: ecbd8ef0077d481df429cee267bbeb1a7b9bddd0
+  IONFilesystemLib: 21a63377696b2d8fab5632ecfb7d2ac67bddb68a
+  PurchasesHybridCommon: 94a0fde86cfecdc487fb64667b68f527af930265
+  RevenueCat: a83de0391a1061302699cb55eb1ff0662f5768b5
+  RevenuecatPurchasesCapacitor: 8fe740819792c2411bd04c74fd96588ebce23893
 
-PODFILE CHECKSUM: e5b8621b6b8427803baa77b3f365eaa05f541968
+PODFILE CHECKSUM: 8a6c4bffe4c39441df745357f306ebf912ed0361
 
 COCOAPODS: 1.16.2
