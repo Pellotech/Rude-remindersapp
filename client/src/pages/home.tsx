@@ -331,7 +331,7 @@ export default function Home({ isPremium }: HomeProps) {
         className={isPremium
           ? "container mx-auto px-4 md:px-[20%] pt-8 max-w-7xl"
           : "container mx-auto px-4 md:px-[20%] py-8 max-w-7xl"}
-        style={isPremium ? { paddingBottom: isAndroid ? '160px' : '80px' } : undefined}
+        style={isPremium ? { paddingBottom: isAndroid ? '130px' : '80px' } : undefined}
       >
         {/* Welcome Header — standalone component, movable anywhere */}
         <HomeHeader
@@ -500,7 +500,7 @@ export default function Home({ isPremium }: HomeProps) {
       {/* Floating Help Button — raised above banner on Android */}
       <div
         className={isPremium ? "fixed right-4 z-50" : "fixed right-4 z-50 flex gap-2"}
-        style={{ bottom: (isPremium ? isAndroid : Capacitor.getPlatform() === 'android') ? '160px' : '90px' }}
+        style={{ bottom: (isPremium ? isAndroid : Capacitor.getPlatform() === 'android') ? '130px' : '90px' }}
       >
         <HelpMenu />
       </div>

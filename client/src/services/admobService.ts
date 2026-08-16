@@ -85,10 +85,11 @@ export class AdMobService {
     try {
       const { insets } = await SafeArea.getSafeAreaInsets();
       console.log(`[AdMob] raw safe-area inset.bottom: ${insets.bottom}px`);
-      // Clamp between a 48px floor (clears a standard 3-button nav bar) and an
-      // 80px ceiling (clears a tall gesture-nav inset without pushing the banner
-      // further up the screen than it needs to be).
-      return Math.min(Math.max(insets.bottom, 48), 80);
+      // Clamp between a 48px floor (clears a standard 3-button nav bar — don't go
+      // lower, or the banner risks sitting under/behind the nav buttons) and a
+      // 56px ceiling (keeps the banner hugging the nav bar instead of floating
+      // further up the screen and cramping the content above it).
+      return Math.min(Math.max(insets.bottom, 48), 56);
     } catch {
       return 48;
     }
