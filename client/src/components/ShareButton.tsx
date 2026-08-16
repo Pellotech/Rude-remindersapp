@@ -5,11 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Share2, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
-import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
+import { getFullApiUrl } from "@/lib/queryClient";
 import { Share } from "@capacitor/share";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import html2canvas from "html2canvas";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -19,18 +18,7 @@ import {
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
 import type { Reminder } from "@shared/schema";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
-
-// Parses the { error, code } JSON body server error responses send back,
-// even though apiRequest wraps it as `HTTP 400: {...}` in error.message.
-function parseApiError(message: string): { error?: string; code?: string } | null {
-  try {
-    const jsonStart = message.indexOf('{');
-    if (jsonStart === -1) return null;
-    return JSON.parse(message.slice(jsonStart));
-  } catch {
-    return null;
-  }
-}
+import { ItHitToggle } from "./ItHitToggle";
 
 interface ShareButtonProps {
   reminder?: Partial<Reminder>;
@@ -71,45 +59,10 @@ export function ShareButton({
   iconOnly = false
 }: ShareButtonProps) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [showPreview, setShowPreview] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // "It Hit" feedback — did this rude message land? Comment field is bypassed
-  // for now (planned: optional note, capped at 50 chars) — server already
-  // accepts one, just not exposed here yet.
-  const reminderId = reminder?.id;
-  const [hitAnswer, setHitAnswer] = useState<boolean | null>(
-    reminder?.hitAt ? !!reminder?.hitConfirmed : null
-  );
-
-  useEffect(() => {
-    setHitAnswer(reminder?.hitAt ? !!reminder?.hitConfirmed : null);
-  }, [reminderId, reminder?.hitAt, reminder?.hitConfirmed]);
-
-  const hitMutation = useMutation({
-    mutationFn: async (hit: boolean) => {
-      if (!reminderId) throw new Error("No reminder to mark");
-      return apiRequest(`/api/reminders/${reminderId}/hit`, {
-        method: "PATCH",
-        body: { hit } as any,
-      });
-    },
-    onSuccess: (_data, hit) => {
-      setHitAnswer(hit);
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-    },
-    onError: (error: Error) => {
-      const errorData = parseApiError(error.message);
-      toast({
-        title: "Couldn't save that",
-        description: errorData?.error || "Something went wrong saving your feedback. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
 
   const reminderTitle = reminder?.title || reminder?.originalMessage?.slice(0, 50) || title || "My Reminder";
   const originalMessage = reminder?.originalMessage || message || "";
@@ -475,34 +428,11 @@ export function ShareButton({
                   </div>
                 )}
 
-                <div className="flex items-center justify-center gap-1.5 flex-wrap text-xs text-gray-500">
-                  <span>Let us know did</span>
-                  <button
-                    onClick={() => hitMutation.mutate(true)}
-                    disabled={hitMutation.isPending || hitAnswer !== null || !reminderId}
-                    className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
-                      hitAnswer === true
-                        ? "bg-[#22C55E] text-white border-[#22C55E]"
-                        : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
-                    }`}
-                    data-testid="button-it-hit-share"
-                  >
-                    It Hit 🎯
-                  </button>
-                  <span>or</span>
-                  <button
-                    onClick={() => hitMutation.mutate(false)}
-                    disabled={hitMutation.isPending || hitAnswer !== null || !reminderId}
-                    className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
-                      hitAnswer === false
-                        ? "bg-gray-400 text-white border-gray-400"
-                        : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
-                    }`}
-                    data-testid="button-hit-nahh-share"
-                  >
-                    Nahh 😒
-                  </button>
-                </div>
+                <ItHitToggle
+                  reminderId={reminder?.id}
+                  hitConfirmed={reminder?.hitConfirmed}
+                  hitAt={reminder?.hitAt}
+                />
 
                 {attachments && attachments.length > 0 && (
                   <div className="flex gap-1.5 overflow-x-auto">

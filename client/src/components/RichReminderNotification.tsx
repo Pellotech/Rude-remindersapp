@@ -7,24 +7,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Volume2, Clock, X, ChevronDown } from "lucide-react";
 import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
+import { ItHitToggle } from "./ItHitToggle";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
-import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
+import { getFullApiUrl } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
-
-// Parses the { error, code } JSON body that server error responses send back,
-// even though apiRequest wraps it as `HTTP 400: {...}` in error.message.
-function parseApiError(message: string): { error?: string; code?: string } | null {
-  try {
-    const jsonStart = message.indexOf('{');
-    if (jsonStart === -1) return null;
-    return JSON.parse(message.slice(jsonStart));
-  } catch {
-    return null;
-  }
-}
 
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
@@ -94,40 +81,6 @@ export function RichReminderNotification({
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { isAndroid, isIOS } = getPlatformInfo();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  // "It Hit" feedback — did this rude message land? Comment field is bypassed
-  // for now (planned: optional note, capped at 50 chars) — server already
-  // accepts one, just not exposed here yet.
-  const [hitAnswer, setHitAnswer] = useState<boolean | null>(
-    reminder.hitAt ? !!reminder.hitConfirmed : null
-  );
-
-  useEffect(() => {
-    setHitAnswer(reminder.hitAt ? !!reminder.hitConfirmed : null);
-  }, [reminder.id, reminder.hitAt, reminder.hitConfirmed]);
-
-  const hitMutation = useMutation({
-    mutationFn: async (hit: boolean) => {
-      return apiRequest(`/api/reminders/${reminder.id}/hit`, {
-        method: "PATCH",
-        body: { hit } as any,
-      });
-    },
-    onSuccess: (_data, hit) => {
-      setHitAnswer(hit);
-      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
-    },
-    onError: (error: Error) => {
-      const errorData = parseApiError(error.message);
-      toast({
-        title: "Couldn't save that",
-        description: errorData?.error || "Something went wrong saving your feedback. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
 
   const [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
     () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
@@ -229,34 +182,11 @@ export function RichReminderNotification({
           )}
 
           {/* It Hit feedback */}
-          <div className="flex items-center justify-center gap-1.5 flex-wrap text-xs text-gray-500">
-            <span>Let us know did</span>
-            <button
-              onClick={() => hitMutation.mutate(true)}
-              disabled={hitMutation.isPending || hitAnswer !== null}
-              className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
-                hitAnswer === true
-                  ? "bg-[#22C55E] text-white border-[#22C55E]"
-                  : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
-              }`}
-              data-testid="button-it-hit"
-            >
-              It Hit 🎯
-            </button>
-            <span>or</span>
-            <button
-              onClick={() => hitMutation.mutate(false)}
-              disabled={hitMutation.isPending || hitAnswer !== null}
-              className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
-                hitAnswer === false
-                  ? "bg-gray-400 text-white border-gray-400"
-                  : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
-              }`}
-              data-testid="button-hit-nahh"
-            >
-              Nahh 😒
-            </button>
-          </div>
+          <ItHitToggle
+            reminderId={reminder.id}
+            hitConfirmed={reminder.hitConfirmed}
+            hitAt={reminder.hitAt}
+          />
 
           {/* Attachments */}
           {reminder.attachments && reminder.attachments.length > 0 && (

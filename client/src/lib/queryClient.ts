@@ -5,6 +5,22 @@ import { Preferences } from "@capacitor/preferences";
 // Production API URL for native apps (when UI is bundled locally)
 const PRODUCTION_API_URL = "https://rude-reminders.replit.app";
 
+// Parses the { error, code } JSON body that server error responses send back.
+// apiRequest() below wraps failures as `Error(\`HTTP ${status}: ${body}\`)`, so
+// the JSON payload doesn't start at character 0 — this finds it regardless.
+// Single source of truth: previously this was copy-pasted per-component,
+// which is exactly the kind of duplication that causes future edits to only
+// land in one of the copies.
+export function parseApiError(message: string): { error?: string; code?: string } | null {
+  try {
+    const jsonStart = message.indexOf('{');
+    if (jsonStart === -1) return null;
+    return JSON.parse(message.slice(jsonStart));
+  } catch {
+    return null;
+  }
+}
+
 // Token storage key
 const AUTH_TOKEN_KEY = "rude_reminders_auth_token";
 
