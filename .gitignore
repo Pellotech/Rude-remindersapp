@@ -12,3 +12,4 @@ vite.config.ts.*
 # by the actual Gradle build, shouldn't be shared or versioned.
 .idea/
 android/.idea/
+project-code.zip
