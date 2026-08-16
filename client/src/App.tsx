@@ -9,7 +9,6 @@ import Home from "@/pages/home";
 import Settings from "@/pages/SettingsLanding";
 import PersonalInfo from "@/pages/settings/PersonalInfo";
 import Notifications from "@/pages/settings/Notifications";
-import Appearance from "@/pages/settings/Appearance";
 import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
@@ -118,7 +117,6 @@ function AppRouter() {
           <Route path="/settings/billing" component={Billing} />
           <Route path="/settings/personal" component={PersonalInfo} />
           <Route path="/settings/notifications" component={Notifications} />
-          <Route path="/settings/appearance" component={Appearance} />
           <Route path="/settings/history" component={ReminderHistory} />
           <Route path="/settings" component={Settings} />
           <Route path="/dev-preview" component={DevPreview} />

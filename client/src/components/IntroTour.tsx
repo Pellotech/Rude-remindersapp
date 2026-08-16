@@ -28,7 +28,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const { isAndroid, isIOS } = getPlatformInfo();
 
-  const totalSlides = 7;
+  const totalSlides = 8;
 
   const nextStep = () => {
     if (currentStep < totalSlides - 1) {
@@ -422,6 +422,62 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
       }
 
       case 6:
+        return (
+          <div className="text-center">
+            <img
+              key={`rudy-${currentStep}`}
+              src={RUDY_THUMBS_UP}
+              alt="Rudy"
+              style={{
+                width: 110,
+                height: 'auto',
+                margin: '0 auto 12px',
+                display: 'block',
+                mixBlendMode: 'multiply',
+                animation: 'rudyEntrance 0.5s ease-out',
+              }}
+            />
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+              Make it yours
+            </h2>
+            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 12 }}>
+              Settings has more than the rudeness dial. Worth a look:
+            </p>
+            <div style={{
+              background: 'white',
+              border: '1.5px solid #C9A063',
+              borderRadius: 14,
+              padding: '4px 16px',
+              textAlign: 'left',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
+                <span style={{ fontSize: 18 }}>🔤</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Notification Text Size</div>
+                  <div style={{ fontSize: 11, color: '#6B7280' }}>Regular, Large, or full-on Billboard</div>
+                </div>
+              </div>
+              <div style={{ height: 1, background: '#F0E8D8' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
+                <span style={{ fontSize: 18 }}>🎈</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Floating Rudy</div>
+                  <div style={{ fontSize: 11, color: '#6B7280' }}>Pin him to the top while you scroll</div>
+                </div>
+              </div>
+              <div style={{ height: 1, background: '#F0E8D8' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
+                <span style={{ fontSize: 18 }}>😇</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Nice Rudy Banner</div>
+                  <div style={{ fontSize: 11, color: '#6B7280' }}>Switch his floating comments to encouraging-only</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 7:
         return (
           <div className="text-center">
             <img

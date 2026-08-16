@@ -245,8 +245,8 @@ export default function Notifications() {
               </div>
               <div className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-white text-[17px]">Nice Rudy Mode</p>
-                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Switch Rudy to encouraging comments only</p>
+                  <p className="text-white text-[17px]">Nice Rudy Banner</p>
+                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Switch the floating Rudy banner to encouraging comments only</p>
                 </div>
                 <Toggle checked={niceModeOn} onChange={handleNiceModeToggle} />
               </div>
