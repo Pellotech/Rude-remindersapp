@@ -235,16 +235,17 @@ export default function Home({ isPremium }: HomeProps) {
   };
 
   // Complete reminder handler
-  // NOTE: the two plans differ here (toast copy, stats refresh, and whether
-  // the notification closes on error). Preserved exactly as it was.
+  // NOTE: toast copy and stats refresh still differ by plan, but the dialog
+  // now always closes on these three actions (Got it done / Let you know
+  // later / Didn't do it) regardless of plan or whether the API call
+  // succeeded — it previously only closed unconditionally on the free plan,
+  // leaving premium users stuck looking at the dialog if the request failed.
   const handleCompleteReminder = async () => {
     if (!currentReminder) return;
     try {
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
       queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
       if (isPremium) {
-        setShowRichNotification(false);
-        setCurrentReminder(null);
         toast({
           title: "Nice work! ✅",
           description: "Logged! This reminder will clear in 24 hours.",
@@ -263,10 +264,8 @@ export default function Home({ isPremium }: HomeProps) {
         variant: "destructive",
       });
     } finally {
-      if (!isPremium) {
-        setShowRichNotification(false);
-        setCurrentReminder(null);
-      }
+      setShowRichNotification(false);
+      setCurrentReminder(null);
     }
   };
 
@@ -276,10 +275,7 @@ export default function Home({ isPremium }: HomeProps) {
     try {
       await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
       queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
-      if (isPremium) {
-        setShowRichNotification(false);
-        setCurrentReminder(null);
-      } else {
+      if (!isPremium) {
         queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
       }
       toast({
@@ -293,10 +289,8 @@ export default function Home({ isPremium }: HomeProps) {
         variant: "destructive",
       });
     } finally {
-      if (!isPremium) {
-        setShowRichNotification(false);
-        setCurrentReminder(null);
-      }
+      setShowRichNotification(false);
+      setCurrentReminder(null);
     }
   };
 

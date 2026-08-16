@@ -1161,6 +1161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch('/api/reminders/:id/hit', isAuthenticated, async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);
+      const hit = req.body?.hit !== false; // defaults to true (It Hit) unless explicitly false (Nahh)
       const rawComment = typeof req.body?.comment === 'string' ? req.body.comment.trim() : '';
 
       let comment: string | undefined = undefined;
@@ -1184,7 +1185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         comment = rawComment;
       }
 
-      const reminder = await storage.markReminderHit(req.params.id, userId, comment);
+      const reminder = await storage.markReminderHit(req.params.id, userId, hit, comment);
       res.json(reminder);
     } catch (error) {
       console.error("Error marking reminder as hit:", error);

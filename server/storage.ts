@@ -44,7 +44,7 @@ export interface IStorage {
   getUpcomingReminders(): Promise<Reminder[]>;
   completeReminder(id: string, userId: string): Promise<Reminder>;
   markReminderNotAccomplished(id: string, userId: string): Promise<Reminder>;
-  markReminderHit(id: string, userId: string, comment?: string): Promise<Reminder>;
+  markReminderHit(id: string, userId: string, hit: boolean, comment?: string): Promise<Reminder>;
   getHitReminders(): Promise<Reminder[]>;
 
   // Rude phrases operations
@@ -351,13 +351,16 @@ export class DatabaseStorage implements IStorage {
     return reminder;
   }
 
-  async markReminderHit(id: string, userId: string, comment?: string): Promise<Reminder> {
+  async markReminderHit(id: string, userId: string, hit: boolean, comment?: string): Promise<Reminder> {
     // CRITICAL: This writes to reminder_events — the permanent analytics record.
     // Never insert without checking for an existing (reminderId, action) row first.
+    // hitConfirmed stores the actual answer (true = "It Hit", false = "Nahh");
+    // hitAt being set at all means the user responded either way. The admin
+    // Hits review page only surfaces hitConfirmed = true rows.
     const [reminder] = await db
       .update(reminders)
       .set({
-        hitConfirmed: true,
+        hitConfirmed: hit,
         hitComment: comment || null,
         hitAt: new Date(),
         updatedAt: new Date(),
@@ -370,7 +373,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         and(
           eq(reminderEvents.reminderId, id),
-          eq(reminderEvents.action, 'hit')
+          eq(reminderEvents.action, hit ? 'hit' : 'hit_nahh')
         )
       )
       .limit(1);
@@ -379,7 +382,7 @@ export class DatabaseStorage implements IStorage {
       await db.insert(reminderEvents).values({
         userId,
         reminderId: id,
-        action: 'hit',
+        action: hit ? 'hit' : 'hit_nahh',
         scheduledFor: reminder.scheduledFor,
       });
     }
@@ -876,13 +879,13 @@ class MemoryStorage implements IStorage {
     return updated;
   }
 
-  async markReminderHit(id: string, userId: string, comment?: string): Promise<Reminder> {
+  async markReminderHit(id: string, userId: string, hit: boolean, comment?: string): Promise<Reminder> {
     const existing = await this.getReminder(id, userId);
     if (!existing) throw new Error('Reminder not found');
 
     const updated = {
       ...existing,
-      hitConfirmed: true,
+      hitConfirmed: hit,
       hitComment: comment || null,
       hitAt: new Date(),
       updatedAt: new Date()
@@ -1128,8 +1131,8 @@ export const storage = {
   async markReminderNotAccomplished(id: string, userId: string) {
     return (await getStorage()).markReminderNotAccomplished(id, userId);
   },
-  async markReminderHit(id: string, userId: string, comment?: string) {
-    return (await getStorage()).markReminderHit(id, userId, comment);
+  async markReminderHit(id: string, userId: string, hit: boolean, comment?: string) {
+    return (await getStorage()).markReminderHit(id, userId, hit, comment);
   },
   async getHitReminders() {
     return (await getStorage()).getHitReminders();

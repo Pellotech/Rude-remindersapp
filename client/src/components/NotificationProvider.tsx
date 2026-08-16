@@ -140,7 +140,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
       await queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
 
-      closeNotification();
       toast({
         title: "Reminder Completed",
         description: "Great job getting it done!",
@@ -151,6 +150,37 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         description: "Failed to mark reminder as complete",
         variant: "destructive",
       });
+    } finally {
+      // Always close, even if the request failed — matches "Let you know
+      // later" and "Didn't do it" below, and keeps the dialog from getting
+      // stuck open if the network call errors.
+      closeNotification();
+    }
+  };
+
+  // "Didn't do it" — this was previously never wired up here, so the button
+  // did nothing when the dialog was opened via a push/real-time notification
+  // (as opposed to the in-app flow in home.tsx, which already had it).
+  const handleMissedReminder = async () => {
+    if (!currentReminder) return;
+
+    try {
+      await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
+
+      await queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+
+      toast({
+        title: "Logged 💪",
+        description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log reminder",
+        variant: "destructive",
+      });
+    } finally {
+      closeNotification();
     }
   };
 
@@ -169,6 +199,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             aiGeneratedQuotes: isAuthenticated
           }}
           onComplete={handleCompleteReminder}
+          onMissed={handleMissedReminder}
           onPlayVoice={handleVoicePlay}
           isPlayingVoice={isPlayingVoice}
         />

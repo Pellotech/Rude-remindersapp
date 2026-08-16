@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Share2, Clock, Target } from "lucide-react";
+import { Share2, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
 import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
@@ -19,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
 import type { Reminder } from "@shared/schema";
+import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
 
 // Parses the { error, code } JSON body server error responses send back,
 // even though apiRequest wraps it as `HTTP 400: {...}` in error.message.
@@ -77,36 +77,34 @@ export function ShareButton({
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // "It Hit" feedback — did this rude message land?
+  // "It Hit" feedback — did this rude message land? Comment field is bypassed
+  // for now (planned: optional note, capped at 50 chars) — server already
+  // accepts one, just not exposed here yet.
   const reminderId = reminder?.id;
-  const [hitConfirmed, setHitConfirmed] = useState(!!reminder?.hitConfirmed);
-  const [showHitComment, setShowHitComment] = useState(false);
-  const [hitComment, setHitComment] = useState("");
+  const [hitAnswer, setHitAnswer] = useState<boolean | null>(
+    reminder?.hitAt ? !!reminder?.hitConfirmed : null
+  );
 
   useEffect(() => {
-    setHitConfirmed(!!reminder?.hitConfirmed);
-    setShowHitComment(false);
-    setHitComment("");
-  }, [reminderId, reminder?.hitConfirmed]);
+    setHitAnswer(reminder?.hitAt ? !!reminder?.hitConfirmed : null);
+  }, [reminderId, reminder?.hitAt, reminder?.hitConfirmed]);
 
   const hitMutation = useMutation({
-    mutationFn: async (comment?: string) => {
+    mutationFn: async (hit: boolean) => {
       if (!reminderId) throw new Error("No reminder to mark");
       return apiRequest(`/api/reminders/${reminderId}/hit`, {
         method: "PATCH",
-        body: { comment } as any,
+        body: { hit } as any,
       });
     },
-    onSuccess: () => {
-      setHitConfirmed(true);
-      setShowHitComment(false);
-      toast({ title: "Noted!", description: "Thanks for letting us know." });
+    onSuccess: (_data, hit) => {
+      setHitAnswer(hit);
       queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
     },
     onError: (error: Error) => {
       const errorData = parseApiError(error.message);
       toast({
-        title: errorData?.code === 'FEEDBACK_TOO_SHORT' ? "Add a bit more detail" : "Couldn't save that",
+        title: "Couldn't save that",
         description: errorData?.error || "Something went wrong saving your feedback. Please try again.",
         variant: "destructive",
       });
@@ -426,7 +424,7 @@ export function ShareButton({
               <div className="flex justify-center mb-3">
                 <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3]">
                   <img
-                    src="/rudy/Rudy_smirk_content_transparent.png"
+                    src={getRudyAvatarSrc(rudenessLevel)}
                     alt="Rudy"
                     className="w-full h-full object-cover object-top"
                     crossOrigin="anonymous"
@@ -477,52 +475,33 @@ export function ShareButton({
                   </div>
                 )}
 
-                <div className="p-3 rounded-lg bg-[#FDF3E3] border border-[#C9A063]/30">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Target className="h-3.5 w-3.5 text-[#C9A063]" />
-                    <Label className="text-xs font-medium text-gray-600">Let us know if this was funny</Label>
-                  </div>
-                  <Button
-                    onClick={() => {
-                      if (hitConfirmed) return;
-                      if (!showHitComment) {
-                        setShowHitComment(true);
-                        return;
-                      }
-                      hitMutation.mutate(hitComment.trim() || undefined);
-                    }}
-                    disabled={hitMutation.isPending || hitConfirmed || !reminderId}
-                    className={`w-full h-9 text-sm font-semibold ${
-                      hitConfirmed
-                        ? "bg-[#22C55E] text-white hover:bg-[#22C55E]"
-                        : "bg-white text-[#1B2A5E] border border-[#C9A063] hover:bg-[#FDF3E3]"
+                <div className="flex items-center justify-center gap-1.5 flex-wrap text-xs text-gray-500">
+                  <span>Let us know did</span>
+                  <button
+                    onClick={() => hitMutation.mutate(true)}
+                    disabled={hitMutation.isPending || hitAnswer !== null || !reminderId}
+                    className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
+                      hitAnswer === true
+                        ? "bg-[#22C55E] text-white border-[#22C55E]"
+                        : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
                     }`}
                     data-testid="button-it-hit-share"
                   >
-                    <Target className="h-4 w-4 mr-1.5" />
-                    {hitConfirmed ? "It Hit ✓" : hitMutation.isPending ? "Saving..." : "It Hit 🎯"}
-                  </Button>
-                  {showHitComment && !hitConfirmed && (
-                    <div className="mt-2 flex gap-1.5">
-                      <Input
-                        value={hitComment}
-                        onChange={(e) => setHitComment(e.target.value)}
-                        placeholder="Add a quick note (optional)"
-                        className="h-8 text-xs"
-                        maxLength={200}
-                        data-testid="input-hit-comment-share"
-                      />
-                      <Button
-                        onClick={() => hitMutation.mutate(hitComment.trim() || undefined)}
-                        disabled={hitMutation.isPending}
-                        size="sm"
-                        className="h-8 px-3 text-xs bg-[#22C55E] hover:bg-[#16a34a] text-white"
-                        data-testid="button-confirm-hit-share"
-                      >
-                        Confirm
-                      </Button>
-                    </div>
-                  )}
+                    It Hit 🎯
+                  </button>
+                  <span>or</span>
+                  <button
+                    onClick={() => hitMutation.mutate(false)}
+                    disabled={hitMutation.isPending || hitAnswer !== null || !reminderId}
+                    className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
+                      hitAnswer === false
+                        ? "bg-gray-400 text-white border-gray-400"
+                        : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
+                    }`}
+                    data-testid="button-hit-nahh-share"
+                  >
+                    Nahh 😒
+                  </button>
                 </div>
 
                 {attachments && attachments.length > 0 && (
