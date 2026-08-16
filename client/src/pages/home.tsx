@@ -331,7 +331,7 @@ export default function Home({ isPremium }: HomeProps) {
         className={isPremium
           ? "container mx-auto px-4 md:px-[20%] pt-8 max-w-7xl"
           : "container mx-auto px-4 md:px-[20%] py-8 max-w-7xl"}
-        style={isPremium ? { paddingBottom: isAndroid ? '130px' : '80px' } : undefined}
+        style={{ paddingBottom: isAndroid ? '130px' : '80px' }}
       >
         {/* Welcome Header — standalone component, movable anywhere */}
         <HomeHeader
