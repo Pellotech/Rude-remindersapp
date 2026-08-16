@@ -27,6 +27,7 @@ import { LocalNotifications } from "@capacitor/local-notifications";
 import { initAuthToken } from "@/lib/queryClient";
 import SplashScreen from "@/components/SplashScreen";
 import OfflineScreen from "@/components/OfflineScreen";
+import { useBackdropTheme } from "@/hooks/useBackdropTheme";
 
 const useNormalizedLocation = (): [string, (to: string) => void] => {
   const navigate = useCallback((to: string) => {
@@ -138,6 +139,8 @@ function AppRouter() {
 }
 
 function App() {
+  useBackdropTheme();
+
   useEffect(() => {
     // Initialize auth token from persistent storage (important for iOS)
     initAuthToken().then(() => {

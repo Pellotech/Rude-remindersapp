@@ -95,6 +95,19 @@ Contained, well-scoped change — not a full theme system. Good candidate for ri
 
 **Toggle behavior — decided:** three-way picker, not a simple on/off. Light / Zero Dark Thirty (or slate) / Auto, where Auto follows the device's system light/dark setting. More settings UI and states to test than a plain toggle, but it's what the user wants.
 
+### Built (Aug 16, 2026)
+- `client/src/hooks/useBackdropTheme.ts` — new hook, toggles a `dark` class on `<html>` based on saved preference (`light` / `dark` / `auto`, from `localStorage.backdrop_theme`). `auto` follows `prefers-color-scheme` live via a media query listener. Called once from `App()` in `App.tsx`.
+- `client/src/pages/home.tsx` — root wrapper's dead `dark:bg-gray-900` swapped for `dark:bg-black` (this is the only place that actually paints, since Create/Manage/Analytics are tabs inside this one component, confirmed via `activeTab` state).
+- `client/src/components/HomeHeader.tsx` already had `dark:text-white` on the "Hey {name}" greeting from some earlier abandoned attempt — reused as-is, no change needed. Everything else on the main screen (cards, pills, tabs, buttons) already carries its own explicit background/text color per the confirmed scope, so nothing else needed touching.
+- Settings UI: new "Appearance" section in `client/src/pages/settings/Notifications.tsx`, 3-way picker matching the existing Text Size button style exactly — Light / Zero Dark Thirty / Auto, small circular color swatches instead of "Aa" previews.
+- `shared/schema.ts`: new `backdropTheme` varchar column on `users`, default `"light"`.
+- `server/routes.ts`: `backdropTheme` added to the `PUT /api/settings` whitelist.
+- Verified: `tsc` still 69 baseline, `vite build` (the client bundle, what actually ships in the app) builds clean, `cap sync android` picked it up.
+
+**Still needed before the Save button fully works:** the new `backdrop_theme` column doesn't exist in the real database yet — run `npm run db:push` (drizzle-kit) against it. Until that's run, the toggle still works visually and locally (localStorage-driven), it just won't persist across devices/reinstalls yet.
+
+**Note found along the way:** there's a stray `'darkMode'` entry already sitting in the `server/routes.ts` settings whitelist with no matching database column — leftover from some earlier, different, abandoned dark-mode attempt (along with the unused `next-themes` package in `package.json` and that dead Tailwind class we already found). Left alone, not this feature's concern, but flagging in case it causes confusion later.
+
 ## iOS — brought up to Capacitor 8 alongside Android (Aug 16, 2026)
 
 No Apple deadline is forcing this (unlike Android's Aug 31 cutoff) — did it now since the `package.json` bump to Capacitor 8 already applies to iOS too (it's one shared dependency manifest), and leaving the native iOS project on old settings while the JS side moved to 8 would've left things inconsistent.

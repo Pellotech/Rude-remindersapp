@@ -314,7 +314,7 @@ export default function Home({ isPremium }: HomeProps) {
   const createTooltip = useCreateTooltip();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-white dark:bg-black">
       <IntroTour isOpen={showIntro} onClose={closeIntro} />
 
       {/* Premium-only: motivational popup */}

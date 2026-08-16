@@ -91,6 +91,17 @@ export default function Notifications() {
     updateSetting("textSize", size);
   };
 
+  const [backdropTheme, setBackdropTheme] = useState<'light' | 'dark' | 'auto'>(
+    () => (localStorage.getItem('backdrop_theme') as 'light' | 'dark' | 'auto') || 'light'
+  );
+
+  const handleBackdropThemeChange = (theme: 'light' | 'dark' | 'auto') => {
+    setBackdropTheme(theme);
+    localStorage.setItem('backdrop_theme', theme);
+    window.dispatchEvent(new CustomEvent('backdrop_theme_changed', { detail: theme }));
+    updateSetting("backdropTheme", theme);
+  };
+
   const { data: user, isLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
@@ -103,6 +114,10 @@ export default function Notifications() {
       if (localSettings.textSize !== undefined) {
         localStorage.setItem('text_size_preference', localSettings.textSize);
         window.dispatchEvent(new CustomEvent('text_size_changed', { detail: localSettings.textSize }));
+      }
+      if (localSettings.backdropTheme !== undefined) {
+        localStorage.setItem('backdrop_theme', localSettings.backdropTheme);
+        window.dispatchEvent(new CustomEvent('backdrop_theme_changed', { detail: localSettings.backdropTheme }));
       }
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setLocalSettings({});
@@ -306,6 +321,58 @@ export default function Notifications() {
                 </div>
                 <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
                   Affects reminder notification text and message display size.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Appearance</h2>
+            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="px-4 py-3">
+                <p className="text-white text-[17px] mb-3">Backdrop</p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {(['light', 'dark', 'auto'] as const).map((theme) => {
+                    const labels = { light: 'Light', dark: 'Zero Dark Thirty', auto: 'Auto' };
+                    const swatches = { light: '#ffffff', dark: '#000000', auto: 'linear-gradient(135deg, #ffffff 50%, #000000 50%)' };
+                    const isSelected = backdropTheme === theme;
+                    return (
+                      <button
+                        key={theme}
+                        type="button"
+                        onClick={() => handleBackdropThemeChange(theme)}
+                        style={{
+                          flex: 1,
+                          background: isSelected ? '#C9A063' : '#38383A',
+                          border: isSelected ? '2px solid #C9A063' : '2px solid transparent',
+                          borderRadius: 12,
+                          padding: '10px 6px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: 6,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <span style={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: '50%',
+                          background: swatches[theme],
+                          border: '1px solid #8E8E93',
+                        }} />
+                        <span style={{
+                          fontSize: 11,
+                          color: isSelected ? '#111827' : '#8E8E93',
+                          fontWeight: 500,
+                          textAlign: 'center',
+                        }}>{labels[theme]}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
+                  Changes the plain background on the main screen only — cards, buttons, and the header stay the same. Auto follows your device's light/dark setting.
                 </p>
               </div>
             </div>

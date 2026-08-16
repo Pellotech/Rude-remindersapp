@@ -55,6 +55,7 @@ export const users = pgTable("users", {
   // UI Preferences
   simplifiedInterface: boolean("simplified_interface").default(false),
   niceMode: boolean("nice_mode").default(false).notNull(),
+  backdropTheme: varchar("backdrop_theme").default("light"), // "light" | "dark" | "auto" — "dark" is the Zero Dark Thirty backdrop
   alarmSound: text("alarm_sound").default("gentle-chime"),
   passwordHash: text("password_hash"),
   emailVerified: boolean("email_verified").default(true), // true for all existing/OAuth users; false for new email-signup until verified

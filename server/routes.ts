@@ -555,7 +555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
         'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
         'ethnicitySpecificQuotes', 'genderSpecificReminders', 
-        'defaultRudenessLevel', 'defaultVoiceCharacter', 'niceMode'
+        'defaultRudenessLevel', 'defaultVoiceCharacter', 'niceMode', 'backdropTheme'
       ];
 
       const sanitizedUpdates = Object.keys(updates)

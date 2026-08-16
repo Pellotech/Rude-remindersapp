@@ -84,7 +84,11 @@ export class AdMobService {
     if (Capacitor.getPlatform() !== 'android') return 0;
     try {
       const { insets } = await SafeArea.getSafeAreaInsets();
-      return Math.max(insets.bottom, 48); // minimum 48px to clear Android nav bar
+      console.log(`[AdMob] raw safe-area inset.bottom: ${insets.bottom}px`);
+      // Clamp between a 48px floor (clears a standard 3-button nav bar) and an
+      // 80px ceiling (clears a tall gesture-nav inset without pushing the banner
+      // further up the screen than it needs to be).
+      return Math.min(Math.max(insets.bottom, 48), 80);
     } catch {
       return 48;
     }
