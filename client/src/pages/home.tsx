@@ -374,13 +374,13 @@ export default function Home({ isPremium }: HomeProps) {
               <Bell className="h-4 w-4" />
               Create
             </TabsTrigger>
-            <TabsTrigger value="manage" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
-              <Target className="h-4 w-4" />
-              Manage
-            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
               <TrendingUp className="h-4 w-4" />
               Analytics
+            </TabsTrigger>
+            <TabsTrigger value="manage" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+              <Target className="h-4 w-4" />
+              Manage
             </TabsTrigger>
           </TabsList>
 
@@ -423,16 +423,16 @@ export default function Home({ isPremium }: HomeProps) {
             />
           </TabsContent>
 
-          <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            {isPremium
-              ? <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
-              : <RemindersList />}
-          </TabsContent>
-
           <TabsContent value="analytics" className="space-y-4">
             {isPremium
               ? <AnalyticsPanel onRudyEvent={fireEvent} />
               : <AnalyticsLocked onUpgrade={() => setLocation('/subscribe')} />}
+          </TabsContent>
+
+          <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
+            {isPremium
+              ? <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
+              : <RemindersList />}
           </TabsContent>
         </Tabs>
       </div>

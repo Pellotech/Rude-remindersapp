@@ -1,6 +1,8 @@
 import { storage } from "../storage";
 import { notificationService } from "./notificationService";
 import { smartResponseService } from "./smartResponseService";
+import { moderationService } from "./moderationService";
+import { log as slog } from "../utils/logger";
 import type { Reminder } from "@shared/schema";
 
 // Helper functions for reminder management
@@ -158,16 +160,32 @@ async function generateReminderResponse(reminder: Reminder, clientLocalTime?: st
     // Generate the personalized AI responses
     const responses = await smartResponseService.getPersonalizedResponse(reminder, true, clientLocalTime);
     console.log(`✅ Received ${responses.length} responses for "${reminder.originalMessage}":`, responses);
-    
-    const rudeMessage = responses[0] || `Time to ${reminder.originalMessage}!`;
+
+    // Defense-in-depth: screen the AI's own output too, in case it produces
+    // something harmful despite clean input. Falls back to the safe template
+    // message rather than blocking reminder creation entirely.
+    const safeFallback = `Time to ${reminder.originalMessage}!`;
+    let rudeMessage = responses[0] || safeFallback;
+    let safeResponses = responses.length > 0 ? responses : [safeFallback];
+
+    const outputCheck = await moderationService.checkContent(rudeMessage);
+    if (outputCheck.flagged) {
+      slog.warn('content_blocked', {
+        reminderId: reminder.id,
+        categories: outputCheck.categories,
+        stage: 'output',
+      });
+      rudeMessage = safeFallback;
+      safeResponses = [safeFallback];
+    }
 
     const updatedReminder = {
       ...reminder,
       rudeMessage,
-      responses, // Store all AI-generated response options
+      responses: safeResponses, // Store all AI-generated response options
       updatedAt: new Date()
     };
-    
+
     console.log(`✅ Returning reminder with ${updatedReminder.responses.length} responses`);
     return updatedReminder;
   } catch (error) {

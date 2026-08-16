@@ -629,6 +629,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         clientLocalTime
       } = req.body;
 
+      // Content safety check — covers both the multi-day and single-day paths
+      // below since it runs before either. See moderationService.ts for what's
+      // blocked and why it fails open rather than closed.
+      const { moderationService } = await import('./services/moderationService');
+      const moderationInput = [originalMessage, context].filter(Boolean).join('\n');
+      const moderationResult = await moderationService.checkContent(moderationInput);
+      if (moderationResult.flagged) {
+        slog.warn('content_blocked', {
+          userId,
+          categories: moderationResult.categories,
+          stage: 'input',
+        });
+        return res.status(400).json({
+          error: "This reminder can't be created because it may reference harmful or illegal content. Please rephrase it.",
+          code: 'CONTENT_BLOCKED',
+        });
+      }
+
       // Use notification settings from frontend (which includes user's preferences) or fallback to user profile
       const finalBrowserNotification = browserNotification !== undefined ? browserNotification : (user.browserNotifications !== false);
       const finalVoiceNotification = voiceNotification !== undefined ? voiceNotification : (user.voiceNotifications || false);

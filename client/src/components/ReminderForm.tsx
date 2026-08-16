@@ -589,6 +589,12 @@ export default function ReminderForm({
             description: errorData.error || `You've reached your reminder limit for this month. Your limit resets on ${errorData.resetDate || 'the 1st of next month'}.`,
             variant: "destructive",
           });
+        } else if (errorData?.code === 'CONTENT_BLOCKED') {
+          toast({
+            title: "Can't Create This Reminder",
+            description: errorData.error || "This reminder can't be created because it may reference harmful or illegal content. Please rephrase it.",
+            variant: "destructive",
+          });
         } else {
           toast({
             title: "Error",
