@@ -2,14 +2,29 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Volume2, Clock, X, ChevronDown } from "lucide-react";
+import { Volume2, Clock, X, ChevronDown, Target } from "lucide-react";
 import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
 import logoImage from "@assets/translusant_logo2_1767108484844.png";
-import { getFullApiUrl } from "@/lib/queryClient";
+import { getFullApiUrl, apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+
+// Parses the { error, code } JSON body that server error responses send back,
+// even though apiRequest wraps it as `HTTP 400: {...}` in error.message.
+function parseApiError(message: string): { error?: string; code?: string } | null {
+  try {
+    const jsonStart = message.indexOf('{');
+    if (jsonStart === -1) return null;
+    return JSON.parse(message.slice(jsonStart));
+  } catch {
+    return null;
+  }
+}
 
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
@@ -58,6 +73,10 @@ interface RichReminderNotificationProps {
   onMissed?: () => void;
   onPlayVoice?: () => void;
   isPlayingVoice?: boolean;
+  /** Hide the Got it done / Let you know later / Didn't do it row — used for
+   * the admin review view, where those actions don't apply to someone else's
+   * reminder. Defaults to true (shown) for the normal user-facing dialog. */
+  showActionButtons?: boolean;
 }
 
 export function RichReminderNotification({
@@ -69,11 +88,48 @@ export function RichReminderNotification({
   onComplete,
   onMissed,
   onPlayVoice,
-  isPlayingVoice = false
+  isPlayingVoice = false,
+  showActionButtons = true
 }: RichReminderNotificationProps) {
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { isAndroid, isIOS } = getPlatformInfo();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // "It Hit" feedback — did this rude message land?
+  const [hitConfirmed, setHitConfirmed] = useState(!!reminder.hitConfirmed);
+  const [showHitComment, setShowHitComment] = useState(false);
+  const [hitComment, setHitComment] = useState("");
+
+  useEffect(() => {
+    setHitConfirmed(!!reminder.hitConfirmed);
+    setShowHitComment(false);
+    setHitComment("");
+  }, [reminder.id, reminder.hitConfirmed]);
+
+  const hitMutation = useMutation({
+    mutationFn: async (comment?: string) => {
+      return apiRequest(`/api/reminders/${reminder.id}/hit`, {
+        method: "PATCH",
+        body: { comment } as any,
+      });
+    },
+    onSuccess: () => {
+      setHitConfirmed(true);
+      setShowHitComment(false);
+      toast({ title: "Noted!", description: "Thanks for letting us know." });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+    },
+    onError: (error: Error) => {
+      const errorData = parseApiError(error.message);
+      toast({
+        title: errorData?.code === 'FEEDBACK_TOO_SHORT' ? "Add a bit more detail" : "Couldn't save that",
+        description: errorData?.error || "Something went wrong saving your feedback. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
     () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
@@ -119,6 +175,17 @@ export function RichReminderNotification({
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
+          {/* Rudy avatar */}
+          <div className="flex justify-center">
+            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3]">
+              <img
+                src="/rudy/Rudy_smirk_content_transparent.png"
+                alt="Rudy"
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+          </div>
+
           {/* Title + badge */}
           <div className="text-center">
             <h2 className="text-lg font-bold text-gray-900 leading-tight">{reminder.title}</h2>
@@ -163,10 +230,53 @@ export function RichReminderNotification({
             </div>
           )}
 
-          {/* Original message */}
-          <div>
-            <Label className="text-xs font-medium text-gray-500">Original Message</Label>
-            <p className="text-xs text-gray-600 mt-0.5">{reminder.originalMessage}</p>
+          {/* It Hit feedback */}
+          <div className="p-3 rounded-xl bg-[#FDF3E3] border border-[#C9A063]/30">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Target className="h-3.5 w-3.5 text-[#C9A063]" />
+              <Label className="text-xs font-medium text-gray-600">Let us know if this was funny</Label>
+            </div>
+            <Button
+              onClick={() => {
+                if (hitConfirmed) return;
+                if (!showHitComment) {
+                  setShowHitComment(true);
+                  return;
+                }
+                hitMutation.mutate(hitComment.trim() || undefined);
+              }}
+              disabled={hitMutation.isPending || hitConfirmed}
+              className={`w-full h-9 text-sm font-semibold ${
+                hitConfirmed
+                  ? "bg-[#22C55E] text-white hover:bg-[#22C55E]"
+                  : "bg-white text-[#1B2A5E] border border-[#C9A063] hover:bg-[#FDF3E3]"
+              }`}
+              data-testid="button-it-hit"
+            >
+              <Target className="h-4 w-4 mr-1.5" />
+              {hitConfirmed ? "It Hit ✓" : hitMutation.isPending ? "Saving..." : "It Hit 🎯"}
+            </Button>
+            {showHitComment && !hitConfirmed && (
+              <div className="mt-2 flex gap-1.5">
+                <Input
+                  value={hitComment}
+                  onChange={(e) => setHitComment(e.target.value)}
+                  placeholder="Add a quick note (optional)"
+                  className="h-8 text-xs"
+                  maxLength={200}
+                  data-testid="input-hit-comment"
+                />
+                <Button
+                  onClick={() => hitMutation.mutate(hitComment.trim() || undefined)}
+                  disabled={hitMutation.isPending}
+                  size="sm"
+                  className="h-8 px-3 text-xs bg-[#22C55E] hover:bg-[#16a34a] text-white"
+                  data-testid="button-confirm-hit"
+                >
+                  Confirm
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Attachments */}
@@ -241,31 +351,33 @@ export function RichReminderNotification({
           </p>
 
           {/* Action buttons */}
-          <div className="pt-2 border-t">
-            <div className="flex flex-col gap-2 w-1/2 mx-auto">
-              <Button
-                onClick={onComplete}
-                className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
-                data-testid="button-complete"
-              >
-                Got it done 👊
-              </Button>
-              <Button
-                onClick={onClose}
-                className="w-full h-10 text-sm font-semibold bg-[#FDF3E3] hover:bg-[#F5EDE0] text-[#1B2A5E] border border-[#C9A063]"
-                data-testid="button-dismiss"
-              >
-                Let you know later
-              </Button>
-              <Button
-                onClick={onMissed}
-                className="w-full h-9 text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 text-gray-900"
-                data-testid="button-missed"
-              >
-                Didn't do it.
-              </Button>
+          {showActionButtons && (
+            <div className="pt-2 border-t">
+              <div className="flex flex-col gap-2 w-1/2 mx-auto">
+                <Button
+                  onClick={onComplete}
+                  className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
+                  data-testid="button-complete"
+                >
+                  Got it done 👊
+                </Button>
+                <Button
+                  onClick={onClose}
+                  className="w-full h-10 text-sm font-semibold bg-[#FDF3E3] hover:bg-[#F5EDE0] text-[#1B2A5E] border border-[#C9A063]"
+                  data-testid="button-dismiss"
+                >
+                  Let you know later
+                </Button>
+                <Button
+                  onClick={onMissed}
+                  className="w-full h-9 text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 text-gray-900"
+                  data-testid="button-missed"
+                >
+                  Didn't do it.
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </DialogContent>
 

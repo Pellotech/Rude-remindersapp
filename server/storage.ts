@@ -44,6 +44,8 @@ export interface IStorage {
   getUpcomingReminders(): Promise<Reminder[]>;
   completeReminder(id: string, userId: string): Promise<Reminder>;
   markReminderNotAccomplished(id: string, userId: string): Promise<Reminder>;
+  markReminderHit(id: string, userId: string, comment?: string): Promise<Reminder>;
+  getHitReminders(): Promise<Reminder[]>;
 
   // Rude phrases operations
   getRudePhrasesForLevel(level: number): Promise<RudePhrase[]>;
@@ -347,6 +349,49 @@ export class DatabaseStorage implements IStorage {
       });
     }
     return reminder;
+  }
+
+  async markReminderHit(id: string, userId: string, comment?: string): Promise<Reminder> {
+    // CRITICAL: This writes to reminder_events — the permanent analytics record.
+    // Never insert without checking for an existing (reminderId, action) row first.
+    const [reminder] = await db
+      .update(reminders)
+      .set({
+        hitConfirmed: true,
+        hitComment: comment || null,
+        hitAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(and(eq(reminders.id, id), eq(reminders.userId, userId)))
+      .returning();
+    const existingHit = await db
+      .select()
+      .from(reminderEvents)
+      .where(
+        and(
+          eq(reminderEvents.reminderId, id),
+          eq(reminderEvents.action, 'hit')
+        )
+      )
+      .limit(1);
+
+    if (existingHit.length === 0) {
+      await db.insert(reminderEvents).values({
+        userId,
+        reminderId: id,
+        action: 'hit',
+        scheduledFor: reminder.scheduledFor,
+      });
+    }
+    return reminder;
+  }
+
+  async getHitReminders(): Promise<Reminder[]> {
+    return await db
+      .select()
+      .from(reminders)
+      .where(eq(reminders.hitConfirmed, true))
+      .orderBy(desc(reminders.hitAt));
   }
 
   async logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent> {
@@ -726,6 +771,10 @@ class MemoryStorage implements IStorage {
       completedAt: null,
       notAccomplished: false,
       notAccomplishedAt: null,
+      loggedAt: null,
+      hitConfirmed: false,
+      hitComment: null,
+      hitAt: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -825,6 +874,34 @@ class MemoryStorage implements IStorage {
       this.reminders[index] = updated;
     }
     return updated;
+  }
+
+  async markReminderHit(id: string, userId: string, comment?: string): Promise<Reminder> {
+    const existing = await this.getReminder(id, userId);
+    if (!existing) throw new Error('Reminder not found');
+
+    const updated = {
+      ...existing,
+      hitConfirmed: true,
+      hitComment: comment || null,
+      hitAt: new Date(),
+      updatedAt: new Date()
+    };
+    const index = this.reminders.findIndex(r => r.id === id);
+    if (index !== -1) {
+      this.reminders[index] = updated;
+    }
+    return updated;
+  }
+
+  async getHitReminders(): Promise<Reminder[]> {
+    return this.reminders
+      .filter(r => r.hitConfirmed)
+      .sort((a, b) => {
+        const aTime = a.hitAt ? new Date(a.hitAt).getTime() : 0;
+        const bTime = b.hitAt ? new Date(b.hitAt).getTime() : 0;
+        return bTime - aTime;
+      });
   }
 
   // Rude phrases operations
@@ -1050,6 +1127,12 @@ export const storage = {
   },
   async markReminderNotAccomplished(id: string, userId: string) {
     return (await getStorage()).markReminderNotAccomplished(id, userId);
+  },
+  async markReminderHit(id: string, userId: string, comment?: string) {
+    return (await getStorage()).markReminderHit(id, userId, comment);
+  },
+  async getHitReminders() {
+    return (await getStorage()).getHitReminders();
   },
   async getRudePhrasesForLevel(level: number) {
     return (await getStorage()).getRudePhrasesForLevel(level);

@@ -80,6 +80,12 @@ export const reminders = pgTable("reminders", {
   notAccomplished: boolean("not_accomplished").default(false),
   notAccomplishedAt: timestamp("not_accomplished_at"),
   loggedAt: timestamp("logged_at"),
+  // "It Hit" feedback — did this rude message land? Optional short comment,
+  // screened the same way as any other free-text user input (see moderationService
+  // and the profanity/junk filter in routes.ts).
+  hitConfirmed: boolean("hit_confirmed").default(false),
+  hitComment: text("hit_comment"),
+  hitAt: timestamp("hit_at"),
   browserNotification: boolean("browser_notification").default(true),
   voiceNotification: boolean("voice_notification").default(false),
   emailNotification: boolean("email_notification").default(false),

@@ -95,6 +95,22 @@ async function isAdmin(req: any, res: any, next: any) {
   }
 }
 
+// Junk filter for "It Hit" feedback comments — catches empty, too-short, and
+// all-emoji submissions before they'd otherwise clutter the admin review list.
+// Genuine harmful content is caught separately by moderationService.
+function isJunkFeedbackText(text: string): { junk: boolean } {
+  const trimmed = text.trim();
+  if (!trimmed) return { junk: true };
+  // Strip common emoji ranges + variation selectors/ZWJ; if nothing meaningful
+  // is left, it was emoji-only.
+  const withoutEmoji = trimmed
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, '')
+    .trim();
+  if (!withoutEmoji) return { junk: true };
+  if (withoutEmoji.length < 6) return { junk: true };
+  return { junk: false };
+}
+
 // Revoke auth token (for logout)
 async function revokeAuthToken(token: string): Promise<void> {
   await db.delete(authTokens).where(eq(authTokens.token, token));
@@ -1138,6 +1154,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // "It Hit" feedback — did this rude message land? Comment is optional; when
+  // present it's screened for junk (empty/too-short/all-emoji) and then run
+  // through the same moderationService used everywhere else, since admin will
+  // be reading these comments directly.
+  app.patch('/api/reminders/:id/hit', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getAuthUserId(req);
+      const rawComment = typeof req.body?.comment === 'string' ? req.body.comment.trim() : '';
+
+      let comment: string | undefined = undefined;
+      if (rawComment) {
+        const junkCheck = isJunkFeedbackText(rawComment);
+        if (junkCheck.junk) {
+          return res.status(400).json({
+            error: "That comment's too short or empty to be useful — try adding a bit more detail, or leave it blank.",
+            code: 'FEEDBACK_TOO_SHORT',
+          });
+        }
+        const { moderationService } = await import('./services/moderationService');
+        const modResult = await moderationService.checkContent(rawComment);
+        if (modResult.flagged) {
+          slog.warn('content_blocked', { userId, reminderId: req.params.id, categories: modResult.categories, stage: 'hit_comment' });
+          return res.status(400).json({
+            error: "This comment can't be saved because it may reference harmful or illegal content. Please rephrase it.",
+            code: 'CONTENT_BLOCKED',
+          });
+        }
+        comment = rawComment;
+      }
+
+      const reminder = await storage.markReminderHit(req.params.id, userId, comment);
+      res.json(reminder);
+    } catch (error) {
+      console.error("Error marking reminder as hit:", error);
+      res.status(500).json({ message: "Failed to mark reminder as hit" });
+    }
+  });
+
   // Statistics routes
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
@@ -1724,6 +1778,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completedAt: null,
         notAccomplished: false,
         notAccomplishedAt: null,
+        loggedAt: null,
+        hitConfirmed: false,
+        hitComment: null,
+        hitAt: null,
         responses: [] as string[],
         createdAt: new Date(),
         updatedAt: new Date()
@@ -2048,6 +2106,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes for managing premium email whitelist
+  app.get('/api/admin/reminder-hits', isAuthenticated, isAdmin, async (_req: any, res) => {
+    try {
+      const hits = await storage.getHitReminders();
+      res.json({ hits, count: hits.length });
+    } catch (error) {
+      console.error("Error getting reminder hits:", error);
+      res.status(500).json({ message: "Failed to get reminder hits" });
+    }
+  });
+
   app.get('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const emails = await getWhitelistedEmails();

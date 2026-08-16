@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { AdminWhitelist } from '@/components/AdminWhitelist';
 import { AdminUsers } from '@/components/admin/AdminUsers';
 import { AdminFeatureFlags } from '@/components/admin/AdminFeatureFlags';
+import { AdminHits } from '@/components/admin/AdminHits';
 import { AdminEnvBadge } from '@/components/admin/AdminEnvBadge';
-import { Shield, ChevronLeft, LogIn, Loader2, Crown, Users, ToggleLeft } from 'lucide-react';
+import { Shield, ChevronLeft, LogIn, Loader2, Crown, Users, ToggleLeft, Target } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const ADMIN_EMAILS = ['letmeknow6@icloud.com', 'loqvm1@gmail.com'].map((e) => e.toLowerCase());
@@ -20,6 +21,7 @@ const NAV: NavItem[] = [
   { href: '/admin/whitelist', label: 'Whitelist', icon: <Crown className="h-4 w-4" /> },
   { href: '/admin/users', label: 'Users', icon: <Users className="h-4 w-4" /> },
   { href: '/admin/toggles', label: 'Toggles', icon: <ToggleLeft className="h-4 w-4" /> },
+  { href: '/admin/hits', label: 'Hits', icon: <Target className="h-4 w-4" /> },
 ];
 
 function AdminTabs() {
@@ -146,6 +148,7 @@ export default function AdminPage() {
           <WouterSwitch>
             <Route path="/admin/users" component={AdminUsers} />
             <Route path="/admin/toggles" component={AdminFeatureFlags} />
+            <Route path="/admin/hits" component={AdminHits} />
             <Route path="/admin/whitelist">
               <div className="rounded-xl p-5" style={{ background: '#1C1C1E', border: '1px solid #38383A' }}>
                 <AdminWhitelist />
