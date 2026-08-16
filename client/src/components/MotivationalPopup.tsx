@@ -6,16 +6,11 @@ const STORAGE_KEY_LAST_SHOWN = "rudeReminders_lastMotivationalShown";
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 const MESSAGES: Array<(name: string) => string> = [
-  () =>
-    `Did you know? It takes the average person 66 days to build a habit. Every reminder you complete gets you closer. Let's go! 🔥`,
-  (name) =>
-    `Hey ${name}, your habit journey is unique. Most people see real change between day 30 and day 66. Keep showing up — it gets easier. 💪`,
-  () =>
-    `The first 30 days are the hardest. 90% of people quit before day 66. You're not most people. 👑`,
-  () =>
-    `Small actions. Repeated daily. That's how habits are built. You've got this. 🌱`,
-  () =>
-    `Your day 1 starts today of your habit journey. Unless you've already started, then keep going you absolute animal . . 🎯`,
+  () => `Small steps. Big streaks. Keep going. 🔥`,
+  (name) => `Hey ${name} — showing up is the win. 💪`,
+  () => `Most people quit early. You're still here. 👑`,
+  () => `Repeat it daily. That's the whole trick. 🌱`,
+  () => `Day one, every day. Let's move. 🎯`,
 ];
 
 interface MotivationalPopupProps {
@@ -102,10 +97,10 @@ export function MotivationalPopup({
           </p>
         </div>
 
-        <div className="bg-[#da7f7f] px-5 py-4 flex flex-col items-center gap-3">
+        <div className="bg-[#FDF3E3] px-5 py-4 flex flex-col items-center gap-3">
           <button
             onClick={dismiss}
-            className="w-full py-2.5 rounded-xl bg-[#C53B3B] text-white font-semibold text-sm hover:bg-[#a83030] transition-colors"
+            className="w-full py-2.5 rounded-xl bg-[#1B2A5E] text-white font-semibold text-sm hover:bg-[#152347] transition-colors"
           >
             Let's get it 💥
           </button>

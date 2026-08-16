@@ -175,11 +175,11 @@ export function RichReminderNotification({
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
           {/* Rudy avatar */}
           <div className="flex justify-center">
-            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3]">
+            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3] p-1">
               <img
                 src={getRudyAvatarSrc(reminder.rudenessLevel)}
                 alt="Rudy"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>

@@ -422,11 +422,11 @@ export function ShareButton({
               </div>
 
               <div className="flex justify-center mb-3">
-                <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3]">
+                <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3] p-1">
                   <img
                     src={getRudyAvatarSrc(rudenessLevel)}
                     alt="Rudy"
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-contain"
                     crossOrigin="anonymous"
                   />
                 </div>
