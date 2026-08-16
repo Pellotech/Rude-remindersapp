@@ -85,11 +85,13 @@ export class AdMobService {
     try {
       const { insets } = await SafeArea.getSafeAreaInsets();
       console.log(`[AdMob] raw safe-area inset.bottom: ${insets.bottom}px`);
-      // Clamp between a 48px floor (clears a standard 3-button nav bar — don't go
-      // lower, or the banner risks sitting under/behind the nav buttons) and a
-      // 56px ceiling (keeps the banner hugging the nav bar instead of floating
-      // further up the screen and cramping the content above it).
-      return Math.min(Math.max(insets.bottom, 48), 56);
+      // Pinned to a flat 48px — the minimum needed to clear a standard 3-button
+      // nav bar without the banner sitting under/behind the nav buttons. Going
+      // lower risks that overlap, so this is as close to the nav bar as it's
+      // safe to sit. (Was a 48-80px range following the raw safe-area inset,
+      // which floated higher than necessary on some devices and cramped the
+      // content above it.)
+      return 48;
     } catch {
       return 48;
     }

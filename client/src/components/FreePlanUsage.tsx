@@ -28,7 +28,7 @@ export function FreePlanUsage({ used, limit, bonusReminders, onUpgrade }: FreePl
   return (
     <div
       className="container mx-auto px-4 md:px-[20%] max-w-7xl"
-      style={{ paddingBottom: Capacitor.getPlatform() === 'android' ? '130px' : '80px' }}
+      style={{ paddingBottom: Capacitor.getPlatform() === 'android' ? '150px' : '80px' }}
     >
       <Card className="bg-white border-[#EAEAEA] rounded-[20px] shadow-[var(--rr-card-shadow)]">
         <CardContent className="pt-6">
