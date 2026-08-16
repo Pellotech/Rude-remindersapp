@@ -37,11 +37,15 @@ export function AdMobManager({
       showBanner(BannerAdPosition.BOTTOM_CENTER);
     }
 
-    // Cleanup: remove banner when component unmounts
+    // Cleanup: remove banner when component unmounts (navigating away from Home).
+    // Always attempt removal here — don't gate on `isBannerVisible`, since that state
+    // is captured in this effect's closure at mount time and never updates before
+    // unmount, so the guard was always stale-false and removeBanner() never ran.
+    // That's why the native banner kept floating over other screens (e.g. covering
+    // the Save button on Settings) after navigating away from Home. removeBannerAd()
+    // already safely no-ops (with a caught error) if there's nothing to remove.
     return () => {
-      if (isBannerVisible) {
-        removeBanner();
-      }
+      removeBanner();
     };
   }, [isInitialized, isAvailable]);
 
