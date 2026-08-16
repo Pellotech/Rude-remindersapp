@@ -17,6 +17,7 @@ const RUDY_ARMS_CROSSED = `${RUDY_BASE}Rudy_confident_arms_crossed_transparent.p
 const RUDY_POINTING = `${RUDY_BASE}Rudy_punching_forward_transparent.png`;
 const RUDY_SITTING = `${RUDY_BASE}Rudy_sitting_upright_transparent.png`;
 const RUDY_THUMBS_UP = `${RUDY_BASE}Rudy_thumbs_up_smile_transparent.png`;
+const RUDY_SMIRK = `${RUDY_BASE}Rudy_smirk_content_transparent.png`;
 
 interface IntroTourProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const { isAndroid, isIOS } = getPlatformInfo();
 
-  const totalSlides = 6;
+  const totalSlides = 7;
 
   const nextStep = () => {
     if (currentStep < totalSlides - 1) {
@@ -236,7 +237,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
               Your reminders, all in one place
             </h2>
             <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 12 }}>
-              The Manage tab shows every reminder you've set. Tap Done or Missed to log it. Every action feeds your habit streak.
+              When a reminder fires, tap 'Got it done', 'Let you know later', or 'Didn't do it'. Everything you log feeds your habit streak — the rest waits for you in Manage → Past.
             </p>
             <div style={{
               background: 'white',
@@ -256,27 +257,85 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                   padding: '4px 10px',
                   border: 'none',
                   fontWeight: 600,
-                }}>✅ Done</button>
+                }}>Got it done 👊</button>
               </div>
               <div style={{ height: 1, background: '#F0E8D8' }} />
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
                 <span style={{ fontSize: 14, color: '#111827', fontWeight: 500 }}>💊 Take vitamins</span>
                 <span style={{ fontSize: 11, color: '#6B7280' }}>Today 9:00 AM</span>
                 <button style={{
-                  background: '#b70d0d',
-                  color: 'white',
+                  background: '#FDE047',
+                  color: '#111827',
                   borderRadius: 20,
                   fontSize: 11,
                   padding: '4px 10px',
                   border: 'none',
                   fontWeight: 600,
-                }}>Missed</button>
+                }}>Didn't do it.</button>
               </div>
             </div>
           </div>
         );
 
-      case 4: {
+      case 4:
+        return (
+          <div className="text-center">
+            <img
+              key={`rudy-${currentStep}`}
+              src={RUDY_SMIRK}
+              alt="Rudy"
+              style={{
+                width: 100,
+                height: 'auto',
+                margin: '0 auto 12px',
+                display: 'block',
+                mixBlendMode: 'multiply',
+                animation: 'rudyEntrance 0.5s ease-out',
+              }}
+            />
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+              Rate the roast
+            </h2>
+            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 14 }}>
+              Every reminder card asks one quick question: did it actually land?
+            </p>
+            <div style={{
+              background: '#FDF3E3',
+              border: '1.5px solid #C9A063',
+              borderRadius: 12,
+              padding: '14px 16px',
+            }}>
+              <p style={{ fontSize: 12, color: '#6B7280', marginBottom: 10 }}>
+                Let us know did
+              </p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                <span style={{
+                  background: '#22C55E',
+                  color: 'white',
+                  borderRadius: 20,
+                  fontSize: 13,
+                  padding: '6px 14px',
+                  fontWeight: 600,
+                }}>It Hit 🎯</span>
+                <span style={{ fontSize: 13, color: '#6B7280', alignSelf: 'center' }}>or</span>
+                <span style={{
+                  background: 'white',
+                  border: '1px solid #C9A063',
+                  color: '#1B2A5E',
+                  borderRadius: 20,
+                  fontSize: 13,
+                  padding: '6px 14px',
+                  fontWeight: 600,
+                }}>Nahh 😒</span>
+              </div>
+            </div>
+            <p style={{ fontSize: 13, color: '#8E8E93', marginTop: 12 }}>
+              One tap, no follow-up questions. It locks in instantly.
+            </p>
+          </div>
+        );
+
+      case 5: {
         const aboveHeights = [20, 30, 0, 40, 25, 0, 35];
         const belowHeights = [0, 0, 15, 0, 0, 20, 0];
         return (
@@ -362,7 +421,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
         );
       }
 
-      case 5:
+      case 6:
         return (
           <div className="text-center">
             <img

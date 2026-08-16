@@ -3,7 +3,7 @@ import logoImage from "@assets/translusant_logo2_1767108484844.png";
 
 const STORAGE_KEY_INDEX = "rudeReminders_motivationalIndex";
 const STORAGE_KEY_LAST_SHOWN = "rudeReminders_lastMotivationalShown";
-const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+const FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
 
 const MESSAGES: Array<(name: string) => string> = [
   () => `Small steps. Big streaks. Keep going. 🔥`,
@@ -11,6 +11,8 @@ const MESSAGES: Array<(name: string) => string> = [
   () => `Most people quit early. You're still here. 👑`,
   () => `Repeat it daily. That's the whole trick. 🌱`,
   () => `Day one, every day. Let's move. 🎯`,
+  () => `Habits take about 66 days. Stay consistent. 📈`,
+  () => `This app exists to build your habits. 🏗️`,
 ];
 
 interface MotivationalPopupProps {
@@ -47,7 +49,7 @@ export function MotivationalPopup({
     const shouldShow =
       forceShow ||
       !lastShown ||
-      Date.now() - parseInt(lastShown, 10) >= THREE_DAYS_MS;
+      Date.now() - parseInt(lastShown, 10) >= FOUR_DAYS_MS;
 
     if (shouldShow) {
       setPendingShow(true);

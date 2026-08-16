@@ -67,16 +67,16 @@ export const helpCategories: HelpCategory[] = [
         icon: "Sparkles",
         keywords: ["popup", "habit", "66 days", "motivational", "modal", "tip"],
         steps: [
-          "A motivational message appears automatically every 2 days on app open",
-          "Each message focuses on habit-building science (it takes ~66 days to form a habit)",
-          "Messages cycle through 5 different tips automatically",
+          "A short motivational message appears automatically every 4 days on app open",
+          "Messages are one line, quick to read, and cycle through 7 tips automatically",
+          "One of them ties directly to habit-building science (it takes ~66 days to form a habit)",
           "Tap 'Let's get it 💥' to dismiss",
           "If a reminder notification is showing, the popup waits until you dismiss it first",
           "To preview a popup anytime: add ?showPopup=1 to the app URL"
         ],
         faqs: [
-          { question: "How often does the popup show?", answer: "Once every 2 days when you open the app. It never interrupts an active reminder notification." },
-          { question: "Can I turn it off?", answer: "Just dismiss it each time — it only appears every 2 days so it's never intrusive." }
+          { question: "How often does the popup show?", answer: "Once every 4 days when you open the app. It never interrupts an active reminder notification." },
+          { question: "Can I turn it off?", answer: "Just dismiss it each time — it only appears every 4 days so it's never intrusive." }
         ]
       }
     ]
@@ -155,6 +155,23 @@ export const helpCategories: HelpCategory[] = [
         ]
       },
       {
+        id: "content-safety",
+        title: "Content Safety — What Gets Blocked",
+        icon: "ShieldCheck",
+        keywords: ["blocked", "rejected", "safety", "moderation", "harmful", "content", "error", "can't create"],
+        steps: [
+          "Rude Reminders screens reminder text for genuinely harmful content before it's created",
+          "This is separate from the app's rudeness — sarcasm, dark humor, and mild profanity are all fine and expected",
+          "What actually gets blocked: things like real-world violence, illegal activity, and credible threats — not ordinary rudeness",
+          "If a reminder is blocked, you'll see a message asking you to rephrase it",
+          "The same check runs again when the reminder fires, using the freshly generated message, so it stays protected even after creation"
+        ],
+        faqs: [
+          { question: "Why was my reminder rejected?", answer: "Its text (or the AI-generated response) matched one of a small set of genuinely harmful categories — not because it was too rude. Try rephrasing it." },
+          { question: "Will ordinary swearing or dark jokes get blocked?", answer: "No. The app is built to be rude — only content describing real harm gets screened out." }
+        ]
+      },
+      {
         id: "voice-characters",
         title: "Voice Characters",
         icon: "Mic",
@@ -214,20 +231,20 @@ export const helpCategories: HelpCategory[] = [
     articles: [
       {
         id: "manage-tabs",
-        title: "Active, Overdue & Completed Tabs",
+        title: "Upcoming & Past Tabs",
         icon: "Layers",
-        keywords: ["active", "overdue", "completed", "tab", "filter", "status", "manage"],
+        keywords: ["active", "overdue", "completed", "tab", "filter", "status", "manage", "upcoming", "past"],
         steps: [
-          "Go to the Manage tab at the top of the home screen",
-          "Active: reminders scheduled for the future",
-          "Overdue: past reminders not yet marked — tap to log them",
-          "Completed: reminders you've finished",
-          "Tap any reminder card to expand it and see options",
+          "Go to the Manage tab (behind Analytics on the home screen)",
+          "Upcoming: reminders scheduled for the future, not yet fired",
+          "Past: overdue reminders you haven't logged yet, plus anything you logged in the last 24 hours",
+          "Tap a card's smiley/frown icons to log a past reminder as done or missed",
+          "Logged reminders clear from Past automatically 24 hours after you log them",
           "Use the search bar to find reminders by title or content"
         ],
         faqs: [
-          { question: "What happens to overdue reminders?", answer: "They stay visible until you mark them as Accomplished or Not Accomplished. Logging them feeds your completion graph." },
-          { question: "Can I delete a reminder?", answer: "Yes — expand the reminder card and tap the delete icon. Reminders within 24h of firing show a timer before they're cleared." }
+          { question: "What happens to overdue reminders?", answer: "They stay in the Past tab, unlogged, until you mark them. Logging them feeds your completion graph." },
+          { question: "Can I delete a reminder?", answer: "Yes — for upcoming reminders, tap delete directly. Past reminders are locked from deletion until they're logged and clear automatically after 24 hours." }
         ]
       },
       {
@@ -247,17 +264,39 @@ export const helpCategories: HelpCategory[] = [
       },
       {
         id: "marking-complete",
-        title: "Mark Accomplished / Not Accomplished",
+        title: "Got It Done / Let You Know Later / Didn't Do It",
         icon: "Check",
-        keywords: ["complete", "done", "accomplish", "finish", "missed", "log"],
+        keywords: ["complete", "done", "accomplish", "finish", "missed", "log", "later"],
         steps: [
-          "When a reminder fires, the notification pops up — tap 'Did it ✅' or 'Didn't do it ❌'",
-          "You can also log from the Manage tab under Overdue",
+          "When a reminder fires, the notification pops up with three options",
+          "'Got it done 👊' logs it as completed",
+          "'Didn't do it.' logs it as not accomplished",
+          "'Let you know later' just closes the popup — nothing is logged yet",
+          "A reminder dismissed with 'Let you know later' shows up under Manage → Past so you can log it whenever you're ready",
           "Every log feeds your completion graph in the Analytics tab",
           "Logging is permanent — it stays on the graph even if you delete the reminder"
         ],
         faqs: [
+          { question: "What does 'Let you know later' actually do?", answer: "It just dismisses the popup without marking anything. The reminder stays unlogged and waits for you in Manage → Past." },
           { question: "Does marking affect future reminders?", answer: "Your completion history is tracked in the graph, but doesn't change how future reminders fire." }
+        ]
+      },
+      {
+        id: "it-hit-feedback",
+        title: "It Hit — Did the Message Land?",
+        icon: "Target",
+        keywords: ["it hit", "nahh", "feedback", "funny", "target", "rate", "rating"],
+        steps: [
+          "Every reminder card has a quick feedback row near the bottom: 'Let us know did It Hit 🎯 or Nahh 😒'",
+          "Tap 'It Hit' if the message actually landed — made you laugh, hit different, whatever counts as a win for you",
+          "Tap 'Nahh' if it didn't do much for you",
+          "Whichever you tap locks in right away — no changing your answer after",
+          "You'll see this same row on the reminder popup and on the Share preview card in Manage",
+          "Rudy's face at the top of the card changes expression based on the reminder's rudeness level"
+        ],
+        faqs: [
+          { question: "What does It Hit actually do?", answer: "It's quick feedback on whether the AI-generated message worked. It helps us understand which messages are actually landing." },
+          { question: "Can I add a comment explaining why?", answer: "Not yet — a short optional note is planned for a future update." }
         ]
       },
       {
@@ -267,12 +306,12 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["filter", "search", "find", "sort"],
         steps: [
           "Use the search bar at the top of the Manage tab to find reminders by title or content",
-          "Switch between Active / Overdue / Completed tabs to filter by status",
+          "Switch between Upcoming and Past tabs to filter by status",
           "Results update instantly as you type",
           "Clear search to see all reminders in the current tab"
         ],
         faqs: [
-          { question: "Can I filter by date?", answer: "Currently you can filter by status (Active, Overdue, Completed). Date filtering is planned for a future update." }
+          { question: "Can I filter by date?", answer: "Currently you can filter by status (Upcoming or Past). Date filtering is planned for a future update." }
         ]
       }
     ]
