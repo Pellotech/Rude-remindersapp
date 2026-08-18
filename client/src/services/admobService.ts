@@ -3,11 +3,11 @@ import { Capacitor } from '@capacitor/core';
 import { SafeArea } from 'capacitor-plugin-safe-area';
 import { AppTrackingTransparency } from 'capacitor-plugin-app-tracking-transparency';
 
-// TEMPORARY diagnostic flag — forces iOS to request Google's guaranteed-fill test
-// banner instead of the real ad unit, so we can confirm the banner itself renders
-// correctly on iOS independent of real-ad fill rate. Flip back to false once
-// confirmed, so iOS goes back to serving real ads.
-const FORCE_IOS_TEST_BANNER = true;
+// Diagnostic flag — was used to force iOS to request Google's guaranteed-fill
+// test banner instead of the real ad unit, to confirm the banner mechanism
+// itself rendered correctly on iOS independent of real-ad fill rate. Confirmed
+// working (Aug 2026), so this is back to false — iOS now requests real ads.
+const FORCE_IOS_TEST_BANNER = false;
 
 export class AdMobService {
   private static instance: AdMobService;
