@@ -82,6 +82,7 @@
     "@uppy/progress-bar": "^4.3.2",
     "@uppy/react": "^4.5.2",
     "bcryptjs": "^3.0.2",
+    "capacitor-plugin-app-tracking-transparency": "^3.0.0",
     "capacitor-plugin-safe-area": "^5.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
