@@ -153,6 +153,11 @@ export const authTokens = pgTable("auth_tokens", {
   token: varchar("token").unique().notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
+  // Optional tag distinguishing what a token is for. Regular mobile-app login
+  // tokens leave this null; the long-lived token issued for the Siri/Shortcuts
+  // App Intent (see /api/auth/siri-token) is tagged 'siri' so it can be looked
+  // up and rotated independently of the user's normal session token.
+  label: varchar("label"),
 }, (table) => [index("IDX_auth_tokens_token").on(table.token), index("IDX_auth_tokens_user").on(table.userId)]);
 
 // Insert schemas
