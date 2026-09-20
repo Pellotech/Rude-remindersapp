@@ -38,6 +38,15 @@ export function useAuth() {
     retry: false,
     retryOnMount: false,
     refetchOnWindowFocus: false,
+    // The global default (queryClient.ts) sets staleTime: Infinity, which is
+    // right for most queries but wrong for this one now that the cache is
+    // persisted across app launches: with Infinity, a cold launch would show
+    // last session's cached user forever and never quietly re-check with the
+    // server. 5 minutes means a returning user still sees their cached data
+    // instantly (isLoading is false as soon as cached data exists — see
+    // App.tsx's PersistQueryClientProvider), while a background refetch
+    // confirms/updates it whenever that cache is more than 5 minutes old.
+    staleTime: 5 * 60 * 1000,
   });
 
   // Identify the user with RevenueCat on native so purchases are attributed

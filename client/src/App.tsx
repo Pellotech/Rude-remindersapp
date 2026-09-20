@@ -1,6 +1,7 @@
 import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { queryPersister, QUERY_CACHE_BUSTER } from "./lib/queryPersister";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/components/NotificationProvider";
@@ -173,7 +174,14 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: queryPersister,
+        buster: QUERY_CACHE_BUSTER,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // keep persisted cache for up to a week
+      }}
+    >
       <WouterRouter hook={useNormalizedLocation}>
         <TooltipProvider>
           <NotificationProvider>
@@ -182,7 +190,7 @@ function App() {
           </NotificationProvider>
         </TooltipProvider>
       </WouterRouter>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
 

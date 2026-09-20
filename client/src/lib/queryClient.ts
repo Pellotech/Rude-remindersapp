@@ -183,6 +183,14 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       retry: false,
+      // Cache is now persisted to disk (see queryPersister.ts / App.tsx) so a
+      // cold app launch can paint instantly from last session's data instead
+      // of waiting on the network. gcTime controls how long an unobserved
+      // query is kept in memory before eviction — it needs to comfortably
+      // exceed the persister's maxAge, or data can be garbage-collected
+      // before (or instead of) being written to disk. Bumped from the
+      // default 5 minutes to a week to match.
+      gcTime: 1000 * 60 * 60 * 24 * 7,
     },
     mutations: {
       retry: false,
