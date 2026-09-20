@@ -320,7 +320,7 @@ export default function Home({ isPremium }: HomeProps) {
       {/* Premium-only: motivational popup */}
       {isPremium && (
         <MotivationalPopup
-          userName={user?.firstName || user?.username || "there"}
+          userName={user?.nickname || user?.firstName || user?.username || "there"}
           blocked={showIntro || !!(currentReminder && showRichNotification)}
         />
       )}

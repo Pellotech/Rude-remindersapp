@@ -30,6 +30,7 @@ export const users = pgTable("users", {
   email: varchar("email").unique().notNull(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
+  nickname: varchar("nickname"), // Optional preferred name; used for in-app greetings/notifications instead of firstName when set
   profileImageUrl: varchar("profile_image_url"),
   defaultRudenessLevel: integer("default_rudeness_level").default(3),
   defaultVoiceCharacter: varchar("default_voice_character").default("default"),

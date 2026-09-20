@@ -264,6 +264,20 @@ export default function PersonalInfo() {
                 data-testid="input-last-name"
               />
             </div>
+            <div className="px-4 py-3 border-b border-[#38383A]">
+              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Nickname</label>
+              <input
+                type="text"
+                value={currentSettings.nickname || ""}
+                onChange={(e) => updateSetting("nickname", e.target.value)}
+                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                placeholder="What should we call you?"
+                data-testid="input-nickname"
+              />
+              <p className="text-[12px] text-[#8E8E93] mt-1">
+                Used for greetings and reminders instead of your first name, if set.
+              </p>
+            </div>
             <div className="px-4 py-3">
               <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Email</label>
               <input

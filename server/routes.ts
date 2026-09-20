@@ -551,7 +551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Ensure notification settings are properly stored
       const allowedSettings = [
-        'firstName', 'lastName', 'timezone', 'darkMode', 'simplifiedInterface',
+        'firstName', 'lastName', 'nickname', 'timezone', 'darkMode', 'simplifiedInterface',
         'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
         'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
         'ethnicitySpecificQuotes', 'genderSpecificReminders', 
