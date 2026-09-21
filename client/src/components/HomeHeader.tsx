@@ -104,7 +104,7 @@ export function HomeHeader({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">
-            <span className="truncate">Hey {(user as any)?.firstName || (user as any)?.username || 'there'}</span>
+            <span className="truncate">Hey {(user as any)?.nickname || (user as any)?.firstName || (user as any)?.username || 'there'}</span>
             <Badge
               className={isPremium ? "text-xs flex-shrink-0" : "text-xs flex-shrink-0 border-0"}
               style={{

@@ -30,6 +30,8 @@ PODS:
     - Capacitor
   - CapacitorNetwork (8.0.1):
     - Capacitor
+  - CapacitorPluginAppTrackingTransparency (3.0.0):
+    - Capacitor
   - CapacitorPluginSafeArea (5.0.1):
     - Capacitor
   - CapacitorPreferences (8.0.1):
@@ -69,6 +71,7 @@ DEPENDENCIES:
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - "CapacitorNetwork (from `../../node_modules/@capacitor/network`)"
+  - CapacitorPluginAppTrackingTransparency (from `../../node_modules/capacitor-plugin-app-tracking-transparency`)
   - CapacitorPluginSafeArea (from `../../node_modules/capacitor-plugin-safe-area`)
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
@@ -115,6 +118,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/local-notifications"
   CapacitorNetwork:
     :path: "../../node_modules/@capacitor/network"
+  CapacitorPluginAppTrackingTransparency:
+    :path: "../../node_modules/capacitor-plugin-app-tracking-transparency"
   CapacitorPluginSafeArea:
     :path: "../../node_modules/capacitor-plugin-safe-area"
   CapacitorPreferences:
@@ -145,6 +150,7 @@ SPEC CHECKSUMS:
   CapacitorHaptics: 4e1e84c2b74fb5918e403fb8f0e73a07d05937df
   CapacitorLocalNotifications: c2354fb1d452274a71db8dd3ace0dc7df2b00f5b
   CapacitorNetwork: 7afc28ed4d9abe1d9801264fa485db32e4420546
+  CapacitorPluginAppTrackingTransparency: c865112679beaad5bccd65a5bbac6e6eacaeb14b
   CapacitorPluginSafeArea: 46cae430c3e91399b0fb6f280bdac626198bbff6
   CapacitorPreferences: 0fa33b3affebf12d96358b491ed7c2b39bec3270
   CapacitorShare: 8a565649d321a05a1ae8b525b2a9b4f2d92c70ce
@@ -159,6 +165,6 @@ SPEC CHECKSUMS:
   RevenueCat: a83de0391a1061302699cb55eb1ff0662f5768b5
   RevenuecatPurchasesCapacitor: 8fe740819792c2411bd04c74fd96588ebce23893
 
-PODFILE CHECKSUM: 8a6c4bffe4c39441df745357f306ebf912ed0361
+PODFILE CHECKSUM: 7c3b2d05055d1cee844eee863eafdba643452258
 
 COCOAPODS: 1.16.2

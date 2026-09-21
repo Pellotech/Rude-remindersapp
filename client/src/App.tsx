@@ -1,6 +1,7 @@
 import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { queryPersister, QUERY_CACHE_BUSTER } from "./lib/queryPersister";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/components/NotificationProvider";
@@ -8,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/home";
 import Settings from "@/pages/SettingsLanding";
 import PersonalInfo from "@/pages/settings/PersonalInfo";
+import SiriShortcuts from "@/pages/settings/SiriShortcuts";
 import Notifications from "@/pages/settings/Notifications";
 import Billing from "@/pages/settings/Billing";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
@@ -117,6 +119,7 @@ function AppRouter() {
         <>
           <Route path="/settings/billing" component={Billing} />
           <Route path="/settings/personal" component={PersonalInfo} />
+          <Route path="/settings/siri" component={SiriShortcuts} />
           <Route path="/settings/notifications" component={Notifications} />
           <Route path="/settings/history" component={ReminderHistory} />
           <Route path="/settings" component={Settings} />
@@ -173,7 +176,14 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: queryPersister,
+        buster: QUERY_CACHE_BUSTER,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // keep persisted cache for up to a week
+      }}
+    >
       <WouterRouter hook={useNormalizedLocation}>
         <TooltipProvider>
           <NotificationProvider>
@@ -182,7 +192,7 @@ function App() {
           </NotificationProvider>
         </TooltipProvider>
       </WouterRouter>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
 

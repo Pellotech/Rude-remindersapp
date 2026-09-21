@@ -530,6 +530,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Siri / Shortcuts access token — a separate, long-lived (1 year) bearer
+  // token used only by the iOS App Intents extension (see ios/App/RudeRemindersIntents),
+  // which runs as its own process and has no access to the main app's
+  // session/Preferences storage. The user generates this once in
+  // Settings > Siri & Shortcuts and pastes it into the "Connect Rude
+  // Reminders" Shortcut; after that, "Add Reminder" phrases work without the
+  // main app ever needing to open. Regenerating revokes the previous one.
+  app.post('/api/auth/siri-token', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getAuthUserId(req);
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      await db.delete(authTokens).where(
+        and(eq(authTokens.userId, userId), eq(authTokens.label, 'siri'))
+      );
+
+      const token = generateSecureToken();
+      const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year
+
+      await db.insert(authTokens).values({
+        userId,
+        token,
+        expiresAt,
+        label: 'siri',
+      });
+
+      res.json({ token, expiresAt });
+    } catch (error) {
+      console.error("Error generating Siri token:", error);
+      res.status(500).json({ message: "Failed to generate token" });
+    }
+  });
+
+  // Revoke the Siri/Shortcuts token (e.g. if it's exposed or no longer needed).
+  app.delete('/api/auth/siri-token', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = getAuthUserId(req);
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      await db.delete(authTokens).where(
+        and(eq(authTokens.userId, userId), eq(authTokens.label, 'siri'))
+      );
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error revoking Siri token:", error);
+      res.status(500).json({ message: "Failed to revoke token" });
+    }
+  });
+
   // User settings routes
   app.patch('/api/user/settings', isAuthenticated, async (req: any, res) => {
     try {
@@ -551,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Ensure notification settings are properly stored
       const allowedSettings = [
-        'firstName', 'lastName', 'timezone', 'darkMode', 'simplifiedInterface',
+        'firstName', 'lastName', 'nickname', 'timezone', 'darkMode', 'simplifiedInterface',
         'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
         'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
         'ethnicitySpecificQuotes', 'genderSpecificReminders', 

@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ChevronLeft, ChevronRight, User, Bell, CreditCard } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic } from "lucide-react";
 import { SettingsIntro } from "@/components/SettingsIntro";
 import { useIntroTour } from "@/components/IntroTour";
 
@@ -64,7 +64,13 @@ export default function SettingsLanding() {
               href="/settings/notifications"
             />
             <div className="h-px bg-[#38383A] ml-12" />
-            <SettingsRow 
+            <SettingsRow
+              icon={<Mic className="h-5 w-5" />}
+              title="Siri & Shortcuts"
+              href="/settings/siri"
+            />
+            <div className="h-px bg-[#38383A] ml-12" />
+            <SettingsRow
               icon={<CreditCard className="h-5 w-5" />}
               title="Payment & Billing"
               href="/settings/billing"

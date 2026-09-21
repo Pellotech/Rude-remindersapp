@@ -227,7 +227,7 @@ class NotificationService {
           <h1>🔔 Rude Reminder Alert!</h1>
         </div>
         <div class="content">
-          <h2>Hey ${user.firstName || 'there'}!</h2>
+          <h2>Hey ${user.nickname || user.firstName || 'there'}!</h2>
           
           <div class="reminder-text">
             <h3>📋 ${reminder.title}</h3>

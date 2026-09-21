@@ -1,6 +1,13 @@
 import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, RewardAdOptions } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
 import { SafeArea } from 'capacitor-plugin-safe-area';
+import { AppTrackingTransparency } from 'capacitor-plugin-app-tracking-transparency';
+
+// Diagnostic flag — was used to force iOS to request Google's guaranteed-fill
+// test banner instead of the real ad unit, to confirm the banner mechanism
+// itself rendered correctly on iOS independent of real-ad fill rate. Confirmed
+// working (Aug 2026), so this is back to false — iOS now requests real ads.
+const FORCE_IOS_TEST_BANNER = false;
 
 export class AdMobService {
   private static instance: AdMobService;
@@ -55,12 +62,33 @@ export class AdMobService {
     }
   }
 
+  // iOS-only: real ad fill depends heavily on the IDFA being available, which
+  // requires the user to have granted App Tracking Transparency. Request it
+  // before AdMob initializes so the SDK's first ad requests already reflect
+  // the user's choice. Safe no-op on Android and web (plugin is iOS-only, but
+  // guarded here anyway in case it's ever called on another platform).
+  private async requestIOSTrackingPermission(): Promise<void> {
+    if (Capacitor.getPlatform() !== 'ios') return;
+    try {
+      const { status } = await AppTrackingTransparency.getStatus();
+      if (status === 'notDetermined') {
+        const result = await AppTrackingTransparency.requestPermission();
+        console.log(`[AdMob] App Tracking Transparency permission: ${result.status}`);
+      } else {
+        console.log(`[AdMob] App Tracking Transparency already resolved: ${status}`);
+      }
+    } catch (err) {
+      console.warn('[AdMob] Failed to request App Tracking Transparency permission:', err);
+    }
+  }
+
   async initialize(): Promise<void> {
     if (!Capacitor.isNativePlatform()) {
       return;
     }
 
     try {
+      await this.requestIOSTrackingPermission();
       await this.loadAdUnitIds();
 
       await AdMob.initialize({
@@ -77,6 +105,9 @@ export class AdMobService {
 
   private getAdUnitId(type: 'banner' | 'interstitial' | 'reward'): string {
     const platform = Capacitor.getPlatform();
+    if (platform === 'ios' && type === 'banner' && FORCE_IOS_TEST_BANNER) {
+      return 'ca-app-pub-3940256099942544/2934735716'; // Google's official iOS test banner ID
+    }
     return this.adUnitIds[type][platform as 'android' | 'ios'] || this.adUnitIds[type].android;
   }
 
@@ -85,11 +116,13 @@ export class AdMobService {
     try {
       const { insets } = await SafeArea.getSafeAreaInsets();
       console.log(`[AdMob] raw safe-area inset.bottom: ${insets.bottom}px`);
-      // Clamp between a 48px floor (clears a standard 3-button nav bar — don't go
-      // lower, or the banner risks sitting under/behind the nav buttons) and a
-      // 56px ceiling (keeps the banner hugging the nav bar instead of floating
-      // further up the screen and cramping the content above it).
-      return Math.min(Math.max(insets.bottom, 48), 56);
+      // Pinned to a flat 48px — the minimum needed to clear a standard 3-button
+      // nav bar without the banner sitting under/behind the nav buttons. Going
+      // lower risks that overlap, so this is as close to the nav bar as it's
+      // safe to sit. (Was a 48-80px range following the raw safe-area inset,
+      // which floated higher than necessary on some devices and cramped the
+      // content above it.)
+      return 48;
     } catch {
       return 48;
     }

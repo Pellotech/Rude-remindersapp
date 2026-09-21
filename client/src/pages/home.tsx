@@ -95,7 +95,8 @@ export default function Home({ isPremium }: HomeProps) {
 
   // ── Rudeness level (page-owned; the form follows it on both plans) ──
   const [badgeRudenessLevel, setBadgeRudenessLevel] = useState<number>(
-    (user as any)?.defaultRudenessLevel || parseInt(localStorage.getItem('default_rudeness_level') || '2')
+    (user as any)?.defaultRudenessLevel ||
+      parseInt(localStorage.getItem("default_rudeness_level") || "2"),
   );
 
   // Sync badge level when user data loads (it's async)
@@ -110,8 +111,9 @@ export default function Home({ isPremium }: HomeProps) {
     const handler = (e: Event) => {
       setBadgeRudenessLevel((e as CustomEvent).detail);
     };
-    window.addEventListener('default_rudeness_changed', handler);
-    return () => window.removeEventListener('default_rudeness_changed', handler);
+    window.addEventListener("default_rudeness_changed", handler);
+    return () =>
+      window.removeEventListener("default_rudeness_changed", handler);
   }, []);
 
   // ── Premium-only: Rudy reaction event stream ──
@@ -119,9 +121,9 @@ export default function Home({ isPremium }: HomeProps) {
   const [eventKey, setEventKey] = useState(0);
   const fireEvent = (e: RudyEventType) => {
     if (!isPremium) return; // free Rudy is static
-    console.log('[home] fireEvent:', e);
+    console.log("[home] fireEvent:", e);
     setLastEvent(e);
-    setEventKey(k => k + 1);
+    setEventKey((k) => k + 1);
   };
   const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasFiredCreatingRef = useRef(false);
@@ -136,7 +138,7 @@ export default function Home({ isPremium }: HomeProps) {
     if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
     sliderRudyRef.current = setTimeout(() => {
       setLastEvent(`slider_${badgeRudenessLevel}` as RudyEventType);
-      setEventKey(k => k + 1);
+      setEventKey((k) => k + 1);
     }, 800);
   }, [badgeRudenessLevel, isPremium]);
 
@@ -147,11 +149,17 @@ export default function Home({ isPremium }: HomeProps) {
     ...(isPremium ? { staleTime: 0, refetchOnMount: true } : {}),
   });
 
-  const { data: stats } = useQuery<{ total: number; completed: number; pending: number; overdue: number; monthlyReminderUsage?: Record<string, number> }>({
+  const { data: stats } = useQuery<{
+    total: number;
+    completed: number;
+    pending: number;
+    overdue: number;
+    monthlyReminderUsage?: Record<string, number>;
+  }>({
     queryKey: ["/api/stats"],
   });
 
-  const { data: voices = [] } = useQuery<{ id: string; name: string; }[]>({
+  const { data: voices = [] } = useQuery<{ id: string; name: string }[]>({
     queryKey: ["/api/voices"],
   });
 
@@ -170,7 +178,10 @@ export default function Home({ isPremium }: HomeProps) {
         try {
           const data = JSON.parse(event.data);
 
-          if (data.type === "reminder" || data.type === "browser_notification") {
+          if (
+            data.type === "reminder" ||
+            data.type === "browser_notification"
+          ) {
             const { reminder } = data;
 
             // Set the current reminder and show rich notification
@@ -193,11 +204,12 @@ export default function Home({ isPremium }: HomeProps) {
 
             // Play voice notification if enabled
             if (reminder.voiceNotification) {
-              const voiceText = reminder.responses && reminder.responses.length > 0
-                ? reminder.responses.slice(0, 2).join(' ... ')
-                : reminder.rudeMessage;
-              import('@/services/ttsService').then(({ speak }) => {
-                speak(voiceText, reminder.voiceCharacter || 'default');
+              const voiceText =
+                reminder.responses && reminder.responses.length > 0
+                  ? reminder.responses.slice(0, 2).join(" ... ")
+                  : reminder.rudeMessage;
+              import("@/services/ttsService").then(({ speak }) => {
+                speak(voiceText, reminder.voiceCharacter || "default");
               });
             }
           }
@@ -223,15 +235,23 @@ export default function Home({ isPremium }: HomeProps) {
 
     setIsPlayingVoice(true);
 
-    const voiceText = currentReminder.responses && currentReminder.responses.length > 0
-      ? currentReminder.responses.slice(0, 2).join(' ... ')
-      : currentReminder.rudeMessage;
+    const voiceText =
+      currentReminder.responses && currentReminder.responses.length > 0
+        ? currentReminder.responses.slice(0, 2).join(" ... ")
+        : currentReminder.rudeMessage;
 
-    import('@/services/ttsService').then(({ speakWithCallback }) => {
-      speakWithCallback(voiceText, currentReminder.voiceCharacter || 'default', () => setIsPlayingVoice(false), () => setIsPlayingVoice(false));
-    }).catch(() => {
-      setIsPlayingVoice(false);
-    });
+    import("@/services/ttsService")
+      .then(({ speakWithCallback }) => {
+        speakWithCallback(
+          voiceText,
+          currentReminder.voiceCharacter || "default",
+          () => setIsPlayingVoice(false),
+          () => setIsPlayingVoice(false),
+        );
+      })
+      .catch(() => {
+        setIsPlayingVoice(false);
+      });
   };
 
   // Complete reminder handler
@@ -243,15 +263,17 @@ export default function Home({ isPremium }: HomeProps) {
   const handleCompleteReminder = async () => {
     if (!currentReminder) return;
     try {
-      await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
-      queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
+      await apiRequest(`/api/reminders/${currentReminder.id}/complete`, {
+        method: "PATCH",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
       if (isPremium) {
         toast({
           title: "Nice work! ✅",
           description: "Logged! This reminder will clear in 24 hours.",
         });
       } else {
-        queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+        queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
         toast({
           title: "Reminder Completed",
           description: "Great job getting it done!",
@@ -273,14 +295,18 @@ export default function Home({ isPremium }: HomeProps) {
   const handleMissedReminder = async () => {
     if (!currentReminder) return;
     try {
-      await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
-      queryClient.invalidateQueries({ queryKey: ['/api/reminders'] });
+      await apiRequest(
+        `/api/reminders/${currentReminder.id}/not-accomplished`,
+        { method: "PATCH" },
+      );
+      queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
       if (!isPremium) {
-        queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+        queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       }
       toast({
         title: "Logged 💪",
-        description: "Tomorrow is a new chance. This reminder clears in 24 hours.",
+        description:
+          "Tomorrow is a new chance. This reminder clears in 24 hours.",
       });
     } catch (error) {
       toast({
@@ -295,15 +321,18 @@ export default function Home({ isPremium }: HomeProps) {
   };
 
   const activeReminders = reminders.filter((r: Reminder) => !r.completed);
-  const completedToday = reminders.filter((r: Reminder) =>
-    r.completed && r.completedAt &&
-    new Date(r.completedAt).toDateString() === new Date().toDateString()
+  const completedToday = reminders.filter(
+    (r: Reminder) =>
+      r.completed &&
+      r.completedAt &&
+      new Date(r.completedAt).toDateString() === new Date().toDateString(),
   );
 
   // ── Free plan usage math ──
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
   const monthlyUsage = stats?.monthlyReminderUsage?.[currentMonth] || 0;
-  const effectiveReminderLimit = FREE_LIMITS.reminders + rewardedFeatures.extraReminders;
+  const effectiveReminderLimit =
+    FREE_LIMITS.reminders + rewardedFeatures.extraReminders;
   const freeUsage = {
     reminders: monthlyUsage,
     voiceCharacters: Math.min(voices.length, FREE_LIMITS.voiceCharacters),
@@ -320,7 +349,9 @@ export default function Home({ isPremium }: HomeProps) {
       {/* Premium-only: motivational popup */}
       {isPremium && (
         <MotivationalPopup
-          userName={user?.firstName || user?.username || "there"}
+          userName={
+            user?.nickname || user?.firstName || user?.username || "there"
+          }
           blocked={showIntro || !!(currentReminder && showRichNotification)}
         />
       )}
@@ -328,10 +359,16 @@ export default function Home({ isPremium }: HomeProps) {
       <Navigation />
 
       <div
-        className={isPremium
-          ? "container mx-auto px-4 md:px-[20%] pt-8 max-w-7xl"
-          : "container mx-auto px-4 md:px-[20%] py-8 max-w-7xl"}
-        style={{ paddingBottom: isAndroid ? '130px' : '80px' }}
+        className={
+          isPremium
+            ? "container mx-auto px-4 md:px-[20%] pt-8 max-w-7xl"
+            : "container mx-auto px-4 md:px-[20%] py-8 max-w-7xl"
+        }
+        style={
+          isPremium
+            ? { paddingBottom: isAndroid ? "150px" : "80px" }
+            : undefined
+        }
       >
         {/* Welcome Header — standalone component, movable anywhere */}
         <HomeHeader
@@ -340,7 +377,9 @@ export default function Home({ isPremium }: HomeProps) {
           nudgeEvent={isPremium ? lastEvent : undefined}
           nudgeKey={isPremium ? eventKey : undefined}
           onNudgeHandled={isPremium ? () => setLastEvent(null) : undefined}
-          onPremiumPress={!isPremium ? () => setLocation('/subscribe') : undefined}
+          onPremiumPress={
+            !isPremium ? () => setLocation("/subscribe") : undefined
+          }
           className={isPremium ? undefined : "mb-3 sm:mb-4"}
         />
 
@@ -361,18 +400,29 @@ export default function Home({ isPremium }: HomeProps) {
           className="space-y-6"
         >
           {/* One-time first-timer tip */}
-          {createTooltip.visible && <CreateTooltip onDismiss={createTooltip.dismiss} />}
+          {createTooltip.visible && (
+            <CreateTooltip onDismiss={createTooltip.dismiss} />
+          )}
 
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
-            <TabsTrigger value="create" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+            <TabsTrigger
+              value="create"
+              className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
+            >
               <Bell className="h-4 w-4" />
               Create
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+            <TabsTrigger
+              value="analytics"
+              className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
+            >
               <TrendingUp className="h-4 w-4" />
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="manage" className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]">
+            <TabsTrigger
+              value="manage"
+              className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
+            >
               <Target className="h-4 w-4" />
               Manage
             </TabsTrigger>
@@ -381,7 +431,9 @@ export default function Home({ isPremium }: HomeProps) {
           <TabsContent value="create" className="space-y-6">
             <ReminderForm
               isFreePlan={!isPremium}
-              currentReminderCount={isPremium ? reminders.length : freeUsage.reminders}
+              currentReminderCount={
+                isPremium ? reminders.length : freeUsage.reminders
+              }
               maxReminders={isPremium ? 999999 : freeUsage.effectiveLimit}
               externalRudenessLevel={badgeRudenessLevel}
               onReminderCreated={() => {
@@ -389,44 +441,57 @@ export default function Home({ isPremium }: HomeProps) {
                   hasFiredCreatingRef.current = false;
                   fireEvent("reminder_created");
                 } else {
-                  setAdActionCount(prev => {
+                  setAdActionCount((prev) => {
                     const next = prev + 1;
-                    console.log('Ad action counter incremented:', next);
+                    console.log("Ad action counter incremented:", next);
                     return next;
                   });
                 }
               }}
-              {...(isPremium ? {
-                onDateSelected: (type: 'date_today' | 'date_tomorrow' | 'date_future') => fireEvent(type),
-                onVoiceTap: () => fireEvent("voice"),
-                onPhotoTap: () => fireEvent("photo"),
-                onQuotesTap: () => fireEvent("quotes"),
-                onMultiDayToggle: (on: boolean) => fireEvent(on ? "multiple_days_on" : "multiple_days_off"),
-                onTitleChange: (title: string) => {
-                  if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
-                  if (title.trim().length < 3) {
-                    hasFiredCreatingRef.current = false;
-                  } else if (!hasFiredCreatingRef.current) {
-                    titleDebounceRef.current = setTimeout(() => {
-                      hasFiredCreatingRef.current = true;
-                      fireEvent("creating_generic");
-                    }, 800);
+              {...(isPremium
+                ? {
+                    onDateSelected: (
+                      type: "date_today" | "date_tomorrow" | "date_future",
+                    ) => fireEvent(type),
+                    onVoiceTap: () => fireEvent("voice"),
+                    onPhotoTap: () => fireEvent("photo"),
+                    onQuotesTap: () => fireEvent("quotes"),
+                    onMultiDayToggle: (on: boolean) =>
+                      fireEvent(on ? "multiple_days_on" : "multiple_days_off"),
+                    onTitleChange: (title: string) => {
+                      if (titleDebounceRef.current)
+                        clearTimeout(titleDebounceRef.current);
+                      if (title.trim().length < 3) {
+                        hasFiredCreatingRef.current = false;
+                      } else if (!hasFiredCreatingRef.current) {
+                        titleDebounceRef.current = setTimeout(() => {
+                          hasFiredCreatingRef.current = true;
+                          fireEvent("creating_generic");
+                        }, 800);
+                      }
+                    },
                   }
-                },
-              } : {})}
+                : {})}
             />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
-            {isPremium
-              ? <AnalyticsPanel onRudyEvent={fireEvent} />
-              : <AnalyticsLocked onUpgrade={() => setLocation('/subscribe')} />}
+            {isPremium ? (
+              <AnalyticsPanel onRudyEvent={fireEvent} />
+            ) : (
+              <AnalyticsLocked onUpgrade={() => setLocation("/subscribe")} />
+            )}
           </TabsContent>
 
-          <TabsContent value="manage" className="space-y-6 w-full overflow-x-hidden">
-            {isPremium
-              ? <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
-              : <RemindersList />}
+          <TabsContent
+            value="manage"
+            className="space-y-6 w-full overflow-x-hidden"
+          >
+            {isPremium ? (
+              <RemindersList onEvent={(e) => fireEvent(e as RudyEventType)} />
+            ) : (
+              <RemindersList />
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -458,7 +523,7 @@ export default function Home({ isPremium }: HomeProps) {
           used={freeUsage.reminders}
           limit={freeUsage.effectiveLimit}
           bonusReminders={rewardedFeatures.extraReminders}
-          onUpgrade={() => setLocation('/subscribe')}
+          onUpgrade={() => setLocation("/subscribe")}
         />
       )}
 
@@ -471,26 +536,28 @@ export default function Home({ isPremium }: HomeProps) {
           showInterstitialOnAction={true}
           actionCount={adActionCount}
           onRewardEarned={() => {
-            const rewardType = Math.random() > 0.5 ? 'reminders' : 'voices';
+            const rewardType = Math.random() > 0.5 ? "reminders" : "voices";
 
-            if (rewardType === 'reminders') {
-              setRewardedFeatures(prev => ({
+            if (rewardType === "reminders") {
+              setRewardedFeatures((prev) => ({
                 ...prev,
-                extraReminders: prev.extraReminders + 3
+                extraReminders: prev.extraReminders + 3,
               }));
               toast({
                 title: "Reward Earned! 🎁",
-                description: "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
+                description:
+                  "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
               });
             } else {
-              const premiumUntil = Date.now() + (30 * 60 * 1000); // 30 minutes
-              setRewardedFeatures(prev => ({
+              const premiumUntil = Date.now() + 30 * 60 * 1000; // 30 minutes
+              setRewardedFeatures((prev) => ({
                 ...prev,
-                premiumVoicesUntil: premiumUntil
+                premiumVoicesUntil: premiumUntil,
               }));
               toast({
                 title: "Reward Earned! 🔊",
-                description: "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters.",
+                description:
+                  "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters.",
               });
             }
           }}
@@ -499,8 +566,16 @@ export default function Home({ isPremium }: HomeProps) {
 
       {/* Floating Help Button — raised above banner on Android */}
       <div
-        className={isPremium ? "fixed right-4 z-50" : "fixed right-4 z-50 flex gap-2"}
-        style={{ bottom: (isPremium ? isAndroid : Capacitor.getPlatform() === 'android') ? '130px' : '90px' }}
+        className={
+          isPremium ? "fixed right-4 z-50" : "fixed right-4 z-50 flex gap-2"
+        }
+        style={{
+          bottom: (
+            isPremium ? isAndroid : Capacitor.getPlatform() === "android"
+          )
+            ? "150px"
+            : "90px",
+        }}
       >
         <HelpMenu />
       </div>
