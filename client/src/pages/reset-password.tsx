@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F5F5F5" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#FDF3E3" }}>
       <AppHeader />
       <div className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
