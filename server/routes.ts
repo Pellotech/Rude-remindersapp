@@ -52,7 +52,14 @@ async function tokenAuthMiddleware(req: Request, res: Response, next: NextFuncti
   
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
-    const userId = await validateAuthToken(token);
+    let userId: string | null;
+    try {
+      userId = await validateAuthToken(token);
+    } catch (error) {
+      console.error('Token authentication database check failed:', error);
+      res.status(503).json({ message: 'Sign-in is temporarily unavailable. Please try again.' });
+      return;
+    }
     
     if (userId) {
       (req as any).tokenUserId = userId;

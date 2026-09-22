@@ -1,0 +1,70 @@
+That package-firewall.replit.local address only resolves inside Replit's own environment — your Mac's npm is pointed at it, which means somewhere your local npm config has a registry/proxy override left over from Replit. Have your Mac check:
+
+npm config list
+
+Look for registry or proxy/https-proxy lines mentioning replit.local. If you see one, remove it:
+
+npm config delete registry
+npm config delete proxy
+npm config delete https-proxy
+
+If nothing shows in npm config list, check your global config file directly:
+
+cat ~/.npmrc
+
+Paste back whatever either command shows and I'll tell you exactly what to delete.
+
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm config list
+; node bin location = /usr/local/bin/node
+; node version = v22.19.0
+; npm local prefix = /Users/macbookpro/Documents/GitHub/Rude-remindersapp
+; npm version = 10.9.3
+; cwd = /Users/macbookpro/Documents/GitHub/Rude-remindersapp
+; HOME = /Users/macbookpro
+; Run npm config ls -l to show all defaults.
+
+Ran 2 commands, searched 2 patterns
+
+Found it — one corrupted entry in package-lock.json. A prior npm install run inside Replit baked its internal proxy URL into the lockfile for the tar package, and that URL only resolves inside Replit's network. Fixing it now.
+
+Edited a file, ran a command
+
+Fixed directly in the file (same folder your Mac sees), and committed here. Two things:
+
+Run npm install again now — it should go through.
+
+Then push the fix so it doesn't come back:
+
+git push origin main
+
+macbookpro@The-Book-of-OTG Rude-remindersapp % npm install
+
+changed 1 package, and audited 1151 packages in 2s
+
+145 packages are looking for funding
+  run npm fund for details
+
+31 vulnerabilities (2 low, 11 moderate, 17 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run npm audit for details.
+macbookpro@The-Book-of-OTG Rude-remindersapp %
+
+Thought process
+
+Install worked. Skip npm audit fix for now — those flagged packages are mostly transitive dev dependencies, and running fix (especially --force) could bump versions away from the exact Capacitor 8 combo we just pinned and tested. Not worth the risk this close to the deadline; revisit after you've shipped.
+
+Next:
+
+git push origin main
+npx cap sync android
+
+Then open android/ in Android Studio and let Gradle sync. Let me know what it shows.
