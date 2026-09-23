@@ -343,7 +343,7 @@ export default function Home({ isPremium }: HomeProps) {
   const createTooltip = useCreateTooltip();
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(to_bottom,#F2DFC0_0%,#F2DFC0_320px,#FDF3E3_320px,#FDF3E3_100%)] dark:bg-black">
+    <div className="min-h-screen bg-[#F2DFC0] dark:bg-black">
       <IntroTour isOpen={showIntro} onClose={closeIntro} />
 
       {/* Premium-only: motivational popup */}
