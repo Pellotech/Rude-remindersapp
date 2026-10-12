@@ -1,4 +1,4 @@
-import logoImage from "@assets/translusant_logo1_1767105109175.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 
 interface AppHeaderProps {
   className?: string;
@@ -9,8 +9,8 @@ export default function AppHeader({ className = "" }: AppHeaderProps) {
     <div className={`text-center ${className}`}>
       <img 
         src={logoImage} 
-        alt="Rude Reminders" 
-        className="mx-auto max-w-[200px] w-full h-auto object-contain"
+        alt="Reems Rude Reminders" 
+        className="mx-auto max-w-[160px] w-full h-auto object-contain"
         data-testid="app-logo"
       />
     </div>

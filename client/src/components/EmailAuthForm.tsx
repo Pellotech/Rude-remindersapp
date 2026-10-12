@@ -178,7 +178,7 @@ export function EmailAuthForm({ onSuccess }: EmailAuthFormProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-center">Welcome to Rude Reminders</CardTitle>
+        <CardTitle className="text-center">Welcome to Reems Rude Reminders</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Hidden fake form to trick Safari autofill */}

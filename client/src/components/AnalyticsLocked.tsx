@@ -1,5 +1,5 @@
 import { TrendingUp } from "lucide-react";
-import rudeRemindersLogo from '@assets/translusant_logo2_1767108484844.png';
+import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 
 /**
  * AnalyticsLocked — the free plan's Analytics tab.
@@ -71,9 +71,9 @@ export function AnalyticsLocked({ onUpgrade }: AnalyticsLockedProps) {
       {/* Upgrade overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="bg-white border-2 border-[#C9A063] rounded-2xl shadow-xl px-6 py-6 text-center max-w-xs mx-auto">
-          <img src={rudeRemindersLogo} alt="Rude Reminders" className="w-12 h-12 mx-auto object-contain mb-3" />
+          <img src={rudeRemindersLogo} alt="Reems Rude Reminders" className="w-12 h-12 mx-auto object-contain mb-3" />
           <h3 className="font-bold text-gray-900 text-base mb-1">Analytics Locked</h3>
-          <p className="text-sm text-gray-500 mb-4">Rude Reminders is the first of its kind habit-building app. These analytics show you exactly how consistent you're being — streaks, completion rates, and your best days. Because what gets measured, gets done.</p>
+          <p className="text-sm text-gray-500 mb-4">Reems Rude Reminders is the first of its kind habit-building app. These analytics show you exactly how consistent you're being — streaks, completion rates, and your best days. Because what gets measured, gets done.</p>
           <button
             onClick={onUpgrade}
             className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white font-semibold py-2.5 px-6 rounded-full text-sm transition-colors"

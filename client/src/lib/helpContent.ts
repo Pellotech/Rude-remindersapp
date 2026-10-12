@@ -25,7 +25,7 @@ export const helpCategories: HelpCategory[] = [
     id: "getting-started",
     title: "Getting Started",
     icon: "Rocket",
-    description: "Learn the basics of Rude Reminders",
+    description: "Learn the basics of Reems Rude Reminders",
     articles: [
       {
         id: "create-account",
@@ -36,7 +36,7 @@ export const helpCategories: HelpCategory[] = [
           "Open the app — you'll be taken to the sign-in screen",
           "Choose Apple, Google, Facebook, or email to register",
           "Your reminders sync across all your devices",
-          "An account is required to use Rude Reminders"
+          "An account is required to use Reems Rude Reminders"
         ],
         faqs: [
           { question: "Which login method is best?", answer: "Apple Sign-In is fastest on iOS devices and keeps your email private. All methods work equally well." },
@@ -160,7 +160,7 @@ export const helpCategories: HelpCategory[] = [
         icon: "ShieldCheck",
         keywords: ["blocked", "rejected", "safety", "moderation", "harmful", "content", "error", "can't create"],
         steps: [
-          "Rude Reminders screens reminder text for genuinely harmful content before it's created",
+          "Reems Rude Reminders screens reminder text for genuinely harmful content before it's created",
           "This is separate from the app's rudeness — sarcasm, dark humor, and mild profanity are all fine and expected",
           "What actually gets blocked: things like real-world violence, illegal activity, and credible threats — not ordinary rudeness",
           "If a reminder is blocked, you'll see a message asking you to rephrase it",
@@ -475,8 +475,8 @@ export const helpCategories: HelpCategory[] = [
         icon: "Settings",
         keywords: ["cancel", "manage", "subscription", "settings"],
         steps: [
-          "On iPhone: Settings → Apple ID → Subscriptions → Rude Reminders",
-          "On Android: Play Store → Menu → Subscriptions → Rude Reminders",
+          "On iPhone: Settings → Apple ID → Subscriptions → Reems Rude Reminders",
+          "On Android: Play Store → Menu → Subscriptions → Reems Rude Reminders",
           "Change plans or cancel here",
           "Cancellation takes effect at end of your billing period — you keep access until then"
         ],
@@ -499,8 +499,8 @@ export const helpCategories: HelpCategory[] = [
         icon: "BellOff",
         keywords: ["notification", "alert", "not working", "missing", "push"],
         steps: [
-          "iPhone: Settings → Notifications → Rude Reminders → Allow Notifications ON",
-          "Android: Settings → Apps → Rude Reminders → Notifications ON",
+          "iPhone: Settings → Notifications → Reems Rude Reminders → Allow Notifications ON",
+          "Android: Settings → Apps → Reems Rude Reminders → Notifications ON",
           "Check that Do Not Disturb / Focus modes allow our app",
           "In-app: Settings → Notifications → make sure they're enabled",
           "Try creating a test reminder using the +10s Quick Reminder button"

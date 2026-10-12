@@ -9,7 +9,7 @@ import AppIntents
 @available(iOS 16.0, *)
 struct AddReminderIntent: AppIntent {
     static var title: LocalizedStringResource = "Add Reminder"
-    static var description = IntentDescription("Creates a new rude reminder in Rude Reminders.")
+    static var description = IntentDescription("Creates a new rude reminder in Reems Rude Reminders.")
 
     @Parameter(title: "What to be reminded of")
     var content: String
@@ -33,9 +33,9 @@ struct AddReminderIntent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         guard let token = AccessToken.load() else {
             return .result(dialog: """
-            You haven't connected Rude Reminders to Siri yet. Open Settings, \
+            You haven't connected Reems Rude Reminders to Siri yet. Open Settings, \
             Siri and Shortcuts in the app, generate an access token, then run \
-            Connect Rude Reminders once.
+            Connect Reems Rude Reminders once.
             """)
         }
 
@@ -51,13 +51,13 @@ struct AddReminderIntent: AppIntent {
         } catch ReminderAPI.APIError.unauthorized {
             AccessToken.clear()
             return .result(dialog: """
-            Your Rude Reminders access token isn't valid anymore. Generate a \
+            Your Reems Rude Reminders access token isn't valid anymore. Generate a \
             new one in Settings, Siri and Shortcuts, and reconnect.
             """)
         } catch ReminderAPI.APIError.server(let message) {
-            return .result(dialog: "Rude Reminders couldn't create that: \(message)")
+            return .result(dialog: "Reems Rude Reminders couldn't create that: \(message)")
         } catch {
-            return .result(dialog: "Couldn't reach Rude Reminders. Check your connection and try again.")
+            return .result(dialog: "Couldn't reach Reems Rude Reminders. Check your connection and try again.")
         }
     }
 }

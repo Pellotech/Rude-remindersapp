@@ -139,6 +139,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       await apiRequest(`/api/reminders/${currentReminder.id}/complete`, { method: 'PATCH' });
 
       await queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
 
       toast({
         title: "Reminder Completed",
@@ -168,6 +169,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       await apiRequest(`/api/reminders/${currentReminder.id}/not-accomplished`, { method: 'PATCH' });
 
       await queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
 
       toast({
         title: "Logged 💪",

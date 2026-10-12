@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Link, useLocation } from "wouter";
 import type { User } from "@shared/schema";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 import { clearAuthToken, apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function Navigation() {
@@ -48,8 +48,8 @@ export default function Navigation() {
             <Link href="/">
               <img 
                 src={logoImage} 
-                alt="Rude Reminders" 
-                className="w-[200px] sm:w-[240px] h-auto object-contain cursor-pointer"
+                alt="Reems Rude Reminders" 
+                className="h-[120px] sm:h-[140px] w-auto object-contain cursor-pointer"
                 data-testid="nav-logo"
               />
             </Link>

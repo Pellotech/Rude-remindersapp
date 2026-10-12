@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.rudereminders.app',
-  appName: 'Rude Reminders',
+  appName: 'Reems Rude Reminders',
   webDir: 'dist/public',
   server: {
     androidScheme: 'https',

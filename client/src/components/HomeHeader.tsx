@@ -58,30 +58,51 @@ export function HomeHeader({
   const badgeColor = RUDENESS_COLORS[rudenessLevel] ?? RUDENESS_COLORS[3];
   const badgeTextColor = [1, 3].includes(rudenessLevel) ? '#111827' : '#FFFFFF';
 
-  // Sticky Rudy behavior — all internal
-  const rudyRef = useRef<HTMLDivElement>(null);
-  const [rudySticky, setRudySticky] = useState(false);
+  // ── Floating Reem behaviour ─────────────────────────────────────────────
+  // ONE widget instance is always mounted (so Reem's bubble/pose never resets).
+  // When its home spot scrolls off-screen it glides into a floating position;
+  // tapping it (or the ×) sends it back home until the user scrolls back up.
+  const homeRef = useRef<HTMLDivElement>(null);
+  const widgetRef = useRef<HTMLDivElement>(null);
+  const [offScreen, setOffScreen] = useState(false);
+  const [docked, setDocked] = useState(false);      // user sent it home
+  const [leaving, setLeaving] = useState(false);    // playing the exit animation
+  const [homeHeight, setHomeHeight] = useState<number | undefined>(undefined);
   const [rudyFloatingEnabled, setRudyFloatingEnabled] = useState(
     () => localStorage.getItem('rudy_widget_visible') !== 'false'
   );
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      setRudyFloatingEnabled((e as CustomEvent).detail);
-    };
+    const handler = (e: Event) => setRudyFloatingEnabled((e as CustomEvent).detail);
     window.addEventListener('rudy_widget_visibility_changed', handler);
     return () => window.removeEventListener('rudy_widget_visibility_changed', handler);
   }, []);
 
   useEffect(() => {
-    if (!rudyRef.current) return;
+    if (!homeRef.current) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setRudySticky(!entry.isIntersecting),
+      ([entry]) => {
+        const gone = !entry.isIntersecting;
+        if (gone && widgetRef.current) {
+          // Remember the real height so the page doesn't jump when it lifts off
+          setHomeHeight(widgetRef.current.offsetHeight);
+        }
+        setOffScreen(gone);
+        if (!gone) { setDocked(false); setLeaving(false); } // back in view → reset
+      },
       { threshold: 0, rootMargin: '-60px 0px 0px 0px' }
     );
-    observer.observe(rudyRef.current);
+    observer.observe(homeRef.current);
     return () => observer.disconnect();
   }, []);
+
+  const floating = offScreen && rudyFloatingEnabled && !docked;
+
+  const sendHome = () => {
+    if (leaving) return;
+    setLeaving(true);
+    window.setTimeout(() => { setDocked(true); setLeaving(false); }, 220);
+  };
 
   const rudyWidget = isPremium ? (
     <RudyWidget
@@ -125,23 +146,52 @@ export function HomeHeader({
           </h1>
         </div>
       </div>
-      <div ref={rudyRef} style={{ height: rudySticky ? '120px' : 'auto' }}>
-        {!rudySticky && rudyWidget}
-      </div>
-      {rudySticky && rudyFloatingEnabled && (
+      {/* Home spot keeps its height while Reem floats, so nothing below jumps */}
+      <div ref={homeRef} style={{ minHeight: floating ? homeHeight : undefined }}>
         <div
-          className="fixed top-[60px] left-0 right-0 z-50 px-4 md:px-[20%]"
-          style={{
-            backgroundColor: 'transparent',
-            transition: 'transform 0.2s ease, opacity 0.2s ease',
-            animation: 'rudySlideIn 0.2s ease',
-            pointerEvents: 'none',
-          }}>
-          <div style={{ pointerEvents: 'auto' }}>
+          ref={widgetRef}
+          className={floating ? (leaving ? 'reem-float-out' : 'reem-float-in') : undefined}
+          style={floating ? {
+            position: 'fixed',
+            top: 60,
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            padding: '0 16px',
+            filter: 'drop-shadow(0 6px 14px rgba(0,0,0,0.18))',
+          } : undefined}
+          // While floating, a tap sends Reem home instead of triggering her tap reaction
+          onClickCapture={floating ? (e) => {
+            const t = e.target as HTMLElement;
+            if (t.closest('[data-reem-keep-tap]')) return; // e.g. Go Premium button
+            e.stopPropagation();
+            e.preventDefault();
+            sendHome();
+          } : undefined}
+        >
+          <div className={floating ? 'md:px-[20%]' : undefined} style={{ position: 'relative' }}>
             {rudyWidget}
+            {floating && (
+              <button
+                type="button"
+                aria-label="Send Reem back"
+                onClick={sendHome}
+                style={{
+                  position: 'absolute', top: 0, right: -6,
+                  width: 26, height: 26, borderRadius: '50%',
+                  background: '#FFFFFF', border: '2px solid #C9A063',
+                  color: '#6B3410', fontSize: 13, fontWeight: 700, lineHeight: 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.2)', cursor: 'pointer',
+                }}
+                data-testid="button-reem-dock"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

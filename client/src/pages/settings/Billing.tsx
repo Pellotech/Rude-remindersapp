@@ -1,61 +1,99 @@
-
 import { useState } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import { getPlatformInfo } from "@/utils/platformDetection";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, Home, ChevronRight, Crown } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ChevronLeft, Home, ChevronRight, Crown, ExternalLink } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { revenueCatService } from "@/services/revenueCatService";
+
+// ── Links (kept in one place so they're easy to update) ──────────────────────
+const LINKS = {
+  privacy: "https://app.termly.io/policy-viewer/policy.html?policyUUID=378d9c6b-c46e-44ed-83a2-d8770229969c",
+  terms: "https://app.termly.io/policy-viewer/policy.html?policyUUID=34f340a5-79a7-4f66-b4f9-81f1e9693176",
+  eula: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
+  iosManage: "https://apps.apple.com/account/subscriptions",
+  androidManage: "https://play.google.com/store/account/subscriptions",
+  supportEmail: "mailto:ruderemindersinfo@gmail.com?subject=Reems%20Rude%20Reminders%20%E2%80%94%20Billing%20Question",
+};
+
+const openLink = async (url: string) => {
+  if (url.startsWith("mailto:")) {
+    window.location.href = url;
+    return;
+  }
+  if (Capacitor.isNativePlatform()) {
+    const { Browser } = await import("@capacitor/browser");
+    await Browser.open({ url, presentationStyle: "popover" as any });
+  } else {
+    window.open(url, "_blank");
+  }
+};
+
+function Row({ label, onClick, value, external, testId, last }: {
+  label: string; onClick?: () => void; value?: React.ReactNode; external?: boolean; testId?: string; last?: boolean;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className={`flex items-center justify-between px-4 py-3.5 ${last ? "" : "border-b border-[#38383A]"} ${onClick ? "cursor-pointer hover:bg-[#2C2C2E] transition-colors" : ""}`}
+      data-testid={testId}
+    >
+      <span className="text-white text-[17px]">{label}</span>
+      {value ?? (onClick && (external
+        ? <ExternalLink className="h-4 w-4 text-[#48484A]" />
+        : <ChevronRight className="h-5 w-5 text-[#48484A]" />))}
+    </div>
+  );
+}
+
+function Section({ title, children, footer }: { title: string; children: React.ReactNode; footer?: string }) {
+  return (
+    <div>
+      <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">{title}</h2>
+      <div className="bg-[#1C1C1E] rounded-xl overflow-hidden border border-[#C9A063]/40">{children}</div>
+      {footer && <p className="text-[13px] text-[#8E8E93] px-4 mt-2 leading-snug">{footer}</p>}
+    </div>
+  );
+}
 
 export default function Billing() {
   const { toast } = useToast();
-  const { isAndroid, isIOS } = getPlatformInfo();
-  const queryClient = useQueryClient();
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  
-  const { data: user, isLoading } = useQuery<any>({
-    queryKey: ["/api/auth/user"],
-  });
+  const { isAndroid, isIOS, isNative } = getPlatformInfo();
+  const [restoring, setRestoring] = useState(false);
 
-  const handleCancelSubscription = () => {
-    setShowCancelDialog(false);
-    toast({
-      title: "How to Cancel",
-      description: "Go to Settings → Your Name → Subscriptions on your iOS device.",
-    });
-  };
+  const { data: user, isLoading } = useQuery<any>({ queryKey: ["/api/auth/user"] });
 
-  if (isLoading) {
-    return (
-      <SplashScreen />
-    );
-  }
+  if (isLoading) return <SplashScreen />;
 
-  const isSubscribed = user?.subscriptionStatus === "active";
-  const subscriptionPlan = user?.subscriptionPlan || "free";
+  const status: string | undefined = user?.subscriptionStatus;
+  const isSubscribed = status === "active";
   const subscriptionEndsAt = user?.subscriptionEndsAt;
+  const storeName = isIOS ? "Apple ID" : isAndroid ? "Google Play" : "app store";
 
-  const getStatusColor = () => {
-    if (isSubscribed) return "text-[#22C55E]";
-    if (user?.subscriptionStatus === "canceled") return "text-[#F59E0B]";
-    return "text-[#8E8E93]";
-  };
+  const statusText = isSubscribed ? "Active" : status === "canceled" ? "Canceled" : status === "expired" ? "Expired" : "Free";
+  const statusColor = isSubscribed ? "text-[#22C55E]" : status === "canceled" ? "text-[#F59E0B]" : "text-[#8E8E93]";
 
-  const getStatusText = () => {
-    if (isSubscribed) return "Active";
-    if (user?.subscriptionStatus === "canceled") return "Canceled";
-    if (user?.subscriptionStatus === "expired") return "Expired";
-    return "Free";
+  const handleRestore = async () => {
+    if (restoring) return;
+    setRestoring(true);
+    try {
+      await revenueCatService.initialize();
+      if (user?.id) await revenueCatService.logIn(user.id);
+      const restored = await revenueCatService.restorePurchases();
+      if (restored) {
+        try { await apiRequest("/api/sync-subscription", { method: "POST" }); } catch { /* webhook will catch up */ }
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        await queryClient.invalidateQueries({ queryKey: ["/api/user/premium-status"] });
+        toast({ title: "Premium restored 🌹", description: "Welcome back — everything is unlocked." });
+      } else {
+        toast({ title: "Nothing to restore", description: `No active subscription found for this ${storeName}.` });
+      }
+    } finally {
+      setRestoring(false);
+    }
   };
 
   return (
@@ -78,92 +116,71 @@ export default function Billing() {
           <h1 className="text-[34px] font-bold text-white px-4 pb-2">Payment & Billing</h1>
         </div>
 
-        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
-          {/* Current Plan Section */}
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Current Plan</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#38383A]">
-                <span className="text-white text-[17px]">Plan</span>
+        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? "120px" : isIOS ? "80px" : "24px" }}>
+          {/* Current plan */}
+          <Section title="Current Plan">
+            <Row
+              label="Plan"
+              value={
                 <div className="flex items-center gap-2">
-                  {subscriptionPlan === 'premium' && <Crown className="h-4 w-4 text-[#FFD700]" />}
-                  <span className="text-[#8E8E93] text-[17px]">
-                    {subscriptionPlan === 'premium' ? 'Premium' : 'Free'}
-                  </span>
+                  {isSubscribed && <Crown className="h-4 w-4 text-[#C9A063]" />}
+                  <span className="text-[#8E8E93] text-[17px]">{isSubscribed ? "Reems Rude Reminders Premium" : "Free"}</span>
                 </div>
-              </div>
-              <div className="flex items-center justify-between px-4 py-3.5 border-b border-[#38383A]">
-                <span className="text-white text-[17px]">Status</span>
-                <span className={`text-[17px] font-semibold ${getStatusColor()}`}>
-                  {getStatusText()}
-                </span>
-              </div>
-              {subscriptionEndsAt && isSubscribed && (
-                <div className="flex items-center justify-between px-4 py-3.5">
-                  <span className="text-white text-[17px]">Next Billing</span>
-                  <span className="text-[#8E8E93] text-[17px]">
-                    {new Date(subscriptionEndsAt).toLocaleDateString()}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+              }
+            />
+            <Row label="Status" last={!(subscriptionEndsAt && isSubscribed)} value={<span className={`text-[17px] font-semibold ${statusColor}`}>{statusText}</span>} />
+            {subscriptionEndsAt && isSubscribed && (
+              <Row label="Renews" last value={<span className="text-[#8E8E93] text-[17px]">{new Date(subscriptionEndsAt).toLocaleDateString()}</span>} />
+            )}
+          </Section>
 
-          {/* Subscription Management */}
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Manage</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+          {/* Subscription */}
+          <Section
+            title="Subscription"
+            footer={
+              !isNative
+                ? "Subscriptions are bought and managed in the Reems Rude Reminders app on iPhone or Android."
+                : isSubscribed
+                ? `Your subscription is billed through your ${storeName}.`
+                : "New phone or reinstalled the app? Tap Restore Purchases to get your Premium back."
+            }
+          >
+            {!isSubscribed && (
               <Link href="/subscribe">
-                <div 
-                  className="flex items-center justify-between px-4 py-3.5 cursor-pointer hover:bg-[#2C2C2E] transition-colors"
-                  data-testid="button-review-plans"
-                >
-                  <span className="text-white text-[17px]">
-                    {isSubscribed ? 'Manage Subscription' : 'Upgrade to Premium'}
-                  </span>
-                  <ChevronRight className="h-5 w-5 text-[#48484A]" />
+                <div>
+                  <Row label="Upgrade to Premium" onClick={() => {}} testId="button-upgrade" last={!isNative} />
                 </div>
               </Link>
-            </div>
-          </div>
+            )}
+            {isNative && isSubscribed && (
+              <Row
+                label="Manage Subscription"
+                onClick={() => openLink(isIOS ? LINKS.iosManage : LINKS.androidManage)}
+                external
+                testId="button-manage-subscription"
+              />
+            )}
+            {isNative && (
+              <Row
+                label={restoring ? "Restoring..." : "Restore Purchases"}
+                onClick={handleRestore}
+                testId="button-restore-purchases"
+                last
+              />
+            )}
+          </Section>
 
-          {/* Cancel Subscription - Only for subscribed users */}
-          {isSubscribed && (
-            <div className="pt-4">
-              <button
-                onClick={() => setShowCancelDialog(true)}
-                className="w-full bg-[#1C1C1E] text-white text-[17px] py-3.5 px-4 rounded-xl hover:bg-[#2C2C2E] transition-colors"
-                data-testid="button-cancel-subscription"
-              >
-                Cancel Subscription
-              </button>
-            </div>
-          )}
+          {/* Legal & help */}
+          <Section title="Legal & Help">
+            <Row label="Privacy Policy" onClick={() => openLink(LINKS.privacy)} external testId="link-privacy" />
+            <Row label="Terms of Use" onClick={() => openLink(LINKS.terms)} external testId="link-terms" />
+            {!isAndroid && (
+              <Row label="End User License Agreement" onClick={() => openLink(LINKS.eula)} external testId="link-eula" />
+            )}
+            <Row label="Contact Billing Support" onClick={() => openLink(LINKS.supportEmail)} external testId="link-support" last />
+          </Section>
         </div>
       </div>
-
-      {/* Cancel Subscription Dialog */}
-      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent className="bg-[#1C1C1E] border-[#38383A] rounded-xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">Cancel Subscription</AlertDialogTitle>
-            <AlertDialogDescription className="text-[#8E8E93]">
-              To cancel, go to your iOS device Settings → Your Name → Subscriptions → Rude Reminders.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-[#2C2C2E] border-0 text-white hover:bg-[#3C3C3E] rounded-xl">
-              Close
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleCancelSubscription}
-              className="bg-[#0A84FF] hover:bg-[#0A7AEF] text-white border-0 rounded-xl"
-            >
-              Got It
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

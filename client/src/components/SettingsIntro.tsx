@@ -72,7 +72,7 @@ export function SettingsIntro({ isOpen, onClose }: SettingsIntroProps) {
               Welcome to Settings
             </h2>
             <p style={{ fontSize: 14, color: textSecondary, lineHeight: 1.5 }}>
-              This is where you make Rude Reminders truly yours — your info, your alerts, your plan. Take a quick spin so you know what's where.
+              This is where you make Reems Rude Reminders truly yours — your info, your alerts, your plan. Take a quick spin so you know what's where.
             </p>
           </div>
         );

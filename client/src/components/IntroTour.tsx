@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { getPlatformInfo } from "@/utils/platformDetection";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 
 const RUDY_BASE = "/rudy/";
 const RUDY_ARMS_CROSSED = `${RUDY_BASE}Rudy_confident_arms_crossed_transparent.png`;
@@ -63,7 +63,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
       case 0:
         return (
           <div className="text-center">
-            <img src={logoImage} alt="Rude Reminders" style={{ width: 52, height: 'auto', margin: '0 auto 12px' }} />
+            <img src={logoImage} alt="Reems Rude Reminders" style={{ width: 52, height: 'auto', margin: '0 auto 12px' }} />
             <div style={{ position: 'relative', display: 'inline-block', marginBottom: 8 }}>
               <div style={{
                 background: 'white',
@@ -96,7 +96,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
               Meet Rudy. Your new accountability partner.
             </h2>
             <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5 }}>
-              He doesn't sugarcoat. He doesn't let you off the hook. Rude Reminders delivers blunt, funny, AI-generated reminders that actually get you moving.
+              He doesn't sugarcoat. He doesn't let you off the hook. Reems Rude Reminders delivers blunt, funny, AI-generated reminders that actually get you moving.
             </p>
           </div>
         );
@@ -550,7 +550,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
         `}</style>
 
         <DialogHeader className="sr-only">
-          <DialogTitle>Welcome to Rude Reminders</DialogTitle>
+          <DialogTitle>Welcome to Reems Rude Reminders</DialogTitle>
           <DialogDescription>
             A short tour of how to create reminders, set rudeness levels, and track your habit progress.
           </DialogDescription>

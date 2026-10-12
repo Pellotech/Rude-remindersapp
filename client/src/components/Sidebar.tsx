@@ -42,7 +42,7 @@ export default function Sidebar() {
             <div className="mt-3 pt-3 border-t">
               <ShareButton
                 title="Daily goal achieved!"
-                message={`Just completed ${stats.completedToday} tasks today with Rude Reminders! This app keeps me on track with the perfect amount of motivation.`}
+                message={`Just completed ${stats.completedToday} tasks today with Reems Rude Reminders! This app keeps me on track with the perfect amount of motivation.`}
                 className="w-full text-xs"
               />
             </div>

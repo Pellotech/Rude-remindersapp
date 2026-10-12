@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from '@/utils/platformDetection';
 import { BackNavigation } from "@/components/BackNavigation";
 import { revenueCatService } from "@/services/revenueCatService";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 import RoseSpinner from "@/components/RoseSpinner";
 
 interface PremiumScreenProps {
@@ -237,7 +237,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
           <div className="bg-white rounded-[24px] overflow-hidden p-8">
             <div className="text-center space-y-6">
               <div className="w-24 h-24 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
-                <img src={logoImage} alt="Rude Reminders" className="h-16 w-auto" />
+                <img src={logoImage} alt="Reems Rude Reminders" className="h-16 w-auto" />
               </div>
             
               <div>

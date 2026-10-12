@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import rudeRemindersLogo from '@assets/translusant_logo2_1767108484844.png';
+import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -1205,7 +1205,7 @@ export default function ReminderForm({
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowLimitModal(false)}>
                 <div className="bg-white rounded-[20px] p-6 mx-4 max-w-sm w-full shadow-xl" onClick={e => e.stopPropagation()}>
                   <div className="text-center space-y-4">
-                    <img src={rudeRemindersLogo} alt="Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
+                    <img src={rudeRemindersLogo} alt="Reems Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
                     <h2 className="text-xl font-bold text-[#111827]">Free Limit Reached</h2>
                     <p className="text-[#6B7280] text-sm">You've reached the free limit of 30 reminders. Upgrade to Premium for unlimited reminders and full access to all features.</p>
                     <div className="space-y-2 pt-2">

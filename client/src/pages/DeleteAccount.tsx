@@ -81,7 +81,7 @@ export default function DeleteAccount() {
           <div className="py-6 px-4 space-y-6">
             <div className="bg-[#1C1C1E] rounded-xl p-4">
               <p className="text-[15px] text-gray-300 leading-relaxed">
-                If you wish to delete your Rude Reminders account, you will need to log in and confirm your identity. This process will permanently remove your account and all associated data.
+                If you wish to delete your Reems Rude Reminders account, you will need to log in and confirm your identity. This process will permanently remove your account and all associated data.
               </p>
             </div>
 

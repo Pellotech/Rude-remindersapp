@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 import type { Reminder } from "@shared/schema";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
 import { ItHitToggle } from "./ItHitToggle";
@@ -198,7 +198,7 @@ export function ShareButton({
             if (savedUri) {
               console.log(`📁 Image saved at: ${savedUri}`);
               const sharePayload = {
-                title: `Rude Reminders: ${reminderTitle}`,
+                title: `Reems Rude Reminders: ${reminderTitle}`,
                 text: "Get the app at rudereminders.app",
                 files: [savedUri],
                 dialogTitle: "Share your reminder",
@@ -220,7 +220,7 @@ export function ShareButton({
         // Fallback to text-only share on native
         console.log("📝 Falling back to text-only share");
         const textPayload = {
-          title: `Rude Reminders: ${reminderTitle}`,
+          title: `Reems Rude Reminders: ${reminderTitle}`,
           text: shareText,
           dialogTitle: "Share your reminder",
         };
@@ -243,7 +243,7 @@ export function ShareButton({
             
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
               await navigator.share({
-                title: `Rude Reminders: ${reminderTitle}`,
+                title: `Reems Rude Reminders: ${reminderTitle}`,
                 text: "Get the app at rudereminders.app",
                 files: [file],
               });
@@ -260,7 +260,7 @@ export function ShareButton({
         
         // Fallback to text-only share on web
         await navigator.share({
-          title: `Rude Reminders: ${reminderTitle}`,
+          title: `Reems Rude Reminders: ${reminderTitle}`,
           text: shareText,
         });
         
@@ -368,8 +368,8 @@ export function ShareButton({
               <div className="flex items-center justify-center mb-3">
                 <img
                   src={logoImage}
-                  alt="Rude Reminders"
-                  className="h-8 w-auto"
+                  alt="Reems Rude Reminders"
+                  className="h-12 w-auto"
                   crossOrigin="anonymous"
                 />
               </div>

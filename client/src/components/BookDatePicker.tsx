@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { addDays, isSameDay, format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import rudeRemindersLogo from '@assets/translusant_logo2_1767108484844.png';
+import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 
 interface ScheduleResult {
   scheduledFor?: string;
@@ -437,7 +437,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   color: '#C9A063', fontSize: isTablet ? 11 : 8, letterSpacing: '0.12em',
                   fontWeight: 500, textAlign: 'center', lineHeight: 1.7,
                   position: 'relative', zIndex: 1,
-                }}>RUDE REMINDERS</div>
+                }}>REEMS RUDE REMINDERS</div>
                 {/* Sub */}
                 <div style={{
                   color: 'rgba(201,160,99,0.5)', fontSize: isTablet ? 9 : 7,

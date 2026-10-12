@@ -184,7 +184,7 @@ class NotificationService {
       
       const mailOptions = {
         from: {
-          name: 'Rude Reminders',
+          name: 'Reems Rude Reminders',
           address: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com'
         },
         to: user.email,
@@ -248,7 +248,7 @@ class NotificationService {
         </div>
         
         <div class="footer">
-          <p>This reminder was sent by Rude Reminders</p>
+          <p>This reminder was sent by Reems Rude Reminders</p>
           <p>Manage your notifications in your account settings</p>
         </div>
       </body>
@@ -273,7 +273,7 @@ ${reminder.motivationalQuote ? `💪 ${reminder.motivationalQuote}\n` : ''}
 Time to take action! 🚀
 
 ---
-This reminder was sent by Rude Reminders
+This reminder was sent by Reems Rude Reminders
 Manage your notifications in your account settings
     `.trim();
   }
@@ -287,11 +287,11 @@ Manage your notifications in your account settings
     try {
       const testMailOptions = {
         from: {
-          name: 'Rude Reminders',
+          name: 'Reems Rude Reminders',
           address: process.env.EMAIL_USER || 'ruderemindersinfo@gmail.com'
         },
         to: userEmail,
-        subject: '🔔 Test Email from Rude Reminders - Gmail Updated!',
+        subject: '🔔 Test Email from Reems Rude Reminders - Gmail Updated!',
         html: `
           <h2>🎉 Gmail Service is Working!</h2>
           <p>This test confirms your updated Gmail settings are working perfectly!</p>

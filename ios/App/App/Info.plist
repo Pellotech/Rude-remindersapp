@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Rude Reminders</string>
+	<string>Reems Rude Reminders</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIconName</key>
@@ -45,13 +45,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Rude Reminders needs access to your camera to take photos for your reminders.</string>
+	<string>Reems Rude Reminders needs access to your camera to take photos for your reminders.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Rude Reminders needs permission to save photos to your library.</string>
+	<string>Reems Rude Reminders needs permission to save photos to your library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Rude Reminders needs access to your photo library to attach images to your reminders.</string>
+	<string>Reems Rude Reminders needs access to your photo library to attach images to your reminders.</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>This helps us show you ads that are more relevant to you and support the free version of Rude Reminders.</string>
+	<string>This helps us show you ads that are more relevant to you and support the free version of Reems Rude Reminders.</string>
 	<key>REVENUECAT_API_KEY</key>
 	<string>appl_EcOTAAHXxtTgOjDXhasLTEmAbPP</string>
 	<key>SKAdNetworkItems</key>

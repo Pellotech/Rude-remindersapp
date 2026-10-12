@@ -581,7 +581,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
       <div style={{ position: "relative", width: "80px", height: "80px", flexShrink: 0, alignSelf: "center" }}>
         <img
           src={rudyImg}
-          alt="Rudy"
+          alt="Reem"
           style={{
             width: "80px",
             height: "80px",
@@ -590,8 +590,8 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
           }}
         />
         <img
-          src="/rudy/rudy_nametag.png"
-          alt="Rudy"
+          src="/rudy/reem_nametag.png"
+          alt="Reem"
           style={{
             position: "absolute",
             bottom: "-20px",
@@ -664,9 +664,10 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
               {/* Triangle inner — white fill */}
               <div style={{ position: 'absolute', left: '-7px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '6px solid transparent', borderBottom: '6px solid transparent', borderRight: '8px solid white' }} />
               <p style={{ fontSize: '11px', color: '#C53B3B', fontStyle: 'italic', margin: 0, lineHeight: '1.4' }}>
-                Find out what Rudy really has to say about you..
+                Find out what Reem really has to say about you..
               </p>
               <button
+                data-reem-keep-tap="true"
                 onClick={(e) => { e.stopPropagation(); onPremiumPress?.(); }}
                 style={{ position: 'absolute', bottom: '-14px', left: '50%', transform: 'translateX(-50%)', zIndex: 2, backgroundColor: '#C53B3B', color: 'white', border: 'none', borderRadius: '20px', padding: '5px 14px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap' }}
               >

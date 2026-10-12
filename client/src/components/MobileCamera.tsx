@@ -123,7 +123,7 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0, 
       // Fallback - show instructions
       toast({
         title: "Open Settings Manually",
-        description: "Go to Settings > Rude Reminders > Enable Camera/Photos",
+        description: "Go to Settings > Reems Rude Reminders > Enable Camera/Photos",
         variant: "destructive",
       });
     }
@@ -450,8 +450,8 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0, 
             </AlertDialogTitle>
             <AlertDialogDescription>
               {permissionType === 'camera' 
-                ? 'Rude Reminders needs access to your camera to take photos for your reminders. Please enable camera access in Settings.'
-                : 'Rude Reminders needs access to your photo library to select images for your reminders. Please enable photo access in Settings.'}
+                ? 'Reems Rude Reminders needs access to your camera to take photos for your reminders. Please enable camera access in Settings.'
+                : 'Reems Rude Reminders needs access to your photo library to select images for your reminders. Please enable photo access in Settings.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

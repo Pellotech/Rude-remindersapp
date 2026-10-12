@@ -13,7 +13,7 @@ export default function SplashScreen() {
     >
       <img
         src="/rose_transparent.png"
-        alt="Rude Reminders"
+        alt="Reems Rude Reminders"
         className="rose-appear"
         style={{
           width: 180,

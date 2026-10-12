@@ -38,21 +38,21 @@ export function CompletionCelebration({
     if (completionStreak >= 7) {
       return {
         title: "🔥 AMAZING STREAK!",
-        message: `Just completed "${reminderTitle}" - that's ${completionStreak} reminders in a row! Rude Reminders keeps me crushing my goals!`,
+        message: `Just completed "${reminderTitle}" - that's ${completionStreak} reminders in a row! Reems Rude Reminders keeps me crushing my goals!`,
         icon: Trophy,
         color: "text-yellow-500"
       };
     } else if (completionStreak >= 3) {
       return {
         title: "⭐ GREAT PROGRESS!",
-        message: `Completed "${reminderTitle}" and ${completionStreak} other tasks! Rude Reminders is keeping me on track.`,
+        message: `Completed "${reminderTitle}" and ${completionStreak} other tasks! Reems Rude Reminders is keeping me on track.`,
         icon: Star,
         color: "text-blue-500"
       };
     } else {
       return {
         title: "✅ TASK COMPLETE!",
-        message: `Just finished "${reminderTitle}" thanks to Rude Reminders! This app gives me exactly the push I need.`,
+        message: `Just finished "${reminderTitle}" thanks to Reems Rude Reminders! This app gives me exactly the push I need.`,
         icon: Zap,
         color: "text-green-500"
       };

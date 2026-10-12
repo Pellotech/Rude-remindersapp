@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/drawer";
 import { helpCategories, searchHelp, type HelpArticle as HelpArticleType, type HelpCategory } from "@/lib/helpContent";
 import { HelpArticle } from "./HelpArticle";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 
 interface HelpCenterProps {
   isOpen: boolean;
@@ -74,7 +74,7 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
         <DrawerHeader className="p-0">
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#B8914F]">
             <div className="flex items-center gap-2">
-              <img src={logoImage} alt="Rude Reminders" className="h-7 w-auto" />
+              <img src={logoImage} alt="Reems Rude Reminders" className="h-10 w-auto" />
               <DrawerTitle className="font-semibold text-white text-base">Help Center</DrawerTitle>
             </div>
             <Button variant="ghost" size="sm" onClick={handleClose} className="h-8 w-8 p-0 text-white hover:bg-white/20">

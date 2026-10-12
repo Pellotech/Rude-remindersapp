@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 
 const STORAGE_KEY_INDEX = "rudeReminders_motivationalIndex";
 const STORAGE_KEY_LAST_SHOWN = "rudeReminders_lastMotivationalShown";
@@ -91,7 +91,7 @@ export function MotivationalPopup({
         <div className="bg-[#FDF3E3] px-4 pt-4 pb-4 flex flex-row items-start gap-3">
           <img
             src={logoImage}
-            alt="Rude Reminders"
+            alt="Reems Rude Reminders"
             className="w-14 h-14 object-contain flex-shrink-0"
           />
           <p className="text-[#111827] font-bold text-base leading-snug">
@@ -108,7 +108,7 @@ export function MotivationalPopup({
           </button>
 
           <p className="text-xs text-center text-[#111827] leading-relaxed">
-            Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
+            Reems Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
           </p>
         </div>
       </div>

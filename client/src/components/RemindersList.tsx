@@ -18,6 +18,7 @@ import { SwipeableReminderCard } from "./SwipeableReminderCard";
 import { playCompletedSound, playNotAccomplishedSound } from "@/lib/soundEffects";
 import { format } from "date-fns";
 import RoseSpinner from "@/components/RoseSpinner";
+import { useNotificationContext } from "./NotificationProvider";
 
 const rudenessLevelColors = {
   1: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
@@ -58,6 +59,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   const [emojiToast, setEmojiToast] = useState<{ reminderId: string; type: 'did' | 'didnt'; x: number; y: number } | null>(null);
   const [showRudyTooltip, setShowRudyTooltip] = useState(() => !localStorage.getItem('manage_tooltip_seen'));
   const { cancelReminder: cancelNativeNotification } = useMobileNotifications();
+  // Opens the full reminder popup (same one shown when the reminder first fires)
+  const notificationContext = useNotificationContext();
 
   const { data: reminders = [], isLoading } = useQuery<Reminder[]>({
     queryKey: ["/api/reminders"],
@@ -229,7 +232,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
         {/* Permanent instruction label — always visible on Past tab */}
         {tab === 'past' && (
           <p style={{ fontSize: '12px', color: '#888', fontStyle: 'italic', textAlign: 'left', marginBottom: '8px' }}>
-            Tap 😊 or 😔 to log what happened
+            Tap a reminder to open it, or tap 😊 or 😔 to log what happened
           </p>
         )}
 
@@ -283,8 +286,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
               const hoursLeft = Math.floor(remainingMs / (60 * 60 * 1000));
               const minutesLeft = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
               const shareMessage = reminder.completed
-                ? `I just crushed it! ✅ ${reminder.title} — tracked with Rude Reminders 🔥`
-                : `Keeping it real — missed ${reminder.title} today. Tomorrow I'll do better 💪 — Rude Reminders`;
+                ? `I just crushed it! ✅ ${reminder.title} — tracked with Reems Rude Reminders 🔥`
+                : `Keeping it real — missed ${reminder.title} today. Tomorrow I'll do better 💪 — Reems Rude Reminders`;
               return (
                 <SwipeableReminderCard
                   key={reminder.id}
@@ -309,7 +312,23 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                   }}
                   disabled={isPast || deleteReminderMutation.isPending}
                 >
-                  <Card className="border border-[#C9A063] w-full" style={{ overflow: 'visible' }}>
+                  <Card
+                    className={cn("border border-[#C9A063] w-full", isPast && !isLogged && "cursor-pointer active:bg-[#FDF8F0]")}
+                    style={{ overflow: 'visible' }}
+                    onClick={(e) => {
+                      // Unlogged past reminders open the full original reminder popup.
+                      // Ignore taps on the share / emoji / delete buttons.
+                      if (!isPast || isLogged) return;
+                      // Taps inside the Share preview (a pop-up rendered elsewhere on the page)
+                      // still bubble up here in React — ignore anything not physically inside this card.
+                      if (!(e.currentTarget as HTMLElement).contains(e.target as Node)) return;
+                      if ((e.target as HTMLElement).closest("button, a")) return;
+                      // Ignore the "ghost tap" that lands on the card while a pop-up is open or closing.
+                      if (document.querySelector('[role="dialog"]')) return;
+                      notificationContext?.showNotification(reminder);
+                    }}
+                    data-testid={`card-open-reminder-${reminder.id}`}
+                  >
                     <CardContent className="p-2.5">
                       <div className="flex items-center justify-between gap-2">
                         {/* Left: title + tag + date */}

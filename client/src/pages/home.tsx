@@ -564,17 +564,18 @@ export default function Home({ isPremium }: HomeProps) {
         />
       )}
 
-      {/* Floating Help Button — raised above banner on Android */}
+      {/* Floating Help Button — bottom-LEFT so it stays clear of the Create Reminder
+          button; still raised above the ad banner (more on Android for the nav bar) */}
       <div
         className={
-          isPremium ? "fixed right-4 z-50" : "fixed right-4 z-50 flex gap-2"
+          isPremium ? "fixed left-4 z-50" : "fixed left-4 z-50 flex gap-2"
         }
         style={{
           bottom: (
             isPremium ? isAndroid : Capacitor.getPlatform() === "android"
           )
-            ? "150px"
-            : "90px",
+            ? "128px"
+            : "70px",
         }}
       >
         <HelpMenu />

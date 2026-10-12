@@ -2,6 +2,10 @@ import { Link } from "wouter";
 import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic } from "lucide-react";
 import { SettingsIntro } from "@/components/SettingsIntro";
 import { useIntroTour } from "@/components/IntroTour";
+import { getPlatformInfo } from "@/utils/platformDetection";
+
+// Siri only exists on iPhone/iPad — hide the option everywhere else (Android, web).
+const showSiri = getPlatformInfo().isIOS;
 
 interface SettingsRowProps {
   icon: React.ReactNode;
@@ -64,12 +68,16 @@ export default function SettingsLanding() {
               href="/settings/notifications"
             />
             <div className="h-px bg-[#38383A] ml-12" />
-            <SettingsRow
-              icon={<Mic className="h-5 w-5" />}
-              title="Siri & Shortcuts"
-              href="/settings/siri"
-            />
-            <div className="h-px bg-[#38383A] ml-12" />
+            {showSiri && (
+              <>
+                <SettingsRow
+                  icon={<Mic className="h-5 w-5" />}
+                  title="Siri & Shortcuts"
+                  href="/settings/siri"
+                />
+                <div className="h-px bg-[#38383A] ml-12" />
+              </>
+            )}
             <SettingsRow
               icon={<CreditCard className="h-5 w-5" />}
               title="Payment & Billing"

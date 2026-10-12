@@ -49,13 +49,13 @@ async function sendVerificationEmail(toEmail: string, token: string): Promise<bo
     const logoUrl = `https://${domain}/logo.png`;
 
     await transporter.sendMail({
-      from: `"Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
+      from: `"Reems Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
       to: toEmail,
-      subject: "Verify your Rude Reminders account",
+      subject: "Verify your Reems Rude Reminders account",
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;text-align:center;">
-          <img src="${logoUrl}" alt="Rude Reminders" style="width:120px;height:auto;margin-bottom:24px;" />
-          <h2 style="color:#1B2A5E;margin-top:0;">Welcome to Rude Reminders!</h2>
+          <img src="${logoUrl}" alt="Reems Rude Reminders" style="width:120px;height:auto;margin-bottom:24px;" />
+          <h2 style="color:#1B2A5E;margin-top:0;">Welcome to Reems Rude Reminders!</h2>
           <p style="color:#374151;">Click the button below to verify your email address and activate your account.</p>
           <a href="${verifyUrl}" style="display:inline-block;background:#C53B3B;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;font-size:16px;">
             Verify My Email
@@ -87,12 +87,12 @@ export async function sendPasswordResetEmail(toEmail: string, token: string): Pr
     const logoUrl = `https://${domain}/logo.png`;
 
     await transporter.sendMail({
-      from: `"Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
+      from: `"Reems Rude Reminders" <${process.env.EMAIL_USER || "ruderemindersinfo@gmail.com"}>`,
       to: toEmail,
-      subject: "Reset your Rude Reminders password",
+      subject: "Reset your Reems Rude Reminders password",
       html: `
         <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;text-align:center;">
-          <img src="${logoUrl}" alt="Rude Reminders" style="width:120px;height:auto;margin-bottom:24px;" />
+          <img src="${logoUrl}" alt="Reems Rude Reminders" style="width:120px;height:auto;margin-bottom:24px;" />
           <h2 style="color:#1B2A5E;margin-top:0;">Reset Your Password</h2>
           <p style="color:#374151;">Click the button below to reset your password. This link expires in 1 hour.</p>
           <a href="${resetUrl}" style="display:inline-block;background:#C53B3B;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0;font-size:16px;">

@@ -5,7 +5,7 @@ import Foundation
 ///
 /// Important: an App Intents extension runs as its own process with its own
 /// app container — it does NOT share UserDefaults.standard with the main
-/// Rude Reminders app, so it can't read the token the main app stores via
+/// Reems Rude Reminders app, so it can't read the token the main app stores via
 /// Capacitor Preferences. That's why this is a separate, purpose-built token
 /// the user pastes in once via ConnectAccountIntent ("Connect Rude
 /// Reminders"). Once saved here, it persists across Siri invocations just

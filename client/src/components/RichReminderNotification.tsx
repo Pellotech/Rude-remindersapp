@@ -8,7 +8,7 @@ import { Volume2, Clock, X, ChevronDown } from "lucide-react";
 import { Reminder } from "@shared/schema";
 import { ShareButton } from "./ShareButton";
 import { ItHitToggle } from "./ItHitToggle";
-import logoImage from "@assets/translusant_logo2_1767108484844.png";
+import logoImage from "@assets/reems_logo_trimmed.png";
 import { getFullApiUrl } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
@@ -118,7 +118,7 @@ export function RichReminderNotification({
 
         {/* Header bar */}
         <div className="sticky top-0 z-10 bg-white border-b border-[#C9A063]/30 px-3 py-2 flex items-center justify-between">
-          <img src={logoImage} alt="Rude Reminders" className="h-8 w-auto" />
+          <img src={logoImage} alt="Reems Rude Reminders" className="h-12 w-auto" />
           <ShareButton
             reminder={reminder}
             className="h-8 px-3 text-xs font-bold text-[#C9A063] bg-white border-2 border-[#C9A063] rounded-full hover:bg-[#FDF3E3]"

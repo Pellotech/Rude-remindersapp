@@ -38,7 +38,7 @@ export default function OfflineScreen({ onRetry }: OfflineScreenProps) {
         No internet connection
       </h1>
       <p style={{ fontSize: 15, color: "#4b5563", maxWidth: 320, marginBottom: 24 }}>
-        Rude Reminders needs an internet connection to sign you in and sync your
+        Reems Rude Reminders needs an internet connection to sign you in and sync your
         reminders. Check your Wi‑Fi or mobile data, then try again.
       </p>
       <Button onClick={handleRetry} disabled={retrying} data-testid="button-retry-connection">

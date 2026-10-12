@@ -91,8 +91,8 @@ export default function SiriShortcuts() {
         <div className="py-6 px-4 space-y-6">
           <div className="bg-[#1C1C1E] rounded-xl p-4">
             <p className="text-[15px] text-gray-300 leading-relaxed">
-              Connect Rude Reminders to Siri so you can say things like{" "}
-              <span className="text-white font-medium">"Hey Siri, add a reminder in Rude Reminders to call mom tomorrow at 5pm"</span>{" "}
+              Connect Reems Rude Reminders to Siri so you can say things like{" "}
+              <span className="text-white font-medium">"Hey Siri, add a reminder in Reems Rude Reminders to call mom tomorrow at 5pm"</span>{" "}
               without opening the app.
             </p>
           </div>
@@ -105,13 +105,13 @@ export default function SiriShortcuts() {
             <div className="px-4 py-3 border-b border-[#38383A]">
               <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 2</p>
               <p className="text-[15px] text-white mt-1">
-                Open the Shortcuts app, find "Connect Rude Reminders", run it once, and paste the token when asked.
+                Open the Shortcuts app, find "Connect Reems Rude Reminders", run it once, and paste the token when asked.
               </p>
             </div>
             <div className="px-4 py-3">
               <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 3</p>
               <p className="text-[15px] text-white mt-1">
-                That's it — "Hey Siri, add a reminder in Rude Reminders..." works from anywhere.
+                That's it — "Hey Siri, add a reminder in Reems Rude Reminders..." works from anywhere.
               </p>
             </div>
           </div>
