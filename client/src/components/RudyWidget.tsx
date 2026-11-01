@@ -131,12 +131,12 @@ const RUDY_LINES = {
   },
   slider_1: {
     rude: [
-      "Oh look, choosing the soft option. Typical.",
-      "Gentle mode. For people who like being ignored.",
+      "Sympathy mode. Fine, I'll hold your hand... this once.",
+      "Going soft on yourself? I'll allow it. Today.",
     ],
     positive: [
-      "Gentle is still showing up. That counts.",
-      "Starting soft is still starting. Respect.",
+      "Rough day? I've got you. Small steps still count.",
+      "Being kind to yourself is still showing up. Proud of you.",
     ],
   },
   slider_2: {

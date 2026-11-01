@@ -12,10 +12,11 @@ import PersonalInfo from "@/pages/settings/PersonalInfo";
 import SiriShortcuts from "@/pages/settings/SiriShortcuts";
 import Notifications from "@/pages/settings/Notifications";
 import Billing from "@/pages/settings/Billing";
+import HelpPage from "@/pages/settings/Help";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
 import Subscribe from "@/pages/subscribe";
-import AdminPage from "@/pages/admin";
+import DevSpace from "@/pages/DevSpace";
 import LoginPage from "@/pages/login";
 import NotFound from "@/pages/not-found";
 import DeleteAccount from "@/pages/DeleteAccount";
@@ -118,16 +119,17 @@ function AppRouter() {
       {isAuthenticated ? (
         <>
           <Route path="/settings/billing" component={Billing} />
+          <Route path="/settings/help" component={HelpPage} />
           <Route path="/settings/personal" component={PersonalInfo} />
           <Route path="/settings/siri" component={SiriShortcuts} />
           <Route path="/settings/notifications" component={Notifications} />
           <Route path="/settings/history" component={ReminderHistory} />
           <Route path="/settings" component={Settings} />
           <Route path="/dev-preview" component={DevPreview} />
-          <Route path="/admin/whitelist" component={AdminPage} />
-          <Route path="/admin/users" component={AdminPage} />
-          <Route path="/admin/toggles" component={AdminPage} />
-          <Route path="/admin" component={AdminPage} />
+          {/* Dev Space (old /admin links open it too) */}
+          <Route path="/dev" component={DevSpace} />
+          <Route path="/admin/:rest*" component={DevSpace} />
+          <Route path="/admin" component={DevSpace} />
         </>
       ) : (
         <>

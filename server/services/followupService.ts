@@ -41,10 +41,10 @@ class FollowUpService {
 
   private getFollowUpTemplates(rudenessLevel: number) {
     const templates = {
-      1: [ // Gentle
-        { type: 'encouraging' as const, message: 'Hey there! Just checking in - how\'s {task} going?' },
-        { type: 'motivational' as const, message: 'You\'ve got this! {task} is totally doable.' },
-        { type: 'encouraging' as const, message: 'No pressure, but {task} is still waiting for you.' }
+      1: [ // Sympathy
+        { type: 'encouraging' as const, message: 'Hey, just checking in on {task}. If today\'s been a lot, that\'s okay — a small start still counts.' },
+        { type: 'motivational' as const, message: 'I know {task} isn\'t always easy. You\'ve handled harder things — I believe in you.' },
+        { type: 'encouraging' as const, message: 'Be kind to yourself. When you\'re ready, {task} will feel good to tick off.' }
       ],
       2: [ // Firm  
         { type: 'stern' as const, message: 'Friendly reminder: {task} isn\'t going to complete itself.' },

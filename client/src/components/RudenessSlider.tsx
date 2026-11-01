@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
  */
 
 export const RUDENESS_LABELS = [
-  { level: 1, emoji: "😊", label: "Gentle" },
+  { level: 1, emoji: "🤗", label: "Sympathy" },
   { level: 2, emoji: "🙂", label: "Motivational" },
   { level: 3, emoji: "😏", label: "Sarcastic" },
   { level: 4, emoji: "😠", label: "Harsh" },

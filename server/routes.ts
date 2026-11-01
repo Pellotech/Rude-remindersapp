@@ -525,8 +525,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { isUserPremium } = await import('./utils/premiumCheck');
       const isPremium = await isUserPremium(user.id);
 
+      // Strip secrets — the app never needs these
+      const { passwordHash, resetToken, resetTokenExpiry, emailVerificationToken, ...safeUser } = user as any;
       res.json({
-        ...user,
+        ...safeUser,
+        hasPassword: !!passwordHash,
         subscriptionStatus: isPremium ? 'active' : (user.subscriptionStatus || 'free'),
         subscriptionPlan: isPremium ? 'premium' : (user.subscriptionPlan || 'free'),
         isPremium: isPremium,
@@ -1771,7 +1774,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Test DeepSeek API integration
-  app.post('/api/test-deepseek', async (req, res) => {
+  app.post('/api/test-deepseek', isAuthenticated, isAdmin, async (req, res) => {
     try {
       const testContext = {
         task: req.body.task || 'study for exam',
@@ -2179,8 +2182,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const emails = await getWhitelistedEmails();
+      const entries = await Promise.all(emails.map(async (email) => ({
+        email,
+        hasAccount: !!(await storage.getUserByEmail(email)),
+      })));
       res.json({ 
         emails,
+        entries,
         count: emails.length 
       });
     } catch (error) {
@@ -2191,44 +2199,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
-      const { email, password } = req.body;
-      const userId = getAuthUserId(req);
+      const { email: rawEmail, password } = req.body;
+      const adminId = getAuthUserId(req) as string; // isAuthenticated guarantees this
 
-      if (!email || typeof email !== 'string') {
+      if (!rawEmail || typeof rawEmail !== 'string' || !rawEmail.includes('@')) {
         return res.status(400).json({ message: "Valid email is required" });
       }
+      const email = rawEmail.toLowerCase().trim();
+      const existing = await storage.getUserByEmail(email);
 
-      if (!password || typeof password !== 'string' || password.length < 8) {
-        return res.status(400).json({ message: "Password must be at least 8 characters" });
+      if (existing) {
+        // Real (or existing) account → just grant Premium via the whitelist.
+        // Never touch their password or name.
+        await addEmailToWhitelist(email, adminId);
+        return res.json({ success: true, email, created: false, message: "Existing account now has Premium" });
       }
 
+      // No account yet → create a test login (password required)
+      if (!password || typeof password !== 'string' || password.length < 8) {
+        return res.status(400).json({ message: "No account with that email yet — add a password (8+ characters) to create a test login" });
+      }
       const hashedPassword = await bcrypt.hash(password, 10);
-      const testUserId = crypto.randomUUID();
-      
       await storage.upsertUser({
-        id: testUserId,
-        email: email.toLowerCase().trim(),
+        id: crypto.randomUUID(),
+        email,
         passwordHash: hashedPassword,
         firstName: 'Test',
         lastName: 'User',
-        subscriptionPlan: 'premium',
-        subscriptionStatus: 'active',
       });
-
-      const added = await addEmailToWhitelist(email, userId);
-
-      if (added || true) {
-        console.log(`Created test user with premium access: ${email}`);
-        res.json({ 
-          message: "Test user created with premium access",
-          email: email.toLowerCase().trim(),
-          success: true
-        });
-      }
+      // Premium comes from the whitelist, so removing them later removes Premium too
+      await addEmailToWhitelist(email, adminId);
+      console.log(`Created whitelisted test user: ${email}`);
+      res.json({ success: true, email, created: true, message: "Test login created with Premium" });
     } catch (error) {
-      console.error("Error creating test user:", error);
-      res.status(500).json({ message: "Failed to create test user" });
+      console.error("Error adding to whitelist:", error);
+      res.status(500).json({ message: "Failed to add to whitelist" });
     }
+  });
+
+  // ── Dev Space passcode ────────────────────────────────────────────────
+  // Second lock on top of the admin email check. The passcode lives ONLY in the
+  // server environment (DEV_SPACE_PASSCODE secret) — never in the app code.
+  const devSpaceAttempts = new Map<string, { count: number; resetAt: number }>();
+  app.post('/api/admin/dev-space/unlock', isAuthenticated, isAdmin, async (req: any, res) => {
+    const expected = process.env.DEV_SPACE_PASSCODE;
+    if (!expected) {
+      return res.status(503).json({ message: "DEV_SPACE_PASSCODE is not set on the server yet" });
+    }
+    const userId = getAuthUserId(req) || 'unknown';
+    const now = Date.now();
+    const rec = devSpaceAttempts.get(userId);
+    if (rec && rec.resetAt > now && rec.count >= 5) {
+      return res.status(429).json({ message: "Too many tries — wait 15 minutes" });
+    }
+    const given = String(req.body?.passcode ?? '');
+    const a = Buffer.from(given);
+    const b = Buffer.from(expected);
+    const ok = a.length === b.length && crypto.timingSafeEqual(a, b);
+    if (!ok) {
+      const next = rec && rec.resetAt > now ? { count: rec.count + 1, resetAt: rec.resetAt } : { count: 1, resetAt: now + 15 * 60 * 1000 };
+      devSpaceAttempts.set(userId, next);
+      return res.status(401).json({ message: "Wrong passcode" });
+    }
+    devSpaceAttempts.delete(userId);
+    res.json({ success: true });
   });
 
   app.delete('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {

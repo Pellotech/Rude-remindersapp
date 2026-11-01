@@ -213,6 +213,19 @@ input::-webkit-contacts-auto-fill-button {
 .reem-float-in  { animation: reemFloatIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .reem-float-out { animation: reemFloatOut 0.22s cubic-bezier(0.4, 0, 1, 1) both; }
 
+/* Quick Reminder drawer — opens like a folder */
+@keyframes quickOpen {
+  from { height: 0; opacity: 0; transform: translateY(-8px) scaleY(0.96); }
+  to   { height: var(--radix-collapsible-content-height); opacity: 1; transform: none; }
+}
+@keyframes quickClose {
+  from { height: var(--radix-collapsible-content-height); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+.quick-drawer { overflow: hidden; transform-origin: top center; }
+.quick-drawer[data-state="open"]   { animation: quickOpen 0.32s cubic-bezier(0.22, 1, 0.36, 1); }
+.quick-drawer[data-state="closed"] { animation: quickClose 0.2s ease-in; }
+
 .animate-slide-up {
   animation: slideUp 0.3s ease-out;
 }

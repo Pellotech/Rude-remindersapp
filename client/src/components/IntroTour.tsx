@@ -125,7 +125,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, textAlign: 'left' }}>
               {[
-                { bg: '#38BDF8', color: '#111827', text: '😊 Gentle — Hey, don\'t forget your workout!' },
+                { bg: '#38BDF8', color: '#111827', text: '🤗 Sympathy — Long day? Even 10 minutes of your workout counts. I believe in you.' },
                 { bg: '#22C55E', color: '#ffffff', text: '🙂 Motivational — Time to get moving, you\'ve got this!' },
                 { bg: '#FDE047', color: '#111827', text: '😏 Sarcastic — Oh wow, still haven\'t done it. Shocking.' },
                 { bg: '#F97316', color: '#ffffff', text: '😠 Harsh — Stop making excuses and just do it.' },
@@ -175,7 +175,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
               {[
                 'Write what you want to be reminded about in the box below',
                 'Flip through the book — pick a date, an hour, and a quarter-minute',
-                'Choose your rudeness level — Gentle to Savage',
+                'Choose your rudeness level — Sympathy to Savage',
                 'Add some spice: a picture, a voice character, a quote, and more',
                 'Hit Create Reminder… and watch out 🔥',
               ].map((step, i) => (

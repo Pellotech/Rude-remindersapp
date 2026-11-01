@@ -109,7 +109,7 @@ export class DeepSeekService {
     const { task, category, rudenessLevel, gender, genderSpecificReminders, culturalBackground, timeOfDay } = context;
     
     const rudenessMap = {
-      1: 'gentle and encouraging',
+      1: 'SYMPATHETIC and encouraging — warm, kind and understanding. Acknowledge that it might be hard, that they may be tired, busy or not feeling it, then gently encourage them that even a small step counts and that you believe in them. No sarcasm, no teasing, no insults, no pressure or guilt',
       2: 'motivational and uplifting',
       3: 'direct and no-nonsense with sarcastic humor - be witty and clever',
       4: 'tough love and brutally honest with joking tone at the end - roast them but make them laugh',
@@ -149,7 +149,9 @@ Requirements:
 7. For sarcastic/joking tones: Use clever wordplay, witty observations, or playful roasts that make people smile while pushing them to act
 8. Reference the actual task ("${task}") creatively rather than just saying it generically
 
-Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
+${rudenessLevel === 1 ? `9. SYMPATHY LEVEL: lead with empathy ("I know it's been a long day", "It's okay if you're not feeling it"), then encourage. Sound like a caring friend, never a drill sergeant.
+
+` : ''}Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
   }
 
   private parseResponses(content: string, expectedCount: number): string[] {
@@ -177,6 +179,15 @@ Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
   private generateFallbackResponses(context: ReminderContext, count: number): string[] {
     const { task, rudenessLevel } = context;
     
+    if (rudenessLevel === 1) {
+      return [
+        `I know it's not always easy, but ${task} is worth it — and so are you.`,
+        `Long day? Even a small step toward "${task}" counts. I believe in you.`,
+        `It's okay if you're not feeling it. Just start "${task}" — you've got more in you than you think.`,
+        `Be kind to yourself today, and when you're ready, ${task}. You've got this.`,
+      ].slice(0, count);
+    }
+
     const fallbacks = [
       `Time to ${task} - your future self will thank you!`,
       `Ready to tackle "${task}"? Let's make it happen!`,

@@ -116,6 +116,9 @@ export default function LoginPage() {
           // Show verification pending screen
           setVerificationEmail(registerForm.email);
           setShowVerificationScreen(true);
+          if (data.email_sent === false) {
+            toast({ title: "Email didn't send", description: "Your account was created, but the verification email failed. Tap Resend Email in a moment.", variant: "destructive" });
+          }
         } else {
           // Tester or instant-login path
           const token = data.authToken ?? data.token ?? data.accessToken;
@@ -208,12 +211,21 @@ export default function LoginPage() {
     if (!verificationEmail) return;
     setResendLoading(true);
     try {
-      await fetch(getFullApiUrl("/api/auth/resend-verification"), {
+      const res = await fetch(getFullApiUrl("/api/auth/resend-verification"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: verificationEmail }),
       });
-      toast({ title: "Email Sent", description: "Verification email resent. Check your inbox." });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast({ title: "Couldn't send", description: data.message || "Please try again shortly.", variant: "destructive" });
+      } else if (data.already_verified) {
+        toast({ title: "Already verified", description: "Go ahead and log in." });
+        setShowVerificationScreen(false);
+        setActiveTab("login");
+      } else {
+        toast({ title: "Email Sent", description: "Check your inbox (and your spam folder). The link lasts 24 hours." });
+      }
     } catch {
       toast({ title: "Error", description: "Failed to resend. Please try again.", variant: "destructive" });
     } finally {
@@ -236,7 +248,7 @@ export default function LoginPage() {
               </div>
               <h2 className="text-xl font-bold text-[#111827]">Check your email</h2>
               <p className="text-[#6B7280] text-sm">
-                Please check your email and click the verification link to continue.
+                Tap the link we emailed you, then come back here and log in. The link lasts 24 hours — check your spam folder if you can't see it.
               </p>
               {verificationEmail && (
                 <p className="text-[#111827] text-sm font-medium">{verificationEmail}</p>

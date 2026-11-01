@@ -439,13 +439,13 @@ export class DatabaseStorage implements IStorage {
 
   async seedRudePhrases(): Promise<void> {
     const phrases = [
-      // Level 1 - Gentle
-      { rudenessLevel: 1, phrase: ", you've got this! 💪", category: "encouraging" },
-      { rudenessLevel: 1, phrase: ", take your time but don't forget! ⏰", category: "gentle" },
-      { rudenessLevel: 1, phrase: ", friendly reminder! 😊", category: "polite" },
-      { rudenessLevel: 1, phrase: ", just a gentle nudge! 👋", category: "soft" },
-      { rudenessLevel: 1, phrase: ", the best time to start was yesterday, the second best is now 🌱", category: "reflective" },
+      // Level 1 - Sympathy (warm, understanding, encouraging)
+      { rudenessLevel: 1, phrase: ", I know it's hard sometimes — but you've got this 💛", category: "sympathy" },
+      { rudenessLevel: 1, phrase: ", it's okay if today's been a lot. One small step is enough 🌱", category: "sympathy" },
+      { rudenessLevel: 1, phrase: ", be gentle with yourself — and when you're ready, let's do this 🤗", category: "sympathy" },
       { rudenessLevel: 1, phrase: ", even tiny steps count — you've got more in you than you think ✨", category: "uplifting" },
+      { rudenessLevel: 1, phrase: ", not feeling it? That's normal. Start small, I believe in you 💪", category: "encouraging" },
+      { rudenessLevel: 1, phrase: ", you're doing better than you think. Keep going 🌟", category: "encouraging" },
 
       // Level 2 - Firm
       { rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm" },
@@ -479,6 +479,15 @@ export class DatabaseStorage implements IStorage {
       { rudenessLevel: 5, phrase: ", a goldfish has completed more tasks than you today", category: "savage-absurd" },
       { rudenessLevel: 5, phrase: ", history will not remember you fondly for this one", category: "dramatic" },
     ];
+
+    // Level 1 is now "Sympathy": remove any old level-1 lines that aren't in the new list
+    const level1Texts = phrases.filter(p => p.rudenessLevel === 1).map(p => p.phrase);
+    const storedLevel1 = await db.select().from(rudePhrasesData).where(eq(rudePhrasesData.rudenessLevel, 1));
+    for (const row of storedLevel1) {
+      if (!level1Texts.includes(row.phrase)) {
+        await db.delete(rudePhrasesData).where(eq(rudePhrasesData.id, row.id));
+      }
+    }
 
     // Insert any phrases that don't already exist (safe to re-run)
     const existingPhrases = await db.select().from(rudePhrasesData);
@@ -919,11 +928,11 @@ class MemoryStorage implements IStorage {
     if (this.rudePhrasesSeeded) return;
 
     const phrases = [
-      // Level 1 - Gentle/Polite
-      { id: '1', rudenessLevel: 1, phrase: ", you've got this! 💪", category: "encouraging", createdAt: new Date() },
-      { id: '2', rudenessLevel: 1, phrase: ", take your time but don't forget! ⏰", category: "gentle", createdAt: new Date() },
-      { id: '3', rudenessLevel: 1, phrase: ", friendly reminder! 😊", category: "polite", createdAt: new Date() },
-      { id: '4', rudenessLevel: 1, phrase: ", just a gentle nudge! 👋", category: "soft", createdAt: new Date() },
+      // Level 1 - Sympathy
+      { id: '1', rudenessLevel: 1, phrase: ", I know it's hard sometimes — but you've got this 💛", category: "sympathy", createdAt: new Date() },
+      { id: '2', rudenessLevel: 1, phrase: ", it's okay if today's been a lot. One small step is enough 🌱", category: "sympathy", createdAt: new Date() },
+      { id: '3', rudenessLevel: 1, phrase: ", be gentle with yourself — and when you're ready, let's do this 🤗", category: "sympathy", createdAt: new Date() },
+      { id: '4', rudenessLevel: 1, phrase: ", even tiny steps count — you've got more in you than you think ✨", category: "uplifting", createdAt: new Date() },
 
       // Level 2 - Firm
       { id: '5', rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm", createdAt: new Date() },

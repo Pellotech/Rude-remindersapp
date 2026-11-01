@@ -33,6 +33,104 @@ function isTesterEmail(email: string): boolean {
   return getTesterEmails().has(email.toLowerCase().trim());
 }
 
+// --- Social sign-in: one account per person ---
+// Looks up the provider account; if none, links to an existing account with the SAME
+// VERIFIED email (so signing up with email and later tapping "Continue with Google"
+// lands in the same account instead of failing); otherwise creates a new account.
+async function findOrCreateSocialUser(opts: {
+  provider: "apple" | "google" | "facebook";
+  providerUserId: string;
+  email?: string | null;
+  emailVerified: boolean;
+  firstName?: string | null;
+  lastName?: string | null;
+  picture?: string | null;
+}) {
+  const providerId = `${opts.provider}_${opts.providerUserId}`;
+  const existing = await storage.getUser(providerId);
+  if (existing) return existing;
+
+  const email = opts.email ? opts.email.toLowerCase().trim() : null;
+  if (email) {
+    const byEmail = await storage.getUserByEmail(email);
+    if (byEmail) {
+      if (opts.emailVerified) {
+        // The provider proved this person owns the email. If the old account was an
+        // email/password sign-up that was never verified, its password can't be trusted
+        // (someone else may have registered it) — remove it so only the real owner gets in.
+        const updates: any = { emailVerified: true, emailVerificationToken: null };
+        if ((byEmail as any).passwordHash && !(byEmail as any).emailVerified) updates.passwordHash = null;
+        await storage.updateUser(byEmail.id, updates);
+        slog.info("auth_account_linked", { provider: opts.provider, userId: byEmail.id });
+        return (await storage.getUser(byEmail.id))!;
+      }
+      // Unverified provider email — don't link; create a separate account without it
+    }
+  }
+
+  const canUseEmail = email && !(await storage.getUserByEmail(email));
+  await storage.upsertUser({
+    id: providerId,
+    email: canUseEmail ? email! : `${opts.provider}_user_${opts.providerUserId}@noemail.local`,
+    firstName: opts.firstName || null,
+    lastName: opts.lastName || null,
+    profileImageUrl: opts.picture || null,
+    emailVerified: !!(canUseEmail && opts.emailVerified),
+  } as any);
+  return (await storage.getUser(providerId))!;
+}
+
+// Native sign-in may only send the token back to OUR app — never to a URL from the request
+const NATIVE_AUTH_CALLBACK = "rudereminders://auth-callback";
+function safeNativeCallback(requested: unknown): string {
+  return requested === NATIVE_AUTH_CALLBACK ? requested : NATIVE_AUTH_CALLBACK;
+}
+
+// --- Email verification helpers ---
+const VERIFY_TOKEN_TTL_MS = 24 * 60 * 60 * 1000; // links work for 24 hours
+
+/** Token carries its own expiry ("<random>.<expiresAtMs>") so no database change is needed. */
+function generateVerificationToken(): string {
+  return `${generateSecureToken()}.${Date.now() + VERIFY_TOKEN_TTL_MS}`;
+}
+function isVerificationTokenExpired(token: string): boolean {
+  const parts = token.split(".");
+  if (parts.length !== 2) return false; // links sent before this change: still honoured
+  const expiresAt = Number(parts[1]);
+  return Number.isFinite(expiresAt) && Date.now() > expiresAt;
+}
+
+// Resend limits: 1 per minute and 5 per hour per email, 15 per hour per device/network
+const resendByEmail = new Map<string, number[]>();
+const resendByIp = new Map<string, number[]>();
+function resendBlockedReason(email: string, ip: string): string | null {
+  const now = Date.now(), HOUR = 60 * 60 * 1000;
+  const e = (resendByEmail.get(email) || []).filter((t) => now - t < HOUR);
+  const i = (resendByIp.get(ip) || []).filter((t) => now - t < HOUR);
+  if (e.length && now - e[e.length - 1] < 60 * 1000) return "Please wait a minute before asking for another email.";
+  if (e.length >= 5 || i.length >= 15) return "Too many emails requested. Please try again in an hour.";
+  e.push(now); i.push(now);
+  resendByEmail.set(email, e); resendByIp.set(ip, i);
+  return null;
+}
+
+if (!process.env.EMAIL_APP_PASSWORD) {
+  console.error("⚠️  EMAIL_APP_PASSWORD is not set — verification and password-reset emails CANNOT be sent. New email sign-ups will be stuck until this secret is added.");
+}
+
+function resultPage(title: string, message: string, ok: boolean): string {
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title></head>
+<body style="margin:0;background:#FDF3E3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="max-width:420px;margin:60px auto;padding:32px 24px;background:#fff;border:3px solid #C9A063;border-radius:20px;text-align:center;">
+    <img src="/logo.png" alt="Reems Rude Reminders" style="width:120px;height:auto;margin-bottom:16px;" />
+    <div style="font-size:44px;margin-bottom:8px;">${ok ? "🎉" : "⏰"}</div>
+    <h2 style="color:#1B2A5E;margin:0 0 10px;">${title}</h2>
+    <p style="color:#374151;font-size:16px;line-height:1.5;margin:0;">${message}</p>
+  </div>
+</body></html>`;
+}
+
 // --- Email Verification Sender ---
 async function sendVerificationEmail(toEmail: string, token: string): Promise<boolean> {
   try {
@@ -66,7 +164,8 @@ async function sendVerificationEmail(toEmail: string, token: string): Promise<bo
     });
     return true;
   } catch (err) {
-    console.error("Failed to send verification email:", err);
+    console.error("❌ Failed to send verification email to", toEmail, "—", err);
+    slog.warn("verification_email_failed", { reason: String((err as any)?.message || err) });
     return false;
   }
 }
@@ -338,10 +437,10 @@ export async function setupAuth(app: Express) {
           .json({ message: "Email and password are required" });
       }
 
-      if (password.length < 6) {
+      if (password.length < 8) {
         return res
           .status(400)
-          .json({ message: "Password must be at least 6 characters" });
+          .json({ message: "Password must be at least 8 characters" });
       }
 
       const normalizedEmail = email.toLowerCase().trim();
@@ -360,7 +459,7 @@ export async function setupAuth(app: Express) {
 
       // Testers skip verification; everyone else must verify
       const skipVerification = isTesterEmail(normalizedEmail);
-      const verificationToken = skipVerification ? null : generateSecureToken();
+      const verificationToken = skipVerification ? null : generateVerificationToken();
 
       // Create user
       const userId = `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -376,13 +475,16 @@ export async function setupAuth(app: Express) {
       });
 
       if (!skipVerification) {
-        // Send verification email (non-blocking — failure doesn't stop account creation)
-        sendVerificationEmail(normalizedEmail, verificationToken!);
+        // Account is created either way; tell the app whether the email actually went out
+        const emailSent = await sendVerificationEmail(normalizedEmail, verificationToken!);
 
         return res.json({
           success: true,
           verification_required: true,
-          message: "Account created! Please check your email to verify your account before logging in.",
+          email_sent: emailSent,
+          message: emailSent
+            ? "Account created! Please check your email to verify your account before logging in."
+            : "Account created, but we couldn't send the verification email. Tap Resend in a moment.",
         });
       }
 
@@ -410,52 +512,45 @@ export async function setupAuth(app: Express) {
   app.get("/api/auth/verify-email", async (req, res) => {
     const { token } = req.query;
     if (!token || typeof token !== "string") {
-      return res.status(400).send("Invalid verification link.");
+      return res.status(400).send(resultPage("Link not valid", "This verification link isn't complete. Open the Reems Rude Reminders app and tap <b>Resend Email</b> to get a new one.", false));
     }
     try {
       const user = await storage.getUserByVerificationToken(token);
       if (!user) {
-        return res.status(400).send(`
-          <html><body style="font-family:sans-serif;text-align:center;padding:60px;">
-            <h2>Link Invalid or Expired</h2>
-            <p>This verification link is invalid or has already been used.</p>
-            <a href="/">Go to App</a>
-          </body></html>
-        `);
+        return res.status(400).send(resultPage("Link already used", "This link has already been used or replaced by a newer one. If you've verified already, just go back to the Reems Rude Reminders app and log in.", false));
       }
-      // Mark as verified and clear token
+      if (isVerificationTokenExpired(token)) {
+        return res.status(400).send(resultPage("Link expired", "Verification links last 24 hours. Open the Reems Rude Reminders app, try to log in, and tap <b>Resend Email</b> for a fresh one.", false));
+      }
       await storage.updateUser(user.id, { emailVerified: true, emailVerificationToken: null });
-      return res.send(`
-        <html><body style="font-family:sans-serif;text-align:center;padding:60px;">
-          <h2 style="color:#1B2A5E;">Email Verified!</h2>
-          <p>Your account is now active. You can log in now.</p>
-          <a href="/login" style="display:inline-block;background:#C53B3B;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:16px;">Log In</a>
-        </body></html>
-      `);
+      return res.send(resultPage("You're verified!", "Your account is ready. Go back to the <b>Reems Rude Reminders</b> app and log in — Reem's been waiting.", true));
     } catch (err) {
       console.error("Email verification error:", err);
-      return res.status(500).send("Verification failed. Please try again.");
+      return res.status(500).send(resultPage("Something went wrong", "We couldn't verify you just now. Please try the link again in a minute.", false));
     }
   });
 
   // Resend verification email
   app.post("/api/auth/resend-verification", async (req, res) => {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: "Email is required" });
+    if (!email || typeof email !== "string") return res.status(400).json({ message: "Email is required" });
     try {
       const normalizedEmail = email.toLowerCase().trim();
-      const user = await storage.getUserByEmail(normalizedEmail);
-      if (!user) return res.json({ success: true }); // don't leak whether user exists
+      const blocked = resendBlockedReason(normalizedEmail, String(req.ip || "unknown"));
+      if (blocked) return res.status(429).json({ message: blocked });
 
+      const user = await storage.getUserByEmail(normalizedEmail);
+      if (!user) return res.json({ success: true }); // don't reveal whether an account exists
       if (user.emailVerified) {
-        return res.json({ success: true, message: "Already verified" });
+        return res.json({ success: true, already_verified: true, message: "You're already verified — go ahead and log in." });
       }
 
-      // Generate a fresh token
-      const newToken = generateSecureToken();
+      const newToken = generateVerificationToken(); // old links stop working
       await storage.updateUser(user.id, { emailVerificationToken: newToken });
-      sendVerificationEmail(normalizedEmail, newToken);
-
+      const sent = await sendVerificationEmail(normalizedEmail, newToken);
+      if (!sent) {
+        return res.status(502).json({ message: "We couldn't send the email right now. Please try again shortly or contact support." });
+      }
       return res.json({ success: true, message: "Verification email sent" });
     } catch (err) {
       console.error("Resend verification error:", err);
@@ -603,49 +698,23 @@ export async function setupAuth(app: Express) {
       });
 
       // Create unique user ID for Apple users
-      const userId = `apple_${appleUserIdVerified}`;
-
-      // Check if user already exists
-      let existingUser = await storage.getUser(userId);
-
-      if (existingUser) {
-        // User exists, log them in
-        console.log("✅ Existing Apple user found, logging in");
-      } else {
-        // New user, create account
-        console.log("🆕 New Apple user, creating account");
-
-        // PRIVACY: Apple may not provide email on subsequent logins if user chose "Hide My Email"
-        // We only store the email if Apple provides it (from token or user info)
-        // Do NOT fabricate email addresses
-        const userEmail = verifiedPayload.email || email || null;
-
-        if (!userEmail) {
-          console.warn(
-            "⚠️ No email provided by Apple (user may have chosen Hide My Email)",
-          );
-        }
-
-        await storage.upsertUser({
-          id: userId,
-          email: userEmail || `apple_user_${appleUserIdVerified}@noemail.local`, // Temporary fallback for DB constraint
-          firstName: givenName || null,
-          lastName: familyName || null,
-          profileImageUrl: null,
-        });
-
-        existingUser = await storage.getUser(userId);
-      }
+      // Only trust the email inside Apple's signed token (not one sent by the app).
+      // Apple emails — including "Hide My Email" relay addresses — are verified by Apple.
+      const existingUser = await findOrCreateSocialUser({
+        provider: "apple",
+        providerUserId: appleUserIdVerified,
+        email: verifiedPayload.email || null,
+        emailVerified: !!verifiedPayload.email,
+        firstName: givenName || null,
+        lastName: familyName || null,
+      });
+      const userId = existingUser.id;
 
       // Create session
       const userSession = {
         claims: {
           sub: userId,
-          email:
-            existingUser?.email ||
-            verifiedPayload.email ||
-            email ||
-            `apple_user_${appleUserIdVerified}@noemail.local`,
+          email: existingUser.email,
           first_name: existingUser?.firstName || givenName,
           last_name: existingUser?.lastName || familyName,
           profile_image_url: "",
@@ -713,8 +782,7 @@ export async function setupAuth(app: Express) {
     authUrl.searchParams.set("redirect_uri", redirectUri);
     authUrl.searchParams.set("response_type", "code");
     authUrl.searchParams.set("scope", "openid email profile");
-    authUrl.searchParams.set("access_type", "offline");
-    authUrl.searchParams.set("prompt", "consent");
+    authUrl.searchParams.set("prompt", "select_account"); // choose account, no repeat consent screen
     authUrl.searchParams.set("state", state);
 
     res.redirect(authUrl.toString());
@@ -796,20 +864,16 @@ export async function setupAuth(app: Express) {
       });
 
       // Create/update user
-      const userId = `google_${payload.sub}`;
-      let existingUser = await storage.getUser(userId);
-
-      if (!existingUser) {
-        console.log("🆕 New Google user, creating account");
-        await storage.upsertUser({
-          id: userId,
-          email: payload.email || `google_user_${payload.sub}@noemail.local`,
-          firstName: payload.given_name || null,
-          lastName: payload.family_name || null,
-          profileImageUrl: payload.picture || null,
-        });
-        existingUser = await storage.getUser(userId);
-      }
+      const existingUser = await findOrCreateSocialUser({
+        provider: "google",
+        providerUserId: String(payload.sub),
+        email: payload.email,
+        emailVerified: payload.email_verified === true,
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        picture: payload.picture,
+      });
+      const userId = existingUser.id;
 
       // Create session
       const userSession = {
@@ -950,20 +1014,16 @@ export async function setupAuth(app: Express) {
       });
 
       // Create/update user
-      const userId = `facebook_${userData.id}`;
-      let existingUser = await storage.getUser(userId);
-
-      if (!existingUser) {
-        console.log("🆕 New Facebook user, creating account");
-        await storage.upsertUser({
-          id: userId,
-          email: userData.email || `fb_user_${userData.id}@noemail.local`,
-          firstName: userData.first_name || null,
-          lastName: userData.last_name || null,
-          profileImageUrl: userData.picture?.data?.url || null,
-        });
-        existingUser = await storage.getUser(userId);
-      }
+      const existingUser = await findOrCreateSocialUser({
+        provider: "facebook",
+        providerUserId: String(userData.id),
+        email: userData.email,
+        emailVerified: !!userData.email,
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        picture: userData.picture?.data?.url,
+      });
+      const userId = existingUser.id;
 
       // Create session
       const userSession = {
@@ -1000,7 +1060,7 @@ export async function setupAuth(app: Express) {
   // Native iOS Google OAuth - Uses in-app browser with custom URL scheme callback
   app.get("/api/auth/google/native", async (req, res) => {
     const clientId = process.env.GOOGLE_CLIENT_ID;
-    const nativeCallback = req.query.callback as string;
+    const nativeCallback = safeNativeCallback(req.query.callback);
     const redirectUri = `${req.protocol}://${req.get("host")}/api/auth/google/native/callback`;
 
     if (!clientId) {
@@ -1024,8 +1084,7 @@ export async function setupAuth(app: Express) {
     authUrl.searchParams.set("redirect_uri", redirectUri);
     authUrl.searchParams.set("response_type", "code");
     authUrl.searchParams.set("scope", "openid email profile");
-    authUrl.searchParams.set("access_type", "offline");
-    authUrl.searchParams.set("prompt", "consent");
+    authUrl.searchParams.set("prompt", "select_account"); // choose account, no repeat consent screen
     authUrl.searchParams.set("state", state);
 
     res.redirect(authUrl.toString());
@@ -1033,7 +1092,7 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/auth/google/native/callback", async (req, res) => {
     const nativeCallback =
-      (req.session as any).nativeCallback || "rudereminders://auth-callback";
+      safeNativeCallback((req.session as any).nativeCallback);
 
     try {
       const { code, error, state } = req.query;
@@ -1110,19 +1169,16 @@ export async function setupAuth(app: Express) {
         );
       }
 
-      const userId = `google_${payload.sub}`;
-      let existingUser = await storage.getUser(userId);
-
-      if (!existingUser) {
-        await storage.upsertUser({
-          id: userId,
-          email: payload.email || `google_user_${payload.sub}@noemail.local`,
-          firstName: payload.given_name || null,
-          lastName: payload.family_name || null,
-          profileImageUrl: payload.picture || null,
-        });
-        existingUser = await storage.getUser(userId);
-      }
+      const existingUser = await findOrCreateSocialUser({
+        provider: "google",
+        providerUserId: String(payload.sub),
+        email: payload.email,
+        emailVerified: payload.email_verified === true,
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        picture: payload.picture,
+      });
+      const userId = existingUser.id;
 
       const userSession = {
         claims: {
@@ -1165,7 +1221,7 @@ export async function setupAuth(app: Express) {
   // Native iOS Facebook OAuth - Uses in-app browser with custom URL scheme callback
   app.get("/api/auth/facebook/native", async (req, res) => {
     const appId = process.env.FACEBOOK_APP_ID;
-    const nativeCallback = req.query.callback as string;
+    const nativeCallback = safeNativeCallback(req.query.callback);
     const redirectUri = `${req.protocol}://${req.get("host")}/api/auth/facebook/native/callback`;
 
     if (!appId) {
@@ -1198,7 +1254,7 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/auth/facebook/native/callback", async (req, res) => {
     const nativeCallback =
-      (req.session as any).nativeCallback || "rudereminders://auth-callback";
+      safeNativeCallback((req.session as any).nativeCallback);
 
     try {
       const { code, error, state } = req.query;
@@ -1272,19 +1328,16 @@ export async function setupAuth(app: Express) {
         );
       }
 
-      const userId = `facebook_${userData.id}`;
-      let existingUser = await storage.getUser(userId);
-
-      if (!existingUser) {
-        await storage.upsertUser({
-          id: userId,
-          email: userData.email || `fb_user_${userData.id}@noemail.local`,
-          firstName: userData.first_name || null,
-          lastName: userData.last_name || null,
-          profileImageUrl: userData.picture?.data?.url || null,
-        });
-        existingUser = await storage.getUser(userId);
-      }
+      const existingUser = await findOrCreateSocialUser({
+        provider: "facebook",
+        providerUserId: String(userData.id),
+        email: userData.email,
+        emailVerified: !!userData.email,
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        picture: userData.picture?.data?.url,
+      });
+      const userId = existingUser.id;
 
       const userSession = {
         claims: {

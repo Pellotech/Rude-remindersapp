@@ -165,7 +165,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
     { icon: "🎙️", text: "AI voice characters for your reminders" },
     { icon: "📸", text: "Attach up to 5 photos per reminder" },
     { icon: "💬", text: "Motivational quotes from history's greats" },
-    { icon: "🔥", text: "Adjustable rudeness levels (Gentle to Savage)" },
+    { icon: "🔥", text: "Adjustable rudeness levels (Sympathy to Savage)" },
     { icon: "✨", text: "A charismatic array of reminders for every life situation" },
   ];
 

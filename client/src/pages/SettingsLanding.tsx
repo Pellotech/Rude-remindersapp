@@ -1,5 +1,7 @@
 import { Link } from "wouter";
-import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic, Shield, LifeBuoy } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { isAdminEmail } from "@/lib/admin";
 import { SettingsIntro } from "@/components/SettingsIntro";
 import { useIntroTour } from "@/components/IntroTour";
 import { getPlatformInfo } from "@/utils/platformDetection";
@@ -33,6 +35,8 @@ function SettingsRow({ icon, title, href }: SettingsRowProps) {
 }
 
 export default function SettingsLanding() {
+  const { user } = useAuth();
+  const isAdmin = isAdminEmail((user as any)?.email);
   const { showIntro, closeIntro } = useIntroTour({
     storageKey: 'settingsIntroShownCount',
     maxShows: 1,
@@ -82,6 +86,25 @@ export default function SettingsLanding() {
               icon={<CreditCard className="h-5 w-5" />}
               title="Payment & Billing"
               href="/settings/billing"
+            />
+            {isAdmin && (
+              <>
+                <div className="h-px bg-[#38383A] ml-12" />
+                <SettingsRow
+                  icon={<Shield className="h-5 w-5 text-[#C9A063]" />}
+                  title="Developer Space"
+                  href="/dev"
+                />
+              </>
+            )}
+          </div>
+
+          {/* Help — its own section, always last */}
+          <div className="overflow-hidden rounded-xl mx-4">
+            <SettingsRow
+              icon={<LifeBuoy className="h-5 w-5 text-[#C9A063]" />}
+              title="Help & Support"
+              href="/settings/help"
             />
           </div>
         </div>

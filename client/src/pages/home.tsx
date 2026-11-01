@@ -10,7 +10,6 @@ import Navigation from "@/components/Navigation";
 import ReminderForm from "@/components/ReminderForm";
 import RemindersList from "@/components/RemindersList";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
-import { HelpMenu } from "@/components/HelpMenu";
 import { NotificationTest } from "@/components/NotificationTest";
 import { AdMobManager } from "@/components/AdMobManager";
 import { RudyEventType } from "@/components/RudyWidget";
@@ -367,7 +366,7 @@ export default function Home({ isPremium }: HomeProps) {
         style={
           isPremium
             ? { paddingBottom: isAndroid ? "150px" : "80px" }
-            : undefined
+            : { paddingBottom: isAndroid ? "170px" : "120px" } // free: clear the ad banner
         }
       >
         {/* Welcome Header — standalone component, movable anywhere */}
@@ -563,23 +562,6 @@ export default function Home({ isPremium }: HomeProps) {
           }}
         />
       )}
-
-      {/* Floating Help Button — bottom-LEFT so it stays clear of the Create Reminder
-          button; still raised above the ad banner (more on Android for the nav bar) */}
-      <div
-        className={
-          isPremium ? "fixed left-4 z-50" : "fixed left-4 z-50 flex gap-2"
-        }
-        style={{
-          bottom: (
-            isPremium ? isAndroid : Capacitor.getPlatform() === "android"
-          )
-            ? "128px"
-            : "70px",
-        }}
-      >
-        <HelpMenu />
-      </div>
 
       {/* Test Notification Button - dev only, premium page only */}
       {isPremium && import.meta.env.DEV && <NotificationTest />}

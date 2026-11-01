@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, clearAuthToken } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
+import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
 import { ChevronLeft, ChevronDown, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft, Lock } from "lucide-react";
 
 export default function PersonalInfo() {
@@ -21,6 +22,7 @@ export default function PersonalInfo() {
     mutationFn: (settings: any) =>
       apiRequest("/api/settings", { method: "PUT", body: JSON.stringify(settings) }),
     onSuccess: () => {
+      setLocalSettings({});
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: "Saved",
@@ -29,8 +31,8 @@ export default function PersonalInfo() {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to save. Please try again.",
+        title: "Couldn't save",
+        description: "Please check your connection and try again.",
         variant: "destructive",
       });
     },
@@ -63,7 +65,7 @@ export default function PersonalInfo() {
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [showDeleteScreen, setShowDeleteScreen] = useState(false);
 
-  const isOAuthOnly = !!user && !user.passwordHash;
+  const isOAuthOnly = !!user && !user.hasPassword;
   const newPwTooShort = newPassword.length > 0 && newPassword.length < 8;
   const pwMismatch = confirmPassword.length > 0 && confirmPassword !== newPassword;
   const canSubmitPassword =
@@ -98,41 +100,21 @@ export default function PersonalInfo() {
 
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const saveButtonRef = useRef<HTMLDivElement>(null);
-  const prevHasChanges = useRef(false);
-
-  useEffect(() => {
-    if (user) {
-      setLocalSettings({});
-    }
-  }, [user]);
-
-  const saveSettings = () => {
-    updateSettingsMutation.mutate(localSettings);
-    setLocalSettings({});
-  };
-
+  // Only real edits count (typing a name back to what it was removes the change)
   const updateSetting = (key: string, value: any) => {
-    setLocalSettings((prev: any) => ({ ...prev, [key]: value }));
+    setLocalSettings((prev: any) => {
+      const next = { ...prev };
+      if ((user?.[key] ?? "") === value) delete next[key];
+      else next[key] = value;
+      return next;
+    });
   };
 
   const hasChanges = Object.keys(localSettings).length > 0;
   const currentSettings = { ...user, ...localSettings };
-
-  useEffect(() => {
-    if (hasChanges && !prevHasChanges.current) {
-      setTimeout(() => {
-        saveButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        const bannerOffset = isAndroid ? 130 : isIOS ? 90 : 0;
-        if (bannerOffset > 0) {
-          setTimeout(() => {
-            window.scrollBy({ top: bannerOffset, behavior: 'smooth' });
-          }, 450);
-        }
-      }, 100);
-    }
-    prevHasChanges.current = hasChanges;
-  }, [hasChanges, isAndroid, isIOS]);
+  const saveSettings = () => updateSettingsMutation.mutateAsync(localSettings);
+  const discardChanges = () => setLocalSettings({});
+  const { leave, dialog: leaveDialog } = useLeaveGuard(hasChanges, saveSettings, discardChanges);
 
   if (isLoading) {
     return (
@@ -225,22 +207,18 @@ export default function PersonalInfo() {
       <div className="max-w-lg mx-auto">
         <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
-            <Link href="/settings">
-              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
-                <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px]">Settings</span>
-              </div>
-            </Link>
-            <Link href="/">
-              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
-                <Home className="h-5 w-5" />
-              </div>
-            </Link>
+            <button onClick={() => leave("/settings")} className="flex items-center text-[#0A84FF]" data-testid="button-back">
+              <ChevronLeft className="h-5 w-5" />
+              <span className="text-[17px]">Settings</span>
+            </button>
+            <button onClick={() => leave("/")} className="text-[#0A84FF]" data-testid="button-home" aria-label="Home">
+              <Home className="h-5 w-5" />
+            </button>
           </div>
           <h1 className="text-[34px] font-bold text-white px-4 pb-2">Personal Information</h1>
         </div>
 
-        <div className="py-6 px-4 space-y-6" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
+        <div className="py-6 px-4 space-y-6" style={{ paddingBottom: (isAndroid ? 120 : isIOS ? 80 : 24) + SAVE_BAR_SPACE }}>
           <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-[#38383A]">
               <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">First Name</label>
@@ -280,14 +258,8 @@ export default function PersonalInfo() {
             </div>
             <div className="px-4 py-3">
               <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Email</label>
-              <input
-                type="email"
-                value={currentSettings.email || ""}
-                onChange={(e) => updateSetting("email", e.target.value)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
-                placeholder="Enter email"
-                data-testid="input-email"
-              />
+              <p className="text-[#AEAEB2] text-[17px] mt-1 break-all" data-testid="text-email">{user?.email || "—"}</p>
+              <p className="text-[12px] text-[#8E8E93] mt-1">This is your sign-in email. Need it changed? Email us from Help &amp; Support.</p>
             </div>
           </div>
 
@@ -412,18 +384,6 @@ export default function PersonalInfo() {
             )}
           </div>
 
-          <div ref={saveButtonRef}>
-            {hasChanges && (
-              <button
-                onClick={saveSettings}
-                disabled={updateSettingsMutation.isPending}
-                className="w-full py-3.5 bg-white text-black font-semibold text-[17px] rounded-xl disabled:opacity-50"
-                data-testid="button-save"
-              >
-                {updateSettingsMutation.isPending ? "Saving..." : "Save"}
-              </button>
-            )}
-          </div>
 
           <div className="pt-4">
             <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Account Management</p>
@@ -442,6 +402,8 @@ export default function PersonalInfo() {
           </div>
         </div>
       </div>
+      <SaveBar visible={hasChanges} saving={updateSettingsMutation.isPending} onSave={() => { saveSettings().catch(() => {}); }} onDiscard={discardChanges} />
+      {leaveDialog}
     </div>
   );
 }

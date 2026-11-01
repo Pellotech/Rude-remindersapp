@@ -10,7 +10,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import type { Reminder } from "@shared/schema";
 
 const rudenessLevelLabels = {
-  1: "Gentle",
+  1: "Sympathy",
   2: "Firm",
   3: "Sarcastic",
   4: "Harsh",

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { ReemCarryAnimation } from "@/components/ReemCarryAnimation";
 import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -266,6 +267,7 @@ export default function ReminderForm({
     lockedTooltipTimerRef.current = setTimeout(() => setLockedTooltip(null), 2000);
   };
   const [quickReminderOpen, setQuickReminderOpen] = useState(false);
+  const quickReminderRef = useRef<HTMLDivElement>(null);
   const [todayIsSelected, setTodayIsSelected] = useState(false);
 
   const [scheduleValid, setScheduleValid] = useState(false);
@@ -460,6 +462,10 @@ export default function ReminderForm({
     try { localStorage.setItem(FREE_REMINDER_STORAGE_KEY, String(getFreeReminderCount() + 1)); } catch {}
   };
 
+  // Reem carries the Create Reminder button away after each new reminder
+  const createButtonRef = useRef<HTMLButtonElement>(null);
+  const [carryRect, setCarryRect] = useState<DOMRect | null>(null);
+
   const createReminderMutation = useMutation({
     mutationFn: async (data: FormData) => {
       const submissionData = {
@@ -484,6 +490,23 @@ export default function ReminderForm({
 
       console.log('Ad action counter incremented: reminder created');
       onReminderCreated?.();
+
+      // Kick off Reem's "steal the button" animation
+      // (Runs for normal AND Quick Reminders — both use this same save step.)
+      const btn = createButtonRef.current;
+      if (btn) {
+        const r = btn.getBoundingClientRect();
+        const onScreen = r.width > 0 && r.top >= 0 && r.bottom <= window.innerHeight;
+        if (onScreen) {
+          setCarryRect(r);
+        } else if (r.width > 0) {
+          // e.g. scrolled down in Quick Reminder — bring the button into view, then play
+          btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          window.setTimeout(() => {
+            if (createButtonRef.current) setCarryRect(createButtonRef.current.getBoundingClientRect());
+          }, 500);
+        }
+      }
 
       toast({
         title: "Success!",
@@ -1207,7 +1230,7 @@ export default function ReminderForm({
                   <div className="text-center space-y-4">
                     <img src={rudeRemindersLogo} alt="Reems Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
                     <h2 className="text-xl font-bold text-[#111827]">Free Limit Reached</h2>
-                    <p className="text-[#6B7280] text-sm">You've reached the free limit of 30 reminders. Upgrade to Premium for unlimited reminders and full access to all features.</p>
+                    <p className="text-[#6B7280] text-sm">You've used all your free reminders for this month. They reset on the 1st — or go Premium for 120 a month plus every feature.</p>
                     <div className="space-y-2 pt-2">
                       <button
                         onClick={() => { setShowLimitModal(false); setLocation('/subscribe'); }}
@@ -1227,11 +1250,20 @@ export default function ReminderForm({
               </div>
             )}
 
+            {carryRect && <ReemCarryAnimation rect={carryRect} onDone={() => setCarryRect(null)} />}
+
             {/* Submit Button */}
             <Button
+              ref={createButtonRef}
               type="submit"
               className="w-full bg-[#1B2A5E] hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg disabled:opacity-100 disabled:cursor-default"
-              disabled={createReminderMutation.isPending || !scheduleValid}
+              style={{
+                // Hidden while Reem "has" it, then pops back in
+                opacity: carryRect ? 0 : 1,
+                transform: carryRect ? 'scale(0.9)' : 'scale(1)',
+                transition: carryRect ? 'none' : 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}
+              disabled={createReminderMutation.isPending || !scheduleValid || !!carryRect}
             >
               {createReminderMutation.isPending ? (
                 <>
@@ -1243,23 +1275,41 @@ export default function ReminderForm({
               )}
             </Button>
 
-            {/* Quick Reminder Settings - Show only when today is selected */}
-            {!form.watch("isMultiDay") && todayIsSelected && (
-                    <Collapsible open={quickReminderOpen} onOpenChange={setQuickReminderOpen}>
+            {/* Quick Reminder — always available (fires from right now, no date needed) */}
+            {(
+                    <Collapsible
+                      open={quickReminderOpen}
+                      onOpenChange={(open) => {
+                        setQuickReminderOpen(open);
+                        if (open) {
+                          // After the drawer finishes opening, scroll so the 10s/5m/15m/30m buttons
+                          // sit above the bottom ad banner / nav bar instead of hiding behind it.
+                          window.setTimeout(() => {
+                            quickReminderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                          }, 340);
+                        }
+                      }}
+                    >
+                      <div
+                        ref={quickReminderRef}
+                        style={{ scrollMarginBottom: platformInfo.isAndroid ? 170 : 120 }}
+                      >
                       <CollapsibleTrigger asChild>
                         <Button
                           type="button"
                           variant="outline"
                           className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-white text-[#1A1A1A] border border-[#C9A063] hover:bg-[#FDF3E3] hover:text-[#1A1A1A] focus-visible:ring-0 focus-visible:border-[#C9A063]"
+                          data-testid="button-quick-reminder"
                         >
                           <span className="flex items-center">
-                            <Clock className="mr-2 h-4 w-4" />
+                            <Zap className="mr-2 h-4 w-4" />
                             Quick Reminder
                           </span>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${quickReminderOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${quickReminderOpen ? "rotate-180" : ""}`} />
                         </Button>
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-2 p-4 bg-[#FDF3E3] rounded-lg border border-[#FDF3E3]">
+                      <CollapsibleContent className="quick-drawer">
+                        <div className="mt-2 p-4 bg-[#FDF3E3] rounded-lg border border-[#FDF3E3]">
                         <div className="grid grid-cols-4 gap-2">
                           {[
                             { seconds: 10, shortLabel: "10s" },
@@ -1324,7 +1374,9 @@ export default function ReminderForm({
                             </Button>
                           ))}
                         </div>
+                        </div>
                       </CollapsibleContent>
+                      </div>
                     </Collapsible>
             )}
 

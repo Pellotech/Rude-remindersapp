@@ -34,7 +34,7 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["account", "signup", "register", "login", "sync"],
         steps: [
           "Open the app — you'll be taken to the sign-in screen",
-          "Choose Apple, Google, Facebook, or email to register",
+          "Sign in with Apple (iPhone), Google, or email",
           "Your reminders sync across all your devices",
           "An account is required to use Reems Rude Reminders"
         ],
@@ -49,7 +49,7 @@ export const helpCategories: HelpCategory[] = [
         icon: "Flame",
         keywords: ["rudeness", "level", "intensity", "rude", "mild", "spicy", "emoji", "smiley", "slider"],
         steps: [
-          "Level 1 😊 Gentle: Encouraging and supportive",
+          "Level 1 🤗 Sympathy: Understanding, warm and encouraging — Reem gets that it's hard",
           "Level 2 🙂 Motivational: Friendly nudge with personality",
           "Level 3 😏 Sarcastic: Balanced motivation with attitude",
           "Level 4 😠 Harsh: Strong push with humor",
@@ -62,6 +62,24 @@ export const helpCategories: HelpCategory[] = [
         ]
       },
       {
+        id: "meet-reem",
+        title: "Meet Reem",
+        icon: "Smile",
+        keywords: ["reem", "rudy", "mascot", "widget", "floating", "nice mode", "bubble", "character"],
+        steps: [
+          "Reem lives at the top of your home screen and reacts to what you do — creating, finishing or skipping reminders",
+          "The top bubble shows Reem's rotating one-liners; the bottom bubble (Premium) reacts to your actions",
+          "Scroll down and Reem glides along with you — tap Reem or the ✕ to send him back to his spot",
+          "Settings → Notifications → Floating Reem turns the follow-along off completely",
+          "Settings → Notifications → Nice Reem Mode makes Reem say only encouraging things",
+          "Every time you create a reminder, Reem shoves the Create Reminder button off the screen — it pops right back"
+        ],
+        faqs: [
+          { question: "Can I stop Reem following me when I scroll?", answer: "Yes — tap Reem or the ✕ to tuck him away until you scroll back up, or turn off Floating Reem in Settings → Notifications." },
+          { question: "Reem is too mean. Can I calm him down?", answer: "Turn on Nice Reem Mode in Settings → Notifications, or slide your reminders down to 🤗 Sympathy." }
+        ]
+      },
+      {
         id: "motivational-popup",
         title: "Habit Building Popup",
         icon: "Sparkles",
@@ -71,8 +89,7 @@ export const helpCategories: HelpCategory[] = [
           "Messages are one line, quick to read, and cycle through 7 tips automatically",
           "One of them ties directly to habit-building science (it takes ~66 days to form a habit)",
           "Tap 'Let's get it 💥' to dismiss",
-          "If a reminder notification is showing, the popup waits until you dismiss it first",
-          "To preview a popup anytime: add ?showPopup=1 to the app URL"
+          "If a reminder notification is showing, the popup waits until you dismiss it first"
         ],
         faqs: [
           { question: "How often does the popup show?", answer: "Once every 4 days when you open the app. It never interrupts an active reminder notification." },
@@ -89,54 +106,54 @@ export const helpCategories: HelpCategory[] = [
     articles: [
       {
         id: "set-time-date",
-        title: "Single Day: Pick Date & Time",
+        title: "Picking a Date & Time (the Book)",
         icon: "Calendar",
-        keywords: ["time", "date", "schedule", "when", "single", "day", "hour", "minute", "calendar"],
+        keywords: ["time", "date", "schedule", "when", "single", "day", "hour", "minute", "calendar", "book"],
         steps: [
-          "In the Create tab, scroll to the date picker",
-          "Tap a date button (cream background, turns red when selected)",
-          "Scroll the hour row to pick your hour — same color scheme",
-          "Scroll the minute row to pick :00, :15, :30, or :45",
-          "The summary bubble below the Create button shows your full schedule"
+          "In the Create tab, find the brown book — that's your week ahead",
+          "Swipe or tap → to open the cover and flip through the next 7 days",
+          "Tap 'Select this day' on the page you want — the date turns red and Reem scribbles a smiley",
+          "Pick an hour from the hour row, then :00, :15, :30 or :45",
+          "The summary under the Create Reminder button shows exactly when it will fire"
         ],
         faqs: [
-          { question: "Can I set reminders for next month?", answer: "Currently reminders can be scheduled up to one week ahead. For longer planning, set a reminder to create another reminder!" },
-          { question: "Why are some date buttons greyed out?", answer: "Past dates and times are disabled — you can only schedule reminders for the future." }
+          { question: "Can I set reminders for next month?", answer: "The book covers the next 7 days. For anything further out, set a reminder to make another reminder!" },
+          { question: "Why can't I pick some times?", answer: "Times that have already passed today are disabled — reminders can only be set for the future." }
         ]
       },
       {
         id: "multiple-days",
         title: "Multiple Days (Recurring)",
         icon: "CalendarDays",
-        keywords: ["recurring", "multiple", "days", "repeat", "weekly", "multi-day", "toggle"],
+        keywords: ["recurring", "multiple", "days", "repeat", "weekly", "multi-day"],
         steps: [
-          "Toggle 'Multiple Days' on below the message input",
-          "The toggle turns gold when active; its track turns cream when off",
-          "Select which days of the week to repeat (buttons turn red when selected)",
-          "Scroll the hour row to pick your time",
-          "Pick your minute: :00, :15, :30, or :45",
-          "The summary shows all selected days and time"
+          "Open the book and tap 'Select this day' on more than one page",
+          "The counter next to the arrows shows how many days you've picked",
+          "Your picked days appear as red chips under the book — tap 'Deselect' on a page to remove it",
+          "Choose one hour and minute — every picked day fires at that time"
         ],
         faqs: [
-          { question: "Do all selected days trigger at the same time?", answer: "Yes, each selected day will fire at the same time you set." },
-          { question: "Can I pick different times for different days?", answer: "Not yet — all recurring days share one time. Set separate reminders if you need different times." }
+          { question: "Do all selected days fire at the same time?", answer: "Yes, each picked day uses the same time." },
+          { question: "Can I pick different times for different days?", answer: "Not yet — create separate reminders if you need different times." }
         ]
       },
       {
         id: "quick-reminders",
-        title: "Quick Reminder Buttons",
+        title: "Quick Reminders (10s · 5m · 15m · 30m)",
         icon: "Zap",
-        keywords: ["quick", "10s", "5m", "15m", "30m", "fast", "shortcut"],
+        keywords: ["quick", "10s", "5m", "15m", "30m", "fast", "shortcut", "now", "hurry", "test", "seconds", "minutes"],
         steps: [
-          "Type your reminder message first",
-          "Scroll down to the 'Quick Reminder' section and tap to expand",
-          "Tap +10s, +5m, +15m, or +30m to create a reminder that fires in that time",
-          "All your current settings (rudeness, voice, attachments, quotes) are applied",
-          "A full AI-generated message is created — no extra steps needed"
+          "Type what you want to be reminded about at the top of the Create tab",
+          "Scroll down to the Quick Reminder bar (red ⚡ icon) under the Create Reminder button and tap it — it opens like a drawer",
+          "Tap 10s, 5m, 15m or 30m — the reminder fires that long from right now",
+          "No need to open the book or pick a date — Quick Reminders always work from the current time",
+          "Your rudeness level, voice, photos and quote settings are all used",
+          "Reem shoves the Create Reminder button off screen to confirm it's set, and a message shows the exact time it will fire"
         ],
         faqs: [
-          { question: "Does +10s really work in 10 seconds?", answer: "Yes! It's great for testing. Real use cases: +5m for a quick task you're about to start." },
-          { question: "Is quick reminder different from the main form?", answer: "It uses all your form settings — rudeness level, voice character, attachments — but fires at a fixed offset from now." }
+          { question: "When should I use a Quick Reminder?", answer: "Anything happening soon — 'take the pizza out' in 15 minutes, 'leave for the bus' in 5. Use 10s to try out a rudeness level or voice instantly." },
+          { question: "Does 10s really fire in 10 seconds?", answer: "Yes. Make sure notifications are allowed so it can pop up even if you leave the app." },
+          { question: "Do Quick Reminders count toward my monthly limit?", answer: "Yes — each one counts as one reminder, the same as the main Create button." }
         ]
       },
       {
@@ -146,8 +163,8 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["slider", "rudeness", "adjust", "level"],
         steps: [
           "The rudeness slider sits in the cream-coloured section with emoji labels",
-          "Drag left for gentler (😊 Gentle) or right for more aggressive (🤬 Savage)",
-          "The emoji row shows: Gentle · Motivational · Sarcastic · Harsh · Savage",
+          "Drag left for kinder (🤗 Sympathy) or right for more aggressive (🤬 Savage)",
+          "The emoji row shows: Sympathy · Motivational · Sarcastic · Harsh · Savage",
           "Your default level can be saved in Settings"
         ],
         faqs: [
@@ -197,13 +214,13 @@ export const helpCategories: HelpCategory[] = [
         steps: [
           "Tap the camera icon in the form to add a photo",
           "Choose 'Take Photo' or 'Choose from Gallery'",
-          "On iPad: the native PHPicker is used automatically for stability",
-          "Your photo appears in the reminder notification when it fires",
-          "Up to 10MB per image; JPEG, PNG, HEIC, WebP supported"
+          "Free: 1 photo per reminder · Premium: up to 5",
+          "Your photos appear in the reminder pop-up when it fires — tap one to see it full size",
+          "JPEG, PNG, HEIC and WebP work, up to 10MB each"
         ],
         faqs: [
-          { question: "iPad camera not working?", answer: "Use 'Choose from Gallery' for best reliability on iPad. Camera capture works best on iPhone." },
-          { question: "Is there a size limit?", answer: "Yes, 10MB per file for optimal performance." }
+          { question: "iPad camera not working?", answer: "Use 'Choose from Gallery' for the most reliable result on iPad." },
+          { question: "Is there a size limit?", answer: "Yes, 10MB per photo." }
         ]
       },
       {
@@ -233,33 +250,33 @@ export const helpCategories: HelpCategory[] = [
         id: "manage-tabs",
         title: "Upcoming & Past Tabs",
         icon: "Layers",
-        keywords: ["active", "overdue", "completed", "tab", "filter", "status", "manage", "upcoming", "past"],
+        keywords: ["active", "overdue", "completed", "tab", "filter", "status", "manage", "upcoming", "past", "open", "reopen"],
         steps: [
-          "Go to the Manage tab (behind Analytics on the home screen)",
-          "Upcoming: reminders scheduled for the future, not yet fired",
-          "Past: overdue reminders you haven't logged yet, plus anything you logged in the last 24 hours",
-          "Tap a card's smiley/frown icons to log a past reminder as done or missed",
-          "Logged reminders clear from Past automatically 24 hours after you log them",
-          "Use the search bar to find reminders by title or content"
+          "Go to the Manage tab on the home screen",
+          "Upcoming: reminders that haven't fired yet",
+          "Past: reminders you haven't logged yet, plus anything you logged in the last 24 hours",
+          "Tap any unlogged Past reminder to reopen the full reminder — message, photos, voice and the Got it done / Didn't do it buttons",
+          "Or log it straight from the list with 😊 (did it) or 😞 (didn't)",
+          "Logged reminders clear from Past automatically 24 hours later"
         ],
         faqs: [
-          { question: "What happens to overdue reminders?", answer: "They stay in the Past tab, unlogged, until you mark them. Logging them feeds your completion graph." },
-          { question: "Can I delete a reminder?", answer: "Yes — for upcoming reminders, tap delete directly. Past reminders are locked from deletion until they're logged and clear automatically after 24 hours." }
+          { question: "What happens to overdue reminders?", answer: "They wait in Past, unlogged, until you mark them. Logging them feeds your graph." },
+          { question: "Can I delete a reminder?", answer: "Upcoming reminders: swipe left or tap the trash. Past reminders can't be deleted — log them and they clear on their own after 24 hours." }
         ]
       },
       {
         id: "editing-reminders",
-        title: "Editing & Deleting Reminders",
+        title: "Deleting & Changing Reminders",
         icon: "Pencil",
-        keywords: ["edit", "change", "modify", "update", "delete", "remove"],
+        keywords: ["edit", "change", "modify", "update", "delete", "remove", "swipe"],
         steps: [
-          "Go to Manage tab and tap a reminder card to expand it",
-          "Tap 'Edit' to modify the message, time, or settings",
-          "Tap the trash icon to delete",
-          "Reminders that fired recently show a countdown before deletion clears"
+          "Go to Manage → Upcoming",
+          "Swipe a reminder left, or tap its trash icon, to delete it",
+          "To change a reminder, delete it and create a new one with the new details",
+          "Past reminders are kept for your history — log them and they clear after 24 hours"
         ],
         faqs: [
-          { question: "Can I edit a reminder after it fires?", answer: "Once triggered, you can only mark it as Accomplished or Not Accomplished." }
+          { question: "Can I edit a reminder after it fires?", answer: "Once it has fired you can only log it — Got it done or Didn't do it." }
         ]
       },
       {
@@ -292,7 +309,7 @@ export const helpCategories: HelpCategory[] = [
           "Tap 'Nahh' if it didn't do much for you",
           "Whichever you tap locks in right away — no changing your answer after",
           "You'll see this same row on the reminder popup and on the Share preview card in Manage",
-          "Rudy's face at the top of the card changes expression based on the reminder's rudeness level"
+          "Reem's face at the top of the card changes expression based on the reminder's rudeness level"
         ],
         faqs: [
           { question: "What does It Hit actually do?", answer: "It's quick feedback on whether the AI-generated message worked. It helps us understand which messages are actually landing." },
@@ -385,8 +402,7 @@ export const helpCategories: HelpCategory[] = [
         icon: "Send",
         keywords: ["share", "send", "export"],
         steps: [
-          "Open any reminder from the Manage tab",
-          "Tap the Share icon",
+          "Tap Share on a reminder in Manage → Past, or at the top of the reminder pop-up",
           "A preview card is generated with your reminder content",
           "Choose how to share: Messages, social media, or save to photos"
         ],
@@ -421,68 +437,66 @@ export const helpCategories: HelpCategory[] = [
     articles: [
       {
         id: "free-vs-premium",
-        title: "Free vs Premium Features",
+        title: "Free vs Premium",
         icon: "Sparkles",
         keywords: ["free", "premium", "difference", "features", "upgrade", "limit"],
         steps: [
-          "Free: 15 reminders per month, Scarlett voice, standard quotes",
-          "Premium: 120 reminders per month, all 4 voice characters",
-          "Premium: AI-powered responses, personalized quotes, photo attachments",
-          "Premium: Multiple response variations to choose from",
-          "Limits reset automatically on the 1st of each month"
+          "Free: 15 reminders a month (10 a month after your first 6 months), Scarlett voice, 1 photo per reminder, standard messages",
+          "Premium: 120 reminders a month and all 4 voices (Scarlett, Will, Gerald, Karen)",
+          "Premium: AI-written messages with extra variations, personalised quotes and up to 5 photos",
+          "Premium: your full Analytics graph and Reem's live reactions",
+          "Monthly limits reset on the 1st of each month"
         ],
         faqs: [
-          { question: "What happens when I hit the free limit?", answer: "You'll be prompted to upgrade or wait until the 1st of next month when your limit resets." },
-          { question: "Can I try premium before paying?", answer: "New users may be eligible for a free trial. Check the Upgrade tab for current offers." }
+          { question: "What happens when I hit the free limit?", answer: "You can upgrade, or wait until the 1st when your reminders reset." },
+          { question: "Is there a free trial?", answer: "Any current offer is shown on the Subscribe screen before you pay." }
         ]
       },
       {
         id: "upgrade",
         title: "How to Upgrade",
         icon: "ArrowUpCircle",
-        keywords: ["upgrade", "subscribe", "buy", "purchase"],
+        keywords: ["upgrade", "subscribe", "buy", "purchase", "premium"],
         steps: [
-          "Create an account first if you haven't already",
-          "Go to the Upgrade tab or tap the Crown icon",
-          "Review premium features and pricing",
-          "Tap 'Subscribe' and confirm with Face ID / Touch ID",
-          "Your premium status activates immediately"
+          "Tap 'Go Premium' on Reem, or go to Settings → Payment & Billing → Upgrade to Premium",
+          "Pick Yearly (best value) or Monthly — prices come straight from the App Store / Google Play",
+          "Tap Continue and confirm with Face ID, Touch ID or your store password",
+          "Premium switches on straight away and you're taken back home"
         ],
         faqs: [
-          { question: "Which payment methods work?", answer: "We use Apple/Google Pay through the app stores. All cards linked to your app store account work." },
-          { question: "Do I need an account to subscribe?", answer: "Yes — you must be registered and logged in so your subscription syncs across devices." }
+          { question: "How do I pay?", answer: "Through your Apple ID or Google Play account — any card or balance linked there works." },
+          { question: "Do I need an account to subscribe?", answer: "Yes — it ties Premium to you so it follows you to any device you sign in on." }
         ]
       },
       {
         id: "restore-purchases",
         title: "Restore Purchases",
         icon: "RefreshCw",
-        keywords: ["restore", "recover", "lost", "purchase"],
+        keywords: ["restore", "recover", "lost", "purchase", "new phone", "reinstall"],
         steps: [
-          "Go to Settings (tap the ⚙️ icon in the header)",
-          "Scroll to the Subscription section",
-          "Tap 'Restore Purchases'",
-          "Your subscription will be verified and restored"
+          "Go to Settings → Payment & Billing",
+          "Tap 'Restore Purchases' (it's also under Continue on the Subscribe screen)",
+          "Premium comes straight back if your store account has an active subscription"
         ],
         faqs: [
-          { question: "Restore not working?", answer: "Make sure you're signed into the same Apple/Google account used for the original purchase." },
-          { question: "Changed phones and lost premium?", answer: "Restore purchases on your new device while signed into the same app store account." }
+          { question: "Restore not working?", answer: "Make sure your phone is signed into the same Apple ID / Google account you paid with." },
+          { question: "Changed phones and lost Premium?", answer: "Sign into the app, then tap Restore Purchases on the new phone." }
         ]
       },
       {
         id: "manage-subscription",
-        title: "Cancel or Change Subscription",
+        title: "Manage Your Subscription",
         icon: "Settings",
-        keywords: ["cancel", "manage", "subscription", "settings"],
+        keywords: ["cancel", "manage", "subscription", "change", "plan", "refund"],
         steps: [
-          "On iPhone: Settings → Apple ID → Subscriptions → Reems Rude Reminders",
-          "On Android: Play Store → Menu → Subscriptions → Reems Rude Reminders",
-          "Change plans or cancel here",
-          "Cancellation takes effect at end of your billing period — you keep access until then"
+          "Go to Settings → Payment & Billing → Manage Subscription",
+          "This opens your Apple ID or Google Play subscriptions page",
+          "Switch between Monthly and Yearly, or turn off auto-renew there",
+          "If you stop renewing, you keep Premium until the end of the period you've paid for"
         ],
         faqs: [
-          { question: "Will I get a refund if I cancel?", answer: "Subscriptions are non-refundable, but you keep access until end of your paid period. Contact App Store/Play Store support for billing issues." },
-          { question: "What happens to my reminders if I cancel?", answer: "All reminders remain. You return to the free tier (15/month limit)." }
+          { question: "Can I get a refund?", answer: "Payments go through Apple or Google, so refunds are handled by them. Email us and we'll point you the right way." },
+          { question: "What happens to my reminders if I stop Premium?", answer: "Nothing is deleted — you just go back to the free plan's monthly limit." }
         ]
       }
     ]
@@ -517,7 +531,7 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["subscription", "premium", "not working", "stuck", "restore"],
         steps: [
           "Force close the app and reopen",
-          "Go to Settings → tap 'Restore Purchases'",
+          "Go to Settings → Payment & Billing → Restore Purchases",
           "Check your internet connection",
           "Wait 5–10 minutes; subscription servers sometimes sync slowly"
         ],
@@ -531,14 +545,14 @@ export const helpCategories: HelpCategory[] = [
         icon: "RefreshCcw",
         keywords: ["stuck", "frozen", "slow", "refresh", "reset", "reload"],
         steps: [
-          "Pull down on any screen to refresh data",
-          "Force close: swipe up from bottom of screen, swipe app away",
-          "Reopen the app fresh",
-          "If still stuck, sign out from Settings and sign back in"
+          "Switch to another tab and back to reload that screen",
+          "Fully close the app (swipe it away from the app switcher) and reopen it",
+          "Check your internet connection — the app needs it to sync",
+          "Still stuck? Sign out with the exit icon at the top of the home screen, then sign back in"
         ],
         faqs: [
-          { question: "Will signing out delete my reminders?", answer: "No. Reminders are saved to your account and return when you sign back in." },
-          { question: "Should I reinstall the app?", answer: "Only as a last resort. Your account data is safely stored on the server and will return after re-login." }
+          { question: "Will signing out delete my reminders?", answer: "No. Everything is saved to your account and comes back when you sign in." },
+          { question: "Should I reinstall the app?", answer: "Only as a last resort — your data is safe on our servers and returns after you sign in." }
         ]
       }
     ]

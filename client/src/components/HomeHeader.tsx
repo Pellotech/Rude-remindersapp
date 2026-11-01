@@ -69,7 +69,7 @@ export function HomeHeader({
   const [leaving, setLeaving] = useState(false);    // playing the exit animation
   const [homeHeight, setHomeHeight] = useState<number | undefined>(undefined);
   const [rudyFloatingEnabled, setRudyFloatingEnabled] = useState(
-    () => localStorage.getItem('rudy_widget_visible') !== 'false'
+    () => localStorage.getItem('rudy_widget_visible') === 'true' // off unless the user turned it on
   );
 
   useEffect(() => {
