@@ -77,6 +77,15 @@ export function registerRemindersRoutes(app: Express) {
         clientLocalTime
       } = req.body;
 
+      // Turn away clearly invalid requests with a clear message (they used to
+      // crash further down and come back as a 500 "server error").
+      if (typeof originalMessage !== 'string' || !originalMessage.trim()) {
+        return res.status(400).json({ message: "Please enter what you need to be reminded about", code: 'INVALID_REMINDER' });
+      }
+      if (!Number.isInteger(rudenessLevel) || rudenessLevel < 1 || rudenessLevel > 5) {
+        return res.status(400).json({ message: "Rudeness level must be between 1 and 5", code: 'INVALID_REMINDER' });
+      }
+
       // Older app versions don't send ?tz=, so fall back to hints in the body.
       noteClientZone(req.body?.timeZone, clientLocalTime);
 
@@ -526,40 +535,6 @@ export function registerRemindersRoutes(app: Express) {
       res.status(500).json({ message: "Failed to get more responses" });
     }
   });
-
-  // Generate AI response for a specific reminder (Premium feature)
-  app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = signedInUserId(req);
-      const reminder = await storage.getReminder(req.params.id, userId);
-      if (!reminder) {
-        return res.status(404).json({ message: "Reminder not found" });
-      }
-
-      // Generate AI response using the reminder service
-      const updatedReminder = await reminderService.generateReminderResponse(reminder); 
-
-      // Update the reminder in storage with the new AI response
-      const finalReminder = {
-        ...reminder,
-        ...updatedReminder,
-        updatedAt: new Date()
-      };
-
-      await storage.updateReminder(req.params.id, userId, finalReminder);
-
-      res.json({
-        ...updatedReminder,
-        isPremium: true, // Assuming this endpoint is for premium users
-        aiGenerated: true,
-        source: 'ai-deepseek' 
-      });
-    } catch (error) {
-      console.error("Error generating AI response:", error);
-      res.status(500).json({ message: "Failed to generate AI response" });
-    }
-  });
-
 
   app.delete('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {

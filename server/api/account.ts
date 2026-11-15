@@ -1,7 +1,7 @@
 // Account & sign-in: forgot / reset / change password, logout, delete account, current user, Siri token, settings
 import type { Express } from "express";
 import { storage } from "../storage";
-import { sendPasswordResetEmail } from "../replitAuth";
+import { sendPasswordResetEmail } from "../auth";
 import { authTokens } from "@shared/schema";
 import { db } from "../db";
 import { eq, and, sql } from "drizzle-orm";
@@ -272,7 +272,7 @@ export function registerAccountRoutes(app: Express) {
     }
   });
 
-  // Protected auth routes (supports Replit Auth, session-based auth, and token-based auth)
+  // Protected auth routes (session-based and token-based sign-in)
   app.get('/api/auth/user', async (req: any, res) => {
     try {
       const userId = getAuthUserId(req);

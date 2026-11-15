@@ -2,7 +2,7 @@
 // Developer Space checks, photo uploads, and small utilities.
 import { type Request, type Response, type NextFunction } from "express";
 import { storage } from "../storage";
-import { isAuthenticated as baseIsAuthenticated } from "../replitAuth";
+import { isAuthenticated as baseIsAuthenticated } from "../auth";
 import { withUserZone, nextDayOccurrence } from "../utils/userTime";
 import { authTokens } from "@shared/schema";
 import { db } from "../db";
@@ -70,7 +70,7 @@ export async function tokenAuthMiddleware(req: Request, res: Response, next: Nex
 
 // Helper to get authenticated user ID from any auth method
 export function getAuthUserId(req: any): string | null {
-  // Priority: token auth > session auth > Replit auth
+  // Priority: app token (Bearer) > session > signed-in session user
   return req.tokenUserId || req.session?.userId || req.user?.claims?.sub || null;
 }
 

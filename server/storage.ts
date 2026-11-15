@@ -25,7 +25,7 @@ import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
 // Interface for storage operations
 export interface IStorage {
   // User operations
-  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+  // User accounts
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByVerificationToken(token: string): Promise<User | undefined>;
@@ -77,7 +77,7 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   // User operations
-  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+  // User accounts
 
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -613,480 +613,39 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// In-memory storage implementation for development
-class MemoryStorage implements IStorage {
-  private users: Map<string, User> = new Map();
-  private reminders: Reminder[] = [];
-  private rudePhrasesSeeded = false;
-  private rudePhrasesStore: RudePhrase[] = [];
-  private whitelistEmails: Set<string> = new Set(['ruderemindersinfo@gmail.com']);
+// Connect to the database. If it can't be reached, try a few more times and
+// then fail loudly. (It used to quietly switch to a temporary in-memory store,
+// which made everyone's reminders look deleted and lost anything saved.)
+async function createStorage(): Promise<IStorage> {
+  const attempts = 4;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const dbStorage = new DatabaseStorage();
+      await dbStorage.seedRudePhrases(); // fails if the database is unreachable
+      console.log('✅ Database connection successful - using DatabaseStorage');
+      return dbStorage;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      if (attempt >= attempts) {
+        console.error(`❌ Database unavailable after ${attempts} tries: ${message}`);
+        throw error;
+      }
+      console.warn(`⚠️  Database unavailable (try ${attempt}/${attempts}): ${message} — retrying…`);
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1500));
+    }
+  }
+}
 
-  constructor() {
-    // Add a default dev user for testing
-    this.users.set('dev-user-001', {
-      id: 'dev-user-001',
-      email: 'developer@example.com',
-      firstName: 'Developer', // Corrected from name to firstName
-      lastName: null, // Added lastName for schema compliance
-      profileImageUrl: null, // Added profileImageUrl
-      defaultRudenessLevel: 3, // Added defaultRudenessLevel
-      defaultVoiceCharacter: 'default', // Added defaultVoiceCharacter
-      voiceNotifications: true, // Added voiceNotifications
-      emailNotifications: false, // Added emailNotifications
-      browserNotifications: true, // Added browserNotifications
-      gender: 'other', // Added gender
-      genderSpecificReminders: false, // Added genderSpecificReminders
-      ethnicity: null, // Added ethnicity
-      ethnicitySpecificQuotes: false, // Added ethnicitySpecificQuotes
-      subscriptionStatus: 'active', // Updated to active for premium testing
-      revenueCatCustomerId: null, // Added revenueCatCustomerId
-      revenueCatEntitlements: {}, // Added revenueCatEntitlements
-      subscriptionPlan: 'premium', // Updated to premium
-      subscriptionEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-      monthlyReminderUsage: null, // Added monthlyReminderUsage
-      simplifiedInterface: false, // Added simplifiedInterface
-      alarmSound: 'gentle-chime', // Added alarmSound
-      passwordHash: null, // Added passwordHash
-      age: null, // Added age
-      country: null, // Added country
-      createdAt: new Date(),
-      updatedAt: new Date(),
+// One shared connection. If connecting fails, the next request tries again.
+let storagePromise: Promise<IStorage> | undefined;
+export const getStorage = (): Promise<IStorage> => {
+  if (!storagePromise) {
+    storagePromise = createStorage().catch((error) => {
+      storagePromise = undefined;
+      throw error;
     });
   }
-
-  // User operations
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const normalizedEmail = email.toLowerCase().trim();
-    for (const user of Array.from(this.users.values())) {
-      if (user.email?.toLowerCase().trim() === normalizedEmail) {
-        return user;
-      }
-    }
-    return undefined;
-  }
-
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    const normalizedEmail = userData.email ? userData.email.toLowerCase().trim() : null;
-    const user: User = {
-      id: userData.id || `user_${Date.now()}`,
-      email: normalizedEmail,
-      firstName: userData.firstName || null,
-      lastName: userData.lastName || null,
-      profileImageUrl: userData.profileImageUrl || null,
-      defaultRudenessLevel: userData.defaultRudenessLevel || 3,
-      defaultVoiceCharacter: userData.defaultVoiceCharacter || 'default',
-      voiceNotifications: userData.voiceNotifications ?? true,
-      emailNotifications: userData.emailNotifications ?? false,
-      browserNotifications: userData.browserNotifications ?? true,
-      gender: userData.gender || null,
-      genderSpecificReminders: userData.genderSpecificReminders ?? false,
-      ethnicity: userData.ethnicity || null,
-      ethnicitySpecificQuotes: userData.ethnicitySpecificQuotes ?? false,
-      subscriptionStatus: userData.subscriptionStatus || "free",
-      revenueCatCustomerId: userData.revenueCatCustomerId || null,
-      revenueCatEntitlements: userData.revenueCatEntitlements || {},
-      subscriptionPlan: userData.subscriptionPlan || "free",
-      subscriptionEndsAt: userData.subscriptionEndsAt || null,
-      monthlyReminderUsage: userData.monthlyReminderUsage || null,
-      simplifiedInterface: userData.simplifiedInterface ?? false,
-      alarmSound: userData.alarmSound || "gentle-chime",
-      passwordHash: userData.passwordHash || null,
-      age: userData.age || null,
-      country: userData.country || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.set(user.id, user);
-    return user;
-  }
-
-  async updateUser(id: string, updates: Partial<User>): Promise<User> {
-    const existing = this.users.get(id);
-    if (!existing) throw new Error('User not found');
-
-    const updated = { ...existing, ...updates, updatedAt: new Date() };
-    this.users.set(id, updated);
-    return updated;
-  }
-
-  async getAllUsers(): Promise<User[]> {
-    return Array.from(this.users.values());
-  }
-
-  async deleteUser(id: string): Promise<void> {
-    this.reminders = this.reminders.filter(r => r.userId !== id);
-    this.users.delete(id);
-  }
-
-  // Reminder operations
-  async createReminder(userId: string, reminder: InsertReminder): Promise<Reminder> {
-    const id = `reminder_${Date.now()}_${Math.random()}`;
-
-    // Generate rude message with multiple variations
-    let rudeMessage: string;
-    let daySpecificMessages = null;
-    let responseVariations: string[] = [];
-
-    const phrases = await this.getRudePhrasesForLevel(reminder.rudenessLevel);
-
-    // Generate 3-5 different response variations
-    const numVariations = Math.min(phrases.length, 5);
-    const shuffledPhrases = phrases.sort(() => 0.5 - Math.random()).slice(0, numVariations);
-
-    responseVariations = shuffledPhrases.map(phrase => 
-      `${reminder.originalMessage}${phrase?.phrase || ', get it done!'}`
-    );
-
-    if (reminder.isMultiDay && reminder.selectedDays && reminder.selectedDays.length > 0) {
-      // Generate different rude messages for each selected day
-      const dayMessages: { [key: string]: string } = {};
-
-      for (const day of reminder.selectedDays) {
-        const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-        dayMessages[day] = `${reminder.originalMessage}${randomPhrase?.phrase || ', get it done!'}`;
-      }
-
-      daySpecificMessages = JSON.stringify(dayMessages);
-      // Use the first day's message as the default rudeMessage
-      rudeMessage = dayMessages[reminder.selectedDays[0]] || reminder.originalMessage;
-    } else {
-      // Standard single-day reminder
-      rudeMessage = responseVariations[0];
-    }
-
-    const newReminder: Reminder = {
-      id,
-      userId,
-      title: reminder.title,
-      originalMessage: reminder.originalMessage,
-      context: reminder.context || null,
-      rudenessLevel: reminder.rudenessLevel,
-      scheduledFor: reminder.scheduledFor,
-      browserNotification: reminder.browserNotification ?? true,
-      voiceNotification: reminder.voiceNotification ?? false,
-      emailNotification: reminder.emailNotification ?? false,
-      voiceCharacter: reminder.voiceCharacter || 'default',
-      attachments: reminder.attachments || [],
-      motivationalQuote: reminder.motivationalQuote || null,
-      responses: responseVariations,
-      // Multi-day fields
-      isMultiDay: reminder.isMultiDay ?? false,
-      selectedDays: reminder.selectedDays || [],
-      daySpecificMessages: daySpecificMessages,
-
-      rudeMessage,
-
-      completed: false,
-      completedAt: null,
-      notAccomplished: false,
-      notAccomplishedAt: null,
-      loggedAt: null,
-      hitConfirmed: false,
-      hitComment: null,
-      hitAt: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    this.reminders.push(newReminder);
-    return newReminder;
-  }
-
-  async getReminders(userId: string): Promise<Reminder[]> {
-    return Array.from(this.reminders.values())
-      .filter(r => r.userId === userId)
-      .sort((a, b) => b.scheduledFor.getTime() - a.scheduledFor.getTime());
-  }
-
-  async getReminder(id: string, userId: string): Promise<Reminder | undefined> {
-    const reminder = this.reminders.find(r => r.id === id);
-    return reminder && reminder.userId === userId ? reminder : undefined;
-  }
-
-  async updateReminder(id: string, userId: string, updates: UpdateReminder): Promise<Reminder> {
-    const existing = await this.getReminder(id, userId);
-    if (!existing) throw new Error('Reminder not found');
-
-    let rudeMessage = existing.rudeMessage;
-    if (updates.originalMessage || updates.rudenessLevel) {
-      const message = updates.originalMessage || existing.originalMessage;
-      const level = updates.rudenessLevel || existing.rudenessLevel;
-      const phrases = await this.getRudePhrasesForLevel(level);
-      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-      rudeMessage = `${message}${randomPhrase?.phrase || ', get it done!'}`;
-    }
-
-    const updated = { 
-      ...existing, 
-      ...updates, 
-      rudeMessage,
-      updatedAt: new Date() 
-    };
-    const index = this.reminders.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.reminders[index] = updated;
-    }
-    return updated;
-  }
-
-  async deleteReminder(id: string, userId: string): Promise<void> {
-    const index = this.reminders.findIndex(r => r.id === id && r.userId === userId);
-    if (index !== -1) {
-      this.reminders.splice(index, 1);
-    }
-  }
-
-  async getActiveReminders(userId: string): Promise<Reminder[]> {
-    return Array.from(this.reminders.values())
-      .filter(r => r.userId === userId && !r.completed && r.scheduledFor >= new Date());
-  }
-
-  async getUpcomingReminders(): Promise<Reminder[]>{
-    const now = new Date();
-    const next24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-
-    return Array.from(this.reminders.values())
-      .filter(r => !r.completed && r.scheduledFor >= now && r.scheduledFor <= next24Hours);
-  }
-
-  async completeReminder(id: string, userId: string): Promise<Reminder> {
-    const existing = await this.getReminder(id, userId);
-    if (!existing) throw new Error('Reminder not found');
-
-    const updated = { 
-      ...existing, 
-      completed: true, 
-      completedAt: new Date(),
-      loggedAt: new Date(),
-      updatedAt: new Date() 
-    };
-    const index = this.reminders.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.reminders[index] = updated;
-    }
-    return updated;
-  }
-
-  async markReminderNotAccomplished(id: string, userId: string): Promise<Reminder> {
-    const existing = await this.getReminder(id, userId);
-    if (!existing) throw new Error('Reminder not found');
-
-    const updated = { 
-      ...existing, 
-      notAccomplished: true, 
-      notAccomplishedAt: new Date(),
-      loggedAt: new Date(),
-      updatedAt: new Date() 
-    };
-    const index = this.reminders.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.reminders[index] = updated;
-    }
-    return updated;
-  }
-
-  async markReminderHit(id: string, userId: string, hit: boolean, comment?: string): Promise<Reminder> {
-    const existing = await this.getReminder(id, userId);
-    if (!existing) throw new Error('Reminder not found');
-
-    const updated = {
-      ...existing,
-      hitConfirmed: hit,
-      hitComment: comment || null,
-      hitAt: new Date(),
-      updatedAt: new Date()
-    };
-    const index = this.reminders.findIndex(r => r.id === id);
-    if (index !== -1) {
-      this.reminders[index] = updated;
-    }
-    return updated;
-  }
-
-  async getHitReminders(): Promise<Reminder[]> {
-    return this.reminders
-      .filter(r => r.hitConfirmed)
-      .sort((a, b) => {
-        const aTime = a.hitAt ? new Date(a.hitAt).getTime() : 0;
-        const bTime = b.hitAt ? new Date(b.hitAt).getTime() : 0;
-        return bTime - aTime;
-      });
-  }
-
-  // Rude phrases operations
-  async getRudePhrasesForLevel(level: number): Promise<RudePhrase[]> {
-    if (!this.rudePhrasesSeeded) {
-      await this.seedRudePhrases();
-    }
-    return this.rudePhrasesStore.filter(phrase => phrase.rudenessLevel === level);
-  }
-
-  async seedRudePhrases(): Promise<void> {
-    if (this.rudePhrasesSeeded) return;
-
-    const phrases = [
-      // Level 1 - Sympathy
-      { id: '1', rudenessLevel: 1, phrase: ", I know it's hard sometimes — but you've got this 💛", category: "sympathy", createdAt: new Date() },
-      { id: '2', rudenessLevel: 1, phrase: ", it's okay if today's been a lot. One small step is enough 🌱", category: "sympathy", createdAt: new Date() },
-      { id: '3', rudenessLevel: 1, phrase: ", be gentle with yourself — and when you're ready, let's do this 🤗", category: "sympathy", createdAt: new Date() },
-      { id: '4', rudenessLevel: 1, phrase: ", even tiny steps count — you've got more in you than you think ✨", category: "uplifting", createdAt: new Date() },
-
-      // Level 2 - Firm
-      { id: '5', rudenessLevel: 2, phrase: ", don't let this slip by!", category: "firm", createdAt: new Date() },
-      { id: '6', rudenessLevel: 2, phrase: ", time to get moving!", category: "assertive", createdAt: new Date() },
-      { id: '7', rudenessLevel: 2, phrase: ", no excuses now!", category: "direct", createdAt: new Date() },
-      { id: '8', rudenessLevel: 2, phrase: ", make it happen!", category: "motivational", createdAt: new Date() },
-
-      // Level 3 - Sarcastic
-      { id: '9', rudenessLevel: 3, phrase: ", because apparently you need reminding...", category: "sarcastic", createdAt: new Date() },
-      { id: '10', rudenessLevel: 3, phrase: ", shocking that you haven't done this yet!", category: "ironic", createdAt: new Date() },
-      { id: '11', rudenessLevel: 3, phrase: ", what a surprise, still not done!", category: "witty", createdAt: new Date() },
-      { id: '12', rudenessLevel: 3, phrase: ", let me guess, you 'forgot' again?", category: "cynical", createdAt: new Date() },
-
-      // Level 4 - Harsh
-      { id: '13', rudenessLevel: 4, phrase: ", stop procrastinating like a lazy sloth!", category: "harsh", createdAt: new Date() },
-      { id: '14', rudenessLevel: 4, phrase: ", get your act together already!", category: "demanding", createdAt: new Date() },
-      { id: '15', rudenessLevel: 4, phrase: ", quit being such a slacker!", category: "critical", createdAt: new Date() },
-      { id: '16', rudenessLevel: 4, phrase: ", enough with the excuses!", category: "impatient", createdAt: new Date() },
-
-      // Level 5 - Savage
-      { id: '17', rudenessLevel: 5, phrase: ", you absolute couch potato!", category: "savage", createdAt: new Date() },
-      { id: '18', rudenessLevel: 5, phrase: ", stop being such a useless lump!", category: "brutal", createdAt: new Date() },
-      { id: '19', rudenessLevel: 5, phrase: ", what's wrong with you?!", category: "offensive", createdAt: new Date() },
-      { id: '20', rudenessLevel: 5, phrase: ", you're pathetic at this point!", category: "insulting", createdAt: new Date() },
-    ];
-
-    this.rudePhrasesStore = phrases;
-    this.rudePhrasesSeeded = true;
-  }
-
-  // Statistics
-  async getUserStats(userId: string): Promise<{
-    activeReminders: number;
-    completedToday: number;
-    avgRudeness: number;
-  }> {
-    const userReminders = Array.from(this.reminders.values()).filter(r => r.userId === userId);
-
-    // Active reminders
-    const activeReminders = userReminders.filter(r => !r.completed && r.scheduledFor >= new Date());
-
-    // Completed today
-    // "Today" in the user's time zone, not the server's
-    const { start: today, end: tomorrow } = zonedDayRange();
-
-    const completedToday = userReminders.filter(r => 
-      r.completed && 
-      r.completedAt && 
-      r.completedAt >= today && 
-      r.completedAt < tomorrow
-    );
-
-    // Average rudeness
-    const avgRudeness = userReminders.length > 0
-      ? userReminders.reduce((sum, r) => sum + r.rudenessLevel, 0) / userReminders.length
-      : 0;
-
-    return {
-      activeReminders: activeReminders.length,
-      completedToday: completedToday.length,
-      avgRudeness: Math.round(avgRudeness * 10) / 10,
-    };
-  }
-
-  // Premium whitelist operations
-  async getWhitelistEmails(): Promise<string[]> {
-    return Array.from(this.whitelistEmails);
-  }
-
-  async addEmailToWhitelist(email: string, addedBy: string): Promise<boolean> {
-    const normalizedEmail = email.toLowerCase().trim();
-    if (this.whitelistEmails.has(normalizedEmail)) {
-      return false;
-    }
-    this.whitelistEmails.add(normalizedEmail);
-    return true;
-  }
-
-  async removeEmailFromWhitelist(email: string): Promise<boolean> {
-    const normalizedEmail = email.toLowerCase().trim();
-    return this.whitelistEmails.delete(normalizedEmail);
-  }
-
-  async isEmailWhitelisted(email: string): Promise<boolean> {
-    const normalizedEmail = email.toLowerCase().trim();
-    return this.whitelistEmails.has(normalizedEmail);
-  }
-
-  // Feature flags (in-memory)
-  private flags: Map<string, FeatureFlag> = new Map();
-
-  async getFeatureFlags(): Promise<FeatureFlag[]> {
-    return Array.from(this.flags.values());
-  }
-
-  async getFeatureFlag(key: string): Promise<FeatureFlag | undefined> {
-    return this.flags.get(key);
-  }
-
-  async setFeatureFlag(key: string, enabled: boolean, updatedBy: string, description?: string): Promise<FeatureFlag> {
-    const existing = this.flags.get(key);
-    const flag: FeatureFlag = {
-      key,
-      enabled,
-      description: description ?? existing?.description ?? null,
-      updatedAt: new Date(),
-      updatedBy,
-    };
-    this.flags.set(key, flag);
-    return flag;
-  }
-
-  async logReminderEvent(event: InsertReminderEvent): Promise<ReminderEvent> {
-    const row: ReminderEvent = {
-      id: crypto.randomUUID(),
-      userId: event.userId,
-      reminderId: event.reminderId ?? null,
-      action: event.action,
-      scheduledFor: event.scheduledFor instanceof Date ? event.scheduledFor : new Date(event.scheduledFor),
-      createdAt: new Date(),
-    };
-    return row;
-  }
-
-  async getReminderEvents(_userId: string): Promise<ReminderEvent[]> {
-    return [];
-  }
-}
-
-// Production-ready storage with fallback to memory when database unavailable
-async function createStorage(): Promise<IStorage> {
-  try {
-    // Test database connection
-    const testStorage = new DatabaseStorage();
-    await testStorage.seedRudePhrases(); // This will fail if DB is unavailable
-    console.log('✅ Database connection successful - using DatabaseStorage');
-    return testStorage;
-  } catch (error) {
-    console.warn('⚠️  Database unavailable, falling back to MemoryStorage for development');
-    console.warn('Error:', error instanceof Error ? error.message : 'Unknown error');
-    const memStorage = new MemoryStorage();
-    await memStorage.seedRudePhrases();
-    return memStorage;
-  }
-}
-
-// Create storage instance with fallback
-let storageInstance: IStorage;
-export const getStorage = async (): Promise<IStorage> => {
-  if (!storageInstance) {
-    storageInstance = await createStorage();
-  }
-  return storageInstance;
+  return storagePromise;
 };
 
 // Export a synchronous storage for immediate use (will be initialized on first API call)

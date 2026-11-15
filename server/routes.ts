@@ -7,7 +7,7 @@ import { type Server } from "http";
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import { storage } from "./storage";
-import { setupAuth } from "./replitAuth";
+import { setupAuth } from "./auth";
 import { reminderService } from "./services/reminderService";
 import { notificationService } from "./services/notificationService";
 import { tokenAuthMiddleware } from "./api/shared";
@@ -33,9 +33,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   startBackgroundJobs();
 
-  // Note: /api/auth/register and /api/auth/login are handled in replitAuth.ts (registered earlier)
 
-  // Note: /api/auth/register and /api/auth/login are handled in replitAuth.ts (registered earlier)
+  // Note: sign-up, sign-in and Google / Apple sign-in are set up in auth.ts (setupAuth, above)
 
   registerAccountRoutes(app);
   registerRemindersRoutes(app);
