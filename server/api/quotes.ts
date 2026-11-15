@@ -2,13 +2,13 @@
 import type { Express } from "express";
 import { premiumQuotesService } from "../services/premiumQuotesService";
 import { isUserPremium } from "../utils/premiumCheck";
-import { getAuthUserId, isAuthenticated } from "./shared";
+import { getAuthUserId, isAuthenticated, signedInUserId } from "./shared";
 
 export function registerQuotesRoutes(app: Express) {
   // Premium Quotes API - Get personalized AI or cultural quotes
   app.get('/api/quotes/personalized', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const { category, ethnicity, gender } = req.query;
 
       const context = {
@@ -35,7 +35,7 @@ export function registerQuotesRoutes(app: Express) {
   // Topic-specific quote routes
   app.get('/api/quotes/sports', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'sports' });
       const isPremium = await isUserPremium(userId);
 
@@ -54,7 +54,7 @@ export function registerQuotesRoutes(app: Express) {
 
   app.get('/api/quotes/historical', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'historical' });
       const isPremium = await isUserPremium(userId);
 
@@ -73,7 +73,7 @@ export function registerQuotesRoutes(app: Express) {
 
   app.get('/api/quotes/entrepreneurs', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'entrepreneurs' });
       const isPremium = await isUserPremium(userId);
 
@@ -92,7 +92,7 @@ export function registerQuotesRoutes(app: Express) {
 
   app.get('/api/quotes/scientists', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'scientists' });
       const isPremium = await isUserPremium(userId);
 
@@ -111,7 +111,7 @@ export function registerQuotesRoutes(app: Express) {
 
   app.get('/api/quotes/motivational', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const quote = await premiumQuotesService.getPersonalizedQuote(userId, { category: 'motivational' });
       const isPremium = await isUserPremium(userId);
 

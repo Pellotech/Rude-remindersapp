@@ -7,13 +7,13 @@ import { reminderService } from "../services/reminderService";
 import crypto from "crypto";
 import { log as slog } from "../utils/logger";
 import multer from "multer";
-import { getAuthUserId, isJunkFeedbackText, upload, isAuthenticated, getNextDayOccurrence } from "./shared";
+import { getAuthUserId, isJunkFeedbackText, upload, isAuthenticated, getNextDayOccurrence, signedInUserId } from "./shared";
 
 export function registerRemindersRoutes(app: Express) {
   // Reminder routes
   app.get('/api/reminders', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       // Prevent HTTP-level caching (Android WebView, CDN, browser) from serving stale reminder lists
       res.set('Cache-Control', 'no-store');
       const reminders = await storage.getReminders(userId);
@@ -54,7 +54,7 @@ export function registerRemindersRoutes(app: Express) {
   // Create a new reminder
   app.post('/api/reminders', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user) {
@@ -167,6 +167,10 @@ export function registerRemindersRoutes(app: Express) {
             notAccomplished: false,
             notAccomplishedAt: null,
             responses: [] as string[],
+            loggedAt: null,
+            hitConfirmed: false,
+            hitComment: null,
+            hitAt: null,
             createdAt: new Date(),
             updatedAt: new Date()
           };
@@ -311,6 +315,10 @@ export function registerRemindersRoutes(app: Express) {
           notAccomplished: false,
           notAccomplishedAt: null,
           responses: [] as string[],
+          loggedAt: null,
+          hitConfirmed: false,
+          hitComment: null,
+          hitAt: null,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -426,7 +434,7 @@ export function registerRemindersRoutes(app: Express) {
 
   app.get('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
@@ -440,7 +448,7 @@ export function registerRemindersRoutes(app: Express) {
 
   app.patch('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const validatedData = updateReminderSchema.parse(req.body);
       const reminder = await storage.updateReminder(req.params.id, userId, validatedData);
 
@@ -460,7 +468,7 @@ export function registerRemindersRoutes(app: Express) {
   // Generate AI response for existing reminder
   app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
@@ -482,7 +490,7 @@ export function registerRemindersRoutes(app: Express) {
   // Get additional responses for a reminder
   app.get('/api/reminders/:id/more-responses', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
 
       if (!reminder) {
@@ -522,7 +530,7 @@ export function registerRemindersRoutes(app: Express) {
   // Generate AI response for a specific reminder (Premium feature)
   app.post('/api/reminders/:id/generate-response', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const reminder = await storage.getReminder(req.params.id, userId);
       if (!reminder) {
         return res.status(404).json({ message: "Reminder not found" });
@@ -555,7 +563,7 @@ export function registerRemindersRoutes(app: Express) {
 
   app.delete('/api/reminders/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       await storage.deleteReminder(req.params.id, userId);
       reminderService.unscheduleReminder(req.params.id);
       res.status(204).send();
@@ -567,7 +575,7 @@ export function registerRemindersRoutes(app: Express) {
 
   app.patch('/api/reminders/:id/complete', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const reminder = await storage.completeReminder(req.params.id, userId);
       reminderService.unscheduleReminder(req.params.id);
       res.json(reminder);
@@ -579,7 +587,7 @@ export function registerRemindersRoutes(app: Express) {
 
   app.patch('/api/reminders/:id/not-accomplished', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const reminder = await storage.markReminderNotAccomplished(req.params.id, userId);
       reminderService.unscheduleReminder(req.params.id);
       res.json(reminder);
@@ -595,7 +603,7 @@ export function registerRemindersRoutes(app: Express) {
   // be reading these comments directly.
   app.patch('/api/reminders/:id/hit', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const hit = req.body?.hit !== false; // defaults to true (It Hit) unless explicitly false (Nahh)
       const rawComment = typeof req.body?.comment === 'string' ? req.body.comment.trim() : '';
 

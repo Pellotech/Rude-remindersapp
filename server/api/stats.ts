@@ -2,13 +2,13 @@
 import type { Express } from "express";
 import { storage } from "../storage";
 import { toWall, fromWall } from "../utils/userTime";
-import { getAuthUserId, isAuthenticated } from "./shared";
+import { getAuthUserId, isAuthenticated, signedInUserId } from "./shared";
 
 export function registerStatsRoutes(app: Express) {
   // Statistics routes
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       res.set('Cache-Control', 'no-store');
       const reminders = await storage.getReminders(userId);
       const user = await storage.getUser(userId);
@@ -34,7 +34,7 @@ export function registerStatsRoutes(app: Express) {
   // Completion graph data endpoint
   app.get('/api/stats/completion-graph', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       res.set('Cache-Control', 'no-store');
 
       // Read from the persistent event log so data survives reminder deletion

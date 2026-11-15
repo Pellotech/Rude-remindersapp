@@ -7,13 +7,13 @@ import { reminderService } from "../services/reminderService";
 import { notificationService } from "../services/notificationService";
 import { isUserPremium } from "../utils/premiumCheck";
 import crypto from "crypto";
-import { getAuthUserId, isAdmin, requireDevSession, deepseekService, isAuthenticated } from "./shared";
+import { getAuthUserId, isAdmin, requireDevSession, deepseekService, isAuthenticated, signedInUserId } from "./shared";
 
 export function registerDevToolsRoutes(app: Express) {
   // Developer preview endpoint
   app.post('/api/dev/preview', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const { task, rudenessLevel, voiceCharacter, category } = req.body;
 
       console.log(`Generating preview for user ${userId}:`, { task, rudenessLevel, voiceCharacter, category });
@@ -122,7 +122,7 @@ export function registerDevToolsRoutes(app: Express) {
       if (process.env.NODE_ENV === 'production') {
         return res.status(404).json({ message: 'Not found' });
       }
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const { isPremium } = req.body;
 
       // Update user subscription status
@@ -179,7 +179,7 @@ export function registerDevToolsRoutes(app: Express) {
   // Generate quick AI preview for testing (doesn't save to database)
   app.post('/api/preview-reminder', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user) {

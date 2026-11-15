@@ -16,7 +16,7 @@ const usePremiumStatus = (): {
   isPremium: boolean;
   features: { aiGeneratedResponses: boolean; aiGeneratedQuotes: boolean }
 } => {
-  const { data } = useQuery({
+  const { data } = useQuery<any>({
     queryKey: ["/api/user/premium-status"],
     retry: false,
     staleTime: 1000, // Refresh quickly for dev tools
@@ -72,7 +72,7 @@ export default function DevPreview() {
   // Trigger generation for missing responses when reminders load
   React.useEffect(() => {
     if (reminders.length > 0) {
-      const remindersMissingResponses = reminders.filter(r =>
+      const remindersMissingResponses = reminders.filter((r: any) =>
         !r.rudeMessage || r.rudeMessage === ""
       );
       if (remindersMissingResponses.length > 0) {
@@ -379,7 +379,7 @@ export default function DevPreview() {
                         {selectedReminder.rudeMessage}
                       </p>
                     </div>
-                  ) : selectedReminder.status === 'generating' ? (
+                  ) : (selectedReminder as any).status === 'generating' ? (
                     <div className="mt-1 flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
                       <span className="text-sm text-blue-600">Generating response...</span>
@@ -433,7 +433,7 @@ export default function DevPreview() {
                 <div>
                   <Label className="text-sm font-medium">Status</Label>
                   <p className="text-sm text-muted-foreground mt-1 capitalize">
-                    {selectedReminder.status}
+                    {(selectedReminder as any).status}
                   </p>
                 </div>
                 {selectedReminder.context && (

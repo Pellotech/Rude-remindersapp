@@ -24,7 +24,7 @@ export default function ReminderHistory() {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<any>({
     queryKey: ["/api/stats"],
   });
 
@@ -138,7 +138,7 @@ export default function ReminderHistory() {
     }
   });
 
-  const formatTimeRemaining = (scheduledFor: string) => {
+  const formatTimeRemaining = (scheduledFor: string | Date) => {
     const now = new Date();
     const scheduled = new Date(scheduledFor);
     const diff = scheduled.getTime() - now.getTime();

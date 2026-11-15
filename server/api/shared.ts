@@ -74,6 +74,14 @@ export function getAuthUserId(req: any): string | null {
   return req.tokenUserId || req.session?.userId || req.user?.claims?.sub || null;
 }
 
+/**
+ * The signed-in user's ID, for routes behind `isAuthenticated` (which has
+ * already turned away anyone not signed in, so the ID is always there).
+ */
+export function signedInUserId(req: any): string {
+  return getAuthUserId(req) as string;
+}
+
 // Admin gate — only the configured admin emails are allowed past this middleware.
 // Override via ADMIN_EMAIL env var (comma-separated for multiple); falls back to the
 // hard-coded owner addresses (dev: letmeknow6@icloud.com, prod: loqvm1@gmail.com).

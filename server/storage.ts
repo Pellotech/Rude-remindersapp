@@ -102,8 +102,9 @@ export class DatabaseStorage implements IStorage {
 
   async upsertUser(userData: UpsertUser): Promise<User> {
     if (userData.email) {
-      userData = { ...userData, email: userData.email.toLowerCase().trim() };
-      const existingUserByEmail = await this.getUserByEmail(userData.email);
+      const email = userData.email.toLowerCase().trim();
+      userData = { ...userData, email };
+      const existingUserByEmail = await this.getUserByEmail(email);
       
       if (existingUserByEmail) {
         const [updatedUser] = await db
@@ -121,7 +122,8 @@ export class DatabaseStorage implements IStorage {
     
     const [user] = await db
       .insert(users)
-      .values(userData)
+      // A brand-new user always arrives with an email (the column requires it)
+      .values(userData as typeof users.$inferInsert)
       .onConflictDoUpdate({
         target: users.id,
         set: {

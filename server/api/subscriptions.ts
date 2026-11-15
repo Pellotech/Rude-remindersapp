@@ -2,13 +2,13 @@
 import type { Express } from "express";
 import { storage } from "../storage";
 import { log as slog } from "../utils/logger";
-import { getAuthUserId, isAuthenticated } from "./shared";
+import { getAuthUserId, isAuthenticated, signedInUserId } from "./shared";
 
 export function registerSubscriptionsRoutes(app: Express) {
   // Check premium status endpoint
   app.get('/api/user/premium-status', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const { isPremium, user, source } = await import('../utils/premiumCheck').then(m => m.getUserPremiumStatus(userId));
 
       res.json({ 
@@ -32,7 +32,7 @@ export function registerSubscriptionsRoutes(app: Express) {
   // RevenueCat customer info route
   app.get('/api/customer-info', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user) {
@@ -120,7 +120,7 @@ export function registerSubscriptionsRoutes(app: Express) {
   // This route handles subscription status updates from webhooks
   app.post('/api/cancel-subscription', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const user = await storage.getUser(userId);
 
       if (!user || user.subscriptionStatus === 'free') {

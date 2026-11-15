@@ -20,11 +20,11 @@ export function DevTools({ isVisible, onToggle }: DevToolsProps) {
   const queryClient = useQueryClient();
 
   // Get current user status
-  const { data: user, isLoading: userLoading } = useQuery({
+  const { data: user, isLoading: userLoading } = useQuery<any>({
     queryKey: ["/api/auth/user"],
   });
 
-  const { data: premiumStatus, isLoading: premiumLoading } = useQuery({
+  const { data: premiumStatus, isLoading: premiumLoading } = useQuery<any>({
     queryKey: ["/api/user/premium-status"],
   });
 

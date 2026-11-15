@@ -128,14 +128,17 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(url: string, options?: RequestInit) {
+/** Options for apiRequest: like fetch's, but `body` may also be a plain object (sent as JSON). */
+export type ApiRequestOptions = Omit<RequestInit, 'body'> & { body?: BodyInit | Record<string, unknown> | unknown[] | null };
+
+export async function apiRequest(url: string, options?: ApiRequestOptions) {
   // Prepend base URL for native platforms
   // (?tz= tells the server the user's time zone — see lib/timeZone.ts)
   const fullUrl = withTimeZoneParam(url.startsWith('/') ? `${getApiBaseUrl()}${url}` : url);
   console.log('apiRequest fullUrl:', fullUrl);
   
   const fetchOptions: RequestInit = {
-    ...options,
+    ...(options as RequestInit),
     headers: {
       'Content-Type': 'application/json',
       ...getAuthHeaders(),

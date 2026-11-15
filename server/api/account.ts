@@ -7,7 +7,7 @@ import { db } from "../db";
 import { eq, and, sql } from "drizzle-orm";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { generateSecureToken, getAuthUserId, revokeAuthToken, revokeAllUserTokens, isAuthenticated } from "./shared";
+import { generateSecureToken, getAuthUserId, revokeAuthToken, revokeAllUserTokens, isAuthenticated, signedInUserId } from "./shared";
 
 export function registerAccountRoutes(app: Express) {
   // Forgot password — send reset email
@@ -360,7 +360,7 @@ export function registerAccountRoutes(app: Express) {
   // User settings routes
   app.patch('/api/user/settings', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const updates = req.body;
       const user = await storage.updateUser(userId, updates);
       res.json(user);
@@ -373,7 +373,7 @@ export function registerAccountRoutes(app: Express) {
   // Settings route (alias for user settings)
   app.put('/api/settings', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = getAuthUserId(req);
+      const userId = signedInUserId(req);
       const updates = req.body;
 
       // Ensure notification settings are properly stored
