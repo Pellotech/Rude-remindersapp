@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { toZoned } from "@/lib/timeZone";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +70,7 @@ export function ShareButton({
   const rudeMessage = reminder?.rudeMessage || "";
   const rudenessLevel = reminder?.rudenessLevel || 3;
   const scheduledTime = reminder?.scheduledFor 
-    ? new Date(reminder.scheduledFor).toLocaleString() 
+    ? toZoned(reminder.scheduledFor).toLocaleString() 
     : "";
   const responses = reminder?.responses || [];
   const motivationalQuote = reminder?.motivationalQuote || "";

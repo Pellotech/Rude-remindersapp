@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { toZoned, zonedNow } from "@/lib/timeZone";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
@@ -168,7 +169,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                     const { x, y, payload, index } = props;
                     const isHighlight = graphTab === "year" && payload.value === currentMonthAbbrev;
                     if (graphTab === "week") {
-                      const todayNow = new Date();
+                      const todayNow = zonedNow();
                       const todayDow = todayNow.getDay();
                       const todayDiffToMon = (todayDow === 0 ? -6 : 1 - todayDow);
                       const weekStartDate = new Date(todayNow);
@@ -460,7 +461,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                 const dc = (reminders as any[])
                   .filter((r: any) => r.completed && r.completedAt)
                   .reduce((acc: any, r: any) => {
-                    const day = new Date(r.completedAt).toLocaleDateString("en-US", { weekday: "short" });
+                    const day = toZoned(r.completedAt).toLocaleDateString("en-US", { weekday: "short" });
                     acc[day] = (acc[day] || 0) + 1;
                     return acc;
                   }, {});

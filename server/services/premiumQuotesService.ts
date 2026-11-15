@@ -1,4 +1,5 @@
 import { DeepSeekService } from './deepseekService.js';
+import { zonedHour } from "../utils/userTime";
 import { isUserPremium } from '../utils/premiumCheck.js';
 import { storage } from '../storage.js';
 
@@ -220,7 +221,7 @@ Generate ONE unique quote now:`;
    * Helper method to determine time of day for context
    */
   private getTimeOfDay(date: Date): string {
-    const hour = date.getHours();
+    const hour = zonedHour(date);
     if (hour < 6) return 'early morning';
     if (hour < 12) return 'morning';
     if (hour < 17) return 'afternoon';

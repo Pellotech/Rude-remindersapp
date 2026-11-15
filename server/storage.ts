@@ -19,6 +19,7 @@ import {
   type FeatureFlag,
 } from "@shared/schema";
 import { db } from "./db";
+import { zonedDayRange } from "./utils/userTime";
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
 
 // Interface for storage operations
@@ -504,10 +505,8 @@ export class DatabaseStorage implements IStorage {
     completedToday: number;
     avgRudeness: number;
   }> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    // "Today" in the user's time zone, not the server's
+    const { start: today, end: tomorrow } = zonedDayRange();
 
     // Active reminders
     const activeReminders = await db
@@ -975,10 +974,8 @@ class MemoryStorage implements IStorage {
     const activeReminders = userReminders.filter(r => !r.completed && r.scheduledFor >= new Date());
 
     // Completed today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    // "Today" in the user's time zone, not the server's
+    const { start: today, end: tomorrow } = zonedDayRange();
 
     const completedToday = userReminders.filter(r => 
       r.completed && 

@@ -1,4 +1,5 @@
 import { storage } from "../storage";
+import { zonedHour } from "../utils/userTime";
 import type { Reminder } from "@shared/schema";
 import { DeepSeekService } from './deepseekService.js';
 import { isUserPremium } from '../utils/premiumCheck.js';
@@ -163,7 +164,7 @@ class SmartResponseService {
 
   // Helper method to determine time of day for context
   private getTimeOfDay(date: Date): string {
-    const hour = date.getHours();
+    const hour = zonedHour(date);
     if (hour < 6) return 'early morning';
     if (hour < 12) return 'morning';
     if (hour < 17) return 'afternoon';
@@ -289,7 +290,7 @@ class SmartResponseService {
     const task = reminder.originalMessage;
     const responses: string[] = [];
     const seedNum = parseInt(seed, 16) || Date.now();
-    const hour = new Date().getHours();
+    const hour = zonedHour();
     
     // Time-aware responses
     if (hour < 9) {
@@ -604,7 +605,7 @@ class SmartResponseService {
   async getContextualRemarks(reminder: Reminder): Promise<string[]> {
     const remarks: string[] = [];
     const now = new Date();
-    const hour = now.getHours();
+    const hour = zonedHour(now);
     const category = this.categorizeReminder(reminder.originalMessage);
     
     // Time-based remarks

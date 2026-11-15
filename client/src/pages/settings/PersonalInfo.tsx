@@ -269,8 +269,24 @@ export default function PersonalInfo() {
                 <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Change Password</p>
                 <div className="bg-[#1C1C1E] rounded-xl px-4 py-3">
                   <p className="text-[15px] text-[#8E8E93]">
-                    Your account uses social sign-in. Manage your password with your sign-in provider.
+                    You sign in with Google or Apple. Want to log in with your email too? Add a password and you'll get the same account and reminders either way.
                   </p>
+                  {user?.email && !user.email.endsWith('@noemail.local') && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await apiRequest('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email: user.email }) });
+                          toast({ title: "Check your email", description: `We sent a link to ${user.email} to set your password.` });
+                        } catch {
+                          toast({ title: "Couldn't send the email", description: "Please try again in a minute.", variant: "destructive" });
+                        }
+                      }}
+                      className="mt-3 text-[#0A84FF] text-[15px] font-medium"
+                    >
+                      Add a password
+                    </button>
+                  )}
                 </div>
               </>
             ) : (

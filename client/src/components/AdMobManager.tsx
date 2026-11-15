@@ -49,25 +49,24 @@ export function AdMobManager({
     };
   }, [isInitialized, isAvailable]);
 
-  // Show interstitial ad on every reminder creation
+  // FREE users: a full-screen ad after every reminder they create (normal or Quick).
+  // It waits until Reem's button-shove animation has finished (~2.5s) so the two
+  // never overlap. A short 30s guard stops back-to-back ads if someone fires
+  // several Quick Reminders in a row (keeps us inside Google's ad-frequency rules).
   useEffect(() => {
-    console.log(`[AdMob] Ad action count: ${actionCount} | showInterstitialOnAction=${showInterstitialOnAction} | isPremium=${isPremium}`);
-    if (!isPremium && showInterstitialOnAction && actionCount > 0) {
-      const now = Date.now();
-      const minIntervalMs = 5 * 60 * 1000; // 5 minutes minimum between interstitials
-      console.log(`[AdMob] Interstitial trigger check: timeSinceLast=${Math.round((now - lastInterstitialTime) / 1000)}s, minInterval=300s`);
-      
-      if (now - lastInterstitialTime > minIntervalMs) {
-        console.log('[AdMob] Attempting to show interstitial ad...');
-        setTimeout(() => {
-          showInterstitial();
-          setLastInterstitialTime(now);
-        }, 1000); // Small delay to not interrupt user flow
-      } else {
-        console.log('[AdMob] Interstitial skipped — too soon since last one');
-      }
+    if (isPremium || !showInterstitialOnAction || actionCount <= 0) return;
+    const now = Date.now();
+    if (now - lastInterstitialTime < 30 * 1000) {
+      console.log('[AdMob] Interstitial skipped — one was shown less than 30s ago');
+      return;
     }
-  }, [actionCount, isPremium, showInterstitialOnAction, lastInterstitialTime]);
+    const t = setTimeout(() => {
+      showInterstitial();
+      setLastInterstitialTime(Date.now());
+    }, 2800);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionCount]);
 
   // Reward ad cooldown effect
   useEffect(() => {

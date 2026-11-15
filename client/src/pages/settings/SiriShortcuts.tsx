@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { ChevronLeft, Home, Copy, Check, RefreshCw, ShieldOff } from "lucide-react";
 import SplashScreen from "@/components/SplashScreen";
+import { getPlatformInfo } from "@/utils/platformDetection";
 
 // This page issues/revokes the long-lived bearer token the iOS "Rude
 // Reminders" App Intents extension uses to create reminders on the user's
@@ -21,9 +22,11 @@ export default function SiriShortcuts() {
 
   const generateMutation = useMutation({
     mutationFn: () => apiRequest("/api/auth/siri-token", { method: "POST" }),
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       setRevealedToken(data.token);
       setCopied(false);
+      // Copy it straight away so the next step is just "paste"
+      try { await navigator.clipboard.writeText(data.token); setCopied(true); } catch { /* user can tap Copy */ }
     },
     onError: () => {
       toast({
@@ -68,6 +71,22 @@ export default function SiriShortcuts() {
     return <SplashScreen />;
   }
 
+  // Siri only exists on iPhone/iPad — never show this on Android or the website
+  if (!getPlatformInfo().isIOS) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col safe-area-header">
+        <div className="px-4 py-3">
+          <Link href="/settings">
+            <div className="flex items-center text-[#0A84FF] cursor-pointer"><ChevronLeft className="h-5 w-5" /><span className="text-[17px]">Settings</span></div>
+          </Link>
+        </div>
+        <div className="flex-1 flex items-center justify-center px-6 text-center">
+          <p className="text-[15px] text-[#8E8E93]">Siri &amp; Shortcuts is only available on iPhone and iPad.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
@@ -100,7 +119,7 @@ export default function SiriShortcuts() {
           <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-[#38383A]">
               <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 1</p>
-              <p className="text-[15px] text-white mt-1">Generate an access token below and copy it.</p>
+              <p className="text-[15px] text-white mt-1">Tap "Generate Access Token" below — it's copied for you automatically.</p>
             </div>
             <div className="px-4 py-3 border-b border-[#38383A]">
               <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 2</p>
@@ -133,6 +152,16 @@ export default function SiriShortcuts() {
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {copied ? "Copied" : "Copy Token"}
               </button>
+              <button
+                onClick={() => { window.location.href = "shortcuts://"; }}
+                className="w-full py-3 bg-[#C9A063] text-black font-semibold text-[15px] rounded-xl"
+                data-testid="button-open-shortcuts"
+              >
+                Open Shortcuts App →
+              </button>
+              <p className="text-[12px] text-[#8E8E93]">
+                In Shortcuts, tap the search bar, type "Connect Reems", run it and paste.
+              </p>
             </div>
           ) : (
             <button

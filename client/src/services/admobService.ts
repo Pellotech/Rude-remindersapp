@@ -1,5 +1,6 @@
-import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, RewardAdOptions } from '@capacitor-community/admob';
+import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, RewardAdOptions, InterstitialAdPluginEvents } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
+import { getFullApiUrl } from '@/lib/queryClient';
 import { SafeArea } from 'capacitor-plugin-safe-area';
 import { AppTrackingTransparency } from 'capacitor-plugin-app-tracking-transparency';
 
@@ -12,6 +13,8 @@ const FORCE_IOS_TEST_BANNER = false;
 export class AdMobService {
   private static instance: AdMobService;
   private isInitialized = false;
+  private interstitialReady = false;
+  private interstitialLoading = false;
 
   // Ad Unit IDs are loaded from the server at initialize() so we can keep them
   // in server-side secrets (ADMOB_IOS_BANNER_ID, ADMOB_ANDROID_BANNER_ID, etc.)
@@ -41,7 +44,9 @@ export class AdMobService {
 
   private async loadAdUnitIds(): Promise<void> {
     try {
-      const res = await fetch('/api/config/admob');
+      // Must use the full server address — inside the phone app a bare '/api/...' points at
+      // the app's own files, the request failed, and every user was shown Google TEST ads.
+      const res = await fetch(getFullApiUrl('/api/config/admob'));
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const cfg = await res.json() as {
         ios: { banner: string; interstitial: string; reward: string };
@@ -98,6 +103,18 @@ export class AdMobService {
 
       this.isInitialized = true;
       console.log('AdMob initialized successfully');
+
+      // Keep one full-screen ad loaded in the background so it appears instantly
+      // after a reminder is created (loading on demand took seconds and often missed).
+      AdMob.addListener(InterstitialAdPluginEvents.Loaded, () => { this.interstitialReady = true; this.interstitialLoading = false; });
+      AdMob.addListener(InterstitialAdPluginEvents.FailedToLoad, (e: any) => {
+        this.interstitialReady = false; this.interstitialLoading = false;
+        console.warn('[AdMob] Interstitial failed to load:', e?.message || e);
+        setTimeout(() => this.preloadInterstitial(), 60 * 1000); // try again in a minute
+      });
+      AdMob.addListener(InterstitialAdPluginEvents.Dismissed, () => { this.interstitialReady = false; this.preloadInterstitial(); });
+      AdMob.addListener(InterstitialAdPluginEvents.FailedToShow, () => { this.interstitialReady = false; this.preloadInterstitial(); });
+      this.preloadInterstitial();
     } catch (error) {
       console.error('Failed to initialize AdMob:', error);
     }
@@ -163,22 +180,37 @@ export class AdMobService {
     }
   }
 
-  async showInterstitialAd(): Promise<void> {
-    if (!this.isInitialized || !Capacitor.isNativePlatform()) {
-      return;
-    }
-
+  /** Load the next full-screen ad in the background. */
+  async preloadInterstitial(): Promise<void> {
+    if (!this.isInitialized || !Capacitor.isNativePlatform() || this.interstitialReady || this.interstitialLoading) return;
+    this.interstitialLoading = true;
     try {
-      const options = {
-        adId: this.getAdUnitId('interstitial'),
-        isTesting: false, // Production mode
-      };
+      await AdMob.prepareInterstitial({ adId: this.getAdUnitId('interstitial'), isTesting: false });
+      this.interstitialReady = true; // (the Loaded event also sets this)
+    } catch (error) {
+      console.warn('[AdMob] prepareInterstitial failed:', error);
+      this.interstitialReady = false;
+    } finally {
+      this.interstitialLoading = false;
+    }
+  }
 
-      await AdMob.prepareInterstitial(options);
+  async showInterstitialAd(): Promise<boolean> {
+    if (!this.isInitialized || !Capacitor.isNativePlatform()) {
+      return false;
+    }
+    try {
+      if (!this.interstitialReady) await this.preloadInterstitial(); // not ready yet → load now
+      if (!this.interstitialReady) return false;
       await AdMob.showInterstitial();
-      console.log('Interstitial ad shown successfully');
+      this.interstitialReady = false;
+      console.log('[AdMob] Interstitial shown');
+      return true;
     } catch (error) {
       console.error('Failed to show interstitial ad:', error);
+      this.interstitialReady = false;
+      this.preloadInterstitial();
+      return false;
     }
   }
 

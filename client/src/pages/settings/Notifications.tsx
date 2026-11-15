@@ -6,6 +6,8 @@ import { ChevronLeft, Home } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
+import { getTextSize, setTextSize, TEXT_SIZES, type TextSize } from "@/lib/textSize";
+import { Link } from "wouter";
 
 interface ToggleProps {
   checked: boolean;
@@ -42,7 +44,7 @@ export default function Notifications() {
     defaultVoiceCharacter: localStorage.getItem('default_voice_character') || 'default',
     niceMode: localStorage.getItem('rudy_nice_mode') === 'true',
     rudyWidgetVisible: localStorage.getItem('rudy_widget_visible') === 'true',
-    textSize: ((localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'),
+    textSize: getTextSize() as TextSize, // shared with Settings → Text Size & Time Zone
     backdropTheme: ((localStorage.getItem('backdrop_theme') as 'light' | 'dark' | 'auto') || 'light'),
   });
   const [saved, setSaved] = useState(readSaved);
@@ -98,8 +100,7 @@ export default function Notifications() {
       window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: changes.rudyWidgetVisible }));
     }
     if (changes.textSize !== undefined) {
-      localStorage.setItem('text_size_preference', changes.textSize);
-      window.dispatchEvent(new CustomEvent('text_size_changed', { detail: changes.textSize }));
+      setTextSize(changes.textSize); // whole app + reminder popup
     }
     if (changes.backdropTheme !== undefined) {
       localStorage.setItem('backdrop_theme', changes.backdropTheme);
@@ -228,12 +229,12 @@ export default function Notifications() {
             <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Text Size</h2>
             <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
               <div className="px-4 py-3">
-                <p className="text-white text-[17px] mb-3">Notification Text Size</p>
+                <p className="text-white text-[17px] mb-3">Text Size</p>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  {(['default', 'larger', 'blind'] as const).map((size) => {
-                    const labels = { default: 'Regular', larger: 'Large', blind: 'Billboard 😜' };
-                    const previews = { default: 'Aa', larger: 'Aa', blind: 'Aa' };
-                    const fontSizes = { default: 16, larger: 20, blind: 24 };
+                  {TEXT_SIZES.map(({ id: size, label }) => {
+                    const labels = { [size]: label } as Record<TextSize, string>;
+                    const previews = { normal: 'Aa', large: 'Aa', xlarge: 'Aa' };
+                    const fontSizes = { normal: 16, large: 20, xlarge: 24 };
                     const isSelected = currentSettings.textSize === size;
                     return (
                       <button
@@ -269,7 +270,8 @@ export default function Notifications() {
                   })}
                 </div>
                 <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
-                  Affects reminder notification text and message display size.
+                  Makes the words bigger everywhere in the app, including your reminders. Same setting as{" "}
+                  <Link href="/settings/display"><span style={{ color: '#0A84FF', cursor: 'pointer' }}>Text Size & Time Zone</span></Link>.
                 </p>
               </div>
             </div>

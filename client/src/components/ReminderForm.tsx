@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { toZoned, zonedNow, formValueToInstant, getEffectiveTimeZone } from "@/lib/timeZone";
 import { ReemCarryAnimation } from "@/components/ReemCarryAnimation";
 import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 import { useForm } from "react-hook-form";
@@ -54,7 +55,7 @@ const formSchema = z.object({
     return data.selectedDays && data.selectedDays.length > 0;
   } else {
     if (!data.scheduledFor) return false;
-    const scheduledDate = new Date(data.scheduledFor);
+    const scheduledDate = formValueToInstant(data.scheduledFor);
     const now = new Date();
     const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     const oneMinuteFromNow = new Date(now.getTime() + 60 * 1000); // Allow as short as 1 minute
@@ -471,7 +472,7 @@ export default function ReminderForm({
       const submissionData = {
         ...data,
         title: data.originalMessage, // Use the original message as the title
-        scheduledFor: data.scheduledFor ? new Date(data.scheduledFor).toISOString() : undefined,
+        scheduledFor: data.scheduledFor ? formValueToInstant(data.scheduledFor).toISOString() : undefined,
         attachments: selectedAttachments, // Ensure attachments are included
       };
 
@@ -605,7 +606,19 @@ export default function ReminderForm({
       }
       // Handle specific error codes
       try {
-        const errorData = JSON.parse(error.message);
+        // apiRequest throws "403: {json}" — strip the status prefix before parsing
+        const rawMsg = error.message || '';
+        const jsonStart = rawMsg.indexOf('{');
+        let errorData: any = null;
+        try {
+          errorData = JSON.parse(jsonStart >= 0 ? rawMsg.slice(jsonStart) : rawMsg);
+        } catch {
+          // apiRequest cuts long messages at 200 characters, which can break the
+          // JSON — pull the code and message out by pattern instead.
+          const code = rawMsg.match(/"code"\s*:\s*"([A-Z_]+)"/)?.[1];
+          const text = rawMsg.match(/"error"\s*:\s*"((?:[^"\\]|\\.)*)"/)?.[1];
+          if (code) errorData = { code, error: text };
+        }
         if (errorData?.code === 'REMINDER_LIMIT_EXCEEDED') {
           toast({
             title: "Reminder Limit Reached",
@@ -861,7 +874,7 @@ export default function ReminderForm({
     const isMultiDay = form.getValues("isMultiDay");
     const scheduledForRaw = form.getValues("scheduledFor");
     const scheduledDateTime = scheduledForRaw
-      ? new Date(scheduledForRaw).toISOString()
+      ? formValueToInstant(scheduledForRaw).toISOString()
       : undefined;
 
     // Generate quote if category is selected
@@ -889,7 +902,9 @@ export default function ReminderForm({
       browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
       voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
       emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+      timeZone: getEffectiveTimeZone(),
       clientLocalTime: new Date().toLocaleString('en-US', {
+        timeZone: getEffectiveTimeZone(),
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
         hour: 'numeric', minute: '2-digit', hour12: true,
       }),
@@ -937,7 +952,7 @@ export default function ReminderForm({
                     if (result.scheduledFor) {
                       form.setValue(
                         "scheduledFor",
-                        format(new Date(result.scheduledFor), "yyyy-MM-dd'T'HH:mm")
+                        format(toZoned(result.scheduledFor), "yyyy-MM-dd'T'HH:mm")
                       );
                     } else {
                       form.setValue("scheduledFor", "");
@@ -945,10 +960,10 @@ export default function ReminderForm({
                     form.setValue("isMultiDay", result.isMultiDay);
                     form.setValue("selectedDays", result.selectedDays);
                     // Detect if today is selected (with or without a time chosen yet)
-                    const todayName = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date().getDay()];
+                    const todayName = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][zonedNow().getDay()];
                     if (result.scheduledFor) {
-                      const d = new Date(result.scheduledFor);
-                      setTodayIsSelected(d.toDateString() === new Date().toDateString());
+                      const d = toZoned(result.scheduledFor);
+                      setTodayIsSelected(d.toDateString() === zonedNow().toDateString());
                     } else if (!result.isMultiDay && result.selectedDays.length > 0) {
                       setTodayIsSelected(result.selectedDays.includes(todayName));
                     } else {
@@ -991,7 +1006,7 @@ export default function ReminderForm({
                   {form.watch("isMultiDay")
                     ? `${form.watch("selectedDays")?.length || 0} days selected`
                     : form.watch("scheduledFor")
-                      ? format(new Date(form.watch("scheduledFor")), "EEE, MMM d • h:mm a")
+                      ? format(toZoned(formValueToInstant(form.watch("scheduledFor") || "")), "EEE, MMM d • h:mm a")
                       : ""}
                 </span>
 
@@ -1356,7 +1371,9 @@ export default function ReminderForm({
                                   browserNotification: (userNotificationSettings as any)?.browserNotifications ?? true,
                                   voiceNotification: (userNotificationSettings as any)?.voiceNotifications ?? false,
                                   emailNotification: (userNotificationSettings as any)?.emailNotifications ?? false,
+                                  timeZone: getEffectiveTimeZone(),
                                   clientLocalTime: new Date().toLocaleString('en-US', {
+                                    timeZone: getEffectiveTimeZone(),
                                     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
                                     hour: 'numeric', minute: '2-digit', hour12: true,
                                   }),

@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { zonedNow, fromZoned } from "@/lib/timeZone";
 import { addDays, isSameDay, format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -105,7 +106,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
   const mouseStartX  = useRef<number | null>(null);
   const direction    = useRef<'forward' | 'back'>('forward');
 
-  const today = new Date();
+  const today = zonedNow(); // "today" in the user's time zone
   const pages = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
   /* ─── schedule-change emitter (UNCHANGED) ───────────────────────────── */
@@ -127,13 +128,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       if (dates.length === 1) {
         const dt = new Date(dates[0]);
         dt.setHours(hour, minute, 0, 0);
-        onScheduleChange({ scheduledFor: dt.toISOString(), isMultiDay: false, selectedDays: [], hasValidSchedule: true });
+        onScheduleChange({ scheduledFor: fromZoned(dt).toISOString(), isMultiDay: false, selectedDays: [], hasValidSchedule: true });
       } else {
         // For multi-day, pass a time reference using the first selected date + chosen hour/minute
         const timeRef = new Date(dates[0]);
         timeRef.setHours(hour, minute, 0, 0);
         onScheduleChange({
-          scheduledFor: timeRef.toISOString(),
+          scheduledFor: fromZoned(timeRef).toISOString(),
           isMultiDay: true,
           selectedDays: dates.map(d => DAY_NAMES[d.getDay()]),
           hasValidSchedule: true,
@@ -145,7 +146,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
   /* ─── time slots (UNCHANGED) ─────────────────────────────────────────── */
   const generateTimeSlots = () => {
-    const now = new Date();
+    const now = zonedNow();
     const onlyTodaySelected = selectedDates.length === 1 && isSameDay(selectedDates[0], now);
     if (onlyTodaySelected) {
       const cur = now.getHours();
@@ -165,7 +166,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
   const isTimeInPast = (hour: number, minute = 0) => {
     if (selectedDates.length !== 1) return false;
-    const now = new Date();
+    const now = zonedNow();
     if (!isSameDay(selectedDates[0], now)) return false;
     const slot = new Date(selectedDates[0]);
     slot.setHours(hour, minute, 0, 0);
@@ -247,7 +248,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
       const newDates = [...selectedDates, pageDate];
       setSelectedDates(newDates);
       fireChange(newDates, selectedHour, selectedMinute);
-      const now      = new Date();
+      const now      = zonedNow();
       const tomorrow = addDays(today, 1);
       if      (isSameDay(pageDate, now))      onDateEventFired?.('date_today');
       else if (isSameDay(pageDate, tomorrow)) onDateEventFired?.('date_tomorrow');

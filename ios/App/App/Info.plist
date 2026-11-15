@@ -42,6 +42,21 @@
 	</dict>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-2730939178232394~3691189109</string>
+	<key>INAlternativeAppNames</key>
+	<array>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Reem</string>
+			<key>INAlternativeAppNamePronunciationHint</key>
+			<string>Reem</string>
+		</dict>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Rude Reminders</string>
+			<key>INAlternativeAppNamePronunciationHint</key>
+			<string>Rude Reminders</string>
+		</dict>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>

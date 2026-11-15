@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { toZoned } from "@/lib/timeZone";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -40,8 +41,9 @@ const formatShortDate = (scheduledFor: string | Date) => {
   const date = typeof scheduledFor === "string" ? new Date(scheduledFor) : scheduledFor;
   const now = new Date();
   const isOverdue = date < now;
-  const dateStr = format(date, "MMM d");
-  const timeStr = format(date, "h:mm a");
+  const shown = toZoned(date); // clock time in the user's chosen zone
+  const dateStr = format(shown, "MMM d");
+  const timeStr = format(shown, "h:mm a");
   return isOverdue ? `${dateStr} • Overdue` : `${dateStr} • ${timeStr}`;
 };
 

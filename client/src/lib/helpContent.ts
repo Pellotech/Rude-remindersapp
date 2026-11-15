@@ -95,6 +95,22 @@ export const helpCategories: HelpCategory[] = [
           { question: "How often does the popup show?", answer: "Once every 4 days when you open the app. It never interrupts an active reminder notification." },
           { question: "Can I turn it off?", answer: "Just dismiss it each time — it only appears every 4 days so it's never intrusive." }
         ]
+      },
+      {
+        id: "text-size-time-zone",
+        title: "Bigger Text & Time Zone",
+        icon: "Settings",
+        keywords: ["text size", "font", "bigger", "large", "words", "read", "time zone", "timezone", "wrong time", "clock", "travel"],
+        steps: [
+          "Open Settings → Text Size & Time Zone",
+          "Under Text Size, tap Regular, Large or Billboard — the whole app, including your reminder popups, changes straight away (the same setting is also in Settings → Notifications)",
+          "Under Time Zone, leave it on Automatic to use your phone's time zone",
+          "If reminder times look wrong, tap 'Choose a time zone', search for a city near you and tap it"
+        ],
+        faqs: [
+          { question: "My reminder times look wrong. What do I do?", answer: "Go to Settings → Text Size & Time Zone and check the time zone. Automatic uses your phone's zone. If that's wrong, choose your zone yourself." },
+          { question: "Will changing the time zone move reminders I already made?", answer: "No. They still go off at the same moment — only the way the time is shown changes." }
+        ]
       }
     ]
   },

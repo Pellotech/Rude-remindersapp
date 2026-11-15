@@ -83,6 +83,9 @@ export function MobileCamera({ onPhotoCaptured, maxFiles = 5, currentCount = 0, 
 
   // Request photos permissions
   const requestPhotosPermissions = async (): Promise<boolean> => {
+    // Android uses the system photo picker, which needs no permission
+    // (Google Play policy forbids READ_MEDIA_IMAGES for this use).
+    if (Capacitor.getPlatform() === 'android') return true;
     try {
       const permissions = await Camera.checkPermissions();
       

@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useRef } from "react";
+import { toZoned } from "@/lib/timeZone";
 import { 
   LocalNotifications, 
   ScheduleOptions,
@@ -32,9 +33,30 @@ function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): 
   return result;
 }
 
+// Android: reminders get their own notification channel — high priority (pops up on
+// screen), vibration and sound. Channels are created once per install; safe to call often.
+export const REMINDER_CHANNEL_ID = 'reminders';
+export async function ensureReminderChannel(): Promise<void> {
+  try {
+    if (Capacitor.getPlatform() !== 'android') return;
+    await LocalNotifications.createChannel({
+      id: REMINDER_CHANNEL_ID,
+      name: 'Reminders',
+      description: "Reem's reminders — buzzes and pops up when it's time",
+      importance: 5,      // high: sound + heads-up banner
+      visibility: 1,      // show on the lock screen
+      vibration: true,
+      lights: true,
+      lightColor: '#C9A063',
+    });
+  } catch (e) {
+    console.warn('Could not create reminder channel', e);
+  }
+}
+
 // Convert UUID string to numeric ID for LocalNotifications
 // Uses a simple hash function to generate consistent numeric IDs from UUID strings
-function uuidToNumericId(uuid: string): number {
+export function uuidToNumericId(uuid: string): number {
   let hash = 0;
   for (let i = 0; i < uuid.length; i++) {
     const char = uuid.charCodeAt(i);
@@ -184,6 +206,7 @@ export function useMobileNotifications(): MobileNotificationService {
             sound: 'beep.wav',
             attachments: [],
             actionTypeId: 'OPEN_REMINDER',
+            channelId: REMINDER_CHANNEL_ID,
             extra: {
               reminderId: reminder.id,
               hasMotivation: !!reminder.motivationalQuote,
@@ -195,11 +218,12 @@ export function useMobileNotifications(): MobileNotificationService {
         ]
       };
 
+      await ensureReminderChannel();
       await LocalNotifications.schedule(options);
       
       toast({
         title: "Reminder scheduled",
-        description: `Mobile notification set for ${reminder.scheduledFor.toLocaleDateString()}`,
+        description: `Mobile notification set for ${toZoned(reminder.scheduledFor).toLocaleDateString()}`,
       });
 
     } catch (error) {

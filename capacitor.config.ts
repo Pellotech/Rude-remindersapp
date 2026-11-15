@@ -15,8 +15,8 @@ const config: CapacitorConfig = {
       permissions: ["camera", "photos"]
     },
     LocalNotifications: {
-      smallIcon: "ic_stat_icon_config_sample",
-      iconColor: "#488AFF",
+      smallIcon: "ic_stat_reem",   // white ⚡ in the status bar
+      iconColor: "#C9A063",        // gold accent
       sound: "beep.wav"
     },
     SplashScreen: {

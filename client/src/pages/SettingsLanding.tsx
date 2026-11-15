@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic, Shield, LifeBuoy } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic, Shield, LifeBuoy, Type } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { isAdminEmail } from "@/lib/admin";
 import { SettingsIntro } from "@/components/SettingsIntro";
@@ -70,6 +70,12 @@ export default function SettingsLanding() {
               icon={<Bell className="h-5 w-5" />}
               title="Notifications"
               href="/settings/notifications"
+            />
+            <div className="h-px bg-[#38383A] ml-12" />
+            <SettingsRow
+              icon={<Type className="h-5 w-5" />}
+              title="Text Size & Time Zone"
+              href="/settings/display"
             />
             <div className="h-px bg-[#38383A] ml-12" />
             {showSiri && (

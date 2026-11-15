@@ -2,7 +2,12 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated, sendPasswordResetEmail } from "./replitAuth";
+import { setupAuth, isAuthenticated as baseIsAuthenticated, sendPasswordResetEmail } from "./replitAuth";
+import { withUserZone, noteClientZone, nextDayOccurrence, zonedHour, toWall, fromWall } from "./utils/userTime";
+
+// Same login check as before, plus: routes behind it know the user's time zone
+// (sent by the app as ?tz=...). See server/utils/userTime.ts.
+const isAuthenticated = withUserZone(baseIsAuthenticated);
 import { insertReminderSchema, updateReminderSchema, type Reminder, type User, users, reminders, registerSchema, loginSchema, authTokens } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gt, lt, sql } from "drizzle-orm";
@@ -99,6 +104,25 @@ async function isAdmin(req: any, res: any, next: any) {
   } catch (e) {
     console.error('[Admin] Authorization check failed:', e);
     return res.status(500).json({ message: 'Authorization check failed' });
+  }
+}
+
+// Every admin request must also carry a live Developer Space session (passcode
+// entered recently on this device). Being signed in as an admin email is not enough.
+async function requireDevSession(req: any, res: any, next: any) {
+  try {
+    const { checkDevSession } = await import('./devSpace');
+    const userId = getAuthUserId(req) as string;
+    const token = req.get('x-dev-session') || undefined;
+    const { ok } = await checkDevSession(userId, token, true);
+    if (!ok) return res.status(401).json({ message: 'Developer Space is locked', code: 'DEV_LOCKED' });
+    if (req.method !== 'GET') {
+      console.log(`[DevSpace] ${req.method} ${req.path} by ${userId}`); // audit trail of changes
+    }
+    next();
+  } catch (e) {
+    console.error('[DevSpace] session check failed:', e);
+    return res.status(500).json({ message: 'Developer Space check failed' });
   }
 }
 
@@ -268,7 +292,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[ForgotPassword] email="${normalizedEmail}" user=${user ? user.id : 'NOT_FOUND'} hasPasswordHash=${!!user?.passwordHash}`);
 
       // Always return success to prevent email enumeration
-      if (!user || !user.passwordHash) {
+      // Social-only accounts (Google/Apple) with a real, verified email may also use this
+      // link to ADD a password, so email login opens the same account (same reminders).
+      const canSetPassword = !!user && (
+        !!user.passwordHash ||
+        (!!(user as any).emailVerified && !!user.email && !user.email.endsWith('@noemail.local'))
+      );
+      if (!user || !canSetPassword) {
         return res.json({ message: "If an account exists with that email, a reset link has been sent." });
       }
 
@@ -322,6 +352,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post('/api/auth/logout', async (req: any, res) => {
+    try {
+      const uid = getAuthUserId(req);
+      if (uid) await (await import('./devSpace')).endAllDevSessions(uid);
+    } catch { /* never block logout */ }
     // Revoke auth token if present
     if (req.authToken) {
       await revokeAuthToken(req.authToken);
@@ -706,6 +740,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         emailNotification,
         clientLocalTime
       } = req.body;
+
+      // Older app versions don't send ?tz=, so fall back to hints in the body.
+      noteClientZone(req.body?.timeZone, clientLocalTime);
 
       // Content safety check — covers both the multi-day and single-day paths
       // below since it runs before either. See moderationService.ts for what's
@@ -1314,37 +1351,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return { name, completed: done, incomplete: -missed };
       };
 
+      // All day/week/month boundaries below are in the USER'S time zone.
+      // `wallAt` builds an instant from a local calendar date + time.
+      const nowWall = toWall(now);
+      const Y = nowWall.getUTCFullYear(), M = nowWall.getUTCMonth(), D = nowWall.getUTCDate();
+      const wallAt = (y: number, m: number, d: number, endOfDay = false) =>
+        fromWall(new Date(endOfDay ? Date.UTC(y, m, d, 23, 59, 59, 999) : Date.UTC(y, m, d, 0, 0, 0, 0)));
+
       // --- This Week: Mon–Sun of the current ISO week ---
       const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const weekStart = new Date(now);
-      const dow = now.getDay();
+      const dow = nowWall.getUTCDay();
       const diffToMon = (dow === 0 ? -6 : 1 - dow);
-      weekStart.setDate(now.getDate() + diffToMon);
-      weekStart.setHours(0, 0, 0, 0);
 
-      const weekData = dayNames.map((name, i) => {
-        const dayStart = new Date(weekStart);
-        dayStart.setDate(weekStart.getDate() + i);
-        const dayEnd = new Date(dayStart);
-        dayEnd.setHours(23, 59, 59, 999);
-        return makePoint(name, dayStart, dayEnd);
-      });
+      const weekData = dayNames.map((name, i) =>
+        makePoint(name, wallAt(Y, M, D + diffToMon + i), wallAt(Y, M, D + diffToMon + i, true)));
 
       // --- This Year: bi-weekly, month-aligned (2 points per month) ---
       const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const currentMonthIdx = now.getMonth();
-      const currentYear = now.getFullYear();
       const yearData: ReturnType<typeof makePoint>[] = [];
-      for (let mi = 0; mi <= currentMonthIdx; mi++) {
+      for (let mi = 0; mi <= M; mi++) {
         // First half: 1st–14th
-        const h1Start = new Date(currentYear, mi, 1, 0, 0, 0, 0);
-        const h1End = new Date(currentYear, mi, 14, 23, 59, 59, 999);
+        const h1Start = wallAt(Y, mi, 1);
+        const h1End = wallAt(Y, mi, 14, true);
         if (h1Start <= now) {
           yearData.push(makePoint(monthNames[mi], h1Start, h1End > now ? now : h1End));
         }
         // Second half: 15th–end of month
-        const h2Start = new Date(currentYear, mi, 15, 0, 0, 0, 0);
-        const h2End = new Date(currentYear, mi + 1, 0, 23, 59, 59, 999);
+        const h2Start = wallAt(Y, mi, 15);
+        const h2End = wallAt(Y, mi + 1, 0, true);
         if (h2Start <= now) {
           yearData.push(makePoint('·', h2Start, h2End > now ? now : h2End));
         }
@@ -1352,14 +1386,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // --- Past 10 Weeks (dense: one point per 3 days = ~23 points) ---
       const tenWeeksData = Array.from({ length: 23 }, (_, i) => {
-        const dayEnd = new Date(now);
-        dayEnd.setDate(now.getDate() - (22 - i) * 3);
-        dayEnd.setHours(23, 59, 59, 999);
-        const dStart = new Date(dayEnd);
-        dStart.setDate(dayEnd.getDate() - 2);
-        dStart.setHours(0, 0, 0, 0);
-        const label = `${dayEnd.getMonth() + 1}/${dayEnd.getDate()}`;
-        return makePoint(label, dStart, dayEnd);
+        const endDay = D - (22 - i) * 3;
+        const labelDate = new Date(Date.UTC(Y, M, endDay));
+        const label = `${labelDate.getUTCMonth() + 1}/${labelDate.getUTCDate()}`;
+        return makePoint(label, wallAt(Y, M, endDay - 2), wallAt(Y, M, endDay, true));
       });
 
       res.json({ week: weekData, year: yearData, tenWeeks: tenWeeksData });
@@ -1522,7 +1552,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const user = await storage.getUser(userId);
           const now = new Date();
-          const timeOfDay = now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening';
+          const hourNow = zonedHour(now); // user's local hour, not the server's
+          const timeOfDay = hourNow < 12 ? 'morning' : hourNow < 17 ? 'afternoon' : 'evening';
 
           const context = {
             task: sampleReminder.title!,
@@ -1774,7 +1805,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Test DeepSeek API integration
-  app.post('/api/test-deepseek', isAuthenticated, isAdmin, async (req, res) => {
+  app.post('/api/test-deepseek', isAuthenticated, isAdmin, requireDevSession, async (req, res) => {
     try {
       const testContext = {
         task: req.body.task || 'study for exam',
@@ -2072,7 +2103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin: which environment is this server running in?
-  app.get('/api/admin/env', isAuthenticated, isAdmin, async (_req, res) => {
+  app.get('/api/admin/env', isAuthenticated, isAdmin, requireDevSession, async (_req, res) => {
     const isProd = process.env.NODE_ENV === 'production' || !!process.env.REPLIT_DEPLOYMENT;
     res.json({
       environment: isProd ? 'production' : 'development',
@@ -2082,7 +2113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin: list all registered users with summary info
-  app.get('/api/admin/users', isAuthenticated, isAdmin, async (_req, res) => {
+  app.get('/api/admin/users', isAuthenticated, isAdmin, requireDevSession, async (_req, res) => {
     try {
       const allUsers = await storage.getAllUsers();
       const whitelistedEmails = new Set(
@@ -2129,7 +2160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     { key: 'maintenance_mode', description: 'Show a maintenance banner and block writes for non-admin users', default: false },
   ];
 
-  app.get('/api/admin/feature-flags', isAuthenticated, isAdmin, async (_req, res) => {
+  app.get('/api/admin/feature-flags', isAuthenticated, isAdmin, requireDevSession, async (_req, res) => {
     try {
       const stored = await storage.getFeatureFlags();
       const byKey = new Map(stored.map(f => [f.key, f]));
@@ -2150,7 +2181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/admin/feature-flags/:key', isAuthenticated, isAdmin, async (req: any, res) => {
+  app.patch('/api/admin/feature-flags/:key', isAuthenticated, isAdmin, requireDevSession, async (req: any, res) => {
     try {
       const { key } = req.params;
       const { enabled } = req.body;
@@ -2169,7 +2200,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes for managing premium email whitelist
-  app.get('/api/admin/reminder-hits', isAuthenticated, isAdmin, async (_req: any, res) => {
+  app.get('/api/admin/reminder-hits', isAuthenticated, isAdmin, requireDevSession, async (_req: any, res) => {
     try {
       const hits = await storage.getHitReminders();
       res.json({ hits, count: hits.length });
@@ -2179,7 +2210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
+  app.get('/api/admin/whitelist', isAuthenticated, isAdmin, requireDevSession, async (req: any, res) => {
     try {
       const emails = await getWhitelistedEmails();
       const entries = await Promise.all(emails.map(async (email) => ({
@@ -2197,7 +2228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
+  app.post('/api/admin/whitelist', isAuthenticated, isAdmin, requireDevSession, async (req: any, res) => {
     try {
       const { email: rawEmail, password } = req.body;
       const adminId = getAuthUserId(req) as string; // isAuthenticated guarantees this
@@ -2240,32 +2271,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ── Dev Space passcode ────────────────────────────────────────────────
   // Second lock on top of the admin email check. The passcode lives ONLY in the
   // server environment (DEV_SPACE_PASSCODE secret) — never in the app code.
-  const devSpaceAttempts = new Map<string, { count: number; resetAt: number }>();
   app.post('/api/admin/dev-space/unlock', isAuthenticated, isAdmin, async (req: any, res) => {
     const expected = process.env.DEV_SPACE_PASSCODE;
     if (!expected) {
       return res.status(503).json({ message: "DEV_SPACE_PASSCODE is not set on the server yet" });
     }
-    const userId = getAuthUserId(req) || 'unknown';
-    const now = Date.now();
-    const rec = devSpaceAttempts.get(userId);
-    if (rec && rec.resetAt > now && rec.count >= 5) {
-      return res.status(429).json({ message: "Too many tries — wait 15 minutes" });
+    const ds = await import('./devSpace');
+    const userId = getAuthUserId(req) as string;
+    const waitMin = await ds.passcodeLockoutMinutes(userId);
+    if (waitMin > 0) {
+      return res.status(429).json({ message: `Too many wrong tries — wait ${waitMin} minute${waitMin === 1 ? '' : 's'}` });
     }
-    const given = String(req.body?.passcode ?? '');
-    const a = Buffer.from(given);
+    const a = Buffer.from(String(req.body?.passcode ?? ''));
     const b = Buffer.from(expected);
     const ok = a.length === b.length && crypto.timingSafeEqual(a, b);
     if (!ok) {
-      const next = rec && rec.resetAt > now ? { count: rec.count + 1, resetAt: rec.resetAt } : { count: 1, resetAt: now + 15 * 60 * 1000 };
-      devSpaceAttempts.set(userId, next);
+      await ds.recordFailedPasscode(userId);
+      console.warn(`[DevSpace] wrong passcode for ${userId}`);
       return res.status(401).json({ message: "Wrong passcode" });
     }
-    devSpaceAttempts.delete(userId);
+    await ds.clearFailedPasscodes(userId);
+    const token = await ds.startDevSession(userId);
+    console.log(`[DevSpace] unlocked by ${userId}`);
+    res.json({ success: true, token, idleMinutes: ds.DEV_IDLE_MINUTES, maxHours: ds.DEV_MAX_HOURS });
+  });
+
+  // Is this device still unlocked? (Checking does NOT count as activity.)
+  app.get('/api/admin/dev-space/status', isAuthenticated, isAdmin, async (req: any, res) => {
+    const { checkDevSession } = await import('./devSpace');
+    const result = await checkDevSession(getAuthUserId(req) as string, req.get('x-dev-session') || undefined, false);
+    res.json({ unlocked: result.ok, idleLocksAt: result.idleLocksAt ?? null });
+  });
+
+  // Lock — ends the Developer Space on every device
+  app.post('/api/admin/dev-space/lock', isAuthenticated, isAdmin, async (req: any, res) => {
+    const { endAllDevSessions } = await import('./devSpace');
+    await endAllDevSessions(getAuthUserId(req) as string);
+    console.log(`[DevSpace] locked everywhere by ${getAuthUserId(req)}`);
     res.json({ success: true });
   });
 
-  app.delete('/api/admin/whitelist', isAuthenticated, isAdmin, async (req: any, res) => {
+  app.delete('/api/admin/whitelist', isAuthenticated, isAdmin, requireDevSession, async (req: any, res) => {
     try {
       const { email } = req.body;
 
@@ -2317,47 +2363,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-// Helper function to get next occurrence of a specific day
+// Helper function to get next occurrence of a specific day.
+// Worked out in the user's time zone (see server/utils/userTime.ts) — it used to
+// use the server's UTC clock, which put evening reminders on the wrong day.
 function getNextDayOccurrence(dayName: string, baseDateTime: string | undefined): Date {
-  const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-  const targetDayIndex = dayNames.indexOf(dayName.toLowerCase());
-
-  if (targetDayIndex === -1) {
-    throw new Error(`Invalid day name: ${dayName}`);
-  }
-
-  // If no base time provided, default to 9:00 AM
-  const baseDate = baseDateTime ? new Date(baseDateTime) : (() => {
-    const d = new Date();
-    d.setHours(9, 0, 0, 0);
-    return d;
-  })();
-  const currentDate = new Date();
-
-  // Start from tomorrow to avoid scheduling for today if the base time has passed for today
-  const startDate = new Date();
-  if (baseDate.getHours() < currentDate.getHours() || (baseDate.getHours() === currentDate.getHours() && baseDate.getMinutes() <= currentDate.getMinutes())) {
-    startDate.setDate(startDate.getDate() + 1);
-  } else {
-    startDate.setDate(startDate.getDate()); // Start from today if the base time is in the future for today
-  }
-
-
-  // Find the next occurrence of the target day
-  for (let i = 0; i < 7; i++) {
-    const checkDate = new Date(startDate);
-    checkDate.setDate(startDate.getDate() + i);
-
-    if (checkDate.getDay() === targetDayIndex) {
-      // Set the time from the base date
-      checkDate.setHours(baseDate.getHours(), baseDate.getMinutes(), 0, 0);
-      return checkDate;
-    }
-  }
-
-  // Fallback (should not reach here if logic is correct)
-  // This might happen if the baseDateTime is very far in the future and the logic needs refinement for edge cases
-  // For now, return the original base date as a fallback, though this might not be ideal.
-  console.warn(`Could not find next occurrence for ${dayName} starting from ${startDate}. Returning original base date.`);
-  return baseDate;
+  return nextDayOccurrence(dayName, baseDateTime);
 }

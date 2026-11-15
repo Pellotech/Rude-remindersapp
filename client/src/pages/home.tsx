@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { toZoned, zonedNow } from "@/lib/timeZone";
 import { Capacitor } from "@capacitor/core";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +24,7 @@ import { MotivationalPopup } from "@/components/MotivationalPopup";
 import { IntroTour, useIntroTour } from "@/components/IntroTour";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { resyncReminderNotifications } from "@/lib/notificationResync";
 import { Reminder } from "@shared/schema";
 
 /**
@@ -99,6 +101,18 @@ export default function Home({ isPremium }: HomeProps) {
   );
 
   // Sync badge level when user data loads (it's async)
+  // Catch up on reminders made by Siri / other devices so they still alert on this phone
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    resyncReminderNotifications();
+    let remove: (() => void) | undefined;
+    import("@capacitor/app").then(({ App }) =>
+      App.addListener("appStateChange", ({ isActive }) => { if (isActive) resyncReminderNotifications(); })
+        .then((h) => { remove = () => h.remove(); })
+    ).catch(() => {});
+    return () => remove?.();
+  }, []);
+
   useEffect(() => {
     if ((user as any)?.defaultRudenessLevel) {
       setBadgeRudenessLevel((user as any).defaultRudenessLevel);
@@ -324,7 +338,7 @@ export default function Home({ isPremium }: HomeProps) {
     (r: Reminder) =>
       r.completed &&
       r.completedAt &&
-      new Date(r.completedAt).toDateString() === new Date().toDateString(),
+      toZoned(r.completedAt).toDateString() === zonedNow().toDateString(),
   );
 
   // ── Free plan usage math ──
@@ -406,21 +420,21 @@ export default function Home({ isPremium }: HomeProps) {
           <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
             <TabsTrigger
               value="create"
-              className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
+              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
             >
               <Bell className="h-4 w-4" />
               Create
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
-              className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
+              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
             >
               <TrendingUp className="h-4 w-4" />
               Analytics
             </TabsTrigger>
             <TabsTrigger
               value="manage"
-              className="flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
+              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-[#FDF3E3]"
             >
               <Target className="h-4 w-4" />
               Manage

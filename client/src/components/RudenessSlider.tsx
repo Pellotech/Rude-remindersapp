@@ -85,7 +85,7 @@ export function RudenessSlider({
         />
 
         {/* Emoji labels */}
-        <div className="flex justify-between mt-3 text-xs text-[#1A1A1A]">
+        <div className="reem-tight-labels flex justify-between mt-3 text-xs text-[#1A1A1A]">
           {RUDENESS_LABELS.map((item) => {
             const isSelected = value === item.level;
             return (

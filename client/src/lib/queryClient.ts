@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { withTimeZoneParam } from "./timeZone";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 
@@ -46,7 +47,21 @@ export async function initAuthToken(): Promise<string | null> {
 }
 
 // Store auth token (async for native, sync for web)
+// Wipe every cached query (memory + the copy saved on disk) so one account's
+// reminders/analytics can never show while another account is signed in.
+async function wipeCachedUserData(): Promise<void> {
+  try {
+    queryClient.clear();
+    const { queryPersister } = await import("./queryPersister");
+    await queryPersister.removeClient();
+  } catch (error) {
+    console.error("Error clearing cached data:", error);
+  }
+}
+
 export async function setAuthToken(token: string): Promise<void> {
+  // Different token = different sign-in (possibly another account): start clean
+  if (cachedToken && cachedToken !== token) await wipeCachedUserData();
   cachedToken = token;
   if (Capacitor.isNativePlatform()) {
     try {
@@ -68,6 +83,7 @@ export function getAuthToken(): string | null {
 // Clear auth token (on logout)
 export async function clearAuthToken(): Promise<void> {
   cachedToken = null;
+  await wipeCachedUserData();
   if (Capacitor.isNativePlatform()) {
     try {
       await Preferences.remove({ key: AUTH_TOKEN_KEY });
@@ -95,11 +111,14 @@ export function getFullApiUrl(path: string): string {
 
 // Get auth headers (include token if available)
 function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {};
   const token = getAuthToken();
-  if (token) {
-    return { 'Authorization': `Bearer ${token}` };
-  }
-  return {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  try {
+    const dev = localStorage.getItem('dev_space_session');
+    if (dev) headers['X-Dev-Session'] = dev; // Developer Space key — checked by the server
+  } catch { /* storage unavailable */ }
+  return headers;
 }
 
 async function throwIfResNotOk(res: Response) {
@@ -111,7 +130,8 @@ async function throwIfResNotOk(res: Response) {
 
 export async function apiRequest(url: string, options?: RequestInit) {
   // Prepend base URL for native platforms
-  const fullUrl = url.startsWith('/') ? `${getApiBaseUrl()}${url}` : url;
+  // (?tz= tells the server the user's time zone — see lib/timeZone.ts)
+  const fullUrl = withTimeZoneParam(url.startsWith('/') ? `${getApiBaseUrl()}${url}` : url);
   console.log('apiRequest fullUrl:', fullUrl);
   
   const fetchOptions: RequestInit = {
@@ -160,7 +180,7 @@ export const getQueryFn: <T>(options: {
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     const path = queryKey.join("/") as string;
-    const fullUrl = path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path;
+    const fullUrl = withTimeZoneParam(path.startsWith('/') ? `${getApiBaseUrl()}${path}` : path);
     const res = await fetch(fullUrl, {
       credentials: "include",
       cache: "no-store", // Prevent Android WebView from serving stale cached responses

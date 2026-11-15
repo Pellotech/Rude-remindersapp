@@ -42,6 +42,8 @@ PODS:
     - Capacitor
   - CapacitorStatusBar (8.0.3):
     - Capacitor
+  - CapacitorTextZoom (8.0.1):
+    - Capacitor
   - CapawesomeCapacitorFilePicker (8.0.4):
     - Capacitor
   - Google-Mobile-Ads-SDK (13.6.0):
@@ -77,6 +79,7 @@ DEPENDENCIES:
   - "CapacitorShare (from `../../node_modules/@capacitor/share`)"
   - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapacitorTextZoom (from `../../node_modules/@capacitor/text-zoom`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/@capawesome/capacitor-file-picker`)"
   - "RevenuecatPurchasesCapacitor (from `../../node_modules/@revenuecat/purchases-capacitor`)"
 
@@ -130,6 +133,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
     :path: "../../node_modules/@capacitor/status-bar"
+  CapacitorTextZoom:
+    :path: "../../node_modules/@capacitor/text-zoom"
   CapawesomeCapacitorFilePicker:
     :path: "../../node_modules/@capawesome/capacitor-file-picker"
   RevenuecatPurchasesCapacitor:
@@ -156,6 +161,7 @@ SPEC CHECKSUMS:
   CapacitorShare: 8a565649d321a05a1ae8b525b2a9b4f2d92c70ce
   CapacitorSplashScreen: 120117d1b2264bba31a6e6f998f51e510144dd12
   CapacitorStatusBar: 40bdc21352ecc617ec71c45ea06d669cdd2da8df
+  CapacitorTextZoom: afbf3d1cb61547480e60b4d06979bc239afee747
   CapawesomeCapacitorFilePicker: 051438760aacbdc54e389320a7e88fb117390360
   Google-Mobile-Ads-SDK: 6e501ace4af8d63e967bd45497c8b2b05821163d
   GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
@@ -165,6 +171,6 @@ SPEC CHECKSUMS:
   RevenueCat: a83de0391a1061302699cb55eb1ff0662f5768b5
   RevenuecatPurchasesCapacitor: 8fe740819792c2411bd04c74fd96588ebce23893
 
-PODFILE CHECKSUM: 7c3b2d05055d1cee844eee863eafdba643452258
+PODFILE CHECKSUM: ccdd17ff806ba65b9e53608731b6e593789ec20b
 
 COCOAPODS: 1.17.0

@@ -453,8 +453,8 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                 <span style={{ fontSize: 18 }}>🔤</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Notification Text Size</div>
-                  <div style={{ fontSize: 11, color: '#6B7280' }}>Regular, Large, or full-on Billboard</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Text Size</div>
+                  <div style={{ fontSize: 11, color: '#6B7280' }}>Regular, Large, or full-on Billboard — the whole app</div>
                 </div>
               </div>
               <div style={{ height: 1, background: '#F0E8D8' }} />

@@ -6,7 +6,7 @@
  * Tabs: Pages (flip through every real screen as Free / Premium / Logged out),
  *       Whitelist, Users, Toggles, Hits, Reminder Lab.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Shield, ChevronLeft, ChevronRight, LogIn, Loader2, Lock, LayoutGrid, Crown, Users, ToggleLeft, Target, FlaskConical, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,7 +20,8 @@ import { DevWhitelist } from '@/components/dev/DevWhitelist';
 import { PagePreview, PAGES, ViewMode } from '@/components/dev/PagePreview';
 import DevPreview from '@/pages/DevPreview';
 
-const UNLOCK_KEY = 'dev_space_unlocked';
+// The server decides whether this device is unlocked; we only keep its key.
+const SESSION_KEY = 'dev_space_session';
 const GOLD = '#C9A063';
 const card = { background: '#1C1C1E', border: '1px solid #38383A' } as const;
 
@@ -34,7 +35,8 @@ const TABS: { id: Tab; label: string; icon: JSX.Element }[] = [
   { id: 'lab', label: 'Reminder Lab', icon: <FlaskConical className="h-4 w-4" /> },
 ];
 
-const readUnlocked = () => { try { return sessionStorage.getItem(UNLOCK_KEY) === '1'; } catch { return false; } };
+const hasKey = () => { try { return !!localStorage.getItem(SESSION_KEY); } catch { return false; } };
+const clearKey = () => { try { localStorage.removeItem(SESSION_KEY); } catch {} };
 
 function BackToSettings() {
   const [, setLocation] = useLocation();
@@ -57,7 +59,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function PasscodeGate({ onUnlock }: { onUnlock: () => void }) {
+function PasscodeGate({ onUnlock, message }: { onUnlock: () => void; message?: string }) {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -65,8 +67,8 @@ function PasscodeGate({ onUnlock }: { onUnlock: () => void }) {
     e.preventDefault();
     setBusy(true); setError(null);
     try {
-      await apiRequest('/api/admin/dev-space/unlock', { method: 'POST', body: JSON.stringify({ passcode: code }) });
-      try { sessionStorage.setItem(UNLOCK_KEY, '1'); } catch {}
+      const res: any = await apiRequest('/api/admin/dev-space/unlock', { method: 'POST', body: JSON.stringify({ passcode: code }) });
+      try { localStorage.setItem(SESSION_KEY, res.token); } catch {}
       onUnlock();
     } catch (err) {
       setError(apiErrorText(err, 'Wrong passcode'));
@@ -77,7 +79,7 @@ function PasscodeGate({ onUnlock }: { onUnlock: () => void }) {
     <Shell>
       <Lock className="h-10 w-10 mx-auto mb-3" style={{ color: GOLD }} />
       <h1 className="text-xl font-bold text-white">Developer Space</h1>
-      <p className="text-sm mt-1 mb-5" style={{ color: '#AEAEB2' }}>Enter the passcode</p>
+      <p className="text-sm mt-1 mb-5" style={{ color: '#AEAEB2' }}>{message || 'Enter the passcode'}</p>
       <form onSubmit={submit} className="space-y-3">
         <input
           type="password" inputMode="text" autoFocus autoComplete="off" value={code}
@@ -160,7 +162,30 @@ function PagesTab() {
 export default function DevSpace() {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
-  const [unlocked, setUnlocked] = useState(readUnlocked);
+  // 'checking' → asking the server; true/false → its answer
+  const [unlocked, setUnlocked] = useState<boolean | 'checking'>(hasKey() ? 'checking' : false);
+  const [lockMsg, setLockMsg] = useState<string | undefined>();
+  const isAdmin = !!user && isAdminEmail((user as any).email);
+
+  // Ask the server on open, every minute, and when the app comes back to the front.
+  // If it was locked elsewhere, timed out, or the key is gone → back to the passcode screen.
+  useEffect(() => {
+    if (!isAdmin || unlocked === false) return;
+    let stop = false;
+    const check = async () => {
+      try {
+        const r: any = await apiRequest('/api/admin/dev-space/status', { method: 'GET' });
+        if (stop) return;
+        if (r?.unlocked) setUnlocked(true);
+        else { clearKey(); setLockMsg('Locked — enter the passcode again'); setUnlocked(false); }
+      } catch { if (!stop && unlocked === 'checking') setUnlocked(false); }
+    };
+    check();
+    const t = window.setInterval(check, 60 * 1000);
+    const onVisible = () => { if (document.visibilityState === 'visible') check(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { stop = true; window.clearInterval(t); document.removeEventListener('visibilitychange', onVisible); };
+  }, [isAdmin, unlocked]);
   const [tab, setTab] = useState<Tab>('pages');
 
   if (isLoading) {
@@ -191,9 +216,18 @@ export default function DevSpace() {
     );
   }
 
-  if (!unlocked) return <PasscodeGate onUnlock={() => setUnlocked(true)} />;
+  if (unlocked === 'checking') {
+    return <div className="min-h-screen flex items-center justify-center" style={{ background: '#000' }}><Loader2 className="h-8 w-8 animate-spin" style={{ color: GOLD }} /></div>;
+  }
+  if (!unlocked) return <PasscodeGate message={lockMsg} onUnlock={() => { setLockMsg(undefined); setUnlocked(true); }} />;
 
-  const lock = () => { try { sessionStorage.removeItem(UNLOCK_KEY); } catch {} setUnlocked(false); };
+  // Lock = closed on EVERY device, not just this one
+  const lock = async () => {
+    try { await apiRequest('/api/admin/dev-space/lock', { method: 'POST' }); } catch {}
+    clearKey();
+    setLockMsg('Locked on all your devices');
+    setUnlocked(false);
+  };
 
   return (
     <div className="min-h-screen" style={{ background: '#000' }}>
@@ -207,6 +241,9 @@ export default function DevSpace() {
             </button>
           </div>
         </div>
+        <p className="text-[12px] px-1" style={{ color: '#8E8E93' }}>
+          Locks after 1 hour without use (12 hours max). Unlocking here signs out any other device. Lock closes it everywhere.
+        </p>
         <div className="flex items-center gap-2">
           <Shield className="h-6 w-6" style={{ color: GOLD }} />
           <h1 className="text-2xl font-bold text-white">Developer Space</h1>

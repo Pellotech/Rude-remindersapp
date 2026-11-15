@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { toZoned } from "@/lib/timeZone";
+import { getTextSize, POPUP_MESSAGE_PX, TEXT_SIZE_EVENT, type TextSize } from "@/lib/textSize";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -82,18 +84,16 @@ export function RichReminderNotification({
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { isAndroid, isIOS } = getPlatformInfo();
 
-  const [textSize, setTextSize] = useState<'default' | 'larger' | 'blind'>(
-    () => (localStorage.getItem('text_size_preference') as 'default' | 'larger' | 'blind') || 'default'
-  );
+  // Same Text Size setting as the rest of the app (lib/textSize.ts)
+  const [textSize, setTextSizeState] = useState<TextSize>(getTextSize);
 
   useEffect(() => {
-    const handler = (e: Event) => setTextSize((e as CustomEvent).detail);
-    window.addEventListener('text_size_changed', handler);
-    return () => window.removeEventListener('text_size_changed', handler);
+    const handler = (e: Event) => setTextSizeState((e as CustomEvent).detail);
+    window.addEventListener(TEXT_SIZE_EVENT, handler);
+    return () => window.removeEventListener(TEXT_SIZE_EVENT, handler);
   }, []);
 
-  const textSizeMap = { default: 14, larger: 18, blind: 21 };
-  const notifFontSize = textSizeMap[textSize];
+  const notifFontSize = POPUP_MESSAGE_PX[textSize] ?? 14;
 
   const rudenessStyle = getRudenessStyle(reminder.rudenessLevel);
 
@@ -249,14 +249,14 @@ export function RichReminderNotification({
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3 text-gray-400" />
                 <span className="text-xs text-gray-600">
-                  {new Date(reminder.scheduledFor).toLocaleString()}
+                  {toZoned(reminder.scheduledFor).toLocaleString()}
                 </span>
               </div>
             </CollapsibleContent>
           </Collapsible>
 
           <p className="text-[11px] text-gray-400 text-right">
-            {new Date(reminder.scheduledFor).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} {' • '} {new Date(reminder.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+            {toZoned(reminder.scheduledFor).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} {' • '} {toZoned(reminder.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
           </p>
 
           {/* Action buttons */}
