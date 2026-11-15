@@ -38,6 +38,7 @@ import { IntroTour } from '@/components/IntroTour';
 import { SettingsIntro } from '@/components/SettingsIntro';
 import { AnalyticsLocked } from '@/components/AnalyticsLocked';
 
+import { palette } from "@/lib/theme";
 export type ViewMode = 'free' | 'premium' | 'loggedOut';
 
 export interface PageDef {
@@ -143,9 +144,9 @@ class PreviewBoundary extends Component<{ children: ReactNode; resetKey: string 
   render() {
     if (this.state.error) {
       return (
-        <div className="p-6 text-sm" style={{ color: '#C53B3B' }}>
+        <div className="p-6 text-sm" style={{ color: palette.red }}>
           <b>This page crashed in preview.</b>
-          <pre className="mt-2 whitespace-pre-wrap text-xs" style={{ color: '#6B3410' }}>{String(this.state.error.message)}</pre>
+          <pre className="mt-2 whitespace-pre-wrap text-xs" style={{ color: palette.brown }}>{String(this.state.error.message)}</pre>
         </div>
       );
     }
@@ -192,7 +193,7 @@ export function PagePreview({ page, mode, onClosePopup }: { page: PageDef; mode:
         height: 'min(780px, calc(100svh - 220px))',
         minHeight: 520,
         borderRadius: 32,
-        border: '3px solid #C9A063',
+        border: `3px solid ${palette.gold}`,
         background: '#FFFFFF',
         boxShadow: '0 10px 30px rgba(0,0,0,0.45)',
         // Makes "position: fixed" bits (floating Reem, help button) stay inside the phone frame

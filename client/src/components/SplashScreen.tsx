@@ -1,10 +1,11 @@
-export default function SplashScreen() {
+
+import { palette } from "@/lib/theme";export default function SplashScreen() {
   return (
     <div
       style={{
         position: "fixed",
         inset: 0,
-        background: "#FDF3E3",
+        background: palette.cream,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

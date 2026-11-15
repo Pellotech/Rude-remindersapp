@@ -77,11 +77,11 @@ export default function SiriShortcuts() {
       <div className="min-h-screen bg-black flex flex-col safe-area-header">
         <div className="px-4 py-3">
           <Link href="/settings">
-            <div className="flex items-center text-[#0A84FF] cursor-pointer"><ChevronLeft className="h-5 w-5" /><span className="text-[17px]">Settings</span></div>
+            <div className="flex items-center text-ui-link cursor-pointer"><ChevronLeft className="h-5 w-5" /><span className="text-body-lg">Settings</span></div>
           </Link>
         </div>
         <div className="flex-1 flex items-center justify-center px-6 text-center">
-          <p className="text-[15px] text-[#8E8E93]">Siri &amp; Shortcuts is only available on iPhone and iPad.</p>
+          <p className="text-body text-ui-label-2">Siri &amp; Shortcuts is only available on iPhone and iPad.</p>
         </div>
       </div>
     );
@@ -90,63 +90,63 @@ export default function SiriShortcuts() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/settings">
-              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+              <div className="flex items-center text-ui-link cursor-pointer" data-testid="button-back">
                 <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px]">Settings</span>
+                <span className="text-body-lg">Settings</span>
               </div>
             </Link>
             <Link href="/">
-              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
+              <div className="text-ui-link cursor-pointer" data-testid="button-home">
                 <Home className="h-5 w-5" />
               </div>
             </Link>
           </div>
-          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Siri & Shortcuts</h1>
+          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Siri & Shortcuts</h1>
         </div>
 
         <div className="py-6 px-4 space-y-6">
-          <div className="bg-[#1C1C1E] rounded-xl p-4">
-            <p className="text-[15px] text-gray-300 leading-relaxed">
+          <div className="bg-ui-card rounded-xl p-4">
+            <p className="text-body text-gray-300 leading-relaxed">
               Connect Reems Rude Reminders to Siri so you can say things like{" "}
               <span className="text-white font-medium">"Hey Siri, add a reminder in Reems Rude Reminders to call mom tomorrow at 5pm"</span>{" "}
               without opening the app.
             </p>
           </div>
 
-          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#38383A]">
-              <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 1</p>
-              <p className="text-[15px] text-white mt-1">Tap "Generate Access Token" below — it's copied for you automatically.</p>
+          <div className="bg-ui-card rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-ui-separator">
+              <p className="text-note text-ui-label-2 uppercase tracking-wide">Step 1</p>
+              <p className="text-body text-white mt-1">Tap "Generate Access Token" below — it's copied for you automatically.</p>
             </div>
-            <div className="px-4 py-3 border-b border-[#38383A]">
-              <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 2</p>
-              <p className="text-[15px] text-white mt-1">
+            <div className="px-4 py-3 border-b border-ui-separator">
+              <p className="text-note text-ui-label-2 uppercase tracking-wide">Step 2</p>
+              <p className="text-body text-white mt-1">
                 Open the Shortcuts app, find "Connect Reems Rude Reminders", run it once, and paste the token when asked.
               </p>
             </div>
             <div className="px-4 py-3">
-              <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Step 3</p>
-              <p className="text-[15px] text-white mt-1">
+              <p className="text-note text-ui-label-2 uppercase tracking-wide">Step 3</p>
+              <p className="text-body text-white mt-1">
                 That's it — "Hey Siri, add a reminder in Reems Rude Reminders..." works from anywhere.
               </p>
             </div>
           </div>
 
           {revealedToken ? (
-            <div className="bg-[#1C1C1E] rounded-xl p-4 space-y-3">
-              <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Your access token</p>
-              <p className="text-[13px] text-[#FF6B6B]">
+            <div className="bg-ui-card rounded-xl p-4 space-y-3">
+              <p className="text-note text-ui-label-2 uppercase tracking-wide">Your access token</p>
+              <p className="text-note text-reem-coral">
                 Copy this now — for your security it won't be shown again.
               </p>
-              <div className="bg-black rounded-lg px-3 py-2.5 break-all text-[13px] text-[#C9A063] font-mono">
+              <div className="bg-black rounded-lg px-3 py-2.5 break-all text-note text-reem-gold font-mono">
                 {revealedToken}
               </div>
               <button
                 onClick={copyToken}
-                className="w-full py-3 bg-white text-black font-semibold text-[15px] rounded-xl flex items-center justify-center gap-2"
+                className="w-full py-3 bg-white text-black font-semibold text-body rounded-xl flex items-center justify-center gap-2"
                 data-testid="button-copy-token"
               >
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
@@ -154,12 +154,12 @@ export default function SiriShortcuts() {
               </button>
               <button
                 onClick={() => { window.location.href = "shortcuts://"; }}
-                className="w-full py-3 bg-[#C9A063] text-black font-semibold text-[15px] rounded-xl"
+                className="w-full py-3 bg-reem-gold text-black font-semibold text-body rounded-xl"
                 data-testid="button-open-shortcuts"
               >
                 Open Shortcuts App →
               </button>
-              <p className="text-[12px] text-[#8E8E93]">
+              <p className="text-caption text-ui-label-2">
                 In Shortcuts, tap the search bar, type "Connect Reems", run it and paste.
               </p>
             </div>
@@ -167,7 +167,7 @@ export default function SiriShortcuts() {
             <button
               onClick={() => generateMutation.mutate()}
               disabled={generateMutation.isPending}
-              className="w-full py-3.5 bg-[#C9A063] text-black font-semibold text-[17px] rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-reem-gold text-black font-semibold text-body-lg rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
               data-testid="button-generate-token"
             >
               <RefreshCw className={`h-4 w-4 ${generateMutation.isPending ? "animate-spin" : ""}`} />
@@ -176,17 +176,17 @@ export default function SiriShortcuts() {
           )}
 
           <div className="pt-2">
-            <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-1 mb-2">Danger Zone</p>
+            <p className="text-note text-ui-label-2 uppercase tracking-wide px-1 mb-2">Danger Zone</p>
             <button
               onClick={() => revokeMutation.mutate()}
               disabled={revokeMutation.isPending}
-              className="w-full py-3 bg-[#1C1C1E] text-red-500 font-medium text-[15px] rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-ui-card text-red-500 font-medium text-body rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
               data-testid="button-revoke-token"
             >
               <ShieldOff className="h-4 w-4" />
               {revokeMutation.isPending ? "Revoking..." : "Revoke Siri Access"}
             </button>
-            <p className="text-[12px] text-[#8E8E93] mt-2 px-1">
+            <p className="text-caption text-ui-label-2 mt-2 px-1">
               Revoke if you ever lose the device you pasted this into, or want to disconnect Siri.
             </p>
           </div>

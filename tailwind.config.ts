@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+import { tailwindColors, cssVariables, fontSizes } from "./client/src/lib/theme";
 
 export default {
   darkMode: ["class"],
@@ -10,7 +12,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // App colours & text sizes live in client/src/lib/theme.ts
+      fontSize: { ...fontSizes },
       colors: {
+        ...tailwindColors(),
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {
@@ -86,5 +91,10 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    // CSS variables for the theme colours: var(--reem-gold), var(--ui-card) …
+    plugin(({ addBase }) => addBase({ ":root": cssVariables() })),
+  ],
 } satisfies Config;

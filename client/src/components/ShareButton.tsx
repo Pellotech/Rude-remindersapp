@@ -21,6 +21,7 @@ import type { Reminder } from "@shared/schema";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
 import { ItHitToggle } from "./ItHitToggle";
 
+import { palette } from "@/lib/theme";
 interface ShareButtonProps {
   reminder?: Partial<Reminder>;
   title?: string;
@@ -78,16 +79,16 @@ export function ShareButton({
   const attachments = reminder?.attachments || [];
 
   const rudenessColors: Record<number, string> = {
-    1: '#38BDF8',
-    2: '#22C55E',
-    3: '#FDE047',
-    4: '#F97316',
-    5: '#b70d0d',
+    1: palette.sky,
+    2: palette.green,
+    3: palette.yellow,
+    4: palette.orange,
+    5: palette.redDeep,
   };
   const rudenessTextColors: Record<number, string> = {
     1: 'white',
     2: 'white',
-    3: '#1a1a1a',
+    3: palette.charcoal,
     4: 'white',
     5: 'white',
   };
@@ -146,7 +147,7 @@ export function ShareButton({
       await new Promise(resolve => setTimeout(resolve, 100));
       
       const canvas = await html2canvas(cardRef.current, {
-        backgroundColor: "#C9A063",
+        backgroundColor: palette.gold,
         scale: 3,
         useCORS: true,
         allowTaint: true,
@@ -361,7 +362,7 @@ export function ShareButton({
             ref={cardRef}
             className="rounded-2xl overflow-hidden"
             style={{ 
-              backgroundColor: "#C9A063",
+              backgroundColor: palette.gold,
               padding: "16px"
             }}
           >
@@ -376,7 +377,7 @@ export function ShareButton({
               </div>
 
               <div className="flex justify-center mb-3">
-                <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3] p-1">
+                <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-reem-gold bg-reem-cream p-1">
                   <img
                     src={getRudyAvatarSrc(rudenessLevel)}
                     alt="Rudy"
@@ -391,7 +392,7 @@ export function ShareButton({
                 <Badge
                   className="mt-1 text-xs"
                   style={{
-                    backgroundColor: rudenessColors[rudenessLevel] ?? '#C9A063',
+                    backgroundColor: rudenessColors[rudenessLevel] ?? palette.gold,
                     color: rudenessTextColors[rudenessLevel] ?? 'white',
                   }}
                 >
@@ -415,7 +416,7 @@ export function ShareButton({
                         className="p-2 rounded-lg flex items-start justify-between bg-gray-50 border-l-4 border-gray-400"
                       >
                         <p className="text-xs text-gray-700 flex-1">{response}</p>
-                        <Badge variant="outline" className="ml-2 text-[10px] px-1.5 py-0">
+                        <Badge variant="outline" className="ml-2 text-tiny px-1.5 py-0">
                           {index + 1}
                         </Badge>
                       </div>
@@ -463,17 +464,17 @@ export function ShareButton({
                 )}
               </div>
               
-              <p className="text-[10px] text-gray-400 text-center mt-3 pt-2 border-t border-gray-100">
+              <p className="text-tiny text-gray-400 text-center mt-3 pt-2 border-t border-gray-100">
                 rudereminders.app
               </p>
             </div>
           </div>
           
-          <div className="p-4 bg-[#C9A063]">
+          <div className="p-4 bg-reem-gold">
             <Button 
               onClick={handleShare} 
               disabled={isSharing || !imagesLoaded}
-              className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white"
+              className="w-full bg-reem-red hover:bg-reem-red-dark text-white"
             >
               <Share2 className="h-4 w-4 mr-2" />
               {isSharing ? "Sharing..." : !imagesLoaded ? "Loading..." : "Share Now"}

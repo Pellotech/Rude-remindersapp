@@ -7,6 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
 
+import { palette } from "@/lib/theme";
 interface ToggleProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
@@ -130,34 +131,34 @@ export default function Notifications() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
-            <button onClick={() => leave("/settings")} className="flex items-center text-[#0A84FF]" data-testid="button-back">
+            <button onClick={() => leave("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px]">Settings</span>
+              <span className="text-body-lg">Settings</span>
             </button>
-            <button onClick={() => leave("/")} className="text-[#0A84FF]" data-testid="button-home" aria-label="Home">
+            <button onClick={() => leave("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
               <Home className="h-5 w-5" />
             </button>
           </div>
-          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Notifications</h1>
+          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Notifications</h1>
         </div>
 
         <div className="py-6 px-4 space-y-8" style={{ paddingBottom: (isAndroid ? 120 : isIOS ? 80 : 24) + SAVE_BAR_SPACE }}>
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Preferences</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden divide-y divide-[#38383A]">
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Preferences</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden divide-y divide-ui-separator">
               <div className="px-4 py-3">
                 <div className="mb-2">
-                  <p className="text-white text-[17px]">Default Rudeness Level</p>
-                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Your reminder slider starts here every time</p>
+                  <p className="text-white text-body-lg">Default Rudeness Level</p>
+                  <p className="text-ui-label-2 text-note mt-0.5">Your reminder slider starts here every time</p>
                 </div>
                 <select
                   value={currentSettings.defaultRudenessLevel}
                   onChange={(e) => updateSetting("defaultRudenessLevel", Number(e.target.value))}
                   style={{
                     width: '100%',
-                    background: '#2C2C2E',
+                    background: palette.uiRaised,
                     color: 'white',
                     border: '1px solid #333',
                     borderRadius: '8px',
@@ -177,15 +178,15 @@ export default function Notifications() {
               </div>
               <div className="px-4 py-3">
                 <div className="mb-2">
-                  <p className="text-white text-[17px]">Default Voice Character</p>
-                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Voice used when reading your reminders aloud</p>
+                  <p className="text-white text-body-lg">Default Voice Character</p>
+                  <p className="text-ui-label-2 text-note mt-0.5">Voice used when reading your reminders aloud</p>
                 </div>
                 <select
                   value={currentSettings.defaultVoiceCharacter}
                   onChange={(e) => updateSetting("defaultVoiceCharacter", e.target.value)}
                   style={{
                     width: '100%',
-                    background: '#2C2C2E',
+                    background: palette.uiRaised,
                     color: 'white',
                     border: '1px solid #333',
                     borderRadius: '8px',
@@ -204,15 +205,15 @@ export default function Notifications() {
               </div>
               <div className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-white text-[17px]">Nice Reem Mode</p>
-                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Reem only says encouraging things — no roasts</p>
+                  <p className="text-white text-body-lg">Nice Reem Mode</p>
+                  <p className="text-ui-label-2 text-note mt-0.5">Reem only says encouraging things — no roasts</p>
                 </div>
                 <Toggle checked={!!currentSettings.niceMode} onChange={(v) => updateSetting("niceMode", v)} />
               </div>
               <div className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-white text-[17px]">Floating Reem</p>
-                  <p className="text-[#8E8E93] text-[13px] mt-0.5">Reem follows you as you scroll — tap him to send him back</p>
+                  <p className="text-white text-body-lg">Floating Reem</p>
+                  <p className="text-ui-label-2 text-note mt-0.5">Reem follows you as you scroll — tap him to send him back</p>
                 </div>
                 <Toggle checked={!!currentSettings.rudyWidgetVisible} onChange={(v) => updateSetting("rudyWidgetVisible", v)} />
               </div>
@@ -220,10 +221,10 @@ export default function Notifications() {
           </div>
 
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Appearance</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Appearance</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden">
               <div className="px-4 py-3">
-                <p className="text-white text-[17px] mb-3">Backdrop</p>
+                <p className="text-white text-body-lg mb-3">Backdrop</p>
                 <div style={{ display: 'flex', gap: 8 }}>
                   {(['light', 'dark', 'auto'] as const).map((theme) => {
                     const labels = { light: 'Light', dark: 'Zero Dark Thirty', auto: 'Auto' };
@@ -236,8 +237,8 @@ export default function Notifications() {
                         onClick={() => updateSetting("backdropTheme", theme)}
                         style={{
                           flex: 1,
-                          background: isSelected ? '#C9A063' : '#38383A',
-                          border: isSelected ? '2px solid #C9A063' : '2px solid transparent',
+                          background: isSelected ? palette.gold : palette.uiSeparator,
+                          border: isSelected ? `2px solid ${palette.gold}` : '2px solid transparent',
                           borderRadius: 12,
                           padding: '10px 6px',
                           display: 'flex',
@@ -252,11 +253,11 @@ export default function Notifications() {
                           height: 20,
                           borderRadius: '50%',
                           background: swatches[theme],
-                          border: '1px solid #8E8E93',
+                          border: `1px solid ${palette.uiLabel2}`,
                         }} />
                         <span style={{
                           fontSize: 11,
-                          color: isSelected ? '#111827' : '#8E8E93',
+                          color: isSelected ? palette.ink : palette.uiLabel2,
                           fontWeight: 500,
                           textAlign: 'center',
                         }}>{labels[theme]}</span>
@@ -264,7 +265,7 @@ export default function Notifications() {
                     );
                   })}
                 </div>
-                <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
+                <p style={{ fontSize: 12, color: palette.uiLabel2, marginTop: 8 }}>
                   Changes the plain background on the main screen only — cards, buttons, and the header stay the same. Auto follows your device's light/dark setting.
                 </p>
               </div>
@@ -272,10 +273,10 @@ export default function Notifications() {
           </div>
 
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Push Notifications</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Browser Notifications</span>
+                <span className="text-white text-body-lg">Browser Notifications</span>
                 <Toggle
                   checked={currentSettings.browserNotifications || false}
                   onChange={(checked) => updateSetting("browserNotifications", checked)}
@@ -285,10 +286,10 @@ export default function Notifications() {
           </div>
 
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Playback</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Playback</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Voice Announcements</span>
+                <span className="text-white text-body-lg">Voice Announcements</span>
                 <Toggle
                   checked={currentSettings.voiceNotifications || false}
                   onChange={(checked) => updateSetting("voiceNotifications", checked)}
@@ -298,10 +299,10 @@ export default function Notifications() {
           </div>
 
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Email</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Email</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-white text-[17px]">Notify me by Email</span>
+                <span className="text-white text-body-lg">Notify me by Email</span>
                 <Toggle
                   checked={currentSettings.emailNotifications || false}
                   onChange={(checked) => updateSetting("emailNotifications", checked)}

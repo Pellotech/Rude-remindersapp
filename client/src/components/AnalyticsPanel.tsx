@@ -17,6 +17,7 @@ import {
 import { RudyEventType } from "@/components/RudyWidget";
 import { cn } from "@/lib/utils";
 
+import { palette } from "@/lib/theme";
 /**
  * AnalyticsPanel — self-contained analytics tab content.
  *
@@ -73,7 +74,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
       {showTooltip && (
         <div style={{
           background: 'white',
-          border: '2px solid #C9A063',
+          border: `2px solid ${palette.gold}`,
           borderRadius: '12px',
           padding: '10px 12px',
           fontSize: '11px',
@@ -93,14 +94,14 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
       )}
 
       {/* ── COMPLETION GRAPH ── */}
-      <Card className="border border-[#C9A063] bg-[#FDF3E3]">
+      <Card className="border border-reem-gold bg-reem-cream">
         <CardHeader className="pb-2 pt-3 px-4">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <TrendingUp className="h-4 w-4 text-[#C9A063]" />
-            <CardTitle className="text-sm font-semibold text-[#C9A063]">My Journey</CardTitle>
+            <TrendingUp className="h-4 w-4 text-reem-gold" />
+            <CardTitle className="text-sm font-semibold text-reem-gold">My Journey</CardTitle>
           </div>
           {/* Graph tab switcher */}
-          <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden">
+          <div className="flex rounded-xl border-2 border-reem-gold overflow-hidden">
             {(["week", "tenWeeks", "year"] as const).map((t, i) => {
               const labels = ["This Week", "10 Weeks", "This Year"];
               return (
@@ -112,11 +113,11 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                     const evMap: Record<string, RudyEventType> = { week: "analytics_this_week", tenWeeks: "analytics_10_weeks", year: "analytics_this_year" };
                     const ev = evMap[t]; if (ev) onRudyEvent?.(ev);
                   }}
-                  className={`flex-1 py-1 text-[11px] font-semibold transition-all ${
+                  className={`flex-1 py-1 text-caption-sm font-semibold transition-all ${
                     graphTab === t
-                      ? "bg-[#C9A063] text-[#111827]"
-                      : "bg-white text-[#111827] hover:bg-[#FDF8F0]"
-                  } ${i !== 0 ? "border-l border-[#C9A063]" : ""}`}
+                      ? "bg-reem-gold text-reem-ink"
+                      : "bg-white text-reem-ink hover:bg-reem-cream-light"
+                  } ${i !== 0 ? "border-l border-reem-gold" : ""}`}
                 >
                   {labels[i]}
                 </button>
@@ -125,7 +126,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
           </div>
         </CardHeader>
         <CardContent className="px-2 pb-1">
-          <p className="text-[10px] text-gray-400 text-center mb-1">Blue = positive day · Red = missed day</p>
+          <p className="text-tiny text-gray-400 text-center mb-1">Blue = positive day · Red = missed day</p>
           {(() => {
             const pts = ((graphData as any)?.[graphTab] ?? []).map((pt: any) => {
               const completed = pt.completed ?? 0;
@@ -146,8 +147,8 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
               // Positive net (more completed than missed) → blue
               // Negative or zero net with activity → red
               if (entry.net > 0) return '#0025CC';
-              if (entry.net < 0) return '#C53B3B';
-              return '#E5E7EB';
+              if (entry.net < 0) return palette.red;
+              return palette.lineLight;
             };
             // Y-axis bounds: fixed ±40 for the year view (bars stay proportional
             // across the whole year so growth is visible). Other tabs use a
@@ -162,7 +163,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
               : -Math.max(4, Math.ceil(maxMissed * 1.1));
             const chartInternals = (w: number | undefined) => (
               <BarChart width={w} height={290} data={pts} margin={margin}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F0E8D8" />
+                <CartesianGrid strokeDasharray="3 3" stroke={palette.sand} />
                 <XAxis
                   dataKey="name"
                   tick={(props: any) => {
@@ -182,17 +183,17 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                       const isToday = dayDate.toDateString() === todayNow.toDateString();
                       return (
                         <g>
-                          <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isToday ? "#C9A063" : "#9CA3AF"} fontWeight={isToday ? 700 : 400}>
+                          <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isToday ? palette.gold : palette.textFaint} fontWeight={isToday ? 700 : 400}>
                             {payload.value}
                           </text>
-                          <text x={x} y={y + 22} textAnchor="middle" fontSize={9} fill={isToday ? "#C9A063" : "#b0b7c3"}>
+                          <text x={x} y={y + 22} textAnchor="middle" fontSize={9} fill={isToday ? palette.gold : "#b0b7c3"}>
                             {dateLabel}
                           </text>
                         </g>
                       );
                     }
                     return (
-                      <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isHighlight ? "#C9A063" : "#9CA3AF"} fontWeight={isHighlight ? 700 : 400}>
+                      <text x={x} y={y + 10} textAnchor="middle" fontSize={10} fill={isHighlight ? palette.gold : palette.textFaint} fontWeight={isHighlight ? 700 : 400}>
                         {payload.value}
                       </text>
                     );
@@ -202,9 +203,9 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                 <YAxis
                   domain={[yBottom, yTop]}
                   allowDecimals={false}
-                  tick={{ fontSize: 9, fill: "#9CA3AF" }}
+                  tick={{ fontSize: 9, fill: palette.textFaint }}
                 />
-                <ReferenceLine y={0} stroke="#374151" strokeWidth={2} />
+                <ReferenceLine y={0} stroke={palette.text} strokeWidth={2} />
                 <Tooltip
                   cursor={false}
                   content={({ active, payload, label }: any) => {
@@ -214,7 +215,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                     const missed = Math.abs(pt.incomplete ?? 0);
                     const net = pt.net ?? 0;
                     return (
-                      <div style={{ border: '1.5px solid #C9A063', borderRadius: 8, background: 'white', padding: '8px 12px', fontSize: 12 }}>
+                      <div style={{ border: `1.5px solid ${palette.gold}`, borderRadius: 8, background: 'white', padding: '8px 12px', fontSize: 12 }}>
                         <p style={{ fontWeight: 700, marginBottom: 4 }}>{label}</p>
                         <p>Completed: {completed} ✅</p>
                         <p>Missed: {missed} ❌</p>
@@ -256,7 +257,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
             alignItems: 'center',
             gap: 10,
             fontSize: 10,
-            color: '#9CA3AF',
+            color: palette.textFaint,
             paddingLeft: 8,
             paddingTop: 4,
             paddingBottom: 2,
@@ -266,7 +267,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
               Positive
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#C53B3B', display: 'inline-block' }} />
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: palette.red, display: 'inline-block' }} />
               Missed
             </span>
           </div>
@@ -285,11 +286,11 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
         const ringCircumference = 2 * Math.PI * 18;
 
         const getHabitLevel = (days: number) => {
-          if (days >= 66) return { label: 'Champion',      emoji: '🏆', color: '#C9A063', next: null as string | null,  nextAt: 66 };
-          if (days >= 45) return { label: 'Habit Builder', emoji: '⚡', color: '#F97316', next: 'Champion' as string | null,    nextAt: 66 };
-          if (days >= 21) return { label: 'Consistent',    emoji: '🔥', color: '#C53B3B', next: 'Habit Builder' as string | null, nextAt: 45 };
-          if (days >= 7)  return { label: 'Getting There', emoji: '💪', color: '#22C55E', next: 'Consistent' as string | null,  nextAt: 21 };
-          return            { label: 'Rookie',             emoji: '🌱', color: '#38BDF8', next: 'Getting There' as string | null, nextAt: 7 };
+          if (days >= 66) return { label: 'Champion',      emoji: '🏆', color: palette.gold, next: null as string | null,  nextAt: 66 };
+          if (days >= 45) return { label: 'Habit Builder', emoji: '⚡', color: palette.orange, next: 'Champion' as string | null,    nextAt: 66 };
+          if (days >= 21) return { label: 'Consistent',    emoji: '🔥', color: palette.red, next: 'Habit Builder' as string | null, nextAt: 45 };
+          if (days >= 7)  return { label: 'Getting There', emoji: '💪', color: palette.green, next: 'Consistent' as string | null,  nextAt: 21 };
+          return            { label: 'Rookie',             emoji: '🌱', color: palette.sky, next: 'Getting There' as string | null, nextAt: 7 };
         };
         const level = getHabitLevel(daysActive);
         const prevAtMap: Record<string, number> = { Rookie: 0, 'Getting There': 7, Consistent: 21, 'Habit Builder': 45, Champion: 66 };
@@ -398,13 +399,13 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                   Day {daysActive}
                 </span>
               </div>
-              <p style={{ fontSize: 13, color: '#374151', marginTop: 6, marginBottom: 0 }}>{msg}</p>
+              <p style={{ fontSize: 13, color: palette.text, marginTop: 6, marginBottom: 0 }}>{msg}</p>
               {level.next && (
                 <>
                   <div style={{
                     height: 4,
                     borderRadius: 2,
-                    background: '#E5E7EB',
+                    background: palette.lineLight,
                     marginTop: 10,
                     overflow: 'hidden',
                   }}>
@@ -416,7 +417,7 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                       transition: 'width 0.6s ease',
                     }} />
                   </div>
-                  <p style={{ fontSize: 10, color: '#9CA3AF', marginTop: 4, marginBottom: 0 }}>
+                  <p style={{ fontSize: 10, color: palette.textFaint, marginTop: 4, marginBottom: 0 }}>
                     {levelPct}% to {level.next}
                   </p>
                 </>
@@ -429,33 +430,33 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
       {/* ── STATS GRID ── */}
       <div className="grid grid-cols-2 gap-3">
         {/* Completion Rate */}
-        <Card className="border border-[#C9A063]">
+        <Card className="border border-reem-gold">
           <CardContent className="p-3">
-            <p className="text-[11px] text-gray-500 mb-1">Completion Rate</p>
+            <p className="text-caption-sm text-gray-500 mb-1">Completion Rate</p>
             <p className="text-2xl font-bold text-gray-900">
               {(reminders as any[]).length > 0
                 ? Math.round(((reminders as any[]).filter((r: any) => r.completed).length / (reminders as any[]).length) * 100)
                 : 0}%
             </p>
-            <p className="text-[10px] text-gray-400">
+            <p className="text-tiny text-gray-400">
               {(reminders as any[]).filter((r: any) => r.completed).length} of {(reminders as any[]).length} done
             </p>
           </CardContent>
         </Card>
 
         {/* Current Streak */}
-        <Card className="border border-[#C9A063]">
+        <Card className="border border-reem-gold">
           <CardContent className="p-3">
-            <p className="text-[11px] text-gray-500 mb-1">Current Streak</p>
+            <p className="text-caption-sm text-gray-500 mb-1">Current Streak</p>
             <p className="text-2xl font-bold text-gray-900">{(stats as any)?.currentStreak ?? 0}</p>
-            <p className="text-[10px] text-gray-400">days in a row</p>
+            <p className="text-tiny text-gray-400">days in a row</p>
           </CardContent>
         </Card>
 
         {/* Most Productive Day */}
-        <Card className="border border-[#C9A063]">
+        <Card className="border border-reem-gold">
           <CardContent className="p-3">
-            <p className="text-[11px] text-gray-500 mb-1">Best Day</p>
+            <p className="text-caption-sm text-gray-500 mb-1">Best Day</p>
             <p className="text-lg font-bold text-gray-900 truncate">
               {(() => {
                 const dc = (reminders as any[])
@@ -470,42 +471,42 @@ export function AnalyticsPanel({ onRudyEvent, className }: AnalyticsPanelProps) 
                 return entries.reduce((a: any, b: any) => (a[1] > b[1] ? a : b))[0];
               })()}
             </p>
-            <p className="text-[10px] text-gray-400">most completions</p>
+            <p className="text-tiny text-gray-400">most completions</p>
           </CardContent>
         </Card>
 
         {/* Total Completed */}
-        <Card className="border border-[#C9A063]">
+        <Card className="border border-reem-gold">
           <CardContent className="p-3">
-            <p className="text-[11px] text-gray-500 mb-1">Total Done</p>
+            <p className="text-caption-sm text-gray-500 mb-1">Total Done</p>
             <p className="text-2xl font-bold text-gray-900">
               {(reminders as any[]).filter((r: any) => r.completed).length}
             </p>
-            <p className="text-[10px] text-gray-400">all time</p>
+            <p className="text-tiny text-gray-400">all time</p>
           </CardContent>
         </Card>
 
         {/* Active Reminders */}
-        <Card className="border border-[#C9A063]">
+        <Card className="border border-reem-gold">
           <CardContent className="p-3">
-            <p className="text-[11px] text-gray-500 mb-1">Active</p>
+            <p className="text-caption-sm text-gray-500 mb-1">Active</p>
             <p className="text-2xl font-bold text-gray-900">
               {(reminders as any[]).filter((r: any) => !r.completed && new Date(r.scheduledFor) >= new Date()).length}
             </p>
-            <p className="text-[10px] text-gray-400">upcoming reminders</p>
+            <p className="text-tiny text-gray-400">upcoming reminders</p>
           </CardContent>
         </Card>
 
         {/* Average Rudeness */}
-        <Card className="border border-[#C9A063]">
+        <Card className="border border-reem-gold">
           <CardContent className="p-3">
-            <p className="text-[11px] text-gray-500 mb-1">Avg Rudeness</p>
+            <p className="text-caption-sm text-gray-500 mb-1">Avg Rudeness</p>
             <p className="text-2xl font-bold text-gray-900">
               {(reminders as any[]).length > 0
                 ? ((reminders as any[]).reduce((acc: number, r: any) => acc + (r.rudenessLevel || 3), 0) / (reminders as any[]).length).toFixed(1)
                 : "3.0"}
             </p>
-            <p className="text-[10px] text-gray-400">out of 5.0</p>
+            <p className="text-tiny text-gray-400">out of 5.0</p>
           </CardContent>
         </Card>
       </div>

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Crown, Search, Users as UsersIcon } from "lucide-react";
 
+import { palette } from "@/lib/theme";
 interface AdminUser {
   id: string;
   email: string;
@@ -50,34 +51,34 @@ export function AdminUsers() {
   return (
     <div
       className="rounded-xl border p-5"
-      style={{ background: '#1C1C1E', borderColor: '#38383A' }}
+      style={{ background: palette.uiCard, borderColor: palette.uiSeparator }}
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <UsersIcon className="h-5 w-5" style={{ color: '#C9A063' }} />
+          <UsersIcon className="h-5 w-5" style={{ color: palette.gold }} />
           <h2 className="text-lg font-semibold text-white">All Users</h2>
         </div>
-        <span className="text-xs" style={{ color: '#8E8E93' }}>
+        <span className="text-xs" style={{ color: palette.uiLabel2 }}>
           {isLoading ? 'Loading…' : `${filtered.length} of ${data?.count ?? 0}`}
         </span>
       </div>
 
       <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#8E8E93' }} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: palette.uiLabel2 }} />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by email, name, or ID"
           className="pl-9 border-0"
-          style={{ background: '#2C2C2E', color: '#FFFFFF' }}
+          style={{ background: palette.uiRaised, color: '#FFFFFF' }}
           data-testid="input-admin-user-search"
         />
       </div>
 
       <div className="overflow-x-auto rounded-lg" style={{ background: '#000000' }}>
-        <table className="min-w-full text-sm" style={{ color: '#E5E5EA' }}>
+        <table className="min-w-full text-sm" style={{ color: palette.uiLabel4 }}>
           <thead>
-            <tr style={{ background: '#1C1C1E', color: '#8E8E93' }} className="text-left text-xs uppercase tracking-wider">
+            <tr style={{ background: palette.uiCard, color: palette.uiLabel2 }} className="text-left text-xs uppercase tracking-wider">
               <th className="px-3 py-2 font-medium">Email</th>
               <th className="px-3 py-2 font-medium">Name</th>
               <th className="px-3 py-2 font-medium">Plan</th>
@@ -87,27 +88,27 @@ export function AdminUsers() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={5} className="px-3 py-6 text-center" style={{ color: '#8E8E93' }}>Loading users…</td></tr>
+              <tr><td colSpan={5} className="px-3 py-6 text-center" style={{ color: palette.uiLabel2 }}>Loading users…</td></tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={5} className="px-3 py-6 text-center" style={{ color: '#8E8E93' }}>No users match.</td></tr>
+              <tr><td colSpan={5} className="px-3 py-6 text-center" style={{ color: palette.uiLabel2 }}>No users match.</td></tr>
             )}
             {filtered.map((u) => (
-              <tr key={u.id} className="border-t" style={{ borderColor: '#1C1C1E' }} data-testid={`row-user-${u.id}`}>
+              <tr key={u.id} className="border-t" style={{ borderColor: palette.uiCard }} data-testid={`row-user-${u.id}`}>
                 <td className="px-3 py-2 font-mono text-xs">{u.email || '—'}</td>
                 <td className="px-3 py-2">{[u.firstName, u.lastName].filter(Boolean).join(' ') || '—'}</td>
                 <td className="px-3 py-2 capitalize">{u.subscriptionPlan}</td>
                 <td className="px-3 py-2">
                   {u.isPremium ? (
-                    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold"
-                      style={{ background: '#3a2f0f', color: '#C9A063', border: '1px solid #C9A063' }}>
+                    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption-sm font-semibold"
+                      style={{ background: '#3a2f0f', color: palette.gold, border: `1px solid ${palette.gold}` }}>
                       <Crown className="h-3 w-3" /> {u.premiumSource === 'whitelist' ? 'Whitelist' : 'Active'}
                     </span>
                   ) : (
-                    <span className="text-xs" style={{ color: '#8E8E93' }}>—</span>
+                    <span className="text-xs" style={{ color: palette.uiLabel2 }}>—</span>
                   )}
                 </td>
-                <td className="px-3 py-2 text-xs" style={{ color: '#8E8E93' }}>{formatDate(u.createdAt)}</td>
+                <td className="px-3 py-2 text-xs" style={{ color: palette.uiLabel2 }}>{formatDate(u.createdAt)}</td>
               </tr>
             ))}
           </tbody>

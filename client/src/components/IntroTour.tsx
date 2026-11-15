@@ -12,6 +12,7 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import logoImage from "@assets/reems_logo_trimmed.png";
 
+import { palette } from "@/lib/theme";
 const RUDY_BASE = "/rudy/";
 const RUDY_ARMS_CROSSED = `${RUDY_BASE}Rudy_confident_arms_crossed_transparent.png`;
 const RUDY_POINTING = `${RUDY_BASE}Rudy_punching_forward_transparent.png`;
@@ -67,10 +68,10 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
             <div style={{ position: 'relative', display: 'inline-block', marginBottom: 8 }}>
               <div style={{
                 background: 'white',
-                border: '1.5px solid #111827',
+                border: `1.5px solid ${palette.ink}`,
                 borderRadius: 12,
                 padding: '8px 14px',
-                color: '#b70d0d',
+                color: palette.redDeep,
                 fontWeight: 700,
                 fontSize: 14,
                 marginBottom: 10,
@@ -92,10 +93,10 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 8 }}>
               Meet Rudy. Your new accountability partner.
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5 }}>
               He doesn't sugarcoat. He doesn't let you off the hook. Reems Rude Reminders delivers blunt, funny, AI-generated reminders that actually get you moving.
             </p>
           </div>
@@ -117,19 +118,19 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 6 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 6 }}>
               Choose your weapon
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 14 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5, marginBottom: 14 }}>
               Pick how hard Rudy comes at you. Dial up or down any time.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, textAlign: 'left' }}>
               {[
-                { bg: '#38BDF8', color: '#111827', text: '🤗 Sympathy — Long day? Even 10 minutes of your workout counts. I believe in you.' },
-                { bg: '#22C55E', color: '#ffffff', text: '🙂 Motivational — Time to get moving, you\'ve got this!' },
-                { bg: '#FDE047', color: '#111827', text: '😏 Sarcastic — Oh wow, still haven\'t done it. Shocking.' },
-                { bg: '#F97316', color: '#ffffff', text: '😠 Harsh — Stop making excuses and just do it.' },
-                { bg: '#b70d0d', color: '#ffffff', text: '🤬 Savage — You absolute couch potato. Get. Up. Now.' },
+                { bg: palette.sky, color: palette.ink, text: '🤗 Sympathy — Long day? Even 10 minutes of your workout counts. I believe in you.' },
+                { bg: palette.green, color: '#ffffff', text: '🙂 Motivational — Time to get moving, you\'ve got this!' },
+                { bg: palette.yellow, color: palette.ink, text: '😏 Sarcastic — Oh wow, still haven\'t done it. Shocking.' },
+                { bg: palette.orange, color: '#ffffff', text: '😠 Harsh — Stop making excuses and just do it.' },
+                { bg: palette.redDeep, color: '#ffffff', text: '🤬 Savage — You absolute couch potato. Get. Up. Now.' },
               ].map((pill, i) => (
                 <div
                   key={i}
@@ -165,10 +166,10 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 6 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 6 }}>
               Hey first-timer 👋
             </h2>
-            <p style={{ fontSize: 13, color: '#4B5563', lineHeight: 1.4, marginBottom: 12 }}>
+            <p style={{ fontSize: 13, color: palette.textSoft, lineHeight: 1.4, marginBottom: 12 }}>
               Here's how to set your first reminder:
             </p>
             <div style={{ textAlign: 'left' }}>
@@ -182,8 +183,8 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 <div
                   key={i}
                   style={{
-                    background: '#FDF3E3',
-                    border: '1.5px solid #C9A063',
+                    background: palette.cream,
+                    border: `1.5px solid ${palette.gold}`,
                     borderRadius: 12,
                     padding: '10px 14px',
                     marginBottom: 8,
@@ -193,8 +194,8 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                   }}
                 >
                   <div style={{
-                    background: '#C9A063',
-                    color: '#111827',
+                    background: palette.gold,
+                    color: palette.ink,
                     width: 24,
                     height: 24,
                     borderRadius: '50%',
@@ -207,11 +208,11 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                   }}>
                     {i + 1}
                   </div>
-                  <span style={{ fontSize: 13, color: '#111827', fontWeight: 500 }}>{step}</span>
+                  <span style={{ fontSize: 13, color: palette.ink, fontWeight: 500 }}>{step}</span>
                 </div>
               ))}
             </div>
-            <p style={{ fontSize: 14, color: '#4B5563', marginTop: 12 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, marginTop: 12 }}>
               That's it. Rudy handles the rest.
             </p>
           </div>
@@ -233,24 +234,24 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 8 }}>
               Your reminders, all in one place
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 12 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5, marginBottom: 12 }}>
               When a reminder fires, tap 'Got it done', 'Let you know later', or 'Didn't do it'. Everything you log feeds your habit streak — the rest waits for you in Manage → Past.
             </p>
             <div style={{
               background: 'white',
-              border: '1.5px solid #C9A063',
+              border: `1.5px solid ${palette.gold}`,
               borderRadius: 14,
               padding: '12px 16px',
               textAlign: 'left',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
-                <span style={{ fontSize: 14, color: '#111827', fontWeight: 500 }}>🏋️ Gym session</span>
-                <span style={{ fontSize: 11, color: '#6B7280' }}>Today 7:00 AM</span>
+                <span style={{ fontSize: 14, color: palette.ink, fontWeight: 500 }}>🏋️ Gym session</span>
+                <span style={{ fontSize: 11, color: palette.textMuted }}>Today 7:00 AM</span>
                 <button style={{
-                  background: '#22C55E',
+                  background: palette.green,
                   color: 'white',
                   borderRadius: 20,
                   fontSize: 11,
@@ -259,13 +260,13 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                   fontWeight: 600,
                 }}>Got it done 👊</button>
               </div>
-              <div style={{ height: 1, background: '#F0E8D8' }} />
+              <div style={{ height: 1, background: palette.sand }} />
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0' }}>
-                <span style={{ fontSize: 14, color: '#111827', fontWeight: 500 }}>💊 Take vitamins</span>
-                <span style={{ fontSize: 11, color: '#6B7280' }}>Today 9:00 AM</span>
+                <span style={{ fontSize: 14, color: palette.ink, fontWeight: 500 }}>💊 Take vitamins</span>
+                <span style={{ fontSize: 11, color: palette.textMuted }}>Today 9:00 AM</span>
                 <button style={{
-                  background: '#FDE047',
-                  color: '#111827',
+                  background: palette.yellow,
+                  color: palette.ink,
                   borderRadius: 20,
                   fontSize: 11,
                   padding: '4px 10px',
@@ -293,35 +294,35 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 8 }}>
               Rate the roast
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 14 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5, marginBottom: 14 }}>
               Every reminder card asks one quick question: did it actually land?
             </p>
             <div style={{
-              background: '#FDF3E3',
-              border: '1.5px solid #C9A063',
+              background: palette.cream,
+              border: `1.5px solid ${palette.gold}`,
               borderRadius: 12,
               padding: '14px 16px',
             }}>
-              <p style={{ fontSize: 12, color: '#6B7280', marginBottom: 10 }}>
+              <p style={{ fontSize: 12, color: palette.textMuted, marginBottom: 10 }}>
                 Let us know did
               </p>
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
                 <span style={{
-                  background: '#22C55E',
+                  background: palette.green,
                   color: 'white',
                   borderRadius: 20,
                   fontSize: 13,
                   padding: '6px 14px',
                   fontWeight: 600,
                 }}>It Hit 🎯</span>
-                <span style={{ fontSize: 13, color: '#6B7280', alignSelf: 'center' }}>or</span>
+                <span style={{ fontSize: 13, color: palette.textMuted, alignSelf: 'center' }}>or</span>
                 <span style={{
                   background: 'white',
-                  border: '1px solid #C9A063',
-                  color: '#1B2A5E',
+                  border: `1px solid ${palette.gold}`,
+                  color: palette.navy,
                   borderRadius: 20,
                   fontSize: 13,
                   padding: '6px 14px',
@@ -329,7 +330,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 }}>Nahh 😒</span>
               </div>
             </div>
-            <p style={{ fontSize: 13, color: '#8E8E93', marginTop: 12 }}>
+            <p style={{ fontSize: 13, color: palette.uiLabel2, marginTop: 12 }}>
               One tap, no follow-up questions. It locks in instantly.
             </p>
           </div>
@@ -353,19 +354,19 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 8 }}>
               Watch yourself actually change
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 12 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5, marginBottom: 12 }}>
               Science says 66 days builds a real habit (Phillippa Lally, UCL). The Analytics tab tracks every completion and miss.
             </p>
             <div style={{
-              background: '#FDF3E3',
-              border: '1.5px solid #C9A063',
+              background: palette.cream,
+              border: `1.5px solid ${palette.gold}`,
               borderRadius: 12,
               padding: '10px 16px',
               fontSize: 13,
-              color: '#6B3410',
+              color: palette.brown,
               fontWeight: 600,
               textAlign: 'center',
               marginBottom: 10,
@@ -378,7 +379,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
               height: 60,
               gap: 4,
               marginTop: 8,
-              borderBottom: '2px solid #374151',
+              borderBottom: `2px solid ${palette.text}`,
             }}>
               {aboveHeights.map((above, i) => (
                 <div key={i} style={{
@@ -390,7 +391,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 }}>
                   {above > 0 ? (
                     <div style={{
-                      background: '#C53B3B',
+                      background: palette.red,
                       borderRadius: '3px 3px 0 0',
                       height: above,
                       width: '100%',
@@ -408,7 +409,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 <div key={i} style={{ flex: 1 }}>
                   {below > 0 ? (
                     <div style={{
-                      background: '#9CA3AF',
+                      background: palette.textFaint,
                       borderRadius: '0 0 3px 3px',
                       height: below,
                       width: '100%',
@@ -437,15 +438,15 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 8 }}>
               Make it yours
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 12 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5, marginBottom: 12 }}>
               Settings has more than the rudeness dial. Worth a look:
             </p>
             <div style={{
               background: 'white',
-              border: '1.5px solid #C9A063',
+              border: `1.5px solid ${palette.gold}`,
               borderRadius: 14,
               padding: '4px 16px',
               textAlign: 'left',
@@ -453,24 +454,24 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                 <span style={{ fontSize: 18 }}>🔤</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Text Size</div>
-                  <div style={{ fontSize: 11, color: '#6B7280' }}>Regular, Large, or full-on Billboard — the whole app</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: palette.ink }}>Text Size</div>
+                  <div style={{ fontSize: 11, color: palette.textMuted }}>Regular, Large, or full-on Billboard — the whole app</div>
                 </div>
               </div>
-              <div style={{ height: 1, background: '#F0E8D8' }} />
+              <div style={{ height: 1, background: palette.sand }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                 <span style={{ fontSize: 18 }}>🎈</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Floating Rudy</div>
-                  <div style={{ fontSize: 11, color: '#6B7280' }}>Pin him to the top while you scroll</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: palette.ink }}>Floating Rudy</div>
+                  <div style={{ fontSize: 11, color: palette.textMuted }}>Pin him to the top while you scroll</div>
                 </div>
               </div>
-              <div style={{ height: 1, background: '#F0E8D8' }} />
+              <div style={{ height: 1, background: palette.sand }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0' }}>
                 <span style={{ fontSize: 18 }}>😇</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Nice Rudy Banner</div>
-                  <div style={{ fontSize: 11, color: '#6B7280' }}>Switch his floating comments to encouraging-only</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: palette.ink }}>Nice Rudy Banner</div>
+                  <div style={{ fontSize: 11, color: palette.textMuted }}>Switch his floating comments to encouraging-only</div>
                 </div>
               </div>
             </div>
@@ -493,39 +494,39 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 animation: 'rudyEntrance 0.5s ease-out',
               }}
             />
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: palette.ink, marginBottom: 8 }}>
               Make it personal
             </h2>
-            <p style={{ fontSize: 14, color: '#4B5563', lineHeight: 1.5, marginBottom: 12 }}>
+            <p style={{ fontSize: 14, color: palette.textSoft, lineHeight: 1.5, marginBottom: 12 }}>
               Premium unlocks photo attachments and motivational quotes added to every reminder.
             </p>
             <div style={{ display: 'flex', flexDirection: 'row', gap: 10, marginTop: 12 }}>
               <div style={{
-                background: '#FDF3E3',
-                border: '1.5px solid #C9A063',
+                background: palette.cream,
+                border: `1.5px solid ${palette.gold}`,
                 borderRadius: 12,
                 padding: 14,
                 flex: 1,
                 textAlign: 'center',
               }}>
                 <div style={{ fontSize: 26 }}>📷</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', marginTop: 4 }}>Photo Attachments</div>
-                <div style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>Attach a photo to make it impossible to ignore</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: palette.ink, marginTop: 4 }}>Photo Attachments</div>
+                <div style={{ fontSize: 11, color: palette.textMuted, marginTop: 4 }}>Attach a photo to make it impossible to ignore</div>
               </div>
               <div style={{
-                background: '#FDF3E3',
-                border: '1.5px solid #C9A063',
+                background: palette.cream,
+                border: `1.5px solid ${palette.gold}`,
                 borderRadius: 12,
                 padding: 14,
                 flex: 1,
                 textAlign: 'center',
               }}>
                 <div style={{ fontSize: 26 }}>💬</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', marginTop: 4 }}>Motivational Quotes</div>
-                <div style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>Words from history's greatest minds</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: palette.ink, marginTop: 4 }}>Motivational Quotes</div>
+                <div style={{ fontSize: 11, color: palette.textMuted, marginTop: 4 }}>Words from history's greatest minds</div>
               </div>
             </div>
-            <p style={{ color: '#8E8E93', fontSize: 13, textAlign: 'center', marginTop: 10 }}>
+            <p style={{ color: palette.uiLabel2, fontSize: 13, textAlign: 'center', marginTop: 10 }}>
               Start free. Upgrade when you're ready.
             </p>
           </div>
@@ -539,7 +540,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-md p-0 overflow-hidden flex flex-col bg-white border-2 border-[#C9A063] rounded-[16px]"
+        className="max-w-md p-0 overflow-hidden flex flex-col bg-white border-2 border-reem-gold rounded-[16px]"
         style={{ maxHeight: dialogMaxHeight }}
       >
         <style>{`
@@ -565,7 +566,7 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
                 className="h-1.5 rounded-full transition-all"
                 style={{
                   width: index === currentStep ? 24 : 8,
-                  background: index === currentStep ? '#C9A063' : index < currentStep ? '#22C55E' : '#E5E7EB',
+                  background: index === currentStep ? palette.gold : index < currentStep ? palette.green : palette.lineLight,
                 }}
               />
             ))}
@@ -574,20 +575,20 @@ export function IntroTour({ isOpen, onClose }: IntroTourProps) {
           {renderSlide()}
         </div>
 
-        <DialogFooter className="flex flex-row items-center justify-between p-3 border-t border-[#F0E8D8] bg-white">
-          <Button variant="ghost" onClick={skipTour} size="sm" className="text-[#6B7280]">
+        <DialogFooter className="flex flex-row items-center justify-between p-3 border-t border-reem-sand bg-white">
+          <Button variant="ghost" onClick={skipTour} size="sm" className="text-reem-text-muted">
             Skip
           </Button>
           <div className="flex gap-2">
             {currentStep > 0 && (
-              <Button variant="outline" onClick={prevStep} size="sm" className="border-[#C9A063] text-[#6B3410]">
+              <Button variant="outline" onClick={prevStep} size="sm" className="border-reem-gold text-reem-brown">
                 Back
               </Button>
             )}
             <Button
               onClick={nextStep}
               size="sm"
-              className="flex items-center gap-2 bg-[#C9A063] hover:bg-[#b08d52] text-white font-semibold"
+              className="flex items-center gap-2 bg-reem-gold hover:bg-[#b08d52] text-white font-semibold"
             >
               {currentStep === totalSlides - 1 ? (
                 <>

@@ -30,7 +30,7 @@ export function HelpArticle({ article, onBack }: HelpArticleProps) {
         <Button variant="ghost" size="sm" onClick={onBack} className="h-8 w-8 p-0">
           <ChevronLeft className="h-5 w-5" />
         </Button>
-        <IconComponent className="h-5 w-5 text-[#C9A063]" />
+        <IconComponent className="h-5 w-5 text-reem-gold" />
         <h2 className="font-semibold text-gray-900 text-sm">{article.title}</h2>
       </div>
 
@@ -40,7 +40,7 @@ export function HelpArticle({ article, onBack }: HelpArticleProps) {
           <ul className="space-y-2">
             {article.steps.map((step, index) => (
               <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                <span className="flex-shrink-0 w-5 h-5 bg-[#C9A063] text-white rounded-full flex items-center justify-center text-xs font-medium">
+                <span className="flex-shrink-0 w-5 h-5 bg-reem-gold text-white rounded-full flex items-center justify-center text-xs font-medium">
                   {index + 1}
                 </span>
                 <span>{step}</span>
@@ -75,7 +75,7 @@ export function HelpArticle({ article, onBack }: HelpArticleProps) {
               href="mailto:ruderemindersinfo@gmail.com?subject=Support%20Request"
               className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
             >
-              <Mail className="h-5 w-5 text-[#C9A063]" />
+              <Mail className="h-5 w-5 text-reem-gold" />
               <div>
                 <p className="text-sm font-medium text-gray-900">Contact Support</p>
                 <p className="text-xs text-gray-500">Get help from our team</p>
@@ -85,7 +85,7 @@ export function HelpArticle({ article, onBack }: HelpArticleProps) {
               href="mailto:ruderemindersinfo@gmail.com?subject=Bug%20Report&body=Device:%20%0AiOS%20Version:%20%0AApp%20Version:%20%0A%0ADescribe%20the%20issue:%0A"
               className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
             >
-              <Bug className="h-5 w-5 text-[#C53B3B]" />
+              <Bug className="h-5 w-5 text-reem-red" />
               <div>
                 <p className="text-sm font-medium text-gray-900">Report a Bug</p>
                 <p className="text-xs text-gray-500">Help us improve the app</p>

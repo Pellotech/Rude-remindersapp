@@ -41,7 +41,7 @@ export default function Navigation() {
 
   return (
     <>
-      <header className="bg-[#C9A063] relative z-50 safe-area-header">
+      <header className="bg-reem-gold relative z-50 safe-area-header">
         <div className="relative max-w-7xl mx-auto px-4 pt-4 pb-4">
           {/* Centered logo — no bottom margin so header ends at logo bottom */}
           <div className="flex justify-center">
@@ -63,7 +63,7 @@ export default function Navigation() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
+                  className="bg-white border border-gray-200 shadow-sm text-reem-red hover:bg-reem-red hover:text-white hover:border-reem-red active:bg-reem-red active:text-white h-9 w-9 p-0"
                   data-testid="button-nav-home"
                 >
                   <Home className="h-4 w-4" />
@@ -83,7 +83,7 @@ export default function Navigation() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className={`bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0 ${location === "/settings" ? "bg-[#C53B3B] text-white border-[#C53B3B]" : ""}`}
+                  className={`bg-white border border-gray-200 shadow-sm text-reem-red hover:bg-reem-red hover:text-white hover:border-reem-red active:bg-reem-red active:text-white h-9 w-9 p-0 ${location === "/settings" ? "bg-reem-red text-white border-reem-red" : ""}`}
                   data-testid="button-nav-settings"
                 >
                   <Settings className="h-4 w-4" />
@@ -94,13 +94,13 @@ export default function Navigation() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white border border-gray-200 shadow-sm text-[#C53B3B] hover:bg-[#C53B3B] hover:text-white hover:border-[#C53B3B] active:bg-[#C53B3B] active:text-white h-9 w-9 p-0"
+                    className="bg-white border border-gray-200 shadow-sm text-reem-red hover:bg-reem-red hover:text-white hover:border-reem-red active:bg-reem-red active:text-white h-9 w-9 p-0"
                     data-testid="button-nav-logout"
                   >
                     <LogOut className="h-4 w-4" />
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-[#FDF3E3]">
+                <AlertDialogContent className="bg-reem-cream">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -111,7 +111,7 @@ export default function Navigation() {
                     <AlertDialogCancel data-testid="button-logout-cancel">Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleLogout}
-                      className="bg-[#C53B3B] text-white hover:bg-[#a82f2f]"
+                      className="bg-reem-red text-white hover:bg-[#a82f2f]"
                       data-testid="button-logout-confirm"
                     >
                       Log out
@@ -124,7 +124,7 @@ export default function Navigation() {
         </div>
         
         {/* Subtle bottom separator */}
-        <div className="h-[1px] bg-gradient-to-r from-transparent via-[#111827]/10 to-transparent" />
+        <div className="h-[1px] bg-gradient-to-r from-transparent via-reem-ink/10 to-transparent" />
       </header>
     </>
   );

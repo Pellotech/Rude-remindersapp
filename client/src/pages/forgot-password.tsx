@@ -8,6 +8,7 @@ import { Mail } from "lucide-react";
 import AppHeader from "@/components/AppHeader";
 import { getFullApiUrl } from "@/lib/queryClient";
 
+import { palette } from "@/lib/theme";
 export default function ForgotPasswordPage() {
   const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
@@ -40,24 +41,24 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FDF3E3" }}>
+    <div className="min-h-screen" style={{ backgroundColor: palette.cream }}>
       <AppHeader />
       <div className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
-          <Card className="border-2 border-[#C9A063] rounded-2xl shadow-md">
+          <Card className="border-2 border-reem-gold rounded-2xl shadow-md">
             <CardContent className="pt-8 pb-8 px-6">
               {submitted ? (
                 <div className="text-center space-y-4">
                   <div className="flex items-center justify-center h-14 w-14 rounded-full bg-green-100 mx-auto">
                     <Mail className="h-7 w-7 text-green-600" />
                   </div>
-                  <h2 className="text-xl font-bold text-[#111827]">Check your email</h2>
-                  <p className="text-sm text-[#374151]">
+                  <h2 className="text-xl font-bold text-reem-ink">Check your email</h2>
+                  <p className="text-sm text-reem-text">
                     If an account exists with that email, a reset link has been sent. Check your inbox (and spam folder).
                   </p>
                   <Button
                     type="button"
-                    className="w-full mt-4 text-[#C9A063] bg-transparent hover:bg-[#FDF3E3] border border-[#C9A063] rounded-[14px]"
+                    className="w-full mt-4 text-reem-gold bg-transparent hover:bg-reem-cream border border-reem-gold rounded-[14px]"
                     onClick={() => setLocation("/login")}
                   >
                     Back to Login
@@ -65,21 +66,21 @@ export default function ForgotPasswordPage() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-[#111827] mb-1">Reset Password</h2>
-                  <p className="text-sm text-[#374151] mb-6">Enter your email and we'll send you a reset link.</p>
+                  <h2 className="text-2xl font-bold text-reem-ink mb-1">Reset Password</h2>
+                  <p className="text-sm text-reem-text mb-6">Enter your email and we'll send you a reset link.</p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[#111827]">Email</Label>
+                      <Label className="text-reem-ink">Email</Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                         <Input
                           type="email"
                           placeholder="Enter your email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="pl-10 border-2 border-[#C9A063] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
-                          style={{ backgroundColor: "#FDF3E3" }}
+                          className="pl-10 border-2 border-reem-gold focus:border-reem-red rounded-[14px] text-reem-ink py-3"
+                          style={{ backgroundColor: palette.cream }}
                           autoComplete="email"
                           required
                         />
@@ -87,13 +88,13 @@ export default function ForgotPasswordPage() {
                     </div>
 
                     {error && (
-                      <p className="text-sm text-[#C53B3B]">{error}</p>
+                      <p className="text-sm text-reem-red">{error}</p>
                     )}
 
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full bg-[#C53B3B] hover:bg-[#a83030] text-white rounded-[14px] py-5 h-[48px] font-semibold"
+                      className="w-full bg-reem-red hover:bg-[#a83030] text-white rounded-[14px] py-5 h-[48px] font-semibold"
                     >
                       {isLoading ? "Sending..." : "Send Reset Link"}
                     </Button>
@@ -102,7 +103,7 @@ export default function ForgotPasswordPage() {
                       <button
                         type="button"
                         onClick={() => setLocation("/login")}
-                        className="text-sm text-[#C9A063] hover:underline"
+                        className="text-sm text-reem-gold hover:underline"
                       >
                         Back to Login
                       </button>

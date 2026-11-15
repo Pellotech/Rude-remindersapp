@@ -155,9 +155,9 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
 
   const legalLinks = (
     <div className="flex gap-4 justify-center flex-wrap">
-      <button onClick={() => openLink(PRIVACY_URL)} className="text-[11px] text-[#2563EB] underline">Privacy Policy</button>
-      <button onClick={() => openLink(TERMS_URL)} className="text-[11px] text-[#2563EB] underline">Terms of Use</button>
-      <button onClick={() => openLink(EULA_URL)} className="text-[11px] text-[#2563EB] underline">EULA</button>
+      <button onClick={() => openLink(PRIVACY_URL)} className="text-caption-sm text-[#2563EB] underline">Privacy Policy</button>
+      <button onClick={() => openLink(TERMS_URL)} className="text-caption-sm text-[#2563EB] underline">Terms of Use</button>
+      <button onClick={() => openLink(EULA_URL)} className="text-caption-sm text-[#2563EB] underline">EULA</button>
     </div>
   );
 
@@ -175,19 +175,19 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
       <button
         onClick={() => setSelectedPlan(plan)}
         disabled={busy}
-        className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selected ? 'border-[#C53B3B] bg-[#FEF2F2]' : 'border-[#EAEAEA] bg-white'}`}
+        className={`w-full p-4 rounded-[14px] border-2 transition-all flex items-center justify-between ${selected ? 'border-reem-red bg-[#FEF2F2]' : 'border-reem-line bg-white'}`}
         data-testid={`plan-${plan}`}
       >
         <div className="text-left">
           <div className="flex items-center gap-2">
-            <span className="text-[#111827] font-semibold text-lg">{title}</span>
-            {badge && <span className="bg-[#C53B3B] text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">{badge}</span>}
+            <span className="text-reem-ink font-semibold text-lg">{title}</span>
+            {badge && <span className="bg-reem-red text-white text-tiny px-2 py-0.5 rounded-full font-semibold">{badge}</span>}
           </div>
-          <div className="text-sm text-[#6B7280]">
+          <div className="text-sm text-reem-text-muted">
             {price ? `${price} · ${period}, cancel anytime` : loadState === 'loading' ? 'Loading price...' : `${period}, cancel anytime`}
           </div>
         </div>
-        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#C53B3B] bg-[#C53B3B]' : 'border-[#D1D5DB]'}`}>
+        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-reem-red bg-reem-red' : 'border-[#D1D5DB]'}`}>
           {selected && <Check className="h-4 w-4 text-white" />}
         </div>
       </button>
@@ -199,19 +199,19 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
     const selectedPrice = selectedPlan === 'yearly' ? yearlyPrice : monthlyPrice;
     const canBuy = isNative && loadState === 'ready' && !busy && !!(selectedPlan === 'yearly' ? packages.yearly : packages.monthly);
     return (
-      <div className="bg-white rounded-[24px] p-6 shadow-[var(--rr-card-shadow)] border-[3px] border-[#C9A063]">
+      <div className="bg-white rounded-[24px] p-6 shadow-[var(--rr-card-shadow)] border-[3px] border-reem-gold">
         <div className="text-center space-y-5">
           <img src={logoImage} alt="Reems Rude Reminders" className="h-24 w-auto mx-auto" />
           <div>
-            <h1 className="text-3xl font-bold text-[#111827] mb-1">Unlock Premium</h1>
-            <p className="text-sm text-[#6B7280]">Get the full Reems Rude Reminders experience</p>
+            <h1 className="text-3xl font-bold text-reem-ink mb-1">Unlock Premium</h1>
+            <p className="text-sm text-reem-text-muted">Get the full Reems Rude Reminders experience</p>
           </div>
 
-          <div className="text-left space-y-2.5 bg-[#F9FAFB] rounded-[16px] p-4 border border-[#EAEAEA]">
+          <div className="text-left space-y-2.5 bg-reem-paper rounded-[16px] p-4 border border-reem-line">
             {premiumFeatures.map((f, i) => (
               <div key={i} className="flex items-center gap-3">
                 <span className="text-lg">{f.icon}</span>
-                <span className="text-sm text-[#374151]">{f.text}</span>
+                <span className="text-sm text-reem-text">{f.text}</span>
               </div>
             ))}
           </div>
@@ -226,14 +226,14 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
           )}
 
           {loadState === 'error' && (
-            <div className="bg-[#FDF3E3] border-[1.5px] border-[#C9A063] rounded-[12px] p-3 text-[13px] text-[#6B3410]">
+            <div className="bg-reem-cream border-[1.5px] border-reem-gold rounded-[12px] p-3 text-note text-reem-brown">
               Couldn't load the plans. Check your connection and{' '}
               <button onClick={loadPlans} className="underline font-semibold">try again</button>.
             </div>
           )}
 
           {!isNative && (
-            <div className="bg-[#FDF3E3] border-[1.5px] border-[#C9A063] rounded-[12px] p-3 text-[13px] text-[#6B3410]">
+            <div className="bg-reem-cream border-[1.5px] border-reem-gold rounded-[12px] p-3 text-note text-reem-brown">
               Subscriptions are available in the Reems Rude Reminders app on the App Store and Google Play.
             </div>
           )}
@@ -241,7 +241,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
           <Button
             onClick={handlePurchase}
             disabled={!canBuy}
-            className="w-full bg-[#C53B3B] hover:bg-[#A83232] disabled:bg-[#C53B3B]/40 text-white text-lg rounded-[14px] h-[52px]"
+            className="w-full bg-reem-red hover:bg-reem-red-dark disabled:bg-reem-red/40 text-white text-lg rounded-[14px] h-[52px]"
             size="lg"
             data-testid="button-continue-purchase"
           >
@@ -255,15 +255,15 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
             <button
               onClick={handleRestore}
               disabled={busy}
-              className="text-sm text-[#6B7280] underline disabled:opacity-50"
+              className="text-sm text-reem-text-muted underline disabled:opacity-50"
               data-testid="button-restore-purchases"
             >
               {restoring ? 'Restoring...' : 'Restore Purchases'}
             </button>
           )}
 
-          <div className="pt-4 border-t border-[#EAEAEA] space-y-3">
-            <p className="text-[11px] text-[#6B7280] leading-relaxed">
+          <div className="pt-4 border-t border-reem-line space-y-3">
+            <p className="text-caption-sm text-reem-text-muted leading-relaxed">
               Reems Rude Reminders Premium{selectedPrice ? ` · ${selectedPrice}/${selectedPlan === 'yearly' ? 'year' : 'month'}` : ''} is an auto-renewable subscription. Payment is charged to your {platform.isIOS ? 'Apple ID' : 'Google Play'} account at confirmation of purchase and renews {selectedPlan === 'yearly' ? 'yearly' : 'monthly'} unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in your {platform.isIOS ? 'device Settings → Apple ID → Subscriptions' : 'Google Play Store → Menu → Subscriptions'}.
             </p>
             {legalLinks}
@@ -274,31 +274,31 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
   };
 
   const renderPremiumDashboard = () => (
-    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border-[3px] border-[#C9A063]">
+    <div className="bg-white rounded-[24px] p-8 shadow-[var(--rr-card-shadow)] border-[3px] border-reem-gold">
       <div className="space-y-6">
         <div className="flex flex-col items-center text-center gap-3">
           <img src={logoImage} alt="Reems Rude Reminders" className="h-24 w-auto" />
           <div>
-            <h1 className="text-2xl font-bold text-[#111827]">Reems Rude Reminders</h1>
+            <h1 className="text-2xl font-bold text-reem-ink">Reems Rude Reminders</h1>
             <div className="flex items-center justify-center gap-2 mt-1">
-              <span className="bg-[#C53B3B] text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
+              <span className="bg-reem-red text-white text-xs px-2 py-0.5 rounded-full font-semibold">Premium Active</span>
             </div>
           </div>
         </div>
         {user?.subscriptionEndsAt && (
-          <div className="bg-[#F9FAFB] rounded-[16px] p-4 border border-[#EAEAEA] flex items-center gap-3">
+          <div className="bg-reem-paper rounded-[16px] p-4 border border-reem-line flex items-center gap-3">
             <span className="text-lg">📅</span>
-            <span className="text-[#111827]">Renews {new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
+            <span className="text-reem-ink">Renews {new Date(user.subscriptionEndsAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</span>
           </div>
         )}
         <button
           onClick={handleManageSubscription}
-          className="w-full py-3 px-4 bg-white text-[#C53B3B] text-base font-medium rounded-[14px] border-2 border-[#C53B3B] hover:bg-[#FEF2F2] active:bg-[#C53B3B] active:text-white h-[48px]"
+          className="w-full py-3 px-4 bg-white text-reem-red text-base font-medium rounded-[14px] border-2 border-reem-red hover:bg-[#FEF2F2] active:bg-reem-red active:text-white h-[48px]"
           data-testid="button-manage-subscription"
         >
           Manage Subscription
         </button>
-        <p className="text-sm text-[#6B7280] text-center">
+        <p className="text-sm text-reem-text-muted text-center">
           Your plan is billed through your {platform.isIOS ? 'Apple ID' : 'Google Play'} account.
         </p>
       </div>
@@ -313,7 +313,7 @@ export default function SubscriptionManager({ user }: SubscriptionManagerProps) 
             <Link href={isSubscribed ? "/settings" : "/"}>
               <div className="flex items-center text-white cursor-pointer" data-testid="button-back">
                 <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px] font-medium">{isSubscribed ? 'Settings' : 'Back'}</span>
+                <span className="text-body-lg font-medium">{isSubscribed ? 'Settings' : 'Back'}</span>
               </div>
             </Link>
           </div>

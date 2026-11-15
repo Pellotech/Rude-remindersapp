@@ -66,8 +66,8 @@ export function ItHitToggle({ reminderId, hitConfirmed, hitAt }: ItHitToggleProp
         disabled={disabledBase}
         className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
           hitAnswer === true
-            ? "bg-[#22C55E] text-white border-[#22C55E]"
-            : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
+            ? "bg-reem-green text-white border-reem-green"
+            : "bg-white text-reem-navy border-reem-gold hover:bg-reem-cream disabled:opacity-50"
         }`}
         data-testid="button-it-hit"
       >
@@ -81,7 +81,7 @@ export function ItHitToggle({ reminderId, hitConfirmed, hitAt }: ItHitToggleProp
             className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
               hitAnswer === false
                 ? "bg-gray-400 text-white border-gray-400"
-                : "bg-white text-[#1B2A5E] border-[#C9A063] hover:bg-[#FDF3E3] disabled:opacity-50"
+                : "bg-white text-reem-navy border-reem-gold hover:bg-reem-cream disabled:opacity-50"
             }`}
             data-testid="button-hit-nahh"
           >

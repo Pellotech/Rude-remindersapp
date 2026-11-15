@@ -163,62 +163,62 @@ export default function ReminderHistory() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/settings">
-              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+              <div className="flex items-center text-ui-link cursor-pointer" data-testid="button-back">
                 <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px]">Settings</span>
+                <span className="text-body-lg">Settings</span>
               </div>
             </Link>
             <Link href="/">
-              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
+              <div className="text-ui-link cursor-pointer" data-testid="button-home">
                 <Home className="h-5 w-5" />
               </div>
             </Link>
           </div>
-          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Reminder History</h1>
+          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Reminder History</h1>
         </div>
 
         <div className="py-6 px-4 space-y-8">
           {stats && (
             <div className="space-y-2">
-              <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Your Stats</h2>
+              <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Your Stats</h2>
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#1C1C1E] rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-[#0A84FF]">{(stats as any).activeReminders}</div>
-                  <div className="text-[13px] text-[#8E8E93] mt-1">Active</div>
+                <div className="bg-ui-card rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-ui-link">{(stats as any).activeReminders}</div>
+                  <div className="text-note text-ui-label-2 mt-1">Active</div>
                 </div>
-                <div className="bg-[#1C1C1E] rounded-xl p-4 text-center">
+                <div className="bg-ui-card rounded-xl p-4 text-center">
                   <div className="text-2xl font-bold text-[#34C759]">{(stats as any).completedToday}</div>
-                  <div className="text-[13px] text-[#8E8E93] mt-1">Completed Today</div>
+                  <div className="text-note text-ui-label-2 mt-1">Completed Today</div>
                 </div>
-                <div className="bg-[#1C1C1E] rounded-xl p-4 text-center">
+                <div className="bg-ui-card rounded-xl p-4 text-center">
                   <div className="text-2xl font-bold text-[#FF9500]">{(stats as any).avgRudeness}</div>
-                  <div className="text-[13px] text-[#8E8E93] mt-1">Avg Rudeness</div>
+                  <div className="text-note text-ui-label-2 mt-1">Avg Rudeness</div>
                 </div>
               </div>
             </div>
           )}
 
           <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Your Reminders</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden p-4 space-y-3">
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Your Reminders</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden p-4 space-y-3">
               <div className="relative">
-                <Search className="absolute left-3 top-3 text-[#8E8E93] h-4 w-4" />
+                <Search className="absolute left-3 top-3 text-ui-label-2 h-4 w-4" />
                 <input
                   type="text"
                   placeholder="Search reminders..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-[#38383A] text-white text-[17px] pl-10 pr-4 py-2 rounded-lg outline-none placeholder-[#48484A]"
+                  className="w-full bg-ui-separator text-white text-body-lg pl-10 pr-4 py-2 rounded-lg outline-none placeholder-ui-tertiary"
                   data-testid="input-search"
                 />
               </div>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-full bg-[#38383A] text-white text-[17px] px-4 py-2 rounded-lg outline-none"
+                className="w-full bg-ui-separator text-white text-body-lg px-4 py-2 rounded-lg outline-none"
                 data-testid="select-filter"
               >
                 <option value="all" className="bg-black text-white">All Reminders</option>
@@ -231,9 +231,9 @@ export default function ReminderHistory() {
 
           {filteredReminders.length === 0 ? (
             <div className="text-center py-12 px-4">
-              <CircleSlash2 className="mx-auto h-12 w-12 text-[#8E8E93] mb-4" />
+              <CircleSlash2 className="mx-auto h-12 w-12 text-ui-label-2 mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">No reminders found</h3>
-              <p className="text-[#8E8E93]">
+              <p className="text-ui-label-2">
                 {searchTerm || filter !== "all"
                   ? "Try adjusting your filters"
                   : "Create your first reminder to get started!"}
@@ -242,24 +242,24 @@ export default function ReminderHistory() {
           ) : (
             <div className="space-y-3">
               {filteredReminders.map((reminder: Reminder) => (
-                <div key={reminder.id} className="bg-[#1C1C1E] rounded-xl p-4">
+                <div key={reminder.id} className="bg-ui-card rounded-xl p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <h3 className="text-white text-[17px] font-semibold">{reminder.title}</h3>
-                      <p className="text-[#8E8E93] text-[13px] mt-1">{reminder.originalMessage.substring(0, 60)}...</p>
+                      <h3 className="text-white text-body-lg font-semibold">{reminder.title}</h3>
+                      <p className="text-ui-label-2 text-note mt-1">{reminder.originalMessage.substring(0, 60)}...</p>
                     </div>
-                    <span className="bg-[#38383A] text-[#8E8E93] text-[13px] px-2 py-1 rounded">
+                    <span className="bg-ui-separator text-ui-label-2 text-note px-2 py-1 rounded">
                       {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels] || 'Normal'}
                     </span>
                   </div>
-                  <div className="text-[13px] text-[#8E8E93] mb-3">
+                  <div className="text-note text-ui-label-2 mb-3">
                     {formatTimeRemaining(reminder.scheduledFor)}
                   </div>
                   <div className="flex gap-2">
                     {!reminder.completed && (
                       <button
                         onClick={() => completeReminderMutation.mutate(reminder.id)}
-                        className="flex-1 bg-[#34C759] text-white py-2 rounded-lg text-[13px] font-semibold active:opacity-70"
+                        className="flex-1 bg-[#34C759] text-white py-2 rounded-lg text-note font-semibold active:opacity-70"
                         data-testid={`button-complete-${reminder.id}`}
                       >
                         Mark Done
@@ -267,7 +267,7 @@ export default function ReminderHistory() {
                     )}
                     <button
                       onClick={() => deleteReminderMutation.mutate(reminder.id)}
-                      className="flex-1 bg-[#38383A] text-[#FF3B30] py-2 rounded-lg text-[13px] font-semibold active:opacity-70"
+                      className="flex-1 bg-ui-separator text-[#FF3B30] py-2 rounded-lg text-note font-semibold active:opacity-70"
                       data-testid={`button-delete-${reminder.id}`}
                     >
                       Delete
@@ -281,7 +281,7 @@ export default function ReminderHistory() {
           {(reminders as Reminder[]).some(r => r.completed) && (
             <button
               onClick={() => clearAllRemindersMutation.mutate()}
-              className="w-full py-3.5 bg-[#FF3B30] text-white font-semibold text-[17px] rounded-xl active:opacity-70"
+              className="w-full py-3.5 bg-[#FF3B30] text-white font-semibold text-body-lg rounded-xl active:opacity-70"
               data-testid="button-clear-all"
             >
               Clear Completed

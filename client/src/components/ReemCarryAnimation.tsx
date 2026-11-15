@@ -13,6 +13,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useAnimate } from 'framer-motion';
 
+import { palette } from "@/lib/theme";
 export const CUSTOM_ANIMATION_VIDEO: string | null = null;
 
 const POSE = {
@@ -108,7 +109,7 @@ function CodeVersion({ rect, label, onDone }: Required<Omit<Props, 'label'>> & {
         ref={btnRef}
         style={{
           position: 'fixed', left: rect.left, top: rect.top, width: rect.width, height: rect.height,
-          background: '#1B2A5E', border: '2px solid #F5B942', borderRadius: 8,
+          background: palette.navy, border: '2px solid #F5B942', borderRadius: 8,
           color: '#fff', fontWeight: 600, fontSize: 18,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 6px 16px rgba(0,0,0,0.25)', zIndex: 1, willChange: 'transform',

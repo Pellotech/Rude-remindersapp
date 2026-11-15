@@ -8,6 +8,7 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 import AppHeader from "@/components/AppHeader";
 import { getFullApiUrl } from "@/lib/queryClient";
 
+import { palette } from "@/lib/theme";
 export default function ResetPasswordPage() {
   const [, setLocation] = useLocation();
   const [token, setToken] = useState("");
@@ -63,37 +64,37 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FDF3E3" }}>
+    <div className="min-h-screen" style={{ backgroundColor: palette.cream }}>
       <AppHeader />
       <div className="flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
-          <Card className="border-2 border-[#C9A063] rounded-2xl shadow-md">
+          <Card className="border-2 border-reem-gold rounded-2xl shadow-md">
             <CardContent className="pt-8 pb-8 px-6">
               {success ? (
                 <div className="text-center space-y-4">
                   <div className="flex items-center justify-center h-14 w-14 rounded-full bg-green-100 mx-auto">
                     <Lock className="h-7 w-7 text-green-600" />
                   </div>
-                  <h2 className="text-xl font-bold text-[#111827]">Password updated!</h2>
-                  <p className="text-sm text-[#374151]">Redirecting you to login...</p>
+                  <h2 className="text-xl font-bold text-reem-ink">Password updated!</h2>
+                  <p className="text-sm text-reem-text">Redirecting you to login...</p>
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-[#111827] mb-1">Reset Password</h2>
-                  <p className="text-sm text-[#374151] mb-6">Enter your new password below.</p>
+                  <h2 className="text-2xl font-bold text-reem-ink mb-1">Reset Password</h2>
+                  <p className="text-sm text-reem-text mb-6">Enter your new password below.</p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[#111827]">New Password</Label>
+                      <Label className="text-reem-ink">New Password</Label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="At least 8 characters"
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className="pl-10 pr-10 border-2 border-[#C9A063] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
-                          style={{ backgroundColor: "#FDF3E3" }}
+                          className="pl-10 pr-10 border-2 border-reem-gold focus:border-reem-red rounded-[14px] text-reem-ink py-3"
+                          style={{ backgroundColor: palette.cream }}
                           required
                         />
                         <Button
@@ -103,35 +104,35 @@ export default function ResetPasswordPage() {
                           className="absolute right-0 top-0 h-full px-3"
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4 text-[#C53B3B]" /> : <Eye className="h-4 w-4 text-[#C53B3B]" />}
+                          {showPassword ? <EyeOff className="h-4 w-4 text-reem-red" /> : <Eye className="h-4 w-4 text-reem-red" />}
                         </Button>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-[#111827]">Confirm Password</Label>
+                      <Label className="text-reem-ink">Confirm Password</Label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Confirm new password"
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="pl-10 border-2 border-[#C9A063] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
-                          style={{ backgroundColor: "#FDF3E3" }}
+                          className="pl-10 border-2 border-reem-gold focus:border-reem-red rounded-[14px] text-reem-ink py-3"
+                          style={{ backgroundColor: palette.cream }}
                           required
                         />
                       </div>
                     </div>
 
                     {error && (
-                      <p className="text-sm text-[#C53B3B]">{error}</p>
+                      <p className="text-sm text-reem-red">{error}</p>
                     )}
 
                     <Button
                       type="submit"
                       disabled={isLoading || !token}
-                      className="w-full bg-[#C53B3B] hover:bg-[#a83030] text-white rounded-[14px] py-5 h-[48px] font-semibold"
+                      className="w-full bg-reem-red hover:bg-[#a83030] text-white rounded-[14px] py-5 h-[48px] font-semibold"
                     >
                       {isLoading ? "Updating..." : "Reset Password"}
                     </Button>
@@ -140,7 +141,7 @@ export default function ResetPasswordPage() {
                       <button
                         type="button"
                         onClick={() => setLocation("/login")}
-                        className="text-sm text-[#C9A063] hover:underline"
+                        className="text-sm text-reem-gold hover:underline"
                       >
                         Back to Login
                       </button>

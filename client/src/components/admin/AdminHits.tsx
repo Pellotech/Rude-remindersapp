@@ -5,6 +5,7 @@ import { Search, Target } from "lucide-react";
 import { RichReminderNotification } from "@/components/RichReminderNotification";
 import type { Reminder } from "@shared/schema";
 
+import { palette } from "@/lib/theme";
 interface HitsResponse {
   hits: Reminder[];
   count: number;
@@ -42,34 +43,34 @@ export function AdminHits() {
   return (
     <div
       className="rounded-xl border p-5"
-      style={{ background: '#1C1C1E', borderColor: '#38383A' }}
+      style={{ background: palette.uiCard, borderColor: palette.uiSeparator }}
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Target className="h-5 w-5" style={{ color: '#C9A063' }} />
+          <Target className="h-5 w-5" style={{ color: palette.gold }} />
           <h2 className="text-lg font-semibold text-white">It Hit — Feedback</h2>
         </div>
-        <span className="text-xs" style={{ color: '#8E8E93' }}>
+        <span className="text-xs" style={{ color: palette.uiLabel2 }}>
           {isLoading ? 'Loading…' : `${filtered.length} of ${data?.count ?? 0}`}
         </span>
       </div>
 
       <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#8E8E93' }} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: palette.uiLabel2 }} />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by message or comment"
           className="pl-9 border-0"
-          style={{ background: '#2C2C2E', color: '#FFFFFF' }}
+          style={{ background: palette.uiRaised, color: '#FFFFFF' }}
           data-testid="input-admin-hits-search"
         />
       </div>
 
       <div className="overflow-x-auto rounded-lg" style={{ background: '#000000' }}>
-        <table className="min-w-full text-sm" style={{ color: '#E5E5EA' }}>
+        <table className="min-w-full text-sm" style={{ color: palette.uiLabel4 }}>
           <thead>
-            <tr style={{ background: '#1C1C1E', color: '#8E8E93' }} className="text-left text-xs uppercase tracking-wider">
+            <tr style={{ background: palette.uiCard, color: palette.uiLabel2 }} className="text-left text-xs uppercase tracking-wider">
               <th className="px-3 py-2 font-medium">Message</th>
               <th className="px-3 py-2 font-medium">Comment</th>
               <th className="px-3 py-2 font-medium">Rudeness</th>
@@ -78,25 +79,25 @@ export function AdminHits() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={4} className="px-3 py-6 text-center" style={{ color: '#8E8E93' }}>Loading…</td></tr>
+              <tr><td colSpan={4} className="px-3 py-6 text-center" style={{ color: palette.uiLabel2 }}>Loading…</td></tr>
             )}
             {!isLoading && filtered.length === 0 && (
-              <tr><td colSpan={4} className="px-3 py-6 text-center" style={{ color: '#8E8E93' }}>No reminders marked "It Hit" yet.</td></tr>
+              <tr><td colSpan={4} className="px-3 py-6 text-center" style={{ color: palette.uiLabel2 }}>No reminders marked "It Hit" yet.</td></tr>
             )}
             {filtered.map((r) => (
               <tr
                 key={r.id}
                 className="border-t cursor-pointer hover:brightness-125 transition-[filter]"
-                style={{ borderColor: '#1C1C1E' }}
+                style={{ borderColor: palette.uiCard }}
                 onClick={() => setSelected(r)}
                 data-testid={`row-hit-${r.id}`}
               >
                 <td className="px-3 py-2 max-w-xs truncate">{r.rudeMessage || r.title}</td>
-                <td className="px-3 py-2 max-w-xs truncate" style={{ color: r.hitComment ? '#E5E5EA' : '#8E8E93' }}>
+                <td className="px-3 py-2 max-w-xs truncate" style={{ color: r.hitComment ? palette.uiLabel4 : palette.uiLabel2 }}>
                   {r.hitComment || '—'}
                 </td>
                 <td className="px-3 py-2">{r.rudenessLevel}</td>
-                <td className="px-3 py-2 text-xs" style={{ color: '#8E8E93' }}>{formatDate(r.hitAt)}</td>
+                <td className="px-3 py-2 text-xs" style={{ color: palette.uiLabel2 }}>{formatDate(r.hitAt)}</td>
               </tr>
             ))}
           </tbody>

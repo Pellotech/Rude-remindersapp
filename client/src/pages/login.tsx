@@ -15,6 +15,7 @@ import { getApiBaseUrl, getFullApiUrl, setAuthToken, queryClient } from "@/lib/q
 import { appleSignInService } from "@/services/appleSignInService";
 import { inAppOAuthService } from "@/services/inAppOAuthService";
 
+import { palette } from "@/lib/theme";
 export default function LoginPage() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -238,31 +239,31 @@ export default function LoginPage() {
   // Verification pending screen
   if (showVerificationScreen) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-reem-gold p-4 pt-safe" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
         <div className="w-full max-w-md space-y-6">
           <AppHeader className="mb-4" />
-          <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+          <Card className="bg-white border border-reem-line rounded-[24px] shadow-[var(--rr-card-shadow)]">
             <CardContent className="pt-8 pb-8 text-center space-y-4">
-              <div className="w-16 h-16 bg-[#FDF3E3] rounded-full flex items-center justify-center mx-auto">
-                <Mail className="h-8 w-8 text-[#C9A063]" />
+              <div className="w-16 h-16 bg-reem-cream rounded-full flex items-center justify-center mx-auto">
+                <Mail className="h-8 w-8 text-reem-gold" />
               </div>
-              <h2 className="text-xl font-bold text-[#111827]">Check your email</h2>
-              <p className="text-[#6B7280] text-sm">
+              <h2 className="text-xl font-bold text-reem-ink">Check your email</h2>
+              <p className="text-reem-text-muted text-sm">
                 Tap the link we emailed you, then come back here and log in. The link lasts 24 hours — check your spam folder if you can't see it.
               </p>
               {verificationEmail && (
-                <p className="text-[#111827] text-sm font-medium">{verificationEmail}</p>
+                <p className="text-reem-ink text-sm font-medium">{verificationEmail}</p>
               )}
               <Button
                 onClick={handleResendVerification}
                 disabled={resendLoading}
-                className="w-full bg-[#1B2A5E] hover:bg-[#152347] text-white rounded-[14px] h-[48px]"
+                className="w-full bg-reem-navy hover:bg-[#152347] text-white rounded-[14px] h-[48px]"
               >
                 {resendLoading ? "Sending..." : "Resend Email"}
               </Button>
               <button
                 onClick={() => { setShowVerificationScreen(false); setActiveTab("login"); }}
-                className="text-sm text-[#6B7280] hover:text-[#111827]"
+                className="text-sm text-reem-text-muted hover:text-reem-ink"
               >
                 Back to Login
               </button>
@@ -274,7 +275,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#C9A063] p-4 pt-safe" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-reem-gold p-4 pt-safe" style={{ paddingBottom: 'calc(max(env(safe-area-inset-bottom), 16px) + 96px)' }}>
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <AppHeader className="mb-4" />
@@ -320,56 +321,56 @@ export default function LoginPage() {
               margin: 0,
               fontSize: 14,
               fontWeight: 500,
-              color: '#111827',
+              color: palette.ink,
               lineHeight: 1.4,
             }}>
-              Oi! You get <span style={{ color: '#b70d0d', fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go <span style={{ color: '#b70d0d', fontWeight: 700 }}>PREMIUM</span> = mind blowing reminders. Pick your poison.
+              Oi! You get <span style={{ color: palette.redDeep, fontWeight: 700 }}>15 free reminders/month</span>, zero card needed. Or go <span style={{ color: palette.redDeep, fontWeight: 700 }}>PREMIUM</span> = mind blowing reminders. Pick your poison.
             </p>
           </div>
         </div>
 
         {/* Login/Register Form */}
-        <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+        <Card className="bg-white border border-reem-line rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6">
-            <h2 className="text-base font-semibold text-[#111827] text-center">
-              <span style={{ color: '#b70d0d' }}>Go Big</span> or <span style={{ color: '#b70d0d' }}>Go Free</span>
+            <h2 className="text-base font-semibold text-reem-ink text-center">
+              <span style={{ color: palette.redDeep }}>Go Big</span> or <span style={{ color: palette.redDeep }}>Go Free</span>
             </h2>
-            <p className="text-xs text-[#6B7280] text-center mt-1 mb-4">
+            <p className="text-xs text-reem-text-muted text-center mt-1 mb-4">
               Just sign up
             </p>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 bg-[#F9FAFB] rounded-[14px] p-1 border border-[#EAEAEA]">
-                <TabsTrigger value="login" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Login</TabsTrigger>
-                <TabsTrigger value="register" className="rounded-[12px] text-[#6B7280] data-[state=active]:bg-white data-[state=active]:text-[#111827] data-[state=active]:shadow-sm">Register</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-reem-paper rounded-[14px] p-1 border border-reem-line">
+                <TabsTrigger value="login" className="rounded-[12px] text-reem-text-muted data-[state=active]:bg-white data-[state=active]:text-reem-ink data-[state=active]:shadow-sm">Login</TabsTrigger>
+                <TabsTrigger value="register" className="rounded-[12px] text-reem-text-muted data-[state=active]:bg-white data-[state=active]:text-reem-ink data-[state=active]:shadow-sm">Register</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4 mt-4">
                   <div className="space-y-2">
-                    <Label className="text-[#111827]">Email</Label>
+                    <Label className="text-reem-ink">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                       <Input
                         type="email"
                         placeholder="your@email.com"
                         value={loginForm.email}
                         onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="pl-10 bg-white border-2 border-[#EAEAEA] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
+                        className="pl-10 bg-white border-2 border-reem-line focus:border-reem-red rounded-[14px] text-reem-ink py-3"
                         data-testid="input-login-email"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#111827]">Password</Label>
+                    <Label className="text-reem-ink">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter password"
                         value={loginForm.password}
                         onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                        className="pl-10 pr-10 bg-white border-2 border-[#EAEAEA] focus:border-[#C53B3B] rounded-[14px] text-[#111827] py-3"
+                        className="pl-10 pr-10 bg-white border-2 border-reem-line focus:border-reem-red rounded-[14px] text-reem-ink py-3"
                         data-testid="input-login-password"
                         required
                       />
@@ -380,7 +381,7 @@ export default function LoginPage() {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-[#C53B3B]" /> : <Eye className="h-4 w-4 text-[#C53B3B]" />}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-reem-red" /> : <Eye className="h-4 w-4 text-reem-red" />}
                       </Button>
                     </div>
                   </div>
@@ -388,12 +389,12 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setLocation("/forgot-password")}
-                      className="text-xs text-[#C9A063] hover:underline"
+                      className="text-xs text-reem-gold hover:underline"
                     >
                       Forgot Password?
                     </button>
                   </div>
-                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-reem-ink rounded-[14px] py-5 border-2 border-reem-line h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
@@ -403,55 +404,55 @@ export default function LoginPage() {
                 <form onSubmit={handleRegister} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-2">
-                      <Label className="text-[#111827]">First Name</Label>
+                      <Label className="text-reem-ink">First Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                         <Input
                           placeholder="First"
                           value={registerForm.firstName}
                           onChange={(e) => setRegisterForm(prev => ({ ...prev, firstName: e.target.value }))}
-                          className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
+                          className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-reem-ink"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[#111827]">Last Name</Label>
+                      <Label className="text-reem-ink">Last Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                         <Input
                           placeholder="Last"
                           value={registerForm.lastName}
                           onChange={(e) => setRegisterForm(prev => ({ ...prev, lastName: e.target.value }))}
-                          className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
+                          className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-reem-ink"
                         />
                       </div>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#111827]">Email</Label>
+                    <Label className="text-reem-ink">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                       <Input
                         type="email"
                         placeholder="your@email.com"
                         value={registerForm.email}
                         onChange={(e) => setRegisterForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
+                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-reem-ink"
                         data-testid="input-register-email"
                         required
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#111827]">Password</Label>
+                    <Label className="text-reem-ink">Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Min 8 characters"
                         value={registerForm.password}
                         onChange={(e) => setRegisterForm(prev => ({ ...prev, password: e.target.value }))}
-                        className="pl-10 pr-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
+                        className="pl-10 pr-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-reem-ink"
                         data-testid="input-register-password"
                         required
                         minLength={8}
@@ -463,26 +464,26 @@ export default function LoginPage() {
                         className="absolute right-0 top-0 h-full px-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4 text-[#C53B3B]" /> : <Eye className="h-4 w-4 text-[#C53B3B]" />}
+                        {showPassword ? <EyeOff className="h-4 w-4 text-reem-red" /> : <Eye className="h-4 w-4 text-reem-red" />}
                       </Button>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[#111827]">Confirm Password</Label>
+                    <Label className="text-reem-ink">Confirm Password</Label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-[#C53B3B]" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-reem-red" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Confirm password"
                         value={registerForm.confirmPassword}
                         onChange={(e) => setRegisterForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-[#111827]"
+                        className="pl-10 bg-white border-[rgba(0,0,0,0.08)] rounded-[12px] text-reem-ink"
                         data-testid="input-register-confirm-password"
                         required
                       />
                     </div>
                   </div>
-                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-[#111827] rounded-[14px] py-5 border-2 border-[#EAEAEA] h-[48px] font-semibold" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-white hover:bg-gray-50 text-reem-ink rounded-[14px] py-5 border-2 border-reem-line h-[48px] font-semibold" disabled={isLoading}>
                     {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
                 </form>
@@ -492,9 +493,9 @@ export default function LoginPage() {
         </Card>
 
         {/* Social Sign-In — separate card */}
-        <Card className="bg-white border border-[#EAEAEA] rounded-[24px] shadow-[var(--rr-card-shadow)]">
+        <Card className="bg-white border border-reem-line rounded-[24px] shadow-[var(--rr-card-shadow)]">
           <CardContent className="pt-6 pb-6">
-            <p className="text-xs font-medium text-[#C9A063] uppercase tracking-wide text-center mb-4">
+            <p className="text-xs font-medium text-reem-gold uppercase tracking-wide text-center mb-4">
               Or continue with
             </p>
             <div className="flex flex-col gap-2.5">
@@ -504,7 +505,7 @@ export default function LoginPage() {
                   onClick={handleAppleSignIn}
                   disabled={isLoading}
                   data-testid="button-apple-signin"
-                  className="w-full h-12 rounded-[12px] bg-black text-white font-semibold text-[15px] flex items-center justify-center gap-2.5 disabled:opacity-60"
+                  className="w-full h-12 rounded-[12px] bg-black text-white font-semibold text-body flex items-center justify-center gap-2.5 disabled:opacity-60"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
@@ -518,7 +519,7 @@ export default function LoginPage() {
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
                 data-testid="button-google-signin"
-                className="w-full h-12 rounded-[12px] bg-white text-[#111827] font-semibold text-[15px] border-[1.5px] border-[#E5E7EB] flex items-center justify-center gap-2.5 disabled:opacity-60"
+                className="w-full h-12 rounded-[12px] bg-white text-reem-ink font-semibold text-body border-[1.5px] border-reem-line-light flex items-center justify-center gap-2.5 disabled:opacity-60"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -535,7 +536,7 @@ export default function LoginPage() {
                 onClick={handleFacebookSignIn}
                 disabled={isLoading}
                 data-testid="button-facebook-signin"
-                className="w-full h-12 rounded-[12px] bg-[#1877F2] text-white font-semibold text-[15px] flex items-center justify-center gap-2.5 disabled:opacity-60"
+                className="w-full h-12 rounded-[12px] bg-[#1877F2] text-white font-semibold text-body flex items-center justify-center gap-2.5 disabled:opacity-60"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -549,7 +550,7 @@ export default function LoginPage() {
 
         {/* Footer */}
 
-        <div className="text-center text-sm text-[#6B7280] space-y-2">
+        <div className="text-center text-sm text-reem-text-muted space-y-2">
           <p className="flex items-center justify-center gap-2 flex-wrap">
             <span>By continuing, you agree to our</span>
             <button
@@ -562,7 +563,7 @@ export default function LoginPage() {
                   window.open(url, "_blank");
                 }
               }}
-              className="text-[#C53B3B] font-semibold hover:underline"
+              className="text-reem-red font-semibold hover:underline"
               data-testid="link-terms-login"
             >
               Terms
@@ -578,7 +579,7 @@ export default function LoginPage() {
                   window.open(url, "_blank");
                 }
               }}
-              className="text-[#C53B3B] font-semibold hover:underline"
+              className="text-reem-red font-semibold hover:underline"
               data-testid="link-privacy-login"
             >
               Privacy Policy

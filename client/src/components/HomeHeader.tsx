@@ -6,6 +6,7 @@ import RudyWidget, { RudyEventType } from "@/components/RudyWidget";
 import { RUDENESS_COLORS } from "@/components/RudenessSlider";
 import { cn } from "@/lib/utils";
 
+import { palette } from "@/lib/theme";
 /**
  * HomeHeader — shared welcome header for the home pages.
  *
@@ -56,7 +57,7 @@ export function HomeHeader({
   const { user } = useAuth();
 
   const badgeColor = RUDENESS_COLORS[rudenessLevel] ?? RUDENESS_COLORS[3];
-  const badgeTextColor = [1, 3].includes(rudenessLevel) ? '#111827' : '#FFFFFF';
+  const badgeTextColor = [1, 3].includes(rudenessLevel) ? palette.ink : '#FFFFFF';
 
   // ── Floating Reem behaviour ─────────────────────────────────────────────
   // ONE widget instance is always mounted (so Reem's bubble/pose never resets).
@@ -179,8 +180,8 @@ export function HomeHeader({
                 style={{
                   position: 'absolute', top: 0, right: -6,
                   width: 26, height: 26, borderRadius: '50%',
-                  background: '#FFFFFF', border: '2px solid #C9A063',
-                  color: '#6B3410', fontSize: 13, fontWeight: 700, lineHeight: 1,
+                  background: '#FFFFFF', border: `2px solid ${palette.gold}`,
+                  color: palette.brown, fontSize: 13, fontWeight: 700, lineHeight: 1,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.2)', cursor: 'pointer',
                 }}

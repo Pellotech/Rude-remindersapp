@@ -3,6 +3,7 @@ import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 
+import { palette } from "@/lib/theme";
 /**
  * RudenessSlider — self-contained rudeness level picker (1–5).
  *
@@ -25,11 +26,11 @@ export const RUDENESS_LABELS = [
 ] as const;
 
 export const RUDENESS_COLORS: Record<number, string> = {
-  1: "#38BDF8",
-  2: "#22C55E",
-  3: "#FDE047",
-  4: "#F97316",
-  5: "#b70d0d",
+  1: palette.sky,
+  2: palette.green,
+  3: palette.yellow,
+  4: palette.orange,
+  5: palette.redDeep,
 };
 
 interface RudenessSliderProps {
@@ -53,7 +54,7 @@ export function RudenessSlider({
   className,
 }: RudenessSliderProps) {
   const previousLevelRef = useRef<number>(value);
-  const color = RUDENESS_COLORS[value] || "#38BDF8";
+  const color = RUDENESS_COLORS[value] || palette.sky;
 
   const handleValueChange = (values: number[]) => {
     const newLevel = values[0];
@@ -71,9 +72,9 @@ export function RudenessSlider({
       className={cn("-mt-1", className)}
       style={{ "--slider-color": color } as React.CSSProperties}
     >
-      <div className="px-4 pt-3 pb-5 bg-[#FDF3E3] rounded-lg">
+      <div className="px-4 pt-3 pb-5 bg-reem-cream rounded-lg">
         {title !== null && (
-          <p className="text-sm font-medium text-[#1A1A1A] mb-3">{title}</p>
+          <p className="text-sm font-medium text-reem-charcoal mb-3">{title}</p>
         )}
         <Slider
           min={1}
@@ -85,7 +86,7 @@ export function RudenessSlider({
         />
 
         {/* Emoji labels */}
-        <div className="reem-tight-labels flex justify-between mt-3 text-xs text-[#1A1A1A]">
+        <div className="reem-tight-labels flex justify-between mt-3 text-xs text-reem-charcoal">
           {RUDENESS_LABELS.map((item) => {
             const isSelected = value === item.level;
             return (

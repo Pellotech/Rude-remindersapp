@@ -21,12 +21,13 @@ import { format } from "date-fns";
 import RoseSpinner from "@/components/RoseSpinner";
 import { useNotificationContext } from "./NotificationProvider";
 
+import { palette } from "@/lib/theme";
 const rudenessLevelColors = {
-  1: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
-  2: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
-  3: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
-  4: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
-  5: "bg-[#FDF8F0] text-[#C9A063] border border-[#C9A063]",
+  1: "bg-reem-cream-light text-reem-gold border border-reem-gold",
+  2: "bg-reem-cream-light text-reem-gold border border-reem-gold",
+  3: "bg-reem-cream-light text-reem-gold border border-reem-gold",
+  4: "bg-reem-cream-light text-reem-gold border border-reem-gold",
+  5: "bg-reem-cream-light text-reem-gold border border-reem-gold",
 };
 
 const rudenessLevelLabels = {
@@ -180,7 +181,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
 
   if (isLoading) {
     return (
-      <Card className="border border-[#C9A063] bg-[#FDF3E3]">
+      <Card className="border border-reem-gold bg-reem-cream">
         <CardContent className="p-12 text-center">
           <RoseSpinner size={36} className="mx-auto mb-4" />
           <p className="text-gray-500">Loading your reminders...</p>
@@ -190,17 +191,17 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   }
 
   return (
-    <Card className="border border-[#C9A063] bg-[#FDF3E3]">
+    <Card className="border border-reem-gold bg-reem-cream">
       <CardHeader className="pb-2 pt-3 px-3">
         {/* Tab switcher */}
-        <div className="flex rounded-xl border-2 border-[#C9A063] overflow-hidden mb-2">
+        <div className="flex rounded-xl border-2 border-reem-gold overflow-hidden mb-2">
           <button
             type="button"
             onClick={() => setTab("past")}
             className={`flex-1 py-1.5 text-xs font-semibold transition-all ${
               tab === "past"
-                ? "bg-[#C9A063] text-[#111827]"
-                : "bg-white text-[#111827] hover:bg-[#FDF8F0]"
+                ? "bg-reem-gold text-reem-ink"
+                : "bg-white text-reem-ink hover:bg-reem-cream-light"
             }`}
           >
             Past ({past.length})
@@ -208,10 +209,10 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
           <button
             type="button"
             onClick={() => setTab("upcoming")}
-            className={`flex-1 py-1.5 text-xs font-semibold transition-all border-l border-[#C9A063] ${
+            className={`flex-1 py-1.5 text-xs font-semibold transition-all border-l border-reem-gold ${
               tab === "upcoming"
-                ? "bg-[#C9A063] text-[#111827]"
-                : "bg-white text-[#111827] hover:bg-[#FDF8F0]"
+                ? "bg-reem-gold text-reem-ink"
+                : "bg-white text-reem-ink hover:bg-reem-cream-light"
             }`}
           >
             Upcoming ({upcoming.length})
@@ -224,9 +225,9 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             placeholder="Search reminders..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8 w-full bg-white border-2 border-[#C9A063] focus-visible:border-[#C9A063] h-8 text-xs"
+            className="pl-8 w-full bg-white border-2 border-reem-gold focus-visible:border-reem-gold h-8 text-xs"
           />
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#C9A063] h-3.5 w-3.5" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-reem-gold h-3.5 w-3.5" />
         </div>
       </CardHeader>
 
@@ -243,7 +244,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
         {tab === 'past' && showRudyTooltip && (
           <div style={{
             background: 'white',
-            border: '2px solid #C9A063',
+            border: `2px solid ${palette.gold}`,
             borderRadius: '12px',
             padding: '10px 12px',
             fontSize: '11px',
@@ -265,7 +266,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
 
         {displayed.length === 0 ? (
           <div className="text-center py-8">
-            <Clock className="h-8 w-8 text-[#C9A063] opacity-40 mx-auto mb-2" />
+            <Clock className="h-8 w-8 text-reem-gold opacity-40 mx-auto mb-2" />
             <p className="text-xs font-medium text-gray-500">
               {searchTerm
                 ? "No matching reminders"
@@ -315,7 +316,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                   disabled={isPast || deleteReminderMutation.isPending}
                 >
                   <Card
-                    className={cn("border border-[#C9A063] w-full", isPast && !isLogged && "cursor-pointer active:bg-[#FDF8F0]")}
+                    className={cn("border border-reem-gold w-full", isPast && !isLogged && "cursor-pointer active:bg-reem-cream-light")}
                     style={{ overflow: 'visible' }}
                     onClick={(e) => {
                       // Unlogged past reminders open the full original reminder popup.
@@ -342,26 +343,26 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
                               {reminder.title}
                             </span>
-                            <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-[10px] px-1.5 py-0 font-medium flex-shrink-0`}>
+                            <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-tiny px-1.5 py-0 font-medium flex-shrink-0`}>
                               {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
                             </Badge>
                             {reminder.completed && (
-                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-[10px] px-1.5 py-0 flex-shrink-0">
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-tiny px-1.5 py-0 flex-shrink-0">
                                 Done
                               </Badge>
                             )}
                             {(reminder as any).notAccomplished && !reminder.completed && (
-                              <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-300 text-[10px] px-1.5 py-0 flex-shrink-0">
+                              <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-300 text-tiny px-1.5 py-0 flex-shrink-0">
                                 Missed
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-1 text-[11px] text-gray-400">
+                          <div className="flex items-center gap-1 text-caption-sm text-gray-400">
                             <Clock className="h-2.5 w-2.5 flex-shrink-0" />
                             <span>{formatShortDate(reminder.scheduledFor)}</span>
                           </div>
                           {isPast && isLogged && remainingMs > 0 && (
-                            <div className="text-[10px] text-gray-400 italic mt-0.5">
+                            <div className="text-tiny text-gray-400 italic mt-0.5">
                               Clears in {hoursLeft}h {minutesLeft}m ⏱
                             </div>
                           )}
@@ -385,7 +386,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                             <>
                               <button
                                 type="button"
-                                style={{ border: '2.5px solid #22C55E', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                style={{ border: `2.5px solid ${palette.green}`, borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 className="h-7 w-7 hover:bg-green-50 transition-colors text-base leading-none"
                                 onClick={(e) => {
                                   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -401,7 +402,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                               </button>
                               <button
                                 type="button"
-                                style={{ border: '2.5px solid #C53B3B', borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                style={{ border: `2.5px solid ${palette.red}`, borderRadius: '50%', padding: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 className="h-7 w-7 hover:bg-red-50 transition-colors text-base leading-none"
                                 onClick={(e) => {
                                   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -448,7 +449,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 w-7 p-0 text-[#C53B3B] hover:text-[#C53B3B] hover:bg-red-50"
+                              className="h-7 w-7 p-0 text-reem-red hover:text-reem-red hover:bg-red-50"
                               onClick={() => deleteReminderMutation.mutate(reminder.id)}
                               disabled={deleteReminderMutation.isPending}
                               title="Delete reminder"
@@ -477,7 +478,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             left: emojiToast.x,
             transform: 'translateX(-50%)',
             whiteSpace: 'nowrap',
-            backgroundColor: '#1a1a1a',
+            backgroundColor: palette.charcoal,
             color: 'white',
             fontSize: '12px',
             borderRadius: '8px',

@@ -126,34 +126,34 @@ export default function PersonalInfo() {
     return (
       <div className="min-h-screen bg-black">
         <div className="max-w-lg mx-auto">
-          <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+          <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
             <div className="flex items-center px-4 py-3">
-              <button onClick={() => { setShowDeleteScreen(false); setDeleteConfirmText(""); setShowDeleteDialog(false); }} className="flex items-center text-[#0A84FF] cursor-pointer">
+              <button onClick={() => { setShowDeleteScreen(false); setDeleteConfirmText(""); setShowDeleteDialog(false); }} className="flex items-center text-ui-link cursor-pointer">
                 <ArrowLeft className="h-5 w-5" />
-                <span className="text-[17px] ml-1">Back</span>
+                <span className="text-body-lg ml-1">Back</span>
               </button>
             </div>
-            <h1 className="text-[34px] font-bold text-red-400 px-4 pb-2 flex items-center gap-2">
+            <h1 className="text-title-lg font-bold text-red-400 px-4 pb-2 flex items-center gap-2">
               <AlertTriangle className="h-7 w-7" />
               Delete Account
             </h1>
           </div>
 
           <div className="py-6 px-4 space-y-6" style={{ paddingBottom: isAndroid ? '120px' : isIOS ? '80px' : '24px' }}>
-            <div className="bg-[#1C1C1E] rounded-xl p-4">
-              <p className="text-[15px] text-gray-300 leading-relaxed">
+            <div className="bg-ui-card rounded-xl p-4">
+              <p className="text-body text-gray-300 leading-relaxed">
                 This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
               </p>
             </div>
 
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <div className="bg-ui-card rounded-xl overflow-hidden">
               <div className="px-4 py-3">
-                <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Type DELETE to confirm</label>
+                <label className="text-note text-ui-label-2 uppercase tracking-wide">Type DELETE to confirm</label>
                 <input
                   type="text"
                   value={deleteConfirmText}
                   onChange={(e) => setDeleteConfirmText(e.target.value)}
-                  className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                  className="w-full bg-transparent text-white text-body-lg mt-1 outline-none placeholder-ui-tertiary"
                   placeholder="DELETE"
                   autoCapitalize="characters"
                 />
@@ -163,7 +163,7 @@ export default function PersonalInfo() {
             <button
               onClick={() => setShowDeleteDialog(true)}
               disabled={deleteConfirmText !== "DELETE" || deleteAccountMutation.isPending}
-              className="w-full py-3.5 bg-red-600 text-white font-semibold text-[17px] rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-red-600 text-white font-semibold text-body-lg rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
             >
               <Trash2 className="h-5 w-5" />
               {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
@@ -172,24 +172,24 @@ export default function PersonalInfo() {
 
           {showDeleteDialog && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-              <div className="bg-[#1C1C1E] rounded-2xl w-[280px] overflow-hidden">
+              <div className="bg-ui-card rounded-2xl w-[280px] overflow-hidden">
                 <div className="p-4 text-center">
-                  <h3 className="text-[17px] font-semibold text-red-400 mb-2">Delete Account</h3>
-                  <p className="text-[13px] text-gray-400">
+                  <h3 className="text-body-lg font-semibold text-red-400 mb-2">Delete Account</h3>
+                  <p className="text-note text-gray-400">
                     This will permanently delete your account and all associated data, including your reminders. This action cannot be undone.
                   </p>
                 </div>
-                <div className="border-t border-[#38383A]">
+                <div className="border-t border-ui-separator">
                   <button
                     onClick={() => { setShowDeleteDialog(false); setDeleteConfirmText(""); }}
-                    className="w-full py-3 text-[17px] text-[#0A84FF] font-medium border-b border-[#38383A]"
+                    className="w-full py-3 text-body-lg text-ui-link font-medium border-b border-ui-separator"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => deleteAccountMutation.mutate()}
                     disabled={deleteAccountMutation.isPending}
-                    className="w-full py-3 text-[17px] text-red-500 font-semibold disabled:opacity-50"
+                    className="w-full py-3 text-body-lg text-red-500 font-semibold disabled:opacity-50"
                   >
                     {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
                   </button>
@@ -205,70 +205,70 @@ export default function PersonalInfo() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
-            <button onClick={() => leave("/settings")} className="flex items-center text-[#0A84FF]" data-testid="button-back">
+            <button onClick={() => leave("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px]">Settings</span>
+              <span className="text-body-lg">Settings</span>
             </button>
-            <button onClick={() => leave("/")} className="text-[#0A84FF]" data-testid="button-home" aria-label="Home">
+            <button onClick={() => leave("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
               <Home className="h-5 w-5" />
             </button>
           </div>
-          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Personal Information</h1>
+          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Personal Information</h1>
         </div>
 
         <div className="py-6 px-4 space-y-6" style={{ paddingBottom: (isAndroid ? 120 : isIOS ? 80 : 24) + SAVE_BAR_SPACE }}>
-          <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#38383A]">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">First Name</label>
+          <div className="bg-ui-card rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-ui-separator">
+              <label className="text-note text-ui-label-2 uppercase tracking-wide">First Name</label>
               <input
                 type="text"
                 value={currentSettings.firstName || ""}
                 onChange={(e) => updateSetting("firstName", e.target.value)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                className="w-full bg-transparent text-white text-body-lg mt-1 outline-none placeholder-ui-tertiary"
                 placeholder="Enter first name"
                 data-testid="input-first-name"
               />
             </div>
-            <div className="px-4 py-3 border-b border-[#38383A]">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Last Name</label>
+            <div className="px-4 py-3 border-b border-ui-separator">
+              <label className="text-note text-ui-label-2 uppercase tracking-wide">Last Name</label>
               <input
                 type="text"
                 value={currentSettings.lastName || ""}
                 onChange={(e) => updateSetting("lastName", e.target.value)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                className="w-full bg-transparent text-white text-body-lg mt-1 outline-none placeholder-ui-tertiary"
                 placeholder="Enter last name"
                 data-testid="input-last-name"
               />
             </div>
-            <div className="px-4 py-3 border-b border-[#38383A]">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Nickname</label>
+            <div className="px-4 py-3 border-b border-ui-separator">
+              <label className="text-note text-ui-label-2 uppercase tracking-wide">Nickname</label>
               <input
                 type="text"
                 value={currentSettings.nickname || ""}
                 onChange={(e) => updateSetting("nickname", e.target.value)}
-                className="w-full bg-transparent text-white text-[17px] mt-1 outline-none placeholder-[#48484A]"
+                className="w-full bg-transparent text-white text-body-lg mt-1 outline-none placeholder-ui-tertiary"
                 placeholder="What should we call you?"
                 data-testid="input-nickname"
               />
-              <p className="text-[12px] text-[#8E8E93] mt-1">
+              <p className="text-caption text-ui-label-2 mt-1">
                 Used for greetings and reminders instead of your first name, if set.
               </p>
             </div>
             <div className="px-4 py-3">
-              <label className="text-[13px] text-[#8E8E93] uppercase tracking-wide">Email</label>
-              <p className="text-[#AEAEB2] text-[17px] mt-1 break-all" data-testid="text-email">{user?.email || "—"}</p>
-              <p className="text-[12px] text-[#8E8E93] mt-1">This is your sign-in email. Need it changed? Email us from Help &amp; Support.</p>
+              <label className="text-note text-ui-label-2 uppercase tracking-wide">Email</label>
+              <p className="text-ui-label-3 text-body-lg mt-1 break-all" data-testid="text-email">{user?.email || "—"}</p>
+              <p className="text-caption text-ui-label-2 mt-1">This is your sign-in email. Need it changed? Email us from Help &amp; Support.</p>
             </div>
           </div>
 
           <div>
             {isOAuthOnly ? (
               <>
-                <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Change Password</p>
-                <div className="bg-[#1C1C1E] rounded-xl px-4 py-3">
-                  <p className="text-[15px] text-[#8E8E93]">
+                <p className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Change Password</p>
+                <div className="bg-ui-card rounded-xl px-4 py-3">
+                  <p className="text-body text-ui-label-2">
                     You sign in with Google or Apple. Want to log in with your email too? Add a password and you'll get the same account and reminders either way.
                   </p>
                   {user?.email && !user.email.endsWith('@noemail.local') && (
@@ -282,7 +282,7 @@ export default function PersonalInfo() {
                           toast({ title: "Couldn't send the email", description: "Please try again in a minute.", variant: "destructive" });
                         }
                       }}
-                      className="mt-3 text-[#0A84FF] text-[15px] font-medium"
+                      className="mt-3 text-ui-link text-body font-medium"
                     >
                       Add a password
                     </button>
@@ -290,7 +290,7 @@ export default function PersonalInfo() {
                 </div>
               </>
             ) : (
-              <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+              <div className="bg-ui-card rounded-xl overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setPasswordOpen((v) => !v)}
@@ -299,24 +299,24 @@ export default function PersonalInfo() {
                   data-testid="toggle-change-password"
                 >
                   <div className="flex items-center gap-3">
-                    <Lock className="h-5 w-5 text-[#C9A063]" />
-                    <span className="text-[17px] text-white font-medium">Change Password</span>
+                    <Lock className="h-5 w-5 text-reem-gold" />
+                    <span className="text-body-lg text-white font-medium">Change Password</span>
                   </div>
                   <ChevronDown
-                    className={`h-5 w-5 text-[#8E8E93] transition-transform duration-200 ${passwordOpen ? "rotate-180" : ""}`}
+                    className={`h-5 w-5 text-ui-label-2 transition-transform duration-200 ${passwordOpen ? "rotate-180" : ""}`}
                   />
                 </button>
 
                 {passwordOpen && (
-                  <div className="border-t border-[#2C2C2E] divide-y divide-[#2C2C2E]">
+                  <div className="border-t border-ui-raised divide-y divide-ui-raised">
                     <div className="px-4 py-3">
-                      <label className="text-[12px] text-[#8E8E93]">Current password</label>
+                      <label className="text-caption text-ui-label-2">Current password</label>
                   <div className="relative mt-1">
                     <input
                       type={showCurrent ? "text" : "password"}
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                      className="w-full bg-transparent text-white text-body-lg outline-none placeholder-ui-tertiary pr-10"
                       placeholder="Enter current password"
                       autoComplete="current-password"
                       data-testid="input-current-password"
@@ -324,7 +324,7 @@ export default function PersonalInfo() {
                     <button
                       type="button"
                       onClick={() => setShowCurrent(!showCurrent)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-ui-label-2"
                       aria-label={showCurrent ? "Hide password" : "Show password"}
                     >
                       {showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -333,13 +333,13 @@ export default function PersonalInfo() {
                 </div>
 
                 <div className="px-4 py-3">
-                  <label className="text-[12px] text-[#8E8E93]">New password</label>
+                  <label className="text-caption text-ui-label-2">New password</label>
                   <div className="relative mt-1">
                     <input
                       type={showNew ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                      className="w-full bg-transparent text-white text-body-lg outline-none placeholder-ui-tertiary pr-10"
                       placeholder="At least 8 characters"
                       autoComplete="new-password"
                       data-testid="input-new-password"
@@ -347,25 +347,25 @@ export default function PersonalInfo() {
                     <button
                       type="button"
                       onClick={() => setShowNew(!showNew)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-ui-label-2"
                       aria-label={showNew ? "Hide password" : "Show password"}
                     >
                       {showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
                   {newPwTooShort && (
-                    <p className="text-[12px] text-[#FF6B6B] mt-1">Must be at least 8 characters.</p>
+                    <p className="text-caption text-reem-coral mt-1">Must be at least 8 characters.</p>
                   )}
                 </div>
 
                 <div className="px-4 py-3">
-                  <label className="text-[12px] text-[#8E8E93]">Confirm new password</label>
+                  <label className="text-caption text-ui-label-2">Confirm new password</label>
                   <div className="relative mt-1">
                     <input
                       type={showConfirm ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-transparent text-white text-[17px] outline-none placeholder-[#48484A] pr-10"
+                      className="w-full bg-transparent text-white text-body-lg outline-none placeholder-ui-tertiary pr-10"
                       placeholder="Re-enter new password"
                       autoComplete="new-password"
                       data-testid="input-confirm-password"
@@ -373,14 +373,14 @@ export default function PersonalInfo() {
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-[#8E8E93]"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-ui-label-2"
                       aria-label={showConfirm ? "Hide password" : "Show password"}
                     >
                       {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
                   {pwMismatch && (
-                    <p className="text-[12px] text-[#FF6B6B] mt-1">Passwords don't match.</p>
+                    <p className="text-caption text-reem-coral mt-1">Passwords don't match.</p>
                   )}
                 </div>
 
@@ -388,7 +388,7 @@ export default function PersonalInfo() {
                       <button
                         onClick={() => changePasswordMutation.mutate()}
                         disabled={!canSubmitPassword || changePasswordMutation.isPending}
-                        className="w-full py-3 bg-[#C9A063] text-black font-semibold text-[15px] rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full py-3 bg-reem-gold text-black font-semibold text-body rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
                         data-testid="button-update-password"
                       >
                         {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
@@ -402,17 +402,17 @@ export default function PersonalInfo() {
 
 
           <div className="pt-4">
-            <p className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Account Management</p>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
+            <p className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Account Management</p>
+            <div className="bg-ui-card rounded-xl overflow-hidden">
               <button
                 onClick={() => setShowDeleteScreen(true)}
-                className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-[#2C2C2E] transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-ui-raised transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <Trash2 className="h-5 w-5 text-red-500" />
-                  <span className="text-red-500 text-[15px]">Delete Account</span>
+                  <span className="text-red-500 text-body">Delete Account</span>
                 </div>
-                <ChevronLeft className="h-4 w-4 text-[#48484A] rotate-180" />
+                <ChevronLeft className="h-4 w-4 text-ui-tertiary rotate-180" />
               </button>
             </div>
           </div>

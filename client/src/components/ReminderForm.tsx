@@ -39,6 +39,7 @@ import { usePaywallGate } from "@/components/PaywallGate";
 import { isFeatureDisabled } from "@/config/featureFlags";
 import RoseSpinner from "@/components/RoseSpinner";
 
+import { palette } from "@/lib/theme";
 const formSchema = z.object({
   originalMessage: z.string().min(1, "Message is required"),
   context: z.string().optional(),
@@ -918,7 +919,7 @@ export default function ReminderForm({
 
 
   return (
-    <Card className="mt-4 bg-white border-2 border-[#FDF3E3] rounded-[24px] shadow-[var(--rr-card-shadow)] dark:bg-transparent dark:border-transparent dark:shadow-none">
+    <Card className="mt-4 bg-white border-2 border-reem-cream rounded-[24px] shadow-[var(--rr-card-shadow)] dark:bg-transparent dark:border-transparent dark:shadow-none">
       <CardContent className="pt-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -932,7 +933,7 @@ export default function ReminderForm({
                   <FormControl>
                     <Input
                       placeholder="✏️ Write your reminder here..."
-                      className="bg-[#FDF3E3] border-2 border-[#C9A063] focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] h-[50px] py-3 text-[#111827] placeholder:text-[#111827]/50"
+                      className="bg-reem-cream border-2 border-reem-gold focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] h-[50px] py-3 text-reem-ink placeholder:text-reem-ink/50"
                       {...field}
                     />
                   </FormControl>
@@ -1000,9 +1001,9 @@ export default function ReminderForm({
 
             {/* Summary bubble — sits below Rudeness Level */}
             {scheduleValid && (
-              <div className="flex items-center justify-between px-3 py-2.5 bg-[#FDF3E3] rounded-lg border border-[#C9A063]">
+              <div className="flex items-center justify-between px-3 py-2.5 bg-reem-cream rounded-lg border border-reem-gold">
                 {/* Left: time or day count */}
-                <span className="text-sm font-medium text-[#111827]">
+                <span className="text-sm font-medium text-reem-ink">
                   {form.watch("isMultiDay")
                     ? `${form.watch("selectedDays")?.length || 0} days selected`
                     : form.watch("scheduledFor")
@@ -1011,7 +1012,7 @@ export default function ReminderForm({
                 </span>
 
                 {/* Right: compact icon indicators */}
-                <div className="flex items-center gap-2 text-[#C9A063]">
+                <div className="flex items-center gap-2 text-reem-gold">
                   <span className="text-xs font-medium">🔔 Lv.{rudenessLevel}</span>
 
                   {selectedVoice && selectedVoice !== "default" && (
@@ -1049,7 +1050,7 @@ export default function ReminderForm({
                       bottom: '105%',
                       left: lockedTooltip === 'photo' ? '50%' : '83%',
                       transform: 'translateX(-50%)',
-                      backgroundColor: '#1a1a1a',
+                      backgroundColor: palette.charcoal,
                       color: 'white',
                       fontSize: '12px',
                       borderRadius: '8px',
@@ -1061,7 +1062,7 @@ export default function ReminderForm({
                       🔒 Go Premium
                     </div>
                   )}
-                <div className="flex rounded-xl overflow-hidden border border-[#C9A063]">
+                <div className="flex rounded-xl overflow-hidden border border-reem-gold">
                   <button
                     type="button"
                     onClick={() => {
@@ -1070,12 +1071,12 @@ export default function ReminderForm({
                         if (opening) onVoiceTap?.();
                       }}
                     className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none ${
-                      activeFeatureTab === 'voice' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                      activeFeatureTab === 'voice' ? 'bg-[#A07840] text-reem-charcoal' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark'
                     }`}
                   >
                     <Volume2 className="h-5 w-5" />
                     Voice
-                    <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
+                    <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-reem-charcoal' : 'bg-transparent'}`} />
                   </button>
 
                   {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
@@ -1086,14 +1087,14 @@ export default function ReminderForm({
                         if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
                         else { gateAttachments(() => { setActiveFeatureTab('photo'); onPhotoTap?.(); }); }
                       }}
-                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-[#B8904F] transition-all relative focus:outline-none ${
-                        activeFeatureTab === 'photo' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                      className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-reem-gold-dark transition-all relative focus:outline-none ${
+                        activeFeatureTab === 'photo' ? 'bg-[#A07840] text-reem-charcoal' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark'
                       }`}
                     >
                       <Camera className="h-5 w-5" />
                       Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
-                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
-                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50" />}
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-reem-charcoal' : 'bg-transparent'}`} />
                     </button>
                   )}
 
@@ -1106,13 +1107,13 @@ export default function ReminderForm({
                         else { gateQuotes(() => { setActiveFeatureTab('quotes'); onQuotesTap?.(); }); }
                       }}
                       className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
-                        activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-[#1A1A1A]' : 'bg-[#C9A063] text-[#1A1A1A] hover:bg-[#B8904F]'
+                        activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-reem-charcoal' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark'
                       }`}
                     >
                       <Quote className="h-5 w-5" />
                       Quotes
-                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-[#1A1A1A]/50" />}
-                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-[#1A1A1A]' : 'bg-transparent'}`} />
+                      {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50" />}
+                      <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-reem-charcoal' : 'bg-transparent'}`} />
                     </button>
                   )}
                 </div>
@@ -1120,12 +1121,12 @@ export default function ReminderForm({
 
                 {/* Content panel — only shown when a tab is active */}
                 {activeFeatureTab && (
-                  <div className="mt-2 border border-[#C9A063] rounded-xl bg-white px-3 pt-3 pb-4 space-y-3">
+                  <div className="mt-2 border border-reem-gold rounded-xl bg-white px-3 pt-3 pb-4 space-y-3">
 
                     {/* Voice panel */}
                     {activeFeatureTab === 'voice' && (
                       <div className="space-y-3">
-                        <p className="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wide">Voice Character</p>
+                        <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">Voice Character</p>
                         <Select
                           value={form.watch("voiceCharacter")}
                           onValueChange={(value) => {
@@ -1138,7 +1139,7 @@ export default function ReminderForm({
                             }
                           }}
                         >
-                          <SelectTrigger className="w-full text-[14px] h-10 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#1A1A1A]">
+                          <SelectTrigger className="w-full text-body-sm h-10 bg-reem-cream-deep border-reem-gold rounded-lg text-reem-charcoal">
                             <SelectValue placeholder="Select voice">
                               {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Select voice"}
                             </SelectValue>
@@ -1149,7 +1150,7 @@ export default function ReminderForm({
                               const isSelected = form.watch("voiceCharacter") === character.id;
                               return (
                                 <SelectItem key={character.id} value={character.id}>
-                                  <span className="flex items-center gap-2 text-[14px] text-[#1A1A1A]">
+                                  <span className="flex items-center gap-2 text-body-sm text-reem-charcoal">
                                     <span className="w-4 text-center text-xs">{isLocked ? '🔒' : isSelected ? '✓' : ''}</span>
                                     <span>{character.name}</span>
                                   </span>
@@ -1164,7 +1165,7 @@ export default function ReminderForm({
                     {/* Photo panel */}
                     {activeFeatureTab === 'photo' && (
                       <div className="space-y-3">
-                        <p className="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wide">
+                        <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">
                           Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
                         </p>
                         {isMobileWithCamera ? (
@@ -1184,7 +1185,7 @@ export default function ReminderForm({
                               type="button"
                               onClick={handlePhotoAttachment}
                               disabled={isFreePlan && selectedAttachments.length >= 1}
-                              className="w-full h-16 rounded-xl border-2 border-dashed border-[#C9A063] bg-[#F5EDE0] flex items-center justify-center gap-2 text-xs text-[#C9A063] font-medium hover:bg-[#EDE0CF] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                              className="w-full h-16 rounded-xl border-2 border-dashed border-reem-gold bg-reem-cream-deep flex items-center justify-center gap-2 text-xs text-reem-gold font-medium hover:bg-[#EDE0CF] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                             >
                               <Camera className="h-4 w-4" />
                               Tap to add photo
@@ -1199,7 +1200,7 @@ export default function ReminderForm({
                             </div>
                           ))}
                           {Array.from({ length: (isFreePlan ? 1 : 5) - selectedAttachments.length }).map((_, i) => (
-                            <div key={`empty-${i}`} className="aspect-square rounded-lg border border-dashed border-[#C9A063]/40 bg-[#F5EDE0]/50" />
+                            <div key={`empty-${i}`} className="aspect-square rounded-lg border border-dashed border-reem-gold/40 bg-reem-cream-deep/50" />
                           ))}
                         </div>
                       </div>
@@ -1208,9 +1209,9 @@ export default function ReminderForm({
                     {/* Quotes panel */}
                     {activeFeatureTab === 'quotes' && (
                       <div className="space-y-3">
-                        <p className="text-[13px] font-semibold text-[#1A1A1A] uppercase tracking-wide">Motivation Style</p>
+                        <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">Motivation Style</p>
                         <Select value={selectedCategory} onValueChange={handleCategorySelection}>
-                          <SelectTrigger className="w-full text-[14px] h-10 bg-[#F5EDE0] border-[#C9A063] rounded-lg text-[#1A1A1A]">
+                          <SelectTrigger className="w-full text-body-sm h-10 bg-reem-cream-deep border-reem-gold rounded-lg text-reem-charcoal">
                             <SelectValue placeholder="Choose a motivation style…" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1218,7 +1219,7 @@ export default function ReminderForm({
                               const IconComponent = category.icon;
                               return (
                                 <SelectItem key={category.id} value={category.id}>
-                                  <div className="flex items-center space-x-2 text-[14px] text-[#1A1A1A]">
+                                  <div className="flex items-center space-x-2 text-body-sm text-reem-charcoal">
                                     <IconComponent className="h-4 w-4" />
                                     <span>{category.name}</span>
                                   </div>
@@ -1227,7 +1228,7 @@ export default function ReminderForm({
                             })}
                           </SelectContent>
                         </Select>
-                        <p className="text-[12px] text-[#1A1A1A]">A motivational quote from your chosen category will be added to your reminder.</p>
+                        <p className="text-caption text-reem-charcoal">A motivational quote from your chosen category will be added to your reminder.</p>
                       </div>
                     )}
                   </div>
@@ -1244,18 +1245,18 @@ export default function ReminderForm({
                 <div className="bg-white rounded-[20px] p-6 mx-4 max-w-sm w-full shadow-xl" onClick={e => e.stopPropagation()}>
                   <div className="text-center space-y-4">
                     <img src={rudeRemindersLogo} alt="Reems Rude Reminders" className="w-16 h-16 mx-auto object-contain" />
-                    <h2 className="text-xl font-bold text-[#111827]">Free Limit Reached</h2>
-                    <p className="text-[#6B7280] text-sm">You've used all your free reminders for this month. They reset on the 1st — or go Premium for 120 a month plus every feature.</p>
+                    <h2 className="text-xl font-bold text-reem-ink">Free Limit Reached</h2>
+                    <p className="text-reem-text-muted text-sm">You've used all your free reminders for this month. They reset on the 1st — or go Premium for 120 a month plus every feature.</p>
                     <div className="space-y-2 pt-2">
                       <button
                         onClick={() => { setShowLimitModal(false); setLocation('/subscribe'); }}
-                        className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white font-semibold rounded-[14px] h-[48px] flex items-center justify-center gap-2 transition-colors"
+                        className="w-full bg-reem-red hover:bg-reem-red-dark text-white font-semibold rounded-[14px] h-[48px] flex items-center justify-center gap-2 transition-colors"
                       >
                         Upgrade to Premium
                       </button>
                       <button
                         onClick={() => setShowLimitModal(false)}
-                        className="w-full text-[#6B7280] h-[44px] text-sm"
+                        className="w-full text-reem-text-muted h-[44px] text-sm"
                       >
                         Maybe Later
                       </button>
@@ -1271,7 +1272,7 @@ export default function ReminderForm({
             <Button
               ref={createButtonRef}
               type="submit"
-              className="w-full bg-[#1B2A5E] hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg disabled:opacity-100 disabled:cursor-default"
+              className="w-full bg-reem-navy hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg disabled:opacity-100 disabled:cursor-default"
               style={{
                 // Hidden while Reem "has" it, then pops back in
                 opacity: carryRect ? 0 : 1,
@@ -1313,7 +1314,7 @@ export default function ReminderForm({
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-white text-[#1A1A1A] border border-[#C9A063] hover:bg-[#FDF3E3] hover:text-[#1A1A1A] focus-visible:ring-0 focus-visible:border-[#C9A063]"
+                          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-white text-reem-charcoal border border-reem-gold hover:bg-reem-cream hover:text-reem-charcoal focus-visible:ring-0 focus-visible:border-reem-gold"
                           data-testid="button-quick-reminder"
                         >
                           <span className="flex items-center">
@@ -1324,7 +1325,7 @@ export default function ReminderForm({
                         </Button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="quick-drawer">
-                        <div className="mt-2 p-4 bg-[#FDF3E3] rounded-lg border border-[#FDF3E3]">
+                        <div className="mt-2 p-4 bg-reem-cream rounded-lg border border-reem-cream">
                         <div className="grid grid-cols-4 gap-2">
                           {[
                             { seconds: 10, shortLabel: "10s" },
@@ -1337,7 +1338,7 @@ export default function ReminderForm({
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="flex items-center justify-center p-2 h-10 bg-white hover:bg-[#FDF3E3] border border-[#C9A063] hover:border-[#B8904F] text-[#1A1A1A] font-semibold text-sm rounded-lg"
+                              className="flex items-center justify-center p-2 h-10 bg-white hover:bg-reem-cream border border-reem-gold hover:border-reem-gold-dark text-reem-charcoal font-semibold text-sm rounded-lg"
                               onClick={async () => {
                                 const currentMessage = form.watch("originalMessage");
                                 if (!currentMessage || currentMessage.trim() === "") {

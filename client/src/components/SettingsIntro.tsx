@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Bell, User, CreditCard } from "lucide-react";
 import { getPlatformInfo } from "@/utils/platformDetection";
 
+import { palette } from "@/lib/theme";
 const RUDY_BASE = "/rudy/";
 const RUDY_SITTING = `${RUDY_BASE}Rudy_sitting_upright_transparent.png`;
 const RUDY_POINTING = `${RUDY_BASE}Rudy_punching_forward_transparent.png`;
@@ -45,11 +46,11 @@ export function SettingsIntro({ isOpen, onClose }: SettingsIntroProps) {
     : '85vh';
 
   // Dark theme tokens to match SettingsLanding (`bg-black`, iOS dark rows)
-  const surface = '#1C1C1E';
-  const surfaceSoft = '#2C2C2E';
+  const surface = palette.uiCard;
+  const surfaceSoft = palette.uiRaised;
   const textPrimary = '#FFFFFF';
-  const textSecondary = '#AEAEB2';
-  const accent = '#C9A063';
+  const textSecondary = palette.uiLabel3;
+  const accent = palette.gold;
 
   const renderSlide = () => {
     switch (currentStep) {
@@ -108,7 +109,7 @@ export function SettingsIntro({ isOpen, onClose }: SettingsIntroProps) {
               gap: 12,
               textAlign: 'left',
             }}>
-              <Bell className="h-5 w-5" style={{ color: '#C53B3B', flexShrink: 0 }} />
+              <Bell className="h-5 w-5" style={{ color: palette.red, flexShrink: 0 }} />
               <span style={{ fontSize: 13, color: textPrimary, fontWeight: 500 }}>
                 If you ever say "Rudy went silent" — this is the first place to check.
               </span>
@@ -203,7 +204,7 @@ export function SettingsIntro({ isOpen, onClose }: SettingsIntroProps) {
                 className="h-1.5 rounded-full transition-all"
                 style={{
                   width: index === currentStep ? 24 : 8,
-                  background: index === currentStep ? accent : index < currentStep ? '#22C55E' : '#3A3A3C',
+                  background: index === currentStep ? accent : index < currentStep ? palette.green : '#3A3A3C',
                 }}
               />
             ))}
@@ -228,7 +229,7 @@ export function SettingsIntro({ isOpen, onClose }: SettingsIntroProps) {
               onClick={nextStep}
               size="sm"
               className="flex items-center gap-2 font-semibold"
-              style={{ background: accent, color: '#111827' }}
+              style={{ background: accent, color: palette.ink }}
             >
               {currentStep === totalSlides - 1 ? (
                 <>

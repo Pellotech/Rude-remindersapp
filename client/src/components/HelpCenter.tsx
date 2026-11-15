@@ -70,7 +70,7 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
 
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DrawerContent className="max-h-[85vh] bg-[#C9A063]">
+      <DrawerContent className="max-h-[85vh] bg-reem-gold">
         <DrawerHeader className="p-0">
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#B8914F]">
             <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
                 </Button>
                 {(() => {
                   const IconComp = getIconComponent(selectedCategory.icon);
-                  return <IconComp className="h-5 w-5 text-[#C9A063]" />;
+                  return <IconComp className="h-5 w-5 text-reem-gold" />;
                 })()}
                 <h2 className="font-semibold text-gray-900">{selectedCategory.title}</h2>
               </div>
@@ -110,8 +110,8 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
                       className="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow text-left"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#C9A063]/10 rounded-full flex items-center justify-center">
-                          <ArticleIcon className="h-5 w-5 text-[#C9A063]" />
+                        <div className="w-10 h-10 bg-reem-gold/10 rounded-full flex items-center justify-center">
+                          <ArticleIcon className="h-5 w-5 text-reem-gold" />
                         </div>
                         <span className="font-medium text-gray-900 text-sm">{article.title}</span>
                       </div>
@@ -145,8 +145,8 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
                           className="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow text-left"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-[#C9A063]/10 rounded-full flex items-center justify-center">
-                              <ArticleIcon className="h-5 w-5 text-[#C9A063]" />
+                            <div className="w-10 h-10 bg-reem-gold/10 rounded-full flex items-center justify-center">
+                              <ArticleIcon className="h-5 w-5 text-reem-gold" />
                             </div>
                             <span className="font-medium text-gray-900 text-sm">{article.title}</span>
                           </div>
@@ -165,18 +165,18 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
                   {onStartTour && (
                     <button
                       onClick={() => { onStartTour(); handleClose(); }}
-                      className="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm border-2 border-[#C53B3B]/20 hover:border-[#C53B3B] transition-colors"
+                      className="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm border-2 border-reem-red/20 hover:border-reem-red transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#C53B3B]/10 rounded-full flex items-center justify-center">
-                          <Compass className="h-5 w-5 text-[#C53B3B]" />
+                        <div className="w-10 h-10 bg-reem-red/10 rounded-full flex items-center justify-center">
+                          <Compass className="h-5 w-5 text-reem-red" />
                         </div>
                         <div className="text-left">
                           <p className="font-semibold text-gray-900 text-sm">Start App Tour</p>
                           <p className="text-xs text-gray-500">Quick walkthrough of features</p>
                         </div>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-[#C53B3B]" />
+                      <ChevronRight className="h-5 w-5 text-reem-red" />
                     </button>
                   )}
 
@@ -190,8 +190,8 @@ export function HelpCenter({ isOpen, onClose, onStartTour }: HelpCenterProps) {
                           className="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow text-left"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-[#C9A063]/10 rounded-full flex items-center justify-center">
-                              <CategoryIcon className="h-5 w-5 text-[#C9A063]" />
+                            <div className="w-10 h-10 bg-reem-gold/10 rounded-full flex items-center justify-center">
+                              <CategoryIcon className="h-5 w-5 text-reem-gold" />
                             </div>
                             <div>
                               <p className="font-medium text-gray-900 text-sm">{category.title}</p>

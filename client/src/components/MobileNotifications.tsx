@@ -9,6 +9,7 @@ import {
 import { Capacitor } from "@capacitor/core";
 import { useToast } from "@/hooks/use-toast";
 
+import { palette } from "@/lib/theme";
 function findPreferredVoice(voices: SpeechSynthesisVoice[], voiceType: string): SpeechSynthesisVoice | undefined {
   console.log(`🎙️ [TTS-DIAG] findPreferredVoice called | voiceType="${voiceType}" | available voices: ${voices.length}`);
   if (voices.length > 0) {
@@ -47,7 +48,7 @@ export async function ensureReminderChannel(): Promise<void> {
       visibility: 1,      // show on the lock screen
       vibration: true,
       lights: true,
-      lightColor: '#C9A063',
+      lightColor: palette.gold,
     });
   } catch (e) {
     console.warn('Could not create reminder channel', e);

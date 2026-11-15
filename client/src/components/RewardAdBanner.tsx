@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Gift, Star, Volume2, Bell, Play } from 'lucide-react';
 import { useAdMob } from '@/hooks/useAdMob';
 
+import { palette } from "@/lib/theme";
 interface RewardAdBannerProps {
   onRewardEarned: () => void;
   currentReminders: number;
@@ -34,11 +35,11 @@ export function RewardAdBanner({
   };
 
   const cardStyle = { backgroundColor: '#DCFCE7' };
-  const iconStyle = { backgroundColor: '#C9A063' };
+  const iconStyle = { backgroundColor: palette.gold };
 
   if (needsMoreReminders) {
     return (
-      <Card className="mb-3 border-2 border-[#C9A063]" style={cardStyle}>
+      <Card className="mb-3 border-2 border-reem-gold" style={cardStyle}>
         <CardContent className="p-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -46,14 +47,14 @@ export function RewardAdBanner({
                 <Bell className="h-3.5 w-3.5 text-white" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-semibold text-[#111827]">Limit reached — </span>
-                <span className="text-xs text-[#111827]">watch an ad for 3 bonus reminders</span>
+                <span className="text-xs font-semibold text-reem-ink">Limit reached — </span>
+                <span className="text-xs text-reem-ink">watch an ad for 3 bonus reminders</span>
               </div>
             </div>
             <Button 
               size="sm"
               onClick={handleWatchAd}
-              className="shrink-0 h-7 px-2 text-xs bg-[#C9A063] hover:bg-[#b38a50] text-white"
+              className="shrink-0 h-7 px-2 text-xs bg-reem-gold hover:bg-[#b38a50] text-white"
               data-testid="watch-ad-for-reminders"
             >
               <Gift className="h-3 w-3 mr-1" />
@@ -67,7 +68,7 @@ export function RewardAdBanner({
 
   if (isNearLimit && !hasTemporaryPremiumVoices) {
     return (
-      <Card className="mb-3 border-2 border-[#C9A063]" style={cardStyle}>
+      <Card className="mb-3 border-2 border-reem-gold" style={cardStyle}>
         <CardContent className="p-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -75,14 +76,14 @@ export function RewardAdBanner({
                 <Volume2 className="h-3.5 w-3.5 text-white" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-semibold text-[#111827]">Unlock voices — </span>
-                <span className="text-xs text-[#111827]">premium voices for 30 min</span>
+                <span className="text-xs font-semibold text-reem-ink">Unlock voices — </span>
+                <span className="text-xs text-reem-ink">premium voices for 30 min</span>
               </div>
             </div>
             <Button 
               size="sm"
               onClick={handleWatchAd}
-              className="shrink-0 h-7 px-2 text-xs bg-[#C9A063] hover:bg-[#b38a50] text-white"
+              className="shrink-0 h-7 px-2 text-xs bg-reem-gold hover:bg-[#b38a50] text-white"
               data-testid="watch-ad-for-voices"
             >
               <Play className="h-3 w-3 mr-1" />
@@ -95,7 +96,7 @@ export function RewardAdBanner({
   }
 
   return (
-    <Card className="mb-3 border-2 border-[#C9A063]" style={cardStyle}>
+    <Card className="mb-3 border-2 border-reem-gold" style={cardStyle}>
       <CardContent className="p-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -103,14 +104,14 @@ export function RewardAdBanner({
               <Star className="h-3.5 w-3.5 text-white" />
             </div>
             <div className="min-w-0">
-              <span className="text-xs font-semibold text-[#111827]">Earn Free Rewards — </span>
-              <span className="text-xs text-[#111827]">watch ads for bonus reminders or premium features</span>
+              <span className="text-xs font-semibold text-reem-ink">Earn Free Rewards — </span>
+              <span className="text-xs text-reem-ink">watch ads for bonus reminders or premium features</span>
             </div>
           </div>
           <Button 
             size="sm"
             onClick={handleWatchAd}
-            className="shrink-0 h-7 px-2 text-xs bg-[#C9A063] hover:bg-[#b38a50] text-white"
+            className="shrink-0 h-7 px-2 text-xs bg-reem-gold hover:bg-[#b38a50] text-white"
             data-testid="watch-ad-general"
           >
             <Gift className="h-3 w-3 mr-1" />

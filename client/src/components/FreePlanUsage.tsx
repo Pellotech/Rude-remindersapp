@@ -30,17 +30,17 @@ export function FreePlanUsage({ used, limit, bonusReminders, onUpgrade }: FreePl
       className="container mx-auto px-4 md:px-[20%] max-w-7xl"
       style={{ paddingBottom: Capacitor.getPlatform() === 'android' ? '150px' : '80px' }}
     >
-      <Card className="bg-white border-[#EAEAEA] rounded-[20px] shadow-[var(--rr-card-shadow)]">
+      <Card className="bg-white border-reem-line rounded-[20px] shadow-[var(--rr-card-shadow)]">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <h3 className="font-semibold text-[#111827]">Free Plan Usage</h3>
+              <h3 className="font-semibold text-reem-ink">Free Plan Usage</h3>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <Bell className="h-4 w-4 text-[#C53B3B]" />
-                  <span className="text-[#6B7280]">{used}/{limit} reminders this month</span>
+                  <Bell className="h-4 w-4 text-reem-red" />
+                  <span className="text-reem-text-muted">{used}/{limit} reminders this month</span>
                   {bonusReminders > 0 && (
-                    <span className="text-xs bg-[#F9FAFB] text-[#111827] px-2 py-1 rounded-full border border-[#EAEAEA]">
+                    <span className="text-xs bg-reem-paper text-reem-ink px-2 py-1 rounded-full border border-reem-line">
                       +{bonusReminders} bonus
                     </span>
                   )}

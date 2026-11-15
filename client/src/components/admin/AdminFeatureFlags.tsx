@@ -4,6 +4,7 @@ import { ToggleLeft } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+import { palette } from "@/lib/theme";
 interface FeatureFlag {
   key: string;
   enabled: boolean;
@@ -53,18 +54,18 @@ export function AdminFeatureFlags() {
   return (
     <div
       className="rounded-xl border p-5"
-      style={{ background: '#1C1C1E', borderColor: '#38383A' }}
+      style={{ background: palette.uiCard, borderColor: palette.uiSeparator }}
     >
       <div className="flex items-center gap-2 mb-1">
-        <ToggleLeft className="h-5 w-5" style={{ color: '#C9A063' }} />
+        <ToggleLeft className="h-5 w-5" style={{ color: palette.gold }} />
         <h2 className="text-lg font-semibold text-white">Feature Toggles</h2>
       </div>
-      <p className="text-xs mb-4" style={{ color: '#8E8E93' }}>
+      <p className="text-xs mb-4" style={{ color: palette.uiLabel2 }}>
         Switch features on or off without a redeploy. Changes take effect on the next request.
       </p>
 
       {isLoading ? (
-        <div className="text-sm" style={{ color: '#8E8E93' }}>Loading flags…</div>
+        <div className="text-sm" style={{ color: palette.uiLabel2 }}>Loading flags…</div>
       ) : (
         <div className="space-y-2">
           {flags.map((f) => (
@@ -72,13 +73,13 @@ export function AdminFeatureFlags() {
               key={f.key}
               data-testid={`flag-row-${f.key}`}
               className="flex items-center justify-between rounded-lg px-4 py-3"
-              style={{ background: '#000000', border: '1px solid #2C2C2E' }}
+              style={{ background: '#000000', border: `1px solid ${palette.uiRaised}` }}
             >
               <div className="min-w-0 pr-4">
                 <div className="text-sm font-semibold text-white">
                   {FLAG_LABELS[f.key] ?? f.key}
                 </div>
-                <div className="text-xs mt-0.5" style={{ color: '#8E8E93' }}>
+                <div className="text-xs mt-0.5" style={{ color: palette.uiLabel2 }}>
                   {f.description || f.key}
                 </div>
               </div>
@@ -91,7 +92,7 @@ export function AdminFeatureFlags() {
             </div>
           ))}
           {flags.length === 0 && (
-            <div className="text-sm" style={{ color: '#8E8E93' }}>No flags configured yet.</div>
+            <div className="text-sm" style={{ color: palette.uiLabel2 }}>No flags configured yet.</div>
           )}
         </div>
       )}

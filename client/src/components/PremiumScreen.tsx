@@ -236,12 +236,12 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
         <div className="w-full max-w-md">
           <div className="bg-white rounded-[24px] overflow-hidden p-8">
             <div className="text-center space-y-6">
-              <div className="w-24 h-24 mx-auto bg-[#F9FAFB] rounded-full flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto bg-reem-paper rounded-full flex items-center justify-center">
                 <img src={logoImage} alt="Reems Rude Reminders" className="h-16 w-auto" />
               </div>
             
               <div>
-                <h1 className="text-3xl font-bold text-[#111827] mb-2">
+                <h1 className="text-3xl font-bold text-reem-ink mb-2">
                   Unlock Premium
                 </h1>
               </div>
@@ -258,7 +258,7 @@ export default function PremiumScreen({ isPremium, onViewSubscription, isAuthent
                 <Button 
                   onClick={handleSubscribe}
                   disabled={loading}
-                  className="w-full bg-[#C53B3B] hover:bg-[#A83232] text-white text-lg py-6 rounded-[14px] h-[52px]"
+                  className="w-full bg-reem-red hover:bg-reem-red-dark text-white text-lg py-6 rounded-[14px] h-[52px]"
                   size="lg"
                   data-testid="button-subscribe-now"
                 >

@@ -19,16 +19,16 @@ function SettingsRow({ icon, title, href }: SettingsRowProps) {
   return (
     <Link href={href}>
       <div 
-        className="flex items-center justify-between px-4 py-3.5 bg-[#1C1C1E] hover:bg-[#2C2C2E] transition-colors cursor-pointer"
+        className="flex items-center justify-between px-4 py-3.5 bg-ui-card hover:bg-ui-raised transition-colors cursor-pointer"
         data-testid={`settings-row-${title.toLowerCase().replace(/\s+/g, '-')}`}
       >
         <div className="flex items-center gap-3">
-          <div className="text-[#8E8E93]">
+          <div className="text-ui-label-2">
             {icon}
           </div>
-          <span className="text-white text-[15px]">{title}</span>
+          <span className="text-white text-body">{title}</span>
         </div>
-        <ChevronRight className="h-4 w-4 text-[#48484A]" />
+        <ChevronRight className="h-4 w-4 text-ui-tertiary" />
       </div>
     </Link>
   );
@@ -46,16 +46,16 @@ export default function SettingsLanding() {
     <div className="min-h-screen bg-black">
       <SettingsIntro isOpen={showIntro} onClose={closeIntro} />
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center px-4 py-3">
             <Link href="/">
-              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+              <div className="flex items-center text-ui-link cursor-pointer" data-testid="button-back">
                 <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px]">Back</span>
+                <span className="text-body-lg">Back</span>
               </div>
             </Link>
           </div>
-          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Settings</h1>
+          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Settings</h1>
         </div>
 
         <div className="py-6 space-y-8">
@@ -65,19 +65,19 @@ export default function SettingsLanding() {
               title="Personal Information"
               href="/settings/personal"
             />
-            <div className="h-px bg-[#38383A] ml-12" />
+            <div className="h-px bg-ui-separator ml-12" />
             <SettingsRow 
               icon={<Bell className="h-5 w-5" />}
               title="Notifications"
               href="/settings/notifications"
             />
-            <div className="h-px bg-[#38383A] ml-12" />
+            <div className="h-px bg-ui-separator ml-12" />
             <SettingsRow
               icon={<Type className="h-5 w-5" />}
               title="Text Size & Time Zone"
               href="/settings/display"
             />
-            <div className="h-px bg-[#38383A] ml-12" />
+            <div className="h-px bg-ui-separator ml-12" />
             {showSiri && (
               <>
                 <SettingsRow
@@ -85,7 +85,7 @@ export default function SettingsLanding() {
                   title="Siri & Shortcuts"
                   href="/settings/siri"
                 />
-                <div className="h-px bg-[#38383A] ml-12" />
+                <div className="h-px bg-ui-separator ml-12" />
               </>
             )}
             <SettingsRow
@@ -95,9 +95,9 @@ export default function SettingsLanding() {
             />
             {isAdmin && (
               <>
-                <div className="h-px bg-[#38383A] ml-12" />
+                <div className="h-px bg-ui-separator ml-12" />
                 <SettingsRow
-                  icon={<Shield className="h-5 w-5 text-[#C9A063]" />}
+                  icon={<Shield className="h-5 w-5 text-reem-gold" />}
                   title="Developer Space"
                   href="/dev"
                 />
@@ -108,7 +108,7 @@ export default function SettingsLanding() {
           {/* Help — its own section, always last */}
           <div className="overflow-hidden rounded-xl mx-4">
             <SettingsRow
-              icon={<LifeBuoy className="h-5 w-5 text-[#C9A063]" />}
+              icon={<LifeBuoy className="h-5 w-5 text-reem-gold" />}
               title="Help & Support"
               href="/settings/help"
             />

@@ -13,7 +13,7 @@ export function HelpMenu() {
         variant="outline" 
         size="sm"
         onClick={() => setIsHelpOpen(true)}
-        className="bg-white shadow-lg border-[#C9A063] hover:bg-[#C9A063]/10 px-3 py-1.5 text-sm font-medium text-[#111827]"
+        className="bg-white shadow-lg border-reem-gold hover:bg-reem-gold/10 px-3 py-1.5 text-sm font-medium text-reem-ink"
         data-testid="button-help"
       >
         Help

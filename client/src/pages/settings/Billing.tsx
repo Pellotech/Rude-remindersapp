@@ -38,13 +38,13 @@ function Row({ label, onClick, value, external, testId, last }: {
   return (
     <div
       onClick={onClick}
-      className={`flex items-center justify-between px-4 py-3.5 ${last ? "" : "border-b border-[#38383A]"} ${onClick ? "cursor-pointer hover:bg-[#2C2C2E] transition-colors" : ""}`}
+      className={`flex items-center justify-between px-4 py-3.5 ${last ? "" : "border-b border-ui-separator"} ${onClick ? "cursor-pointer hover:bg-ui-raised transition-colors" : ""}`}
       data-testid={testId}
     >
-      <span className="text-white text-[17px]">{label}</span>
+      <span className="text-white text-body-lg">{label}</span>
       {value ?? (onClick && (external
-        ? <ExternalLink className="h-4 w-4 text-[#48484A]" />
-        : <ChevronRight className="h-5 w-5 text-[#48484A]" />))}
+        ? <ExternalLink className="h-4 w-4 text-ui-tertiary" />
+        : <ChevronRight className="h-5 w-5 text-ui-tertiary" />))}
     </div>
   );
 }
@@ -52,9 +52,9 @@ function Row({ label, onClick, value, external, testId, last }: {
 function Section({ title, children, footer }: { title: string; children: React.ReactNode; footer?: string }) {
   return (
     <div>
-      <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">{title}</h2>
-      <div className="bg-[#1C1C1E] rounded-xl overflow-hidden border border-[#C9A063]/40">{children}</div>
-      {footer && <p className="text-[13px] text-[#8E8E93] px-4 mt-2 leading-snug">{footer}</p>}
+      <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">{title}</h2>
+      <div className="bg-ui-card rounded-xl overflow-hidden border border-reem-gold/40">{children}</div>
+      {footer && <p className="text-note text-ui-label-2 px-4 mt-2 leading-snug">{footer}</p>}
     </div>
   );
 }
@@ -74,7 +74,7 @@ export default function Billing() {
   const storeName = isIOS ? "Apple ID" : isAndroid ? "Google Play" : "app store";
 
   const statusText = isSubscribed ? "Active" : status === "canceled" ? "Canceled" : status === "expired" ? "Expired" : "Free";
-  const statusColor = isSubscribed ? "text-[#22C55E]" : status === "canceled" ? "text-[#F59E0B]" : "text-[#8E8E93]";
+  const statusColor = isSubscribed ? "text-reem-green" : status === "canceled" ? "text-[#F59E0B]" : "text-ui-label-2";
 
   const handleRestore = async () => {
     if (restoring) return;
@@ -99,21 +99,21 @@ export default function Billing() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/settings">
-              <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
+              <div className="flex items-center text-ui-link cursor-pointer" data-testid="button-back">
                 <ChevronLeft className="h-5 w-5" />
-                <span className="text-[17px]">Settings</span>
+                <span className="text-body-lg">Settings</span>
               </div>
             </Link>
             <Link href="/">
-              <div className="text-[#0A84FF] cursor-pointer" data-testid="button-home">
+              <div className="text-ui-link cursor-pointer" data-testid="button-home">
                 <Home className="h-5 w-5" />
               </div>
             </Link>
           </div>
-          <h1 className="text-[34px] font-bold text-white px-4 pb-2">Payment & Billing</h1>
+          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Payment & Billing</h1>
         </div>
 
         <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? "120px" : isIOS ? "80px" : "24px" }}>
@@ -123,14 +123,14 @@ export default function Billing() {
               label="Plan"
               value={
                 <div className="flex items-center gap-2">
-                  {isSubscribed && <Crown className="h-4 w-4 text-[#C9A063]" />}
-                  <span className="text-[#8E8E93] text-[17px]">{isSubscribed ? "Reems Rude Reminders Premium" : "Free"}</span>
+                  {isSubscribed && <Crown className="h-4 w-4 text-reem-gold" />}
+                  <span className="text-ui-label-2 text-body-lg">{isSubscribed ? "Reems Rude Reminders Premium" : "Free"}</span>
                 </div>
               }
             />
-            <Row label="Status" last={!(subscriptionEndsAt && isSubscribed)} value={<span className={`text-[17px] font-semibold ${statusColor}`}>{statusText}</span>} />
+            <Row label="Status" last={!(subscriptionEndsAt && isSubscribed)} value={<span className={`text-body-lg font-semibold ${statusColor}`}>{statusText}</span>} />
             {subscriptionEndsAt && isSubscribed && (
-              <Row label="Renews" last value={<span className="text-[#8E8E93] text-[17px]">{new Date(subscriptionEndsAt).toLocaleDateString()}</span>} />
+              <Row label="Renews" last value={<span className="text-ui-label-2 text-body-lg">{new Date(subscriptionEndsAt).toLocaleDateString()}</span>} />
             )}
           </Section>
 

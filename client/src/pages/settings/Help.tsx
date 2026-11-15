@@ -36,26 +36,26 @@ function Row({ icon, title, subtitle, onClick, accent, external, testId }: {
 }) {
   return (
     <button onClick={onClick} data-testid={testId}
-      className="w-full flex items-center justify-between px-4 py-3.5 bg-[#1C1C1E] hover:bg-[#2C2C2E] transition-colors text-left">
+      className="w-full flex items-center justify-between px-4 py-3.5 bg-ui-card hover:bg-ui-raised transition-colors text-left">
       <div className="flex items-center gap-3 min-w-0">
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${accent ? "bg-[#C53B3B]/20 text-[#FF6B6B]" : "bg-[#C9A063]/15 text-[#C9A063]"}`}>{icon}</div>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${accent ? "bg-reem-red/20 text-reem-coral" : "bg-reem-gold/15 text-reem-gold"}`}>{icon}</div>
         <div className="min-w-0">
-          <p className="text-white text-[15px] truncate">{title}</p>
-          {subtitle && <p className="text-[12px] text-[#8E8E93] truncate">{subtitle}</p>}
+          <p className="text-white text-body truncate">{title}</p>
+          {subtitle && <p className="text-caption text-ui-label-2 truncate">{subtitle}</p>}
         </div>
       </div>
-      {external ? <ExternalLink className="h-4 w-4 text-[#48484A] flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-[#48484A] flex-shrink-0" />}
+      {external ? <ExternalLink className="h-4 w-4 text-ui-tertiary flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-ui-tertiary flex-shrink-0" />}
     </button>
   );
 }
 
-const Divider = () => <div className="h-px bg-[#38383A] ml-[60px]" />;
+const Divider = () => <div className="h-px bg-ui-separator ml-[60px]" />;
 
 function Section({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
     <div>
-      {title && <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">{title}</h2>}
-      <div className="rounded-xl overflow-hidden border border-[#C9A063]/30">{children}</div>
+      {title && <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">{title}</h2>}
+      <div className="rounded-xl overflow-hidden border border-reem-gold/30">{children}</div>
     </div>
   );
 }
@@ -65,14 +65,14 @@ function ArticleView({ article }: { article: HelpArticle }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 px-1">
-        <div className="w-10 h-10 rounded-xl bg-[#C9A063]/15 text-[#C9A063] flex items-center justify-center"><Icon name={article.icon} className="h-5 w-5" /></div>
+        <div className="w-10 h-10 rounded-xl bg-reem-gold/15 text-reem-gold flex items-center justify-center"><Icon name={article.icon} className="h-5 w-5" /></div>
         <h2 className="text-white text-[22px] font-bold leading-tight">{article.title}</h2>
       </div>
       <Section title="How it works">
-        <ol className="bg-[#1C1C1E] p-4 space-y-3">
+        <ol className="bg-ui-card p-4 space-y-3">
           {article.steps.map((s, i) => (
-            <li key={i} className="flex gap-3 text-[15px] text-[#E5E5EA] leading-snug">
-              <span className="w-6 h-6 rounded-full bg-[#C9A063] text-[#111827] text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+            <li key={i} className="flex gap-3 text-body text-ui-label-4 leading-snug">
+              <span className="w-6 h-6 rounded-full bg-reem-gold text-reem-ink text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
               <span>{s}</span>
             </li>
           ))}
@@ -81,12 +81,12 @@ function ArticleView({ article }: { article: HelpArticle }) {
       {article.faqs.length > 0 && (
         <Section title="Questions people ask">
           {article.faqs.map((f, i) => (
-            <div key={i} className={i ? "border-t border-[#38383A]" : ""}>
-              <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between gap-3 px-4 py-3.5 bg-[#1C1C1E] text-left">
-                <span className="text-white text-[15px]">{f.question}</span>
-                <ChevronDown className={`h-4 w-4 text-[#8E8E93] flex-shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
+            <div key={i} className={i ? "border-t border-ui-separator" : ""}>
+              <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between gap-3 px-4 py-3.5 bg-ui-card text-left">
+                <span className="text-white text-body">{f.question}</span>
+                <ChevronDown className={`h-4 w-4 text-ui-label-2 flex-shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
               </button>
-              {open === i && <p className="px-4 pb-4 bg-[#1C1C1E] text-[14px] text-[#AEAEB2] leading-relaxed">{f.answer}</p>}
+              {open === i && <p className="px-4 pb-4 bg-ui-card text-body-sm text-ui-label-3 leading-relaxed">{f.answer}</p>}
             </div>
           ))}
         </Section>
@@ -124,22 +124,22 @@ export default function HelpPage() {
     <div className="min-h-screen bg-black">
       <IntroTour isOpen={tourOpen} onClose={() => setTourOpen(false)} />
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
             {category || article ? (
-              <button onClick={back} className="flex items-center text-[#0A84FF]" data-testid="button-help-back">
-                <ChevronLeft className="h-5 w-5" /><span className="text-[17px]">{article ? (category ? category.title : "Help") : "Help"}</span>
+              <button onClick={back} className="flex items-center text-ui-link" data-testid="button-help-back">
+                <ChevronLeft className="h-5 w-5" /><span className="text-body-lg">{article ? (category ? category.title : "Help") : "Help"}</span>
               </button>
             ) : (
               <Link href="/settings">
-                <div className="flex items-center text-[#0A84FF] cursor-pointer" data-testid="button-back">
-                  <ChevronLeft className="h-5 w-5" /><span className="text-[17px]">Settings</span>
+                <div className="flex items-center text-ui-link cursor-pointer" data-testid="button-back">
+                  <ChevronLeft className="h-5 w-5" /><span className="text-body-lg">Settings</span>
                 </div>
               </Link>
             )}
-            <Link href="/"><div className="text-[#0A84FF] cursor-pointer" data-testid="button-home"><Home className="h-5 w-5" /></div></Link>
+            <Link href="/"><div className="text-ui-link cursor-pointer" data-testid="button-home"><Home className="h-5 w-5" /></div></Link>
           </div>
-          {title && <h1 className="text-[34px] font-bold text-white px-4 pb-2">{title}</h1>}
+          {title && <h1 className="text-title-lg font-bold text-white px-4 pb-2">{title}</h1>}
         </div>
 
         <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? "120px" : "80px" }}>
@@ -158,11 +158,11 @@ export default function HelpPage() {
             <>
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8E8E93]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ui-label-2" />
                 <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search help…"
-                  className="w-full rounded-xl bg-[#1C1C1E] border border-[#38383A] pl-9 pr-9 py-2.5 text-[15px] text-white placeholder:text-[#8E8E93] outline-none focus:border-[#C9A063]"
+                  className="w-full rounded-xl bg-ui-card border border-ui-separator pl-9 pr-9 py-2.5 text-body text-white placeholder:text-ui-label-2 outline-none focus:border-reem-gold"
                   data-testid="input-help-search" />
-                {query && <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8E8E93]" aria-label="Clear search"><X className="h-4 w-4" /></button>}
+                {query && <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-ui-label-2" aria-label="Clear search"><X className="h-4 w-4" /></button>}
               </div>
 
               {query.trim() ? (
@@ -178,7 +178,7 @@ export default function HelpPage() {
                     ))}
                   </Section>
                 ) : (
-                  <p className="text-center text-[#8E8E93] text-sm py-6">No results for "{query}". Try another word, or email us below.</p>
+                  <p className="text-center text-ui-label-2 text-sm py-6">No results for "{query}". Try another word, or email us below.</p>
                 )
               ) : (
                 <>
@@ -214,7 +214,7 @@ export default function HelpPage() {
                 <Row icon={<Icon name="FileText" className="h-4 w-4" />} title="Terms of Use" onClick={() => openLink(TERMS_URL)} external />
               </Section>
 
-              <p className="text-center text-[12px] text-[#636366]">Reems Rude Reminders{appVersion ? ` · v${appVersion}` : ""}</p>
+              <p className="text-center text-caption text-[#636366]">Reems Rude Reminders{appVersion ? ` · v${appVersion}` : ""}</p>
             </>
           )}
         </div>

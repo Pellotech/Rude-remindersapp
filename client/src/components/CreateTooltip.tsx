@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { palette } from "@/lib/theme";
 const STORAGE_KEY = 'create_form_tooltip_seen';
 const FIRST_SEEN_KEY = 'create_form_tooltip_first_seen_at';
 const EXPIRY_MS = 3 * 24 * 60 * 60 * 1000; // stops showing 3 days after first seen
@@ -40,7 +41,7 @@ export function CreateTooltip({ onDismiss }: { onDismiss: () => void }) {
   return (
     <div style={{
       background: 'white',
-      border: '2px solid #C9A063',
+      border: `2px solid ${palette.gold}`,
       borderRadius: '12px',
       padding: '10px 12px',
       fontSize: '11px',

@@ -85,29 +85,29 @@ export function MotivationalPopup({
       onClick={dismiss}
     >
       <div
-        className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border-2 border-[#C9A063]"
+        className="relative w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border-2 border-reem-gold"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-[#FDF3E3] px-4 pt-4 pb-4 flex flex-row items-start gap-3">
+        <div className="bg-reem-cream px-4 pt-4 pb-4 flex flex-row items-start gap-3">
           <img
             src={logoImage}
             alt="Reems Rude Reminders"
             className="w-14 h-14 object-contain flex-shrink-0"
           />
-          <p className="text-[#111827] font-bold text-base leading-snug">
+          <p className="text-reem-ink font-bold text-base leading-snug">
             {message}
           </p>
         </div>
 
-        <div className="bg-[#FDF3E3] px-5 py-4 flex flex-col items-center gap-3">
+        <div className="bg-reem-cream px-5 py-4 flex flex-col items-center gap-3">
           <button
             onClick={dismiss}
-            className="w-full py-2.5 rounded-xl bg-[#1B2A5E] text-white font-semibold text-sm hover:bg-[#152347] transition-colors"
+            className="w-full py-2.5 rounded-xl bg-reem-navy text-white font-semibold text-sm hover:bg-[#152347] transition-colors"
           >
             Let's get it 💥
           </button>
 
-          <p className="text-xs text-center text-[#111827] leading-relaxed">
+          <p className="text-xs text-center text-reem-ink leading-relaxed">
             Reems Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
           </p>
         </div>

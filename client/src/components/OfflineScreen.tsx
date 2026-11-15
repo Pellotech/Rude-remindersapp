@@ -2,6 +2,7 @@ import { useState } from "react";
 import { WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { palette } from "@/lib/theme";
 interface OfflineScreenProps {
   onRetry: () => Promise<unknown> | void;
 }
@@ -23,7 +24,7 @@ export default function OfflineScreen({ onRetry }: OfflineScreenProps) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "#FDF3E3",
+        background: palette.cream,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -37,7 +38,7 @@ export default function OfflineScreen({ onRetry }: OfflineScreenProps) {
       <h1 style={{ fontSize: 22, fontWeight: 700, color: "#1f2937", marginBottom: 8 }}>
         No internet connection
       </h1>
-      <p style={{ fontSize: 15, color: "#4b5563", maxWidth: 320, marginBottom: 24 }}>
+      <p style={{ fontSize: 15, color: palette.textSoft, maxWidth: 320, marginBottom: 24 }}>
         Reems Rude Reminders needs an internet connection to sign you in and sync your
         reminders. Check your Wi‑Fi or mobile data, then try again.
       </p>

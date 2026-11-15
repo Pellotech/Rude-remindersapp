@@ -13,6 +13,7 @@ import {
   setManualTimeZone,
 } from "@/lib/timeZone";
 
+import { palette } from "@/lib/theme";
 // Used when the phone can't list every zone itself (older Android WebViews).
 const FALLBACK_ZONES = [
   "Pacific/Honolulu", "America/Anchorage", "America/Vancouver", "America/Los_Angeles",
@@ -49,9 +50,9 @@ function clockIn(tz: string): string {
 function Section({ title, children, footer }: { title: string; children: React.ReactNode; footer?: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">{title}</h2>
-      <div className="bg-[#1C1C1E] rounded-xl overflow-hidden border border-[#C9A063]/40">{children}</div>
-      {footer && <p className="text-[13px] text-[#8E8E93] px-4 mt-2 leading-snug">{footer}</p>}
+      <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">{title}</h2>
+      <div className="bg-ui-card rounded-xl overflow-hidden border border-reem-gold/40">{children}</div>
+      {footer && <p className="text-note text-ui-label-2 px-4 mt-2 leading-snug">{footer}</p>}
     </div>
   );
 }
@@ -64,14 +65,14 @@ function ChoiceRow({ label, detail, selected, onClick, last, testId }: {
       onClick={onClick}
       role="radio"
       aria-checked={selected}
-      className={`flex items-center justify-between gap-3 px-4 py-3.5 cursor-pointer hover:bg-[#2C2C2E] transition-colors ${last ? "" : "border-b border-[#38383A]"}`}
+      className={`flex items-center justify-between gap-3 px-4 py-3.5 cursor-pointer hover:bg-ui-raised transition-colors ${last ? "" : "border-b border-ui-separator"}`}
       data-testid={testId}
     >
       <div className="min-w-0">
-        <div className="text-white text-[17px] break-words">{label}</div>
-        {detail && <div className="text-[13px] text-[#8E8E93] mt-0.5 break-words">{detail}</div>}
+        <div className="text-white text-body-lg break-words">{label}</div>
+        {detail && <div className="text-note text-ui-label-2 mt-0.5 break-words">{detail}</div>}
       </div>
-      {selected && <Check className="h-5 w-5 flex-shrink-0 text-[#C9A063]" />}
+      {selected && <Check className="h-5 w-5 flex-shrink-0 text-reem-gold" />}
     </div>
   );
 }
@@ -155,13 +156,13 @@ export default function Display() {
   return (
     <div className="min-h-screen bg-black">
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-[#38383A] safe-area-header">
+        <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
-            <button onClick={() => leave("/settings")} className="flex items-center text-[#0A84FF]" data-testid="button-back">
+            <button onClick={() => leave("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
-              <span className="text-[17px]">Settings</span>
+              <span className="text-body-lg">Settings</span>
             </button>
-            <button onClick={() => leave("/")} className="text-[#0A84FF]" data-testid="button-home" aria-label="Home">
+            <button onClick={() => leave("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
               <Home className="h-5 w-5" />
             </button>
           </div>
@@ -189,8 +190,8 @@ export default function Display() {
                       style={{
                         flex: 1,
                         minWidth: 0,
-                        background: isSelected ? "#C9A063" : "#38383A",
-                        border: isSelected ? "2px solid #C9A063" : "2px solid transparent",
+                        background: isSelected ? palette.gold : palette.uiSeparator,
+                        border: isSelected ? `2px solid ${palette.gold}` : "2px solid transparent",
                         borderRadius: 12,
                         padding: "10px 6px",
                         display: "flex",
@@ -200,8 +201,8 @@ export default function Display() {
                         cursor: "pointer",
                       }}
                     >
-                      <span style={{ fontSize: previewPx, fontWeight: 600, color: isSelected ? "#111827" : "#ffffff", lineHeight: 1 }}>Aa</span>
-                      <span style={{ fontSize: 11, fontWeight: 500, color: isSelected ? "#111827" : "#8E8E93", textAlign: "center" }}>{label}</span>
+                      <span style={{ fontSize: previewPx, fontWeight: 600, color: isSelected ? palette.ink : "#ffffff", lineHeight: 1 }}>Aa</span>
+                      <span style={{ fontSize: 11, fontWeight: 500, color: isSelected ? palette.ink : palette.uiLabel2, textAlign: "center" }}>{label}</span>
                     </button>
                   );
                 })}
@@ -239,8 +240,8 @@ export default function Display() {
 
             {picking && (
               <div>
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-[#38383A]">
-                  <Search className="h-4 w-4 flex-shrink-0 text-[#8E8E93]" />
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-ui-separator">
+                  <Search className="h-4 w-4 flex-shrink-0 text-ui-label-2" />
                   <input
                     type="search"
                     value={search}
@@ -249,13 +250,13 @@ export default function Display() {
                     aria-label="Search time zones"
                     autoCapitalize="none"
                     autoCorrect="off"
-                    className="flex-1 min-w-0 bg-transparent text-white text-[17px] placeholder-[#8E8E93] outline-none"
+                    className="flex-1 min-w-0 bg-transparent text-white text-body-lg placeholder-ui-label-2 outline-none"
                     data-testid="time-zone-search"
                   />
                 </div>
                 <div className="max-h-[320px] overflow-y-auto">
                   {matches.length === 0 && (
-                    <div className="px-4 py-3.5 text-[15px] text-[#8E8E93]">No time zone found. Try a big city nearby.</div>
+                    <div className="px-4 py-3.5 text-body text-ui-label-2">No time zone found. Try a big city nearby.</div>
                   )}
                   {matches.map((z, i) => (
                     <ChoiceRow

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 
+import { palette } from "@/lib/theme";
 interface ScheduleResult {
   scheduledFor?: string;
   isMultiDay: boolean;
@@ -337,8 +338,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
       {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
       <div style={{
-        background: '#FDF3E3',
-        border: '1.5px solid #C9A063',
+        background: palette.cream,
+        border: `1.5px solid ${palette.gold}`,
         borderRadius: 14,
         padding: '0 20px',
         display: 'flex',
@@ -372,7 +373,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Spine */}
               <div style={{
                 width: 14,
-                background: '#6B3410',
+                background: palette.brown,
                 borderRadius: '5px 0 0 5px',
                 flexShrink: 0,
                 position: 'relative',
@@ -386,7 +387,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
               {/* Cover */}
               <div style={{
                 flex: 1,
-                background: '#6B3410',
+                background: palette.brown,
                 borderRadius: '0 7px 7px 0',
                 position: 'relative',
                 overflow: 'hidden',
@@ -435,7 +436,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 <div style={{ width: isTablet ? 32 : 26, height: 1, background: 'rgba(201,160,99,0.3)', position: 'relative', zIndex: 1 }} />
                 {/* Title */}
                 <div style={{
-                  color: '#C9A063', fontSize: isTablet ? 11 : 8, letterSpacing: '0.12em',
+                  color: palette.gold, fontSize: isTablet ? 11 : 8, letterSpacing: '0.12em',
                   fontWeight: 500, textAlign: 'center', lineHeight: 1.7,
                   position: 'relative', zIndex: 1,
                 }}>REEMS RUDE REMINDERS</div>
@@ -537,13 +538,13 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             {/* Top edge */}
             <div style={{
               position: 'absolute', top: 0, left: 0, right: 0,
-              height: 6, background: '#6B3410',
+              height: 6, background: palette.brown,
               borderRadius: 0, zIndex: 10,
             }} />
             {/* Bottom edge */}
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
-              height: 6, background: '#6B3410',
+              height: 6, background: palette.brown,
               borderRadius: 0, zIndex: 10,
             }} />
             {/* Open book */}
@@ -557,7 +558,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
               {/* Left outer cover strip */}
               <div style={{
-                width: 13, background: '#6B3410',
+                width: 13, background: palette.brown,
                 borderRadius: 0, flexShrink: 0,
               }} />
 
@@ -654,7 +655,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 {displayIdx === 1 && (
                   <div style={{
                     position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', zIndex: 8,
-                    background: '#FEF9C3', color: '#6B3410',
+                    background: '#FEF9C3', color: palette.brown,
                     fontSize: 9, fontWeight: 600,
                     padding: '2px 8px', borderRadius: 20,
                     whiteSpace: 'nowrap',
@@ -673,7 +674,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {/* Day number */}
                   <div style={{
                     fontSize: isTablet ? 64 : 41, fontWeight: 500, lineHeight: 1,
-                    color: '#1a1a1a',
+                    color: palette.charcoal,
                   }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
                   </div>
@@ -686,7 +687,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'EEEE') : ''}
                   </div>
                   {/* Month */}
-                  <div style={{ fontSize: isTablet ? 16 : 11, fontWeight: 500, color: '#C9A063' }}>
+                  <div style={{ fontSize: isTablet ? 16 : 11, fontWeight: 500, color: palette.gold }}>
                     {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'MMM') : ''}
                   </div>
                 </div>
@@ -706,24 +707,24 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                   {isPageSelected(displayIdx) && (
                     <>
                       <circle cx="23" cy="21" r="12"
-                        stroke="#1B2A5E" strokeWidth="1.8" strokeLinecap="round"
+                        stroke={palette.navy} strokeWidth="1.8" strokeLinecap="round"
                         strokeDasharray="300" strokeDashoffset="300"
                         style={{ animation: 'scribble 0.65s ease forwards' }}
                       />
-                      <circle cx="19" cy="18" r="1.8" fill="#1B2A5E" />
-                      <circle cx="27" cy="18" r="1.8" fill="#1B2A5E" />
+                      <circle cx="19" cy="18" r="1.8" fill={palette.navy} />
+                      <circle cx="27" cy="18" r="1.8" fill={palette.navy} />
                       <path d="M18 25 Q23 30 28 25"
-                        stroke="#1B2A5E" strokeWidth="1.8" strokeLinecap="round"
+                        stroke={palette.navy} strokeWidth="1.8" strokeLinecap="round"
                         strokeDasharray="300" strokeDashoffset="300"
                         style={{ animation: 'scribble 0.65s ease forwards 0.2s' }}
                       />
                       <path d="M16 13 Q18 11 20 13"
-                        stroke="#C9A063" strokeWidth="1.4" strokeLinecap="round"
+                        stroke={palette.gold} strokeWidth="1.4" strokeLinecap="round"
                         strokeDasharray="100" strokeDashoffset="100"
                         style={{ animation: 'scribble 0.4s ease forwards 0.4s' }}
                       />
                       <path d="M26 13 Q28 11 30 13"
-                        stroke="#C9A063" strokeWidth="1.4" strokeLinecap="round"
+                        stroke={palette.gold} strokeWidth="1.4" strokeLinecap="round"
                         strokeDasharray="100" strokeDashoffset="100"
                         style={{ animation: 'scribble 0.4s ease forwards 0.5s' }}
                       />
@@ -734,7 +735,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
               {/* Right outer cover strip */}
               <div style={{
-                width: 13, background: '#6B3410',
+                width: 13, background: palette.brown,
                 borderRadius: 0, flexShrink: 0,
               }} />
             </div>
@@ -756,14 +757,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={currentIdx === 0}
           style={{
             width: isTablet ? 80 : 42, height: isTablet ? 48 : 36, flexShrink: 0,
-            background: '#FDF3E3', border: '1.5px solid #C9A063',
-            borderRadius: 20, color: '#111827', cursor: 'pointer',
+            background: palette.cream, border: `1.5px solid ${palette.gold}`,
+            borderRadius: 20, color: palette.ink, cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: currentIdx === 0 ? 0.4 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
-          onMouseEnter={e => { if (currentIdx !== 0) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#111827'; }}
+          onMouseEnter={e => { if (currentIdx !== 0) { (e.currentTarget as HTMLButtonElement).style.background = palette.gold; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = palette.cream; (e.currentTarget as HTMLButtonElement).style.color = palette.ink; }}
         >←</button>
 
         {/* Spacer (left) — shrinks Select button by ~25% total */}
@@ -778,24 +779,24 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             fontSize: isTablet ? 14 : 12, fontWeight: 500, padding: '0 8px',
             transition: 'background 0.15s, color 0.15s, border 0.15s',
             ...(displayIdx === 0
-              ? { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
+              ? { background: palette.cream, color: palette.ink, border: `1.5px solid ${palette.gold}` }
               : currentDisplaySelected
-                ? { background: '#1B2A5E', color: '#ffffff', border: '1.5px solid #C9A063' }
-                : { background: '#FDF3E3', color: '#111827', border: '1.5px solid #C9A063' }
+                ? { background: palette.navy, color: '#ffffff', border: `1.5px solid ${palette.gold}` }
+                : { background: palette.cream, color: palette.ink, border: `1.5px solid ${palette.gold}` }
             ),
           }}
           onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.background = '#C9A063';
+            (e.currentTarget as HTMLButtonElement).style.background = palette.gold;
             (e.currentTarget as HTMLButtonElement).style.color = '#fff';
           }}
           onMouseLeave={e => {
             const btn = e.currentTarget as HTMLButtonElement;
             if (displayIdx !== 0 && currentDisplaySelected) {
-              btn.style.background = '#1B2A5E';
+              btn.style.background = palette.navy;
               btn.style.color = '#ffffff';
             } else {
-              btn.style.background = '#FDF3E3';
-              btn.style.color = '#111827';
+              btn.style.background = palette.cream;
+              btn.style.color = palette.ink;
             }
           }}
         >
@@ -814,14 +815,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={currentIdx === 7}
           style={{
             width: isTablet ? 80 : 42, height: isTablet ? 48 : 36, flexShrink: 0,
-            background: '#FDF3E3', border: '1.5px solid #C9A063',
-            borderRadius: 20, color: '#111827', cursor: 'pointer',
+            background: palette.cream, border: `1.5px solid ${palette.gold}`,
+            borderRadius: 20, color: palette.ink, cursor: 'pointer',
             fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
             opacity: currentIdx === 7 ? 0.4 : 1,
             transition: 'background 0.15s, color 0.15s',
           }}
-          onMouseEnter={e => { if (currentIdx !== 7) { (e.currentTarget as HTMLButtonElement).style.background = '#C9A063'; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#FDF3E3'; (e.currentTarget as HTMLButtonElement).style.color = '#111827'; }}
+          onMouseEnter={e => { if (currentIdx !== 7) { (e.currentTarget as HTMLButtonElement).style.background = palette.gold; (e.currentTarget as HTMLButtonElement).style.color = '#fff'; } }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = palette.cream; (e.currentTarget as HTMLButtonElement).style.color = palette.ink; }}
         >→</button>
       </div>
 
@@ -835,9 +836,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           disabled={selectedDates.length === 0}
           style={{
             minWidth: 46, height: 28, borderRadius: 20,
-            border: '1.5px solid #C9A063',
-            background: '#FDF3E3',
-            color: '#111827',
+            border: `1.5px solid ${palette.gold}`,
+            background: palette.cream,
+            color: palette.ink,
             fontSize: 11, fontWeight: 500,
             padding: '0 10px', flexShrink: 0, cursor: 'pointer',
             opacity: selectedDates.length > 0 ? 1 : 0.4,
@@ -856,9 +857,9 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             const isDotCover  = i === 0;
             const dotSelected = i > 0 && isPageSelected(i);
             let bg = 'rgba(0,0,0,0.15)';
-            if (isDotCover)  bg = '#6B3410';
-            if (dotSelected) bg = '#b70d0d';
-            if (isCurrent)   bg = '#C9A063';
+            if (isDotCover)  bg = palette.brown;
+            if (dotSelected) bg = palette.redDeep;
+            if (isCurrent)   bg = palette.gold;
             return (
               <div key={i} style={{
                 height: 6,
@@ -887,7 +888,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 textAlign: 'center',
                 background: '#ffffff',
                 color: '#000000',
-                border: '1.5px solid #FDF3E3',
+                border: `1.5px solid ${palette.cream}`,
                 fontSize: 10, borderRadius: 8, padding: '2px 0',
                 whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
               }}>
@@ -901,7 +902,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
       {/* ── HOUR PICKER (UNCHANGED) ───────────────────────────────────────── */}
       {selectedDates.length > 0 && (
-        <Card className="border-[#C9A063]">
+        <Card className="border-reem-gold">
           <CardContent className="pt-3 pb-3">
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {generateTimeSlots().map((slot) => {
@@ -915,8 +916,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     disabled={isPast}
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-semibold whitespace-nowrap flex-shrink-0 transition-all",
-                      !isSel && !isPast && "bg-[#FDF3E3] text-[#111827] hover:bg-[#C9A063] hover:text-[#111827]",
-                      isSel  && "bg-[#b70d0d] text-white hover:bg-[#a83030] hover:text-white",
+                      !isSel && !isPast && "bg-reem-cream text-reem-ink hover:bg-reem-gold hover:text-reem-ink",
+                      isSel  && "bg-reem-red-deep text-white hover:bg-[#a83030] hover:text-white",
                       isPast && "opacity-40 bg-gray-200 text-gray-400 cursor-not-allowed",
                     )}
                   >{slot.display}</button>
@@ -929,7 +930,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
       {/* ── MINUTE PICKER (UNCHANGED) ─────────────────────────────────────── */}
       {selectedDates.length > 0 && selectedHour !== null && (
-        <Card className="border-[#C9A063]">
+        <Card className="border-reem-gold">
           <CardContent className="pt-3 pb-3">
             <div className={cn("flex gap-2 overflow-x-auto pb-1 scrollbar-hide", isTablet && "justify-center")}>
               {QUARTER_SLOTS.map((slot) => {
@@ -943,8 +944,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     disabled={isPast}
                     className={cn(
                       "h-12 min-w-[90px] rounded-full shadow-sm text-sm font-bold whitespace-nowrap flex-shrink-0 transition-all",
-                      !isSel && !isPast && "bg-[#FDF3E3] text-[#111827] hover:bg-[#C9A063] hover:text-[#111827]",
-                      isSel  && "bg-[#b70d0d] text-white hover:bg-[#a83030] hover:text-white",
+                      !isSel && !isPast && "bg-reem-cream text-reem-ink hover:bg-reem-gold hover:text-reem-ink",
+                      isSel  && "bg-reem-red-deep text-white hover:bg-[#a83030] hover:text-white",
                       isPast && "opacity-40 bg-gray-200 text-gray-400 cursor-not-allowed",
                     )}
                   >{slot.label}</button>

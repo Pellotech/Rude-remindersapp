@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import { palette } from "@/lib/theme";
 const RUDY_IMAGES = {
   idle:                       "/rudy/Rudy_leaning_2_transparent.png",
   idleSwap:                   "/rudy/Rudy_idle_smile_transparent.png",
@@ -561,8 +562,8 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
       onClick={handleTap}
       style={{
         minHeight: "120px",
-        background: "#FDF3E3",
-        border: `2px solid ${borderColor || "#C9A063"}`,
+        background: palette.cream,
+        border: `2px solid ${borderColor || palette.gold}`,
         borderRadius: "12px",
         transition: "border-color 0.3s ease",
         padding: "10px 12px",
@@ -663,13 +664,13 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
               <div style={{ position: 'absolute', left: '-10px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderRight: '10px solid black' }} />
               {/* Triangle inner — white fill */}
               <div style={{ position: 'absolute', left: '-7px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '6px solid transparent', borderBottom: '6px solid transparent', borderRight: '8px solid white' }} />
-              <p style={{ fontSize: '11px', color: '#C53B3B', fontStyle: 'italic', margin: 0, lineHeight: '1.4' }}>
+              <p style={{ fontSize: '11px', color: palette.red, fontStyle: 'italic', margin: 0, lineHeight: '1.4' }}>
                 Find out what Reem really has to say about you..
               </p>
               <button
                 data-reem-keep-tap="true"
                 onClick={(e) => { e.stopPropagation(); onPremiumPress?.(); }}
-                style={{ position: 'absolute', bottom: '-14px', left: '50%', transform: 'translateX(-50%)', zIndex: 2, backgroundColor: '#C53B3B', color: 'white', border: 'none', borderRadius: '20px', padding: '5px 14px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                style={{ position: 'absolute', bottom: '-14px', left: '50%', transform: 'translateX(-50%)', zIndex: 2, backgroundColor: palette.red, color: 'white', border: 'none', borderRadius: '20px', padding: '5px 14px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap' }}
               >
                 🔥 Go Premium
               </button>
@@ -712,7 +713,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
             }} />
             <p style={{
               fontSize: "12px",
-              color: "#C53B3B",
+              color: palette.red,
               fontWeight: "bold",
               margin: 0,
               lineHeight: "1.35",

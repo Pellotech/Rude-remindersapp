@@ -44,63 +44,63 @@
 
 :root {
   /* Clean Theme - Muted Gold Background with White Cards + Red Accent */
-  --background: #C9A063;
-  --foreground: #111827;
-  --muted: #F9FAFB;
-  --muted-foreground: #6B7280;
+  --background: var(--reem-gold);
+  --foreground: var(--reem-ink);
+  --muted: var(--reem-paper);
+  --muted-foreground: var(--reem-text-muted);
   --popover: #FFFFFF;
-  --popover-foreground: #111827;
+  --popover-foreground: var(--reem-ink);
   --card: #FFFFFF;
-  --card-foreground: #111827;
-  --border: #EAEAEA;
+  --card-foreground: var(--reem-ink);
+  --border: var(--reem-line);
   --input: #FFFFFF;
-  --primary: #C53B3B;
+  --primary: var(--reem-red);
   --primary-foreground: #FFFFFF;
   --secondary: #FFFFFF;
-  --secondary-foreground: #C53B3B;
-  --accent: #C53B3B;
+  --secondary-foreground: var(--reem-red);
+  --accent: var(--reem-red);
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --ring: #C53B3B;
+  --ring: var(--reem-red);
   --radius: 1rem;
   
   /* Custom theme tokens */
-  --rr-red: #C53B3B;
+  --rr-red: var(--reem-red);
   --rr-red-light: #E85555;
-  --rr-gold: #C9A063;
-  --rr-text-primary: #111827;
-  --rr-text-secondary: #6B7280;
+  --rr-gold: var(--reem-gold);
+  --rr-text-primary: var(--reem-ink);
+  --rr-text-secondary: var(--reem-text-muted);
   --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
-  --background: #C9A063;
-  --foreground: #111827;
-  --muted: #F9FAFB;
-  --muted-foreground: #6B7280;
+  --background: var(--reem-gold);
+  --foreground: var(--reem-ink);
+  --muted: var(--reem-paper);
+  --muted-foreground: var(--reem-text-muted);
   --popover: #FFFFFF;
-  --popover-foreground: #111827;
+  --popover-foreground: var(--reem-ink);
   --card: #FFFFFF;
-  --card-foreground: #111827;
-  --border: #EAEAEA;
+  --card-foreground: var(--reem-ink);
+  --border: var(--reem-line);
   --input: #FFFFFF;
-  --primary: #C53B3B;
+  --primary: var(--reem-red);
   --primary-foreground: #FFFFFF;
   --secondary: #FFFFFF;
-  --secondary-foreground: #C53B3B;
-  --accent: #C53B3B;
+  --secondary-foreground: var(--reem-red);
+  --accent: var(--reem-red);
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --ring: #C53B3B;
+  --ring: var(--reem-red);
   --radius: 1rem;
   
-  --rr-red: #C53B3B;
+  --rr-red: var(--reem-red);
   --rr-red-light: #E85555;
-  --rr-gold: #C9A063;
-  --rr-text-primary: #111827;
-  --rr-text-secondary: #6B7280;
+  --rr-gold: var(--reem-gold);
+  --rr-text-primary: var(--reem-ink);
+  --rr-text-secondary: var(--reem-text-muted);
   --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -125,8 +125,8 @@
 .rudeness-slider [role="slider"] {
   width: 28px !important;
   height: 28px !important;
-  background: var(--slider-color, #C9A063) !important;
-  border: 2px solid var(--slider-color, #C9A063) !important;
+  background: var(--slider-color, var(--reem-gold)) !important;
+  border: 2px solid var(--slider-color, var(--reem-gold)) !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
   transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 150ms ease, background 200ms ease, border-color 200ms ease !important;
   touch-action: none;
@@ -144,7 +144,7 @@
 }
 
 .rudeness-slider > span:first-child > span:first-child {
-  background: var(--slider-color, #C53B3B) !important;
+  background: var(--slider-color, var(--reem-red)) !important;
   transition: background 200ms ease !important;
 }
 

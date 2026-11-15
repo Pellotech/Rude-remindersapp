@@ -9,6 +9,7 @@ import { AdminEnvBadge } from '@/components/admin/AdminEnvBadge';
 import { Shield, ChevronLeft, LogIn, Loader2, Crown, Users, ToggleLeft, Target } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
+import { palette } from "@/lib/theme";
 const ADMIN_EMAILS = ['letmeknow6@icloud.com', 'loqvm1@gmail.com'].map((e) => e.toLowerCase());
 
 interface NavItem {
@@ -27,7 +28,7 @@ const NAV: NavItem[] = [
 function AdminTabs() {
   const [location] = useLocation();
   return (
-    <nav className="flex items-center gap-1 overflow-x-auto rounded-xl p-1" style={{ background: '#1C1C1E', border: '1px solid #38383A' }}>
+    <nav className="flex items-center gap-1 overflow-x-auto rounded-xl p-1" style={{ background: palette.uiCard, border: `1px solid ${palette.uiSeparator}` }}>
       {NAV.map((item) => {
         const active = location === item.href || (item.href === '/admin/whitelist' && location === '/admin');
         return (
@@ -36,8 +37,8 @@ function AdminTabs() {
               data-testid={`tab-${item.label.toLowerCase()}`}
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
               style={{
-                background: active ? '#C9A063' : 'transparent',
-                color: active ? '#111827' : '#E5E5EA',
+                background: active ? palette.gold : 'transparent',
+                color: active ? palette.ink : palette.uiLabel4,
               }}
             >
               {item.icon}
@@ -64,7 +65,7 @@ export default function AdminPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#000000' }}>
-        <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#C9A063' }} />
+        <Loader2 className="h-8 w-8 animate-spin" style={{ color: palette.gold }} />
       </div>
     );
   }
@@ -72,16 +73,16 @@ export default function AdminPage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#000000' }}>
-        <div className="w-full max-w-md rounded-2xl p-6 text-center" style={{ background: '#1C1C1E', border: '1px solid #38383A' }}>
-          <Shield className="h-10 w-10 mx-auto mb-3" style={{ color: '#C9A063' }} />
+        <div className="w-full max-w-md rounded-2xl p-6 text-center" style={{ background: palette.uiCard, border: `1px solid ${palette.uiSeparator}` }}>
+          <Shield className="h-10 w-10 mx-auto mb-3" style={{ color: palette.gold }} />
           <h1 className="text-xl font-bold text-white">Admin login required</h1>
-          <p className="text-sm mt-2 mb-5" style={{ color: '#AEAEB2' }}>
+          <p className="text-sm mt-2 mb-5" style={{ color: palette.uiLabel3 }}>
             Sign in with the admin account to access the admin hub.
           </p>
           <Button
             onClick={() => setLocation('/login?redirect=/admin/whitelist')}
             className="w-full"
-            style={{ background: '#C9A063', color: '#111827' }}
+            style={{ background: palette.gold, color: palette.ink }}
             data-testid="button-admin-login"
           >
             <LogIn className="h-4 w-4 mr-2" />
@@ -95,20 +96,20 @@ export default function AdminPage() {
   if (!isAuthorized) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#000000' }}>
-        <div className="w-full max-w-md rounded-2xl p-6 text-center" style={{ background: '#1C1C1E', border: '1px solid #38383A' }}>
-          <Shield className="h-10 w-10 mx-auto mb-3" style={{ color: '#C53B3B' }} />
+        <div className="w-full max-w-md rounded-2xl p-6 text-center" style={{ background: palette.uiCard, border: `1px solid ${palette.uiSeparator}` }}>
+          <Shield className="h-10 w-10 mx-auto mb-3" style={{ color: palette.red }} />
           <h1 className="text-xl font-bold text-white">Access denied</h1>
-          <p className="text-sm mt-2" style={{ color: '#AEAEB2' }}>
+          <p className="text-sm mt-2" style={{ color: palette.uiLabel3 }}>
             You don't have permission to view this page.
           </p>
-          <p className="text-xs mt-1" style={{ color: '#8E8E93' }}>
+          <p className="text-xs mt-1" style={{ color: palette.uiLabel2 }}>
             Logged in as {user.email}
           </p>
           <Button
             onClick={() => setLocation('/')}
             variant="outline"
             className="w-full mt-5 border-0"
-            style={{ background: '#2C2C2E', color: '#FFFFFF' }}
+            style={{ background: palette.uiRaised, color: '#FFFFFF' }}
           >
             Go home
           </Button>
@@ -126,14 +127,14 @@ export default function AdminPage() {
             <button
               onClick={() => setLocation('/')}
               className="flex items-center gap-1 text-sm"
-              style={{ color: '#8E8E93' }}
+              style={{ color: palette.uiLabel2 }}
               data-testid="button-admin-back"
             >
               <ChevronLeft className="h-4 w-4" />
               Back
             </button>
             <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5" style={{ color: '#C9A063' }} />
+              <Shield className="h-5 w-5" style={{ color: palette.gold }} />
               <h1 className="text-xl font-bold text-white">Admin Hub</h1>
             </div>
           </div>
@@ -150,13 +151,13 @@ export default function AdminPage() {
             <Route path="/admin/toggles" component={AdminFeatureFlags} />
             <Route path="/admin/hits" component={AdminHits} />
             <Route path="/admin/whitelist">
-              <div className="rounded-xl p-5" style={{ background: '#1C1C1E', border: '1px solid #38383A' }}>
+              <div className="rounded-xl p-5" style={{ background: palette.uiCard, border: `1px solid ${palette.uiSeparator}` }}>
                 <AdminWhitelist />
               </div>
             </Route>
             <Route>
               {/* Fallback while /admin is redirecting */}
-              <div className="rounded-xl p-5" style={{ background: '#1C1C1E', border: '1px solid #38383A' }}>
+              <div className="rounded-xl p-5" style={{ background: palette.uiCard, border: `1px solid ${palette.uiSeparator}` }}>
                 <AdminWhitelist />
               </div>
             </Route>

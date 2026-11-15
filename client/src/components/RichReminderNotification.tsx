@@ -15,6 +15,7 @@ import { getFullApiUrl } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
 
+import { palette } from "@/lib/theme";
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
   if (path.startsWith('blob:') || path.startsWith('data:image')) return true;
@@ -40,13 +41,13 @@ const getImageSrc = (attachment: string): string => {
 
 const getRudenessStyle = (level: number): { bg: string; color: string } => {
   const map: Record<number, { bg: string; color: string }> = {
-    1: { bg: '#38BDF8', color: '#ffffff' },
-    2: { bg: '#22C55E', color: '#ffffff' },
-    3: { bg: '#FDE047', color: '#1a1a1a' },
-    4: { bg: '#F97316', color: '#ffffff' },
-    5: { bg: '#b70d0d', color: '#ffffff' },
+    1: { bg: palette.sky, color: '#ffffff' },
+    2: { bg: palette.green, color: '#ffffff' },
+    3: { bg: palette.yellow, color: palette.charcoal },
+    4: { bg: palette.orange, color: '#ffffff' },
+    5: { bg: palette.redDeep, color: '#ffffff' },
   };
-  return map[level] ?? { bg: '#C9A063', color: '#ffffff' };
+  return map[level] ?? { bg: palette.gold, color: '#ffffff' };
 };
 
 interface RichReminderNotificationProps {
@@ -109,7 +110,7 @@ export function RichReminderNotification({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-md p-0 overflow-hidden flex flex-col bg-white border-[6px] border-[#C9A063] rounded-[16px]"
+        className="max-w-md p-0 overflow-hidden flex flex-col bg-white border-[6px] border-reem-gold rounded-[16px]"
         style={{ maxHeight: dialogMaxHeight }}
       >
         <DialogHeader className="sr-only">
@@ -117,18 +118,18 @@ export function RichReminderNotification({
         </DialogHeader>
 
         {/* Header bar */}
-        <div className="sticky top-0 z-10 bg-white border-b border-[#C9A063]/30 px-3 py-2 flex items-center justify-between">
+        <div className="sticky top-0 z-10 bg-white border-b border-reem-gold/30 px-3 py-2 flex items-center justify-between">
           <img src={logoImage} alt="Reems Rude Reminders" className="h-12 w-auto" />
           <ShareButton
             reminder={reminder}
-            className="h-8 px-3 text-xs font-bold text-[#C9A063] bg-white border-2 border-[#C9A063] rounded-full hover:bg-[#FDF3E3]"
+            className="h-8 px-3 text-xs font-bold text-reem-gold bg-white border-2 border-reem-gold rounded-full hover:bg-reem-cream"
           />
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
           {/* Rudy avatar */}
           <div className="flex justify-center">
-            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-[#C9A063] bg-[#FDF3E3] p-1">
+            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-reem-gold bg-reem-cream p-1">
               <img
                 src={getRudyAvatarSrc(reminder.rudenessLevel)}
                 alt="Rudy"
@@ -141,7 +142,7 @@ export function RichReminderNotification({
           <div className="text-center">
             <h2 className="text-lg font-bold text-gray-900 leading-tight">{reminder.title}</h2>
             <span
-              className="inline-block mt-1 px-3.5 py-1 rounded-full text-[13px] font-bold"
+              className="inline-block mt-1 px-3.5 py-1 rounded-full text-note font-bold"
               style={{ background: rudenessStyle.bg, color: rudenessStyle.color }}
             >
               Rudeness Level {reminder.rudenessLevel}
@@ -150,8 +151,8 @@ export function RichReminderNotification({
 
           {/* Main rude message bubble */}
           {reminder.rudeMessage && (
-            <div className="p-3 rounded-xl bg-[#FDF3E3]">
-              <p className="text-sm font-medium text-[#1a1a1a]" style={{ fontSize: notifFontSize }}>
+            <div className="p-3 rounded-xl bg-reem-cream">
+              <p className="text-sm font-medium text-reem-charcoal" style={{ fontSize: notifFontSize }}>
                 {reminder.rudeMessage}
               </p>
             </div>
@@ -162,10 +163,10 @@ export function RichReminderNotification({
             <div className="space-y-2">
               <Label className="text-xs font-medium text-gray-500">Response Variations</Label>
               {reminder.responses.slice(0, 2).map((response: string, index: number) => (
-                <div key={index} className="p-2 rounded-xl bg-[#FDF3E3]">
+                <div key={index} className="p-2 rounded-xl bg-reem-cream">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs text-[#1a1a1a] flex-1">{response}</p>
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">{index + 1}</Badge>
+                    <p className="text-xs text-reem-charcoal flex-1">{response}</p>
+                    <Badge variant="outline" className="text-tiny px-1.5 py-0">{index + 1}</Badge>
                   </div>
                 </div>
               ))}
@@ -174,8 +175,8 @@ export function RichReminderNotification({
 
           {/* Motivational quote */}
           {reminder.motivationalQuote && (
-            <div className="p-2 rounded-xl bg-[#FDF3E3]">
-              <p className="text-xs italic text-[#1a1a1a]">
+            <div className="p-2 rounded-xl bg-reem-cream">
+              <p className="text-xs italic text-reem-charcoal">
                 "{reminder.motivationalQuote}"
               </p>
             </div>
@@ -255,7 +256,7 @@ export function RichReminderNotification({
             </CollapsibleContent>
           </Collapsible>
 
-          <p className="text-[11px] text-gray-400 text-right">
+          <p className="text-caption-sm text-gray-400 text-right">
             {toZoned(reminder.scheduledFor).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} {' • '} {toZoned(reminder.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
           </p>
 
@@ -265,14 +266,14 @@ export function RichReminderNotification({
               <div className="flex flex-col gap-2 w-1/2 mx-auto">
                 <Button
                   onClick={onComplete}
-                  className="w-full h-10 text-sm font-semibold bg-[#22C55E] hover:bg-[#16a34a] text-white"
+                  className="w-full h-10 text-sm font-semibold bg-reem-green hover:bg-[#16a34a] text-white"
                   data-testid="button-complete"
                 >
                   Got it done 👊
                 </Button>
                 <Button
                   onClick={onClose}
-                  className="w-full h-10 text-sm font-semibold bg-[#FDF3E3] hover:bg-[#F5EDE0] text-[#1B2A5E] border border-[#C9A063]"
+                  className="w-full h-10 text-sm font-semibold bg-reem-cream hover:bg-reem-cream-deep text-reem-navy border border-reem-gold"
                   data-testid="button-dismiss"
                 >
                   Let you know later
