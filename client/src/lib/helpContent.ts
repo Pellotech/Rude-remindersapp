@@ -103,9 +103,9 @@ export const helpCategories: HelpCategory[] = [
         keywords: ["text size", "font", "bigger", "large", "words", "read", "time zone", "timezone", "wrong time", "clock", "travel"],
         steps: [
           "Open Settings → Text Size & Time Zone",
-          "Under Text Size, tap Regular, Large or Billboard — the whole app, including your reminder popups, changes straight away (the same setting is also in Settings → Notifications)",
+          "Under Text Size, tap Regular, Large or Billboard to see it, then press Save to keep it — the whole app, including your reminder popups, changes",
           "Under Time Zone, leave it on Automatic to use your phone's time zone",
-          "If reminder times look wrong, tap 'Choose a time zone', search for a city near you and tap it"
+          "If reminder times look wrong, tap 'Choose a time zone', search for a city near you, tap it and press Save"
         ],
         faqs: [
           { question: "My reminder times look wrong. What do I do?", answer: "Go to Settings → Text Size & Time Zone and check the time zone. Automatic uses your phone's zone. If that's wrong, choose your zone yourself." },

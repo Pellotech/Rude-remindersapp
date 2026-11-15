@@ -6,8 +6,6 @@ import { ChevronLeft, Home } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
-import { getTextSize, setTextSize, TEXT_SIZES, type TextSize } from "@/lib/textSize";
-import { Link } from "wouter";
 
 interface ToggleProps {
   checked: boolean;
@@ -44,7 +42,6 @@ export default function Notifications() {
     defaultVoiceCharacter: localStorage.getItem('default_voice_character') || 'default',
     niceMode: localStorage.getItem('rudy_nice_mode') === 'true',
     rudyWidgetVisible: localStorage.getItem('rudy_widget_visible') === 'true',
-    textSize: getTextSize() as TextSize, // shared with Settings → Text Size & Time Zone
     backdropTheme: ((localStorage.getItem('backdrop_theme') as 'light' | 'dark' | 'auto') || 'light'),
   });
   const [saved, setSaved] = useState(readSaved);
@@ -98,9 +95,6 @@ export default function Notifications() {
     if (changes.rudyWidgetVisible !== undefined) {
       localStorage.setItem('rudy_widget_visible', changes.rudyWidgetVisible ? 'true' : 'false');
       window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: changes.rudyWidgetVisible }));
-    }
-    if (changes.textSize !== undefined) {
-      setTextSize(changes.textSize); // whole app + reminder popup
     }
     if (changes.backdropTheme !== undefined) {
       localStorage.setItem('backdrop_theme', changes.backdropTheme);
@@ -221,58 +215,6 @@ export default function Notifications() {
                   <p className="text-[#8E8E93] text-[13px] mt-0.5">Reem follows you as you scroll — tap him to send him back</p>
                 </div>
                 <Toggle checked={!!currentSettings.rudyWidgetVisible} onChange={(v) => updateSetting("rudyWidgetVisible", v)} />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-[13px] text-[#8E8E93] uppercase tracking-wide px-4 mb-2">Text Size</h2>
-            <div className="bg-[#1C1C1E] rounded-xl overflow-hidden">
-              <div className="px-4 py-3">
-                <p className="text-white text-[17px] mb-3">Text Size</p>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {TEXT_SIZES.map(({ id: size, label }) => {
-                    const labels = { [size]: label } as Record<TextSize, string>;
-                    const previews = { normal: 'Aa', large: 'Aa', xlarge: 'Aa' };
-                    const fontSizes = { normal: 16, large: 20, xlarge: 24 };
-                    const isSelected = currentSettings.textSize === size;
-                    return (
-                      <button
-                        key={size}
-                        type="button"
-                        onClick={() => updateSetting("textSize", size)}
-                        style={{
-                          flex: 1,
-                          background: isSelected ? '#C9A063' : '#38383A',
-                          border: isSelected ? '2px solid #C9A063' : '2px solid transparent',
-                          borderRadius: 12,
-                          padding: '10px 6px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: 6,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <span style={{
-                          fontSize: fontSizes[size],
-                          fontWeight: 600,
-                          color: isSelected ? '#111827' : '#ffffff',
-                          lineHeight: 1,
-                        }}>{previews[size]}</span>
-                        <span style={{
-                          fontSize: 11,
-                          color: isSelected ? '#111827' : '#8E8E93',
-                          fontWeight: 500,
-                        }}>{labels[size]}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p style={{ fontSize: 12, color: '#8E8E93', marginTop: 8 }}>
-                  Makes the words bigger everywhere in the app, including your reminders. Same setting as{" "}
-                  <Link href="/settings/display"><span style={{ color: '#0A84FF', cursor: 'pointer' }}>Text Size & Time Zone</span></Link>.
-                </p>
               </div>
             </div>
           </div>

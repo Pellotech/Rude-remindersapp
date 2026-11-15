@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Text Size (Settings → Text Size & Time Zone, also shown in Notifications).
+// Text Size (Settings → Text Size & Time Zone).
 //
 // One setting that makes ALL the words in the app bigger — screens and the
 // reminder popup — whatever unit the font size was written in.
@@ -13,9 +13,8 @@ import { Capacitor, registerPlugin } from "@capacitor/core";
 
 export type TextSize = "normal" | "large" | "xlarge";
 
-// One setting for the whole app AND the reminder popup. It's shown in two
-// places (Settings → Text Size & Time Zone, and Settings → Notifications) and
-// both change this same value.
+// One setting for the whole app AND the reminder popup, in its own page:
+// Settings → Text Size & Time Zone.
 export const TEXT_SIZES: { id: TextSize; label: string; scale: number }[] = [
   { id: "normal", label: "Regular", scale: 1 },
   { id: "large", label: "Large", scale: 1.15 },
