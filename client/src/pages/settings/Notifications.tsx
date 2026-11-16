@@ -39,7 +39,7 @@ export default function Notifications() {
   const { isAndroid, isIOS } = getPlatformInfo();
 
   // What's currently saved on this device (the app reads these). Nothing here changes
-  // until the user taps Save — so Discard / "Don't Save" can always put things back.
+  // until the user taps Save — so Discard (or leaving) can always put things back.
   const readSaved = () => ({
     defaultRudenessLevel: parseInt(localStorage.getItem('default_rudeness_level') || '2'),
     defaultVoiceCharacter: localStorage.getItem('default_voice_character') || 'default',

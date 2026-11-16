@@ -3,10 +3,10 @@
  *
  *  <SaveBar>          — slides up from the bottom only when something actually changed.
  *                       Never moves the page or auto-scrolls (that was the "glitchy" part).
- *  useLeaveGuard()    — wraps Back / Home so leaving with unsaved changes asks first:
- *                       Save · Don't Save · Keep Editing. Also catches Android's back button.
+ *  useLeaveGuard()    — wraps Back / Home: leaving with unsaved changes throws them away
+ *                       (no second pop-up). Also catches Android's back button.
  */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Capacitor } from "@capacitor/core";
 
@@ -43,64 +43,34 @@ export function SaveBar({ visible, saving, onSave, onDiscard }: {
 /** Space to leave at the bottom of the page so the bar never covers the last row. */
 export const SAVE_BAR_SPACE = 96;
 
-export function useLeaveGuard(hasChanges: boolean, save: () => Promise<unknown>, discard: () => void) {
+/**
+ * Leaving a settings page without pressing Save throws the changes away
+ * (Mohammed's choice: the Save bar is the only prompt — no second pop-up).
+ * `discard` puts any live previews back (e.g. the text size).
+ * `save` is kept in the signature so pages don't need to change.
+ */
+export function useLeaveGuard(hasChanges: boolean, _save: () => Promise<unknown>, discard: () => void) {
   const [, setLocation] = useLocation();
-  const [pendingTo, setPendingTo] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
   const hasChangesRef = useRef(hasChanges);
   hasChangesRef.current = hasChanges;
+  const discardRef = useRef(discard);
+  discardRef.current = discard;
 
   /** Use instead of <Link>/setLocation for Back and Home. */
   const leave = useCallback((to: string) => {
-    if (hasChangesRef.current) setPendingTo(to);
-    else setLocation(to);
+    if (hasChangesRef.current) discardRef.current();
+    setLocation(to);
   }, [setLocation]);
 
-  // Android hardware back button
+  // Android hardware back button: same thing — drop unsaved changes, go back to Settings
   useEffect(() => {
     if (!hasChanges || Capacitor.getPlatform() !== "android") return;
     let remove: (() => void) | undefined;
     import("@capacitor/app").then(({ App }) =>
-      App.addListener("backButton", () => setPendingTo("/settings")).then((h) => { remove = () => h.remove(); })
+      App.addListener("backButton", () => { discardRef.current(); setLocation("/settings"); }).then((h) => { remove = () => h.remove(); })
     ).catch(() => {});
     return () => remove?.();
-  }, [hasChanges]);
+  }, [hasChanges, setLocation]);
 
-  const dialog = pendingTo ? (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6" role="dialog" aria-modal="true">
-      <div className="w-full max-w-[300px] overflow-hidden rounded-2xl bg-ui-card border border-ui-separator">
-        <div className="p-5 text-center">
-          <h3 className="text-body-lg font-semibold text-white">Save your changes?</h3>
-          <p className="mt-1.5 text-note text-ui-label-3">You changed some settings but haven't saved them yet.</p>
-        </div>
-        <div className="border-t border-ui-separator">
-          <button
-            disabled={saving}
-            onClick={async () => {
-              setSaving(true);
-              try { await save(); const to = pendingTo; setPendingTo(null); setLocation(to); }
-              catch { /* save() shows its own error; stay on the page */ setPendingTo(null); }
-              finally { setSaving(false); }
-            }}
-            className="w-full py-3 text-body-lg font-semibold text-reem-gold border-b border-ui-separator disabled:opacity-50"
-            data-testid="button-leave-save">
-            {saving ? "Saving…" : "Save"}
-          </button>
-          <button
-            disabled={saving}
-            onClick={() => { discard(); const to = pendingTo; setPendingTo(null); setLocation(to); }}
-            className="w-full py-3 text-body-lg text-[#FF453A] border-b border-ui-separator"
-            data-testid="button-leave-discard">
-            Don't Save
-          </button>
-          <button disabled={saving} onClick={() => setPendingTo(null)}
-            className="w-full py-3 text-body-lg text-ui-link" data-testid="button-leave-cancel">
-            Keep Editing
-          </button>
-        </div>
-      </div>
-    </div>
-  ) : null;
-
-  return { leave, dialog };
+  return { leave, dialog: null as JSX.Element | null };
 }
