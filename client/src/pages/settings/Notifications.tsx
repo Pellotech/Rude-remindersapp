@@ -6,6 +6,8 @@ import { ChevronLeft, Home } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
+import { applyTextSize, getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
+import { TextSizeTiles } from "@/components/settings/TextSizeTiles";
 
 import { palette } from "@/lib/theme";
 interface ToggleProps {
@@ -44,6 +46,7 @@ export default function Notifications() {
     niceMode: localStorage.getItem('rudy_nice_mode') === 'true',
     rudyWidgetVisible: localStorage.getItem('rudy_widget_visible') === 'true',
     backdropTheme: ((localStorage.getItem('backdrop_theme') as 'light' | 'dark' | 'auto') || 'light'),
+    textSize: getTextSize() as TextSize, // phone-only; same setting as Text Size & Time Zone
   });
   const [saved, setSaved] = useState(readSaved);
 
@@ -97,6 +100,9 @@ export default function Notifications() {
       localStorage.setItem('rudy_widget_visible', changes.rudyWidgetVisible ? 'true' : 'false');
       window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: changes.rudyWidgetVisible }));
     }
+    if (changes.textSize !== undefined) {
+      setTextSize(changes.textSize); // whole app + reminder popup
+    }
     if (changes.backdropTheme !== undefined) {
       localStorage.setItem('backdrop_theme', changes.backdropTheme);
       window.dispatchEvent(new CustomEvent('backdrop_theme_changed', { detail: changes.backdropTheme }));
@@ -104,8 +110,11 @@ export default function Notifications() {
   };
 
   const updateSettingsMutation = useMutation({
-    mutationFn: async (settings: Record<string, any>) =>
-      apiRequest("/api/settings", { method: "PUT", body: settings as any }),
+    mutationFn: async (settings: Record<string, any>) => {
+      // Text size is kept on the phone only — don't send it to the server
+      const { textSize: _textSize, ...serverSettings } = settings;
+      return apiRequest("/api/settings", { method: "PUT", body: serverSettings });
+    },
     onSuccess: (_res, settings) => {
       applyLocally(settings);
       setSaved(readSaved());
@@ -119,7 +128,19 @@ export default function Notifications() {
   });
 
   const saveSettings = () => updateSettingsMutation.mutateAsync(localSettings);
-  const discardChanges = () => setLocalSettings({});
+  const discardChanges = () => {
+    setLocalSettings({});
+    void applyTextSize(saved.textSize); // undo the text size preview
+  };
+
+  // Text size: tapping a tile shows it straight away (a preview); Save keeps it
+  const previewTextSize = (size: TextSize) => {
+    updateSetting("textSize", size);
+    void applyTextSize(size);
+  };
+
+  // Leaving without saving (any way out) puts the saved text size back
+  useEffect(() => () => { void applyTextSize(); }, []);
   const { leave, dialog: leaveDialog } = useLeaveGuard(hasChanges, saveSettings, discardChanges);
 
   if (isLoading) {
@@ -216,6 +237,18 @@ export default function Notifications() {
                   <p className="text-ui-label-2 text-note mt-0.5">Reem follows you as you scroll — tap him to send him back</p>
                 </div>
                 <Toggle checked={!!currentSettings.rudyWidgetVisible} onChange={(v) => updateSetting("rudyWidgetVisible", v)} />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Text Size</h2>
+            <div className="bg-ui-card rounded-xl overflow-hidden">
+              <div className="px-4 py-3">
+                <TextSizeTiles value={currentSettings.textSize} onChange={previewTextSize} />
+                <p style={{ fontSize: 12, color: palette.uiLabel2, marginTop: 8 }}>
+                  Makes the words bigger everywhere in the app, including your reminders. Tap one to see it, then press Save to keep it.
+                </p>
               </div>
             </div>
           </div>

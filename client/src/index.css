@@ -332,9 +332,9 @@ input::-webkit-contacts-auto-fill-button {
 /* ── Text Size (Settings → Text Size & Time Zone, lib/textSize.ts) ───────────
    The phone scales every font by 115% / 130%. Two rows put several labels on
    one line and have no room to grow that much, so their starting size is
-   lowered here — after scaling they end up about the size they are on Normal
-   (the five rudeness labels) or a little bigger (the three home tabs). */
-html[data-text-size="large"] .reem-tight-labels { font-size: 0.66rem; }
-html[data-text-size="xlarge"] .reem-tight-labels { font-size: 0.6rem; }
+   lowered a little here. The five rudeness labels still grow (12 → about
+   13px on Large, 13.5px on Billboard) and the three home tabs grow a bit too. */
+html[data-text-size="large"] .reem-tight-labels { font-size: 0.72rem; }
+html[data-text-size="xlarge"] .reem-tight-labels { font-size: 0.65rem; }
 html[data-text-size="large"] .reem-tight-tab { font-size: 0.8rem; }
 html[data-text-size="xlarge"] .reem-tight-tab { font-size: 0.76rem; gap: 0.25rem; padding-left: 0.5rem; padding-right: 0.5rem; }

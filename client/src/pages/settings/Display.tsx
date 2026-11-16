@@ -4,7 +4,8 @@ import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChan
 import { useToast } from "@/hooks/use-toast";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { queryClient } from "@/lib/queryClient";
-import { TEXT_SIZES, applyTextSize, getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
+import { applyTextSize, getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
+import { TextSizeTiles } from "@/components/settings/TextSizeTiles";
 import {
   FIXED_OFFSET_ZONES,
   describeTimeZone,
@@ -172,41 +173,10 @@ export default function Display() {
         <div className="py-6 px-4 space-y-8" style={{ paddingBottom: (isAndroid ? 120 : isIOS ? 80 : 24) + SAVE_BAR_SPACE }}>
           <Section
             title="Text Size"
-            footer="Makes the words bigger everywhere in the app, including your reminders. Tap one to see it, then press Save to keep it."
+            footer="Makes the words bigger everywhere in the app, including your reminders. Tap one to see it, then press Save to keep it. You can also change this in Settings → Notifications."
           >
-            <div className="px-4 py-3" role="radiogroup" aria-label="Text size">
-              <div style={{ display: "flex", gap: 8 }}>
-                {TEXT_SIZES.map(({ id, label }) => {
-                  const isSelected = textSize === id;
-                  const previewPx = { normal: 16, large: 20, xlarge: 24 }[id];
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      role="radio"
-                      aria-checked={isSelected}
-                      onClick={() => chooseTextSize(id)}
-                      data-testid={`text-size-${id}`}
-                      style={{
-                        flex: 1,
-                        minWidth: 0,
-                        background: isSelected ? palette.gold : palette.uiSeparator,
-                        border: isSelected ? `2px solid ${palette.gold}` : "2px solid transparent",
-                        borderRadius: 12,
-                        padding: "10px 6px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 6,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <span style={{ fontSize: previewPx, fontWeight: 600, color: isSelected ? palette.ink : "#ffffff", lineHeight: 1 }}>Aa</span>
-                      <span style={{ fontSize: 11, fontWeight: 500, color: isSelected ? palette.ink : palette.uiLabel2, textAlign: "center" }}>{label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="px-4 py-3">
+              <TextSizeTiles value={textSize} onChange={chooseTextSize} />
             </div>
           </Section>
 
