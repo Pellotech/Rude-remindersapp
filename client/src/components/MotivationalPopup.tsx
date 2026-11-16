@@ -106,10 +106,6 @@ export function MotivationalPopup({
           >
             Let's get it 💥
           </button>
-
-          <p className="text-xs text-center text-reem-ink leading-relaxed">
-            Reems Rude Reminders — the greatest scheduling &amp; habit building app in the world 🌍
-          </p>
         </div>
       </div>
     </div>
