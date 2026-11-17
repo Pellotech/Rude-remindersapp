@@ -303,8 +303,17 @@ app.use("/api/auth/reset-password", authLimiter);
   // Serve static files from client dist
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // Serve uploaded attachments
-  app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
+  // Serve uploaded attachments — and ONLY those. This folder also holds project
+  // files (pasted notes, logs, source, store art) that must never be public, so
+  // anything that isn't named like an uploaded photo/video gets a 404.
+  const UPLOADED_FILE = /^\d{13}-[0-9a-f]{1,16}\.(jpe?g|png|gif|webp|heic|heif|mp4|mov|m4v|webm)$/i;
+  app.use('/attached_assets', (req, res, next) => {
+    let name = '';
+    try { name = decodeURIComponent(req.path.slice(1)); } catch { /* bad URL → 404 below */ }
+    if (!UPLOADED_FILE.test(name)) return res.status(404).json({ message: 'Not found' });
+    res.setHeader('X-Content-Type-Options', 'nosniff'); // never let a file be run as a web page
+    next();
+  }, express.static(path.join(process.cwd(), 'attached_assets'), { dotfiles: 'deny', index: false }));
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
