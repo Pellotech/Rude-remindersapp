@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, Home, Search } from "lucide-react";
-import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
-import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { queryClient } from "@/lib/queryClient";
-import { applyTextSize, getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
+import { getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
 import { TextSizeTiles } from "@/components/settings/TextSizeTiles";
 import {
   FIXED_OFFSET_ZONES,
@@ -14,7 +13,6 @@ import {
   setManualTimeZone,
 } from "@/lib/timeZone";
 
-import { palette } from "@/lib/theme";
 // Used when the phone can't list every zone itself (older Android WebViews).
 const FALLBACK_ZONES = [
   "Pacific/Honolulu", "America/Anchorage", "America/Vancouver", "America/Los_Angeles",
@@ -80,14 +78,11 @@ function ChoiceRow({ label, detail, selected, onClick, last, testId }: {
 
 export default function Display() {
   const { isAndroid, isIOS } = getPlatformInfo();
-  const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
-  // What's saved, and what's on screen. Tapping a text size shows it straight
-  // away (a preview), but it's only kept when you press Save.
-  const [savedSize, setSavedSize] = useState<TextSize>(getTextSize);
-  const [textSize, setTextSizeState] = useState<TextSize>(savedSize);
-  const [savedZone, setSavedZone] = useState<string | null>(getManualTimeZone);
-  const [manualZone, setManualZoneState] = useState<string | null>(savedZone);
+  // Every change applies and saves straight away — no Save button.
+  const [textSize, setTextSizeState] = useState<TextSize>(getTextSize);
+  const [manualZone, setManualZoneState] = useState<string | null>(getManualTimeZone);
   const [picking, setPicking] = useState(false);
   const [search, setSearch] = useState("");
   const [, setTick] = useState(0);
@@ -97,33 +92,6 @@ export default function Display() {
     const id = setInterval(() => setTick((t) => t + 1), 30000);
     return () => clearInterval(id);
   }, []);
-
-  // Leaving without saving (any way out) puts the saved size back.
-  useEffect(() => () => { void applyTextSize(); }, []);
-
-  const hasChanges = textSize !== savedSize || manualZone !== savedZone;
-
-  const saveChanges = async () => {
-    setTextSize(textSize);
-    setManualTimeZone(manualZone);
-    if (manualZone !== savedZone) {
-      // Stats, "today" and the reminder lists depend on the zone — reload them.
-      queryClient.invalidateQueries();
-    }
-    setSavedSize(textSize);
-    setSavedZone(manualZone);
-    toast({ title: "Saved", description: "Your text size and time zone are updated." });
-  };
-
-  const discardChanges = () => {
-    setTextSizeState(savedSize);
-    setManualZoneState(savedZone);
-    setPicking(false);
-    setSearch("");
-    void applyTextSize(savedSize);
-  };
-
-  const { leave, dialog: leaveDialog } = useLeaveGuard(hasChanges, saveChanges, discardChanges);
 
   const deviceZone = getDeviceTimeZone();
   // Built only when the list is opened: each zone with its label and search text.
@@ -143,13 +111,17 @@ export default function Display() {
 
   const chooseTextSize = (size: TextSize) => {
     setTextSizeState(size);
-    void applyTextSize(size); // preview only — Save keeps it
+    setTextSize(size); // whole app + reminder popup, saved on this phone
   };
 
   const chooseZone = (tz: string | null) => {
     setManualZoneState(tz);
     setPicking(false);
     setSearch("");
+    if (tz === manualZone) return;
+    setManualTimeZone(tz);
+    // Stats, "today" and the reminder lists depend on the zone — reload them.
+    queryClient.invalidateQueries();
   };
 
   const activeZone = manualZone || deviceZone;
@@ -159,21 +131,22 @@ export default function Display() {
       <div className="max-w-lg mx-auto">
         <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
-            <button onClick={() => leave("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
+            <button onClick={() => setLocation("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
               <span className="text-body-lg">Settings</span>
             </button>
-            <button onClick={() => leave("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
+            <button onClick={() => setLocation("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
               <Home className="h-5 w-5" />
             </button>
           </div>
-          <h1 className="text-[30px] leading-tight font-bold text-white px-4 pb-2">Text Size & Time Zone</h1>
+          <h1 className="text-[30px] leading-tight font-bold text-white px-4">Text Size & Time Zone</h1>
+          <p className="text-note text-ui-label-2 px-4 pb-2">Changes save automatically.</p>
         </div>
 
-        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: (isAndroid ? 120 : isIOS ? 80 : 24) + SAVE_BAR_SPACE }}>
+        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? 120 : isIOS ? 80 : 24 }}>
           <Section
             title="Text Size"
-            footer="Makes the words bigger everywhere in the app, including your reminders. Tap one to see it, then press Save to keep it. You can also change this in Settings → Notifications."
+            footer="Makes the words bigger everywhere in the app, including your reminders. It changes straight away. You can also change this in Settings → Notifications."
           >
             <div className="px-4 py-3">
               <TextSizeTiles value={textSize} onChange={chooseTextSize} />
@@ -185,7 +158,7 @@ export default function Display() {
             footer={
               <>
                 Reminder times are set and shown in this time zone. Right now it's {clockIn(activeZone)} there.
-                If that doesn't match your clock, choose a time zone yourself, then press Save. Reminders you
+                If that doesn't match your clock, choose a time zone yourself. Reminders you
                 already made still go off at the same moment.
               </>
             }
@@ -245,8 +218,6 @@ export default function Display() {
           </Section>
         </div>
       </div>
-      <SaveBar visible={hasChanges} saving={false} onSave={() => { void saveChanges(); }} onDiscard={discardChanges} />
-      {leaveDialog}
     </div>
   );
 }

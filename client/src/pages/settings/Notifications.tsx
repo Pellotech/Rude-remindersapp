@@ -5,8 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, Home } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
-import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
-import { applyTextSize, getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
+import { useLocation } from "wouter";
+import { getTextSize, setTextSize, type TextSize } from "@/lib/textSize";
 import { TextSizeTiles } from "@/components/settings/TextSizeTiles";
 
 import { palette } from "@/lib/theme";
@@ -38,8 +38,8 @@ export default function Notifications() {
   const queryClient = useQueryClient();
   const { isAndroid, isIOS } = getPlatformInfo();
 
-  // What's currently saved on this device (the app reads these). Nothing here changes
-  // until the user taps Save — so Discard (or leaving) can always put things back.
+  // What's saved on this device (the app reads these). Every change on this page
+  // saves straight away — there's no Save button.
   const readSaved = () => ({
     defaultRudenessLevel: parseInt(localStorage.getItem('default_rudeness_level') || '2'),
     defaultVoiceCharacter: localStorage.getItem('default_voice_character') || 'default',
@@ -67,20 +67,9 @@ export default function Notifications() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.defaultRudenessLevel, user?.defaultVoiceCharacter]);
 
-  // Only the things the user actually changed (changing something back removes it)
-  const [localSettings, setLocalSettings] = useState<Record<string, any>>({});
-  const baseline: Record<string, any> = { ...(user || {}), ...saved };
-  const currentSettings: Record<string, any> = { ...baseline, ...localSettings };
-  const hasChanges = Object.keys(localSettings).length > 0;
-
-  const updateSetting = (key: string, value: any) => {
-    setLocalSettings((prev) => {
-      const next = { ...prev };
-      if (baseline[key] === value || (baseline[key] == null && value === false)) delete next[key];
-      else next[key] = value;
-      return next;
-    });
-  };
+  // Changes made on this page so far (already saved — shown on top of the saved values)
+  const [changed, setChanged] = useState<Record<string, any>>({});
+  const currentSettings: Record<string, any> = { ...(user || {}), ...saved, ...changed };
 
   // Push saved values to the rest of the app (reminder form, Reem, pop-ups, theme)
   const applyLocally = (changes: Record<string, any>) => {
@@ -109,39 +98,31 @@ export default function Notifications() {
     }
   };
 
+  // Save one setting to the account. If it fails, put it back and say so.
   const updateSettingsMutation = useMutation({
-    mutationFn: async (settings: Record<string, any>) => {
-      // Text size is kept on the phone only — don't send it to the server
-      const { textSize: _textSize, ...serverSettings } = settings;
-      return apiRequest("/api/settings", { method: "PUT", body: serverSettings });
-    },
-    onSuccess: (_res, settings) => {
-      applyLocally(settings);
-      setSaved(readSaved());
-      setLocalSettings({});
+    mutationFn: async ({ key, value }: { key: string; value: any; previous: any }) =>
+      apiRequest("/api/settings", { method: "PUT", body: { [key]: value } }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      toast({ title: "Saved", description: "Your preferences have been updated." });
     },
-    onError: () => {
+    onError: (_error, { key, previous }) => {
+      applyLocally({ [key]: previous });
+      setChanged((prev) => ({ ...prev, [key]: previous }));
       toast({ title: "Couldn't save", description: "Please check your connection and try again.", variant: "destructive" });
     },
   });
 
-  const saveSettings = () => updateSettingsMutation.mutateAsync(localSettings);
-  const discardChanges = () => {
-    setLocalSettings({});
-    void applyTextSize(saved.textSize); // undo the text size preview
+  // Every change applies and saves straight away (like iPhone Settings)
+  const updateSetting = (key: string, value: any) => {
+    const previous = currentSettings[key];
+    if (previous === value) return;
+    setChanged((prev) => ({ ...prev, [key]: value }));
+    applyLocally({ [key]: value });          // the app uses it right away
+    if (key === "textSize") return;          // text size is kept on the phone only
+    updateSettingsMutation.mutate({ key, value, previous });
   };
 
-  // Text size: tapping a tile shows it straight away (a preview); Save keeps it
-  const previewTextSize = (size: TextSize) => {
-    updateSetting("textSize", size);
-    void applyTextSize(size);
-  };
-
-  // Leaving without saving (any way out) puts the saved text size back
-  useEffect(() => () => { void applyTextSize(); }, []);
-  const { leave, dialog: leaveDialog } = useLeaveGuard(hasChanges, saveSettings, discardChanges);
+  const [, setLocation] = useLocation();
 
   if (isLoading) {
     return (
@@ -154,18 +135,19 @@ export default function Notifications() {
       <div className="max-w-lg mx-auto">
         <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-ui-separator safe-area-header">
           <div className="flex items-center justify-between px-4 py-3">
-            <button onClick={() => leave("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
+            <button onClick={() => setLocation("/settings")} className="flex items-center text-ui-link" data-testid="button-back">
               <ChevronLeft className="h-5 w-5" />
               <span className="text-body-lg">Settings</span>
             </button>
-            <button onClick={() => leave("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
+            <button onClick={() => setLocation("/")} className="text-ui-link" data-testid="button-home" aria-label="Home">
               <Home className="h-5 w-5" />
             </button>
           </div>
-          <h1 className="text-title-lg font-bold text-white px-4 pb-2">Notifications</h1>
+          <h1 className="text-title-lg font-bold text-white px-4">Notifications</h1>
+          <p className="text-note text-ui-label-2 px-4 pb-2">Changes save automatically.</p>
         </div>
 
-        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: (isAndroid ? 120 : isIOS ? 80 : 24) + SAVE_BAR_SPACE }}>
+        <div className="py-6 px-4 space-y-8" style={{ paddingBottom: isAndroid ? 120 : isIOS ? 80 : 24 }}>
           <div>
             <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Preferences</h2>
             <div className="bg-ui-card rounded-xl overflow-hidden divide-y divide-ui-separator">
@@ -245,9 +227,9 @@ export default function Notifications() {
             <h2 className="text-note text-ui-label-2 uppercase tracking-wide px-4 mb-2">Text Size</h2>
             <div className="bg-ui-card rounded-xl overflow-hidden">
               <div className="px-4 py-3">
-                <TextSizeTiles value={currentSettings.textSize} onChange={previewTextSize} />
+                <TextSizeTiles value={currentSettings.textSize} onChange={(size) => updateSetting("textSize", size)} />
                 <p style={{ fontSize: 12, color: palette.uiLabel2, marginTop: 8 }}>
-                  Makes the words bigger everywhere in the app, including your reminders. Tap one to see it, then press Save to keep it.
+                  Makes the words bigger everywhere in the app, including your reminders.
                 </p>
               </div>
             </div>
@@ -346,8 +328,6 @@ export default function Notifications() {
 
         </div>
       </div>
-      <SaveBar visible={hasChanges} saving={updateSettingsMutation.isPending} onSave={() => { saveSettings().catch(() => {}); }} onDiscard={discardChanges} />
-      {leaveDialog}
     </div>
   );
 }
