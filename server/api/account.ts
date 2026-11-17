@@ -9,6 +9,24 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { generateSecureToken, getAuthUserId, revokeAuthToken, revokeAllUserTokens, isAuthenticated, signedInUserId } from "./shared";
 
+// The only account fields a user may change through the settings routes.
+// (Subscription, email, password and verification fields are NOT here.)
+const ALLOWED_SETTINGS = [
+  'firstName', 'lastName', 'nickname', 'timezone', 'darkMode', 'simplifiedInterface',
+  'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
+  'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
+  'ethnicitySpecificQuotes', 'genderSpecificReminders',
+  'defaultRudenessLevel', 'defaultVoiceCharacter', 'niceMode', 'backdropTheme'
+];
+function pickAllowedSettings(body: any): Record<string, any> {
+  const picked: Record<string, any> = {};
+  if (!body || typeof body !== 'object') return picked;
+  for (const key of ALLOWED_SETTINGS) {
+    if (key in body) picked[key] = body[key];
+  }
+  return picked;
+}
+
 export function registerAccountRoutes(app: Express) {
   // Forgot password — send reset email
   app.post('/api/auth/forgot-password', async (req, res) => {
@@ -361,9 +379,12 @@ export function registerAccountRoutes(app: Express) {
   app.patch('/api/user/settings', isAuthenticated, async (req: any, res) => {
     try {
       const userId = signedInUserId(req);
-      const updates = req.body;
+      // Only ordinary settings may be changed here. Without this list a signed-in
+      // user could set their own subscription, email or password fields.
+      const updates = pickAllowedSettings(req.body);
       const user = await storage.updateUser(userId, updates);
-      res.json(user);
+      const { passwordHash, resetToken, resetTokenExpiry, emailVerificationToken, ...safeUser } = (user || {}) as any;
+      res.json({ ...safeUser, hasPassword: !!passwordHash });
     } catch (error) {
       console.error("Error updating user settings:", error);
       res.status(500).json({ message: "Failed to update settings" });
@@ -376,23 +397,8 @@ export function registerAccountRoutes(app: Express) {
       const userId = signedInUserId(req);
       const updates = req.body;
 
-      // Ensure notification settings are properly stored
-      const allowedSettings = [
-        'firstName', 'lastName', 'nickname', 'timezone', 'darkMode', 'simplifiedInterface',
-        'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
-        'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
-        'ethnicitySpecificQuotes', 'genderSpecificReminders', 
-        'defaultRudenessLevel', 'defaultVoiceCharacter', 'niceMode', 'backdropTheme'
-      ];
+      const sanitizedUpdates = pickAllowedSettings(updates);
 
-      const sanitizedUpdates = Object.keys(updates)
-        .filter(key => allowedSettings.includes(key))
-        .reduce((obj, key) => {
-          obj[key] = updates[key];
-          return obj;
-        }, {} as any);
-
-      // Update user in storage
       await storage.updateUser(userId, sanitizedUpdates);
 
       res.json({ success: true });

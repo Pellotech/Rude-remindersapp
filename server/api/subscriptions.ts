@@ -143,6 +143,11 @@ export function registerSubscriptionsRoutes(app: Express) {
   app.post('/api/webhooks/revenuecat', async (req, res) => {
     // Verify RevenueCat webhook authorization header
     const webhookSecret = process.env.REVENUECAT_WEBHOOK_SECRET;
+    if (!webhookSecret && process.env.NODE_ENV === 'production') {
+      // Without the secret anyone could post fake "purchase" events and get Premium.
+      console.error('[Webhook] REVENUECAT_WEBHOOK_SECRET is not set — rejecting webhook');
+      return res.status(503).send('Webhook not configured');
+    }
     if (webhookSecret) {
       const authHeader = req.headers['authorization'];
       if (!authHeader || authHeader !== webhookSecret) {

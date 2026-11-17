@@ -244,7 +244,8 @@ export function registerDevToolsRoutes(app: Express) {
   });
 
   // Test email endpoint - Add this route for manual testing
-  app.get('/api/test-email', async (req, res) => {
+  // Admin-only: otherwise anyone could make the server send email to any address
+  app.get('/api/test-email', isAuthenticated, isAdmin, requireDevSession, async (req, res) => {
     try {
       const testEmail = req.query.email as string || 'ruderemindersinfo@gmail.com';
       const success = await notificationService.sendTestEmail(testEmail);

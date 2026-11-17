@@ -162,13 +162,15 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+const ALLOWED_UPLOAD_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif', '.mp4', '.mov', '.m4v', '.webm'];
+
 const storage_multer = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + crypto.randomBytes(8).toString('hex');
+    cb(null, uniqueSuffix + path.extname(file.originalname).toLowerCase());
   }
 });
 
@@ -176,8 +178,10 @@ export const upload = multer({
   storage: storage_multer,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
-    // Accept images and videos only
-    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+    // Accept images and videos only — checked by type AND by file ending, so a
+    // file that only claims to be an image (e.g. a .html or .svg page) is refused.
+    const ext = path.extname(file.originalname).toLowerCase();
+    if ((file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) && ALLOWED_UPLOAD_EXTENSIONS.includes(ext)) {
       cb(null, true);
     } else {
       cb(new Error('Only image and video files are allowed'));
