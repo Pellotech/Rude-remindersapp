@@ -41,7 +41,7 @@ export default function Navigation() {
 
   return (
     <>
-      <header className="bg-reem-gold dark:bg-reem-concrete-light relative z-50 safe-area-header">
+      <header className="bg-reem-gold dark:bg-reem-concrete-widget relative z-50 safe-area-header">
         <div className="relative max-w-7xl mx-auto px-4 pt-4 pb-4">
           {/* Centered logo — no bottom margin so header ends at logo bottom */}
           <div className="flex justify-center">
@@ -49,7 +49,7 @@ export default function Navigation() {
               <img 
                 src={logoImage} 
                 alt="Reems Rude Reminders" 
-                className="h-[120px] sm:h-[140px] w-auto object-contain cursor-pointer"
+                className="h-[120px] sm:h-[140px] w-auto object-contain cursor-pointer dark:[filter:drop-shadow(0_0_1px_#fff)_drop-shadow(0_0_1px_#fff)_drop-shadow(0_0_3px_rgba(255,255,255,0.6))]"
                 data-testid="nav-logo"
               />
             </Link>
