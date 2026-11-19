@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { db } from "./db";
 import { reminders, reminderEvents } from "@shared/schema";
 import { eq, and, isNotNull, sql } from "drizzle-orm";
+import { backfillUserCodes } from "./utils/userCode";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -284,6 +285,9 @@ app.use("/api/auth/reset-password", authLimiter);
 
   // Backfill existing completed/missed reminders into the event log
   await backfillReminderEvents();
+
+  // Give every existing user their permanent 10-digit user code
+  await backfillUserCodes();
 
   app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

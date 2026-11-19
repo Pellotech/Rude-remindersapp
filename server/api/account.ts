@@ -304,6 +304,16 @@ export function registerAccountRoutes(app: Express) {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
+
+      // Safety net: anyone missed by the startup backfill gets a code now
+      if (!user.userCode) {
+        try {
+          const { assignUserCode } = await import('../utils/userCode');
+          user.userCode = await assignUserCode(user.id);
+        } catch (codeErr) {
+          console.warn("Could not assign user code:", codeErr);
+        }
+      }
       
       const { isUserPremium } = await import('../utils/premiumCheck');
       const isPremium = await isUserPremium(user.id);

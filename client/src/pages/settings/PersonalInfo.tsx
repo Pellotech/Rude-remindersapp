@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, clearAuthToken } from "@/lib/queryClient";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { SaveBar, SAVE_BAR_SPACE, useLeaveGuard } from "@/components/UnsavedChanges";
-import { ChevronLeft, ChevronDown, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft, Lock } from "lucide-react";
+import { ChevronLeft, ChevronDown, Eye, EyeOff, Home, Trash2, AlertTriangle, ArrowLeft, Lock, Copy, Check } from "lucide-react";
 
 export default function PersonalInfo() {
   const { toast } = useToast();
@@ -56,6 +56,7 @@ export default function PersonalInfo() {
   });
 
   const [localSettings, setLocalSettings] = useState<any>({});
+  const [codeCopied, setCodeCopied] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -256,10 +257,37 @@ export default function PersonalInfo() {
                 Used for greetings and reminders instead of your first name, if set.
               </p>
             </div>
-            <div className="px-4 py-3">
+            <div className="px-4 py-3 border-b border-ui-separator">
               <label className="text-note text-ui-label-2 uppercase tracking-wide">Email</label>
               <p className="text-ui-label-3 text-body-lg mt-1 break-all" data-testid="text-email">{user?.email || "—"}</p>
               <p className="text-caption text-ui-label-2 mt-1">This is your sign-in email. Need it changed? Email us from Help &amp; Support.</p>
+            </div>
+            <div className="px-4 py-3">
+              <label className="text-note text-ui-label-2 uppercase tracking-wide">Your User ID</label>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-ui-label-3 text-body-lg tracking-wider tabular-nums" data-testid="text-user-code">
+                  {user?.userCode ? `${user.userCode.slice(0, 5)} ${user.userCode.slice(5)}` : "—"}
+                </p>
+                {user?.userCode && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(user.userCode);
+                        setCodeCopied(true);
+                        setTimeout(() => setCodeCopied(false), 2000);
+                      } catch {
+                        toast({ title: "Couldn't copy", description: "Press and hold the number to copy it." });
+                      }
+                    }}
+                    className="flex items-center gap-1 text-ui-link text-body"
+                    data-testid="button-copy-user-code"
+                  >
+                    {codeCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    {codeCopied ? "Copied" : "Copy"}
+                  </button>
+                )}
+              </div>
+              <p className="text-caption text-ui-label-2 mt-1">Your personal 10-digit ID. It never changes. Support may ask for it.</p>
             </div>
           </div>
 

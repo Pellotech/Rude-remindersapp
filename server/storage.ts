@@ -20,6 +20,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { zonedDayRange } from "./utils/userTime";
+import { generateUserCode, isUserCodeCollision, isUserCodeTaken } from "./utils/userCode";
 import { eq, and, desc, gte, lte, sql } from "drizzle-orm";
 
 // Interface for storage operations
@@ -120,19 +121,29 @@ export class DatabaseStorage implements IStorage {
       }
     }
     
-    const [user] = await db
-      .insert(users)
-      // A brand-new user always arrives with an email (the column requires it)
-      .values(userData as typeof users.$inferInsert)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+    // New users get their permanent 10-digit code right away. A clash with an
+    // existing code is astronomically unlikely, but we retry just in case.
+    for (let attempt = 0; ; attempt++) {
+      let userCode = generateUserCode();
+      if (await isUserCodeTaken(userCode)) userCode = generateUserCode();
+      try {
+        const [user] = await db
+          .insert(users)
+          // A brand-new user always arrives with an email (the column requires it)
+          .values({ ...userData, userCode } as typeof users.$inferInsert)
+          .onConflictDoUpdate({
+            target: users.id,
+            set: {
+              ...userData,
+              updatedAt: new Date(),
+            },
+          })
+          .returning();
+        return user;
+      } catch (err) {
+        if (!isUserCodeCollision(err) || attempt >= 4) throw err;
+      }
+    }
   }
 
   async updateUser(id: string, updates: Partial<User>): Promise<User> {

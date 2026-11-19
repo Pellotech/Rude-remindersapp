@@ -28,6 +28,12 @@ export const sessions = pgTable(
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique().notNull(),
+  // Permanent random 10-digit ID for creator-to-user messaging; assigned by the
+  // server, never edited by the user. Deliberately NOT marked .unique() here:
+  // drizzle-kit then offers to TRUNCATE the users table when the column is added.
+  // Uniqueness is enforced by an index the server creates at startup
+  // (see server/utils/userCode.ts).
+  userCode: varchar("user_code", { length: 10 }),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   nickname: varchar("nickname"), // Optional preferred name; used for in-app greetings/notifications instead of firstName when set
