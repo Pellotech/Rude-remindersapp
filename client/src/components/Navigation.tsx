@@ -49,7 +49,7 @@ export default function Navigation() {
               <img 
                 src={logoImage} 
                 alt="Reems Rude Reminders" 
-                className="h-[120px] sm:h-[140px] w-auto object-contain cursor-pointer dark:[filter:drop-shadow(0_0_1px_#fff)_drop-shadow(0_0_1px_#fff)_drop-shadow(0_0_3px_rgba(255,255,255,0.6))]"
+                className="h-[120px] sm:h-[140px] w-auto object-contain cursor-pointer"
                 data-testid="nav-logo"
               />
             </Link>
