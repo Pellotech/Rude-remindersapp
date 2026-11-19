@@ -104,6 +104,7 @@
     "google-auth-library": "^10.2.1",
     "helmet": "^8.2.0",
     "html2canvas": "^1.4.1",
+    "i18next": "26.5.3",
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.2.0",
@@ -122,6 +123,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.55.0",
+    "react-i18next": "17.1.0",
     "react-icons": "^5.4.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.2",
@@ -162,6 +164,7 @@
     "bufferutil": "^4.0.8"
   },
   "overrides": {
-    "tar@>=7.0.0 <7.5.16": "7.5.22"
+    "tar@>=7.0.0 <7.5.16": "7.5.22",
+    "@babel/runtime": "7.29.10"
   }
 }

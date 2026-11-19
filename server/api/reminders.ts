@@ -1,5 +1,7 @@
 // Reminders: list, create (single + repeat days), upload photos, edit, delete, done / missed / "it hit"
 import type { Express } from "express";
+import { getUserLanguage } from "../utils/userLanguage";
+import { localizeText, timeToMessage } from "../services/localize";
 import { storage } from "../storage";
 import { noteClientZone } from "../utils/userTime";
 import { updateReminderSchema } from "@shared/schema";
@@ -231,6 +233,10 @@ export function registerRemindersRoutes(app: Express) {
               console.error("Error generating motivational quote:", error);
               // Continue without quote if generation fails
             }
+            // The automatic quotes are English; put them in the user's language
+            if (reminder.motivationalQuote) {
+              reminder.motivationalQuote = await localizeText(reminder.motivationalQuote, await getUserLanguage(userId));
+            }
           }
 
           // Generate AI response automatically during form submission
@@ -241,8 +247,9 @@ export function registerRemindersRoutes(app: Express) {
           } catch (error) {
             console.error("Error generating AI response:", error);
             // Fallback to basic message if AI generation fails
-            reminder.rudeMessage = `Time to ${reminder.originalMessage}!`;
-            reminder.responses = [`Time to ${reminder.originalMessage}!`];
+            const fallback = timeToMessage(reminder.originalMessage, await getUserLanguage(userId));
+            reminder.rudeMessage = fallback;
+            reminder.responses = [fallback];
 
           }
 
@@ -379,6 +386,10 @@ export function registerRemindersRoutes(app: Express) {
             console.error("Error generating motivational quote:", error);
             // Continue without quote if generation fails
           }
+          // The automatic quotes are English; put them in the user's language
+          if (reminder.motivationalQuote) {
+            reminder.motivationalQuote = await localizeText(reminder.motivationalQuote, await getUserLanguage(userId));
+          }
         }
 
         // Generate AI response automatically during form submission
@@ -389,8 +400,9 @@ export function registerRemindersRoutes(app: Express) {
         } catch (error) {
           console.error("Error generating AI response:", error);
           // Fallback to basic message if AI generation fails
-          reminder.rudeMessage = `Time to ${originalMessage}!`;
-          reminder.responses = [`Time to ${originalMessage}!`];
+          const fallback = timeToMessage(originalMessage, await getUserLanguage(userId));
+          reminder.rudeMessage = fallback;
+          reminder.responses = [fallback];
 
         }
 

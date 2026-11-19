@@ -1,0 +1,18 @@
+{
+  "common": {
+    "settings": "Settings",
+    "home": "Home",
+    "savesAutomatically": "Changes save automatically."
+  },
+  "settingsLanding": {
+    "language": "Language"
+  },
+  "language": {
+    "title": "Language",
+    "automatic": "Phone language",
+    "automaticDetail": "Uses your phone: {{language}}",
+    "automaticNotSupported": "Your phone's language isn't available yet, so the app uses English.",
+    "choose": "Languages",
+    "footer": "Changes the app's menus and buttons, Reem's messages and the spoken voice. Reminders you already made keep their words; new ones use the new language."
+  }
+}

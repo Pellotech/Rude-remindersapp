@@ -5,6 +5,8 @@ import { DeepSeekService } from './deepseekService.js';
 import { isUserPremium } from '../utils/premiumCheck.js';
 import { moderationService } from './moderationService.js';
 import { log as slog } from '../utils/logger.js';
+import { getUserLanguage } from '../utils/userLanguage';
+import { localizeLines } from './localize';
 
 interface UserBehaviorData {
   userId: string;
@@ -33,6 +35,7 @@ class SmartResponseService {
   async getPersonalizedResponse(reminder: Reminder, forceRefresh = false, clientLocalTime?: string): Promise<string[]> {
     // Check if user has premium access for AI generation
     const isPremium = await isUserPremium(reminder.userId);
+    const language = await getUserLanguage(reminder.userId);
     
     console.log(`\n🔍 AI Response Generation Request:`);
     console.log(`   User ID: ${reminder.userId}`);
@@ -57,7 +60,8 @@ class SmartResponseService {
           genderSpecificReminders: user?.genderSpecificReminders || false,
           culturalBackground: user?.ethnicity || undefined,
           timeOfDay,
-          clientLocalTime
+          clientLocalTime,
+          language
         };
         
         console.log(`\n🤖 Calling DeepSeek API with context:`, JSON.stringify(context, null, 2));
@@ -104,7 +108,8 @@ class SmartResponseService {
     
     // Fallback to template responses for free users or if DeepSeek is unavailable
     console.log('\n📝 Using fallback template responses instead of AI');
-    return this.getLegacyPersonalizedResponse(reminder, forceRefresh);
+    const templates = await this.getLegacyPersonalizedResponse(reminder, forceRefresh);
+    return localizeLines(templates, language);
   }
   
   // Existing logic as fallback
@@ -621,7 +626,7 @@ class SmartResponseService {
     const categoryRemarks = this.getCategorySpecificRemarks(category, hour);
     remarks.push(...categoryRemarks);
     
-    return remarks;
+    return localizeLines(remarks, await getUserLanguage(reminder.userId));
   }
 
   private getCategorySpecificRemarks(category: string, hour: number): string[] {

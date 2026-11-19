@@ -1,3 +1,5 @@
+import { languageInfo, type LanguageCode } from "@shared/languages";
+
 interface DeepSeekResponse {
   id: string;
   object: string;
@@ -27,6 +29,8 @@ interface ReminderContext {
   culturalBackground?: string;
   timeOfDay: string;
   clientLocalTime?: string;
+  /** Write the messages in this language (default English) */
+  language?: LanguageCode;
 }
 
 export class DeepSeekService {
@@ -66,7 +70,7 @@ export class DeepSeekService {
           messages: [
             {
               role: 'system',
-              content: `The current date and time for the user is: ${currentDateTimeStr}. Use this to make your reminder message time-aware and accurate. Do NOT assume it is night, morning, or any specific time of day unless it matches this timestamp. Never say "before you sleep", "tonight", "this morning" etc. unless the current time actually supports that.\n\nYou are a motivational reminder assistant that generates fresh, personalized reminder messages. Be creative, engaging, and avoid repetitive patterns.`
+              content: `The current date and time for the user is: ${currentDateTimeStr}. Use this to make your reminder message time-aware and accurate. Do NOT assume it is night, morning, or any specific time of day unless it matches this timestamp. Never say "before you sleep", "tonight", "this morning" etc. unless the current time actually supports that.\n\nYou are a motivational reminder assistant that generates fresh, personalized reminder messages. Be creative, engaging, and avoid repetitive patterns.${context.language && context.language !== 'en' ? `\n\nWrite every message in ${languageInfo(context.language).english}. Use natural, everyday ${languageInfo(context.language).english} the way a witty native speaker talks, not a word-for-word translation of English.` : ''}`
             },
             {
               role: 'user',
@@ -89,7 +93,7 @@ export class DeepSeekService {
         throw new Error('No content received from DeepSeek API');
       }
 
-      const parsed = this.parseResponses(content, count);
+      const parsed = this.parseResponses(content, count, context.language);
       return this.scoreAndRankResponses(parsed, context.rudenessLevel, context.task);
     } catch (error) {
       const { log: slog } = await import('../utils/logger');
@@ -149,12 +153,16 @@ Requirements:
 7. For sarcastic/joking tones: Use clever wordplay, witty observations, or playful roasts that make people smile while pushing them to act
 8. Reference the actual task ("${task}") creatively rather than just saying it generically
 
-${rudenessLevel === 1 ? `9. SYMPATHY LEVEL: lead with empathy ("I know it's been a long day", "It's okay if you're not feeling it"), then encourage. Sound like a caring friend, never a drill sergeant.
+${context.language && context.language !== 'en' ? `LANGUAGE: Write all ${count} messages in ${languageInfo(context.language).english}. Keep the task wording recognisable. The rules about English openers above apply to their ${languageInfo(context.language).english} equivalents.
+
+` : ''}${rudenessLevel === 1 ? `9. SYMPATHY LEVEL: lead with empathy ("I know it's been a long day", "It's okay if you're not feeling it"), then encourage. Sound like a caring friend, never a drill sergeant.
 
 ` : ''}Format: Return exactly ${count} messages, one per line, numbered 1-${count}.`;
   }
 
-  private parseResponses(content: string, expectedCount: number): string[] {
+  private parseResponses(content: string, expectedCount: number, language?: LanguageCode): string[] {
+    // Chinese, Japanese and Korean pack a full sentence into fewer characters
+    const minLength = language === 'zh' || language === 'ja' || language === 'ko' ? 4 : 10;
     // Extract numbered responses from the AI output
     const lines = content.split('\n').filter(line => line.trim());
     const responses: string[] = [];
@@ -162,7 +170,7 @@ ${rudenessLevel === 1 ? `9. SYMPATHY LEVEL: lead with empathy ("I know it's been
     for (const line of lines) {
       // Match patterns like "1. message" or "1) message" or just "message"
       const match = line.match(/^\d+[.)]\s*(.+)$/) || [null, line.trim()];
-      if (match[1] && match[1].length > 10) { // Ensure meaningful response
+      if (match[1] && match[1].length > minLength) { // Ensure meaningful response
         responses.push(match[1]);
       }
     }
@@ -239,6 +247,55 @@ ${rudenessLevel === 1 ? `9. SYMPATHY LEVEL: lead with empathy ("I know it's been
     const rest = scored.slice(2).sort((a, b) => a.idx - b.idx);
 
     return [...top2.map(x => x.msg), ...rest.map(x => x.msg)];
+  }
+
+  /**
+   * Translates short app messages into another language, keeping the tone
+   * (sarcastic stays sarcastic) and any emoji. Returns null on any failure so
+   * callers can fall back to English.
+   */
+  async translateLines(lines: string[], language: LanguageCode): Promise<string[] | null> {
+    if (lines.length === 0) return [];
+    const target = languageInfo(language).english;
+    try {
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: `You translate short messages from a cheeky reminder app into ${target}. Keep the meaning, tone and humour (kind stays kind, sarcastic stays sarcastic, savage stays savage), and keep emoji. Sound like a natural, witty native ${target} speaker, not a literal translation. Keep the user's own task wording recognisable. Reply with only a JSON array of strings: the translations, in the same order and the same count as the input.`
+            },
+            { role: 'user', content: JSON.stringify(lines) }
+          ],
+          temperature: 0.3,
+          max_tokens: Math.min(4000, 200 + lines.join(' ').length * 3)
+        })
+      });
+      if (!response.ok) throw new Error(`DeepSeek API error: ${response.status}`);
+      const data: DeepSeekResponse = await response.json();
+      const content = data.choices[0]?.message?.content ?? '';
+      const jsonText = content.slice(content.indexOf('['), content.lastIndexOf(']') + 1);
+      const parsed = JSON.parse(jsonText);
+      if (!Array.isArray(parsed) || parsed.length !== lines.length || !parsed.every((s) => typeof s === 'string' && s.trim())) {
+        throw new Error('translation came back in the wrong shape');
+      }
+      return parsed.map((s: string) => s.trim());
+    } catch (error) {
+      const { log: slog } = await import('../utils/logger');
+      slog.error('ai_translation_failed', {
+        provider: 'deepseek',
+        language,
+        count: lines.length,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return null;
+    }
   }
 
   async testConnection(): Promise<boolean> {

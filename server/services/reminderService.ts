@@ -4,6 +4,8 @@ import { smartResponseService } from "./smartResponseService";
 import { moderationService } from "./moderationService";
 import { log as slog } from "../utils/logger";
 import type { Reminder } from "@shared/schema";
+import { getUserLanguage } from "../utils/userLanguage";
+import { timeToMessage } from "./localize";
 
 // Helper functions for reminder management
 const createReminder = async (userId: string, reminder: Reminder): Promise<Reminder> => {
@@ -116,7 +118,7 @@ class ReminderService {
             categories: outputCheck.categories,
             stage: 'trigger_regeneration',
           });
-          personalizedResponses = [reminder.rudeMessage || `Time to ${reminder.originalMessage}!`];
+          personalizedResponses = [reminder.rudeMessage || timeToMessage(reminder.originalMessage, await getUserLanguage(reminder.userId))];
         }
       }
 
@@ -171,6 +173,7 @@ class ReminderService {
 
 // Generate AI response for an existing reminder
 async function generateReminderResponse(reminder: Reminder, clientLocalTime?: string): Promise<Reminder> {
+  const language = await getUserLanguage(reminder.userId);
   try {
     console.log(`Generating AI response for reminder: ${reminder.originalMessage}`);
 
@@ -181,7 +184,7 @@ async function generateReminderResponse(reminder: Reminder, clientLocalTime?: st
     // Defense-in-depth: screen the AI's own output too, in case it produces
     // something harmful despite clean input. Falls back to the safe template
     // message rather than blocking reminder creation entirely.
-    const safeFallback = `Time to ${reminder.originalMessage}!`;
+    const safeFallback = timeToMessage(reminder.originalMessage, language);
     let rudeMessage = responses[0] || safeFallback;
     let safeResponses = responses.length > 0 ? responses : [safeFallback];
 
@@ -210,8 +213,8 @@ async function generateReminderResponse(reminder: Reminder, clientLocalTime?: st
     // Return reminder with basic response if AI fails
     return {
       ...reminder,
-      rudeMessage: `Time to ${reminder.originalMessage}!`,
-      responses: [`Time to ${reminder.originalMessage}!`], // Always include responses array
+      rudeMessage: timeToMessage(reminder.originalMessage, language),
+      responses: [timeToMessage(reminder.originalMessage, language)], // Always include responses array
       updatedAt: new Date()
     };
   }

@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic, Shield, LifeBuoy, Type } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Bell, CreditCard, Mic, Shield, LifeBuoy, Type, Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { isAdminEmail } from "@/lib/admin";
 import { SettingsIntro } from "@/components/SettingsIntro";
@@ -35,6 +36,7 @@ function SettingsRow({ icon, title, href }: SettingsRowProps) {
 }
 
 export default function SettingsLanding() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const isAdmin = isAdminEmail((user as any)?.email);
   const { showIntro, closeIntro } = useIntroTour({
@@ -76,6 +78,12 @@ export default function SettingsLanding() {
               icon={<Type className="h-5 w-5" />}
               title="Text Size & Time Zone"
               href="/settings/display"
+            />
+            <div className="h-px bg-ui-separator ml-12" />
+            <SettingsRow
+              icon={<Globe className="h-5 w-5" />}
+              title={t("settingsLanding.language")}
+              href="/settings/language"
             />
             <div className="h-px bg-ui-separator ml-12" />
             {showSiri && (

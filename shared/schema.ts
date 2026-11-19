@@ -34,6 +34,9 @@ export const users = pgTable("users", {
   // Uniqueness is enforced by an index the server creates at startup
   // (see server/utils/userCode.ts).
   userCode: varchar("user_code", { length: 10 }),
+  // App language code from shared/languages.ts ("en", "es", "ar"…). Null = English.
+  // Added at startup by server/utils/userLanguage.ts if missing.
+  language: varchar("language", { length: 8 }),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   nickname: varchar("nickname"), // Optional preferred name; used for in-app greetings/notifications instead of firstName when set

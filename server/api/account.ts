@@ -1,5 +1,7 @@
 // Account & sign-in: forgot / reset / change password, logout, delete account, current user, Siri token, settings
 import type { Express } from "express";
+import { matchLanguage } from "@shared/languages";
+import { forgetUserLanguage } from "../utils/userLanguage";
 import { storage } from "../storage";
 import { sendPasswordResetEmail } from "../auth";
 import { authTokens } from "@shared/schema";
@@ -16,13 +18,19 @@ const ALLOWED_SETTINGS = [
   'browserNotifications', 'voiceNotifications', 'emailNotifications', 'emailSummary',
   'snoozeTime', 'reminderFrequency', 'ethnicity', 'gender', 'age', 'country',
   'ethnicitySpecificQuotes', 'genderSpecificReminders',
-  'defaultRudenessLevel', 'defaultVoiceCharacter', 'niceMode', 'backdropTheme'
+  'defaultRudenessLevel', 'defaultVoiceCharacter', 'niceMode', 'backdropTheme', 'language'
 ];
 function pickAllowedSettings(body: any): Record<string, any> {
   const picked: Record<string, any> = {};
   if (!body || typeof body !== 'object') return picked;
   for (const key of ALLOWED_SETTINGS) {
     if (key in body) picked[key] = body[key];
+  }
+  // Only codes the app supports; anything else is dropped
+  if ('language' in picked) {
+    const code = matchLanguage(picked.language);
+    if (code) picked.language = code;
+    else delete picked.language;
   }
   return picked;
 }
@@ -393,6 +401,7 @@ export function registerAccountRoutes(app: Express) {
       // user could set their own subscription, email or password fields.
       const updates = pickAllowedSettings(req.body);
       const user = await storage.updateUser(userId, updates);
+      forgetUserLanguage(userId);
       const { passwordHash, resetToken, resetTokenExpiry, emailVerificationToken, ...safeUser } = (user || {}) as any;
       res.json({ ...safeUser, hasPassword: !!passwordHash });
     } catch (error) {
@@ -410,6 +419,7 @@ export function registerAccountRoutes(app: Express) {
       const sanitizedUpdates = pickAllowedSettings(updates);
 
       await storage.updateUser(userId, sanitizedUpdates);
+      forgetUserLanguage(userId);
 
       res.json({ success: true });
     } catch (error) {

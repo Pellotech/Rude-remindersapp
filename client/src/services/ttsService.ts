@@ -1,4 +1,6 @@
 import { Capacitor } from '@capacitor/core';
+import { languageInfo } from '@shared/languages';
+import { getCurrentLanguage } from '@/i18n';
 
 type VoiceProfile = {
   rate: number;
@@ -37,12 +39,24 @@ const VOICE_PROFILES: Record<string, VoiceProfile> = {
 };
 
 function getProfile(character: string): VoiceProfile {
-  return VOICE_PROFILES[character] || VOICE_PROFILES['default'];
+  const profile = VOICE_PROFILES[character] || VOICE_PROFILES['default'];
+  const language = getCurrentLanguage();
+  if (language === 'en') return profile;
+  // Other languages: the named English voices don't apply. Keep each
+  // character's speed and pitch, and use a phone voice in that language.
+  return { ...profile, lang: languageInfo(language).speech, preferred: [], fallback: 'female' };
 }
 
 // Picks the best voice for a character from any list of voices that has a name and a lang.
 // Returns undefined when nothing suitable is installed, so the device default is used.
 function pickVoice<T extends { name: string; lang: string }>(voices: T[], profile: VoiceProfile): T | undefined {
+  const base = profile.lang.toLowerCase().split('-')[0];
+  if (base !== 'en') {
+    // Exact region first (es-ES), then any region of the language (es-MX)
+    const lang = profile.lang.toLowerCase().replace('_', '-');
+    const norm = (v: T) => v.lang.toLowerCase().replace('_', '-');
+    return voices.find(v => norm(v) === lang) || voices.find(v => norm(v).startsWith(base));
+  }
   const english = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
   const pool = english.length > 0 ? english : voices;
 

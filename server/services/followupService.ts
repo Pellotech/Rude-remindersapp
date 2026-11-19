@@ -1,3 +1,5 @@
+import { getUserLanguage } from '../utils/userLanguage';
+import { localizeLines } from './localize';
 
 import { storage } from "../storage";
 import type { Reminder } from "@shared/schema";
@@ -36,6 +38,10 @@ class FollowUpService {
       }
     });
 
+    // Follow-up templates are English; put them in the user's language
+    const language = await getUserLanguage(reminder.userId);
+    const localized = await localizeLines(followUps.map((f) => f.message), language);
+    localized.forEach((message, i) => { followUps[i].message = message; });
     return followUps;
   }
 

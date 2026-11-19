@@ -1,4 +1,6 @@
 import { DeepSeekService } from './deepseekService.js';
+import { getUserLanguage } from '../utils/userLanguage';
+import { localizeText } from './localize';
 import { zonedHour } from "../utils/userTime";
 import { isUserPremium } from '../utils/premiumCheck.js';
 import { storage } from '../storage.js';
@@ -27,6 +29,11 @@ export class PremiumQuotesService {
    * Premium users get AI-generated quotes, free users get pre-made cultural quotes
    */
   async getPersonalizedQuote(userId: string, context: QuoteGenerationContext = {}): Promise<string> {
+    const quote = await this.getPersonalizedQuoteInEnglish(userId, context);
+    return localizeText(quote, await getUserLanguage(userId));
+  }
+
+  private async getPersonalizedQuoteInEnglish(userId: string, context: QuoteGenerationContext = {}): Promise<string> {
     const isPremium = await isUserPremium(userId);
 
     if (isPremium && this.deepseekService) {

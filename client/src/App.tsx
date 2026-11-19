@@ -13,6 +13,9 @@ import SiriShortcuts from "@/pages/settings/SiriShortcuts";
 import Notifications from "@/pages/settings/Notifications";
 import Billing from "@/pages/settings/Billing";
 import Display from "@/pages/settings/Display";
+import LanguageSettings from "@/pages/settings/Language";
+import { useLanguageSync } from "@/hooks/useLanguageSync";
+import { useLanguageKey } from "@/i18n";
 import HelpPage from "@/pages/settings/Help";
 import ReminderHistory from "@/pages/settings/ReminderHistory";
 import DevPreview from "@/pages/DevPreview";
@@ -85,6 +88,7 @@ function RedirectToLogin() {
 
 function AppRouter() {
   const { isAuthenticated, isLoading, isError, error, refetch } = useAuth();
+  useLanguageSync();
 
   if (isLoading) {
     return <SplashScreen />;
@@ -121,6 +125,7 @@ function AppRouter() {
         <>
           <Route path="/settings/billing" component={Billing} />
           <Route path="/settings/display" component={Display} />
+          <Route path="/settings/language" component={LanguageSettings} />
           <Route path="/settings/help" component={HelpPage} />
           <Route path="/settings/personal" component={PersonalInfo} />
           <Route path="/settings/siri" component={SiriShortcuts} />
@@ -147,6 +152,7 @@ function AppRouter() {
 
 function App() {
   useBackdropTheme();
+  const languageKey = useLanguageKey();
 
   useEffect(() => {
     // Initialize auth token from persistent storage (important for iOS)
@@ -192,7 +198,8 @@ function App() {
         <TooltipProvider>
           <NotificationProvider>
             <Toaster />
-            <AppRouter />
+            {/* Re-render every screen when the language changes */}
+            <AppRouter key={languageKey} />
           </NotificationProvider>
         </TooltipProvider>
       </WouterRouter>
