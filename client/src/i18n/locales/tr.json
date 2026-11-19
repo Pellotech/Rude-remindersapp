@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "Ayarlar",
+    "home": "Ana sayfa",
+    "savesAutomatically": "Değişiklikler otomatik kaydedilir."
+  },
+  "settingsLanding": {
+    "language": "Dil",
+    "back": "Geri",
+    "settings": "Ayarlar",
+    "personalInformation": "Kişisel bilgiler",
+    "notifications": "Bildirimler",
+    "textSizeTimeZone": "Yazı boyutu ve saat dilimi",
+    "siriShortcuts": "Siri ve Kestirmeler",
+    "paymentBilling": "Ödeme ve faturalama",
+    "developerSpace": "Geliştirici alanı",
+    "helpSupport": "Yardım ve destek"
+  },
+  "language": {
+    "title": "Dil",
+    "automatic": "Telefonun dili",
+    "automaticDetail": "Telefonunki kullanılır: {{language}}",
+    "automaticNotSupported": "Telefonunun dili henüz yok, bu yüzden uygulama İngilizce.",
+    "choose": "Diller",
+    "footer": "Uygulamanın menülerini ve düğmelerini, Reem'in mesajlarını ve sesi değiştirir. Önceden oluşturduğun hatırlatıcılar aynı kalır; yenileri yeni dilde olur."
+  },
+  "home": {
+    "niceWork": "Helal! ✅",
+    "loggedThisReminderWillClear": "Kaydedildi! Bu hatırlatıcı 24 saat sonra silinecek.",
+    "reminderCompleted": "Hatırlatıcı tamamlandı",
+    "greatJobGettingItDone": "Harika, hallettin!",
+    "error": "Hata",
+    "failedToMarkReminderAs": "Hatırlatıcı tamamlandı olarak işaretlenemedi",
+    "logged": "Kaydedildi 💪",
+    "tomorrowIsANewChance": "Yarın yeni bir fırsat. Bu hatırlatıcı 24 saat sonra silinir.",
+    "failedToLogReminder": "Hatırlatıcı kaydedilemedi",
+    "create": "Oluştur",
+    "analytics": "İstatistik",
+    "manage": "Yönet",
+    "rewardEarned": "Ödül kazandın! 🎁",
+    "youVeEarned3Extra": "Bu ay 3 ekstra hatırlatıcı kazandın! Daha fazla ödül için daha çok reklam izle.",
+    "rewardEarned2": "Ödül kazandın! 🔊",
+    "youVeUnlockedPremiumVoices": "Premium sesler 30 dakikalığına açıldı! Gelişmiş ses karakterleriyle hatırlatıcı oluştur."
+  },
+  "header": {
+    "hey": "Selam {{name}}",
+    "premium": "Premium 👑",
+    "free": "Ücretsiz",
+    "sendReemBack": "Reem'i geri gönder",
+    "there": "dostum"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Profil",
+    "areYouSureYouWant": "Çıkış yapmak istediğinden emin misin?",
+    "youLlNeedToSign": "Hatırlatıcılarını görmek için tekrar giriş yapman gerekecek.",
+    "cancel": "İptal",
+    "logOut": "Çıkış yap"
+  },
+  "usage": {
+    "freePlanUsage": "Ücretsiz plan kullanımı",
+    "remindersThisMonth": "Bu ay {{used}}/{{limit}} hatırlatıcı",
+    "bonus": "+{{count}} bonus",
+    "remindersUsed": "Kullanılan hatırlatıcılar",
+    "upgrade": "Yükselt"
+  },
+  "form": {
+    "messageRequired": "Mesaj gerekli",
+    "pleaseEnterWhatYouNeed": "Önce neyi hatırlatmamı istediğini yaz",
+    "quickReminderCreated": "Hızlı hatırlatıcı oluşturuldu",
+    "whatDoYouNeedTo": "Sana neyi hatırlatayım?",
+    "writeYourReminderHere": "✏️ Hatırlatıcını buraya yaz...",
+    "creatingReminder": "Hatırlatıcı oluşturuluyor...",
+    "createReminder": "Hatırlatıcı oluştur",
+    "quickReminderSetFor": "Hatırlatıcı {{time}} için ({{when}} sonra)"
+  },
+  "schedule": {
+    "lv": "🔔 Sv.",
+    "voice": "Ses",
+    "daysSelected": "{{count}} gün seçildi"
+  },
+  "features": {
+    "goPremium": "🔒 Premium'a geç",
+    "voice": "Ses",
+    "photo": "Fotoğraf",
+    "quotes": "Alıntılar",
+    "voiceCharacter": "Ses karakteri",
+    "selectVoice": "Ses seç",
+    "addPhotos": "Fotoğraf ekle ({{count}}/{{max}})",
+    "tapToAddPhoto": "Fotoğraf eklemek için dokun",
+    "motivationStyle": "Motivasyon tarzı",
+    "chooseAMotivationStyle": "Bir motivasyon tarzı seç…",
+    "aMotivationalQuoteFromYour": "Seçtiğin kategoriden motive edici bir alıntı hatırlatıcına eklenecek."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Ücretsiz sınıra ulaştın",
+    "youVeUsedAllYour": "Bu ayın tüm ücretsiz hatırlatıcılarını kullandın. Ayın 1'inde yenilenir; ya da Premium'a geç, ayda 120 hatırlatıcı ve tüm özellikler senin.",
+    "upgradeToPremium": "Premium'a geç",
+    "maybeLater": "Belki sonra"
+  },
+  "quick": {
+    "quickReminder": "Hızlı hatırlatıcı",
+    "t": {
+      "10s": "10 sn",
+      "5m": "5 dk",
+      "15m": "15 dk",
+      "30m": "30 dk"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "önündeki hafta",
+    "swipeToOpen": "açmak için kaydır",
+    "today": "Bugün",
+    "openCover": "Kapağı aç",
+    "deselect": "Kaldır",
+    "select": "Seç",
+    "clear": "Temizle"
+  },
+  "manage": {
+    "reminderCompleted": "Hatırlatıcı tamamlandı!",
+    "greatJobKeepUpThe": "Harika! Böyle devam.",
+    "unauthorized": "Yetkisiz",
+    "youAreLoggedOutLogging": "Çıkış yapıldı. Tekrar giriş yapılıyor...",
+    "error": "Hata",
+    "failedToCompleteReminder": "Hatırlatıcı tamamlanamadı.",
+    "deleted": "Silindi!",
+    "reminderHasBeenDeleted": "Hatırlatıcı silindi.",
+    "failedToDeleteReminder": "Hatırlatıcı silinemedi.",
+    "noted": "Not edildi",
+    "trackingWhatDidnTGet": "Yapılmayanı kaydetmek de farkındalık kazandırır.",
+    "failedToMarkReminder": "Hatırlatıcı işaretlenemedi.",
+    "loadingYourReminders": "Hatırlatıcıların yükleniyor...",
+    "past": "Geçmiş ({{count}})",
+    "upcoming": "Yaklaşan ({{count}})",
+    "searchReminders": "Hatırlatıcı ara...",
+    "tapAReminderToOpen": "Açmak için bir hatırlatıcıya dokun ya da ne olduğunu kaydetmek için 😊 veya 😔'ya dokun",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "İlk kez mi buradasın? Emoji düğmeleri alışkanlıklarını takip eder. Yeşil yapıldı, kırmızı kaçırıldı demek. Grafiğin kendiliğinden güncellenir.",
+    "noMatchingReminders": "Eşleşen hatırlatıcı yok",
+    "nothingScheduledYet": "Henüz planlanmış bir şey yok",
+    "noPastReminders": "Geçmiş hatırlatıcı yok",
+    "keptFor24hAfterLogging": "Kaydettikten sonra 24 sa kalır",
+    "pastRemindersAreKeptFor": "Geçmiş hatırlatıcılar 24 sa kalır",
+    "logItAsDoneOr": "Yapıldı ✅ ya da kaçırıldı ❌ olarak kaydet, 24 saat sonra kendiliğinden silinir.",
+    "done": "Yapıldı",
+    "missed": "Kaçırıldı",
+    "clearsIn": "{{hours}} sa {{minutes}} dk sonra silinecek ⏱",
+    "didIt": "Yaptım!",
+    "didnTDoIt": "Yapmadım",
+    "keptFor24HoursAfter": "Kaydettikten sonra 24 saat kalır",
+    "deleteReminder": "Hatırlatıcıyı sil",
+    "itSDone": "Tamam ✅",
+    "iSlacked": "Yan çizdim 😬",
+    "overdue": "Gecikti"
+  },
+  "analyticsLocked": {
+    "completions": "Tamamlananlar",
+    "youReCrushingItKeep": "Döktürüyorsun, o çizgi tırmanmaya devam etsin! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "İstatistikler kilitli",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders türünün ilk alışkanlık edinme uygulaması. Bu istatistikler ne kadar istikrarlı olduğunu tam olarak gösterir: seriler, tamamlama oranı ve en iyi günlerin. Çünkü ölçülen şey yapılır.",
+    "unlockAnalytics": "İstatistikleri aç"
+  },
+  "rudeness": {
+    "title": "Kabalık seviyesi",
+    "l1": "Şefkatli",
+    "l2": "Motive edici",
+    "l3": "Alaycı",
+    "l4": "Sert",
+    "l5": "Acımasız"
+  },
+  "tip": {
+    "firstReminder": "<b>İlk hatırlatıcın mı?</b> Aşağıya neyi hatırlatmamı istediğini yaz, tarih, saat ve dakikayı seçmek için kitabı aç, kabalığı Şefkatli'den Acımasız'a ayarla, istersen fotoğraf, ses ya da alıntı ekle. Hazır olunca <b>Hatırlatıcı oluştur</b>'a dokun.",
+    "dismiss": "İpucunu kapat"
+  },
+  "share": {
+    "share": "Paylaş",
+    "sharing": "Paylaşılıyor..."
+  }
+}

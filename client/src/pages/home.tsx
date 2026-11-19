@@ -27,6 +27,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { resyncReminderNotifications } from "@/lib/notificationResync";
 import { Reminder } from "@shared/schema";
 
+import { tr } from "@/i18n";
 /**
  * Home — the single home page for both plans.
  *
@@ -282,20 +283,20 @@ export default function Home({ isPremium }: HomeProps) {
       queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
       if (isPremium) {
         toast({
-          title: "Nice work! ✅",
-          description: "Logged! This reminder will clear in 24 hours.",
+          title: tr("home.niceWork"),
+          description: tr("home.loggedThisReminderWillClear"),
         });
       } else {
         queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
         toast({
-          title: "Reminder Completed",
-          description: "Great job getting it done!",
+          title: tr("home.reminderCompleted"),
+          description: tr("home.greatJobGettingItDone"),
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to mark reminder as complete",
+        title: tr("home.error"),
+        description: tr("home.failedToMarkReminderAs"),
         variant: "destructive",
       });
     } finally {
@@ -317,14 +318,14 @@ export default function Home({ isPremium }: HomeProps) {
         queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
       }
       toast({
-        title: "Logged 💪",
+        title: tr("home.logged"),
         description:
-          "Tomorrow is a new chance. This reminder clears in 24 hours.",
+          tr("home.tomorrowIsANewChance"),
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to log reminder",
+        title: tr("home.error"),
+        description: tr("home.failedToLogReminder"),
         variant: "destructive",
       });
     } finally {
@@ -423,21 +424,21 @@ export default function Home({ isPremium }: HomeProps) {
               className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream dark:data-[state=inactive]:bg-reem-concrete-widget dark:data-[state=inactive]:text-reem-concrete-muted dark:data-[state=active]:bg-reem-concrete-ocean dark:data-[state=active]:text-white"
             >
               <Bell className="h-4 w-4" />
-              Create
+              {tr("home.create")}
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
               className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream dark:data-[state=inactive]:bg-reem-concrete-widget dark:data-[state=inactive]:text-reem-concrete-muted dark:data-[state=active]:bg-reem-concrete-ocean dark:data-[state=active]:text-white"
             >
               <TrendingUp className="h-4 w-4" />
-              Analytics
+              {tr("home.analytics")}
             </TabsTrigger>
             <TabsTrigger
               value="manage"
               className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream dark:data-[state=inactive]:bg-reem-concrete-widget dark:data-[state=inactive]:text-reem-concrete-muted dark:data-[state=active]:bg-reem-concrete-ocean dark:data-[state=active]:text-white"
             >
               <Target className="h-4 w-4" />
-              Manage
+              {tr("home.manage")}
             </TabsTrigger>
           </TabsList>
 
@@ -557,9 +558,9 @@ export default function Home({ isPremium }: HomeProps) {
                 extraReminders: prev.extraReminders + 3,
               }));
               toast({
-                title: "Reward Earned! 🎁",
+                title: tr("home.rewardEarned"),
                 description:
-                  "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
+                  tr("home.youVeEarned3Extra"),
               });
             } else {
               const premiumUntil = Date.now() + 30 * 60 * 1000; // 30 minutes
@@ -568,9 +569,9 @@ export default function Home({ isPremium }: HomeProps) {
                 premiumVoicesUntil: premiumUntil,
               }));
               toast({
-                title: "Reward Earned! 🔊",
+                title: tr("home.rewardEarned2"),
                 description:
-                  "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters.",
+                  tr("home.youVeUnlockedPremiumVoices"),
               });
             }
           }}

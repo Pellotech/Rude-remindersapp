@@ -6,6 +6,7 @@ import { Zap, ChevronDown } from "lucide-react";
 import { getPlatformInfo } from "@/utils/platformDetection";
 import { QUICK_TIMES } from "./schema";
 
+import { tr } from "@/i18n";
 export function QuickReminder({ onPick }: { onPick: (option: (typeof QUICK_TIMES)[number]) => void }) {
   const [quickReminderOpen, setQuickReminderOpen] = useState(false);
   const quickReminderRef = useRef<HTMLDivElement>(null);
@@ -38,7 +39,7 @@ export function QuickReminder({ onPick }: { onPick: (option: (typeof QUICK_TIMES
         >
           <span className="flex items-center">
             <Zap className="mr-2 h-4 w-4" />
-            Quick Reminder
+            {tr("quick.quickReminder")}
           </span>
           <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${quickReminderOpen ? "rotate-180" : ""}`} />
         </Button>
@@ -55,7 +56,7 @@ export function QuickReminder({ onPick }: { onPick: (option: (typeof QUICK_TIMES
               className="flex items-center justify-center p-2 h-10 bg-white hover:bg-reem-cream border border-reem-gold hover:border-reem-gold-dark text-reem-charcoal font-semibold text-sm rounded-lg"
               onClick={() => onPick(option)}
             >
-              {option.shortLabel}
+              {tr(`quick.t.${option.shortLabel}`)}
             </Button>
           ))}
         </div>

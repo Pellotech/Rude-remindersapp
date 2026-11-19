@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "ترتیبات",
+    "home": "ہوم",
+    "savesAutomatically": "تبدیلیاں خود بخود محفوظ ہو جاتی ہیں۔"
+  },
+  "settingsLanding": {
+    "language": "زبان",
+    "back": "واپس",
+    "settings": "ترتیبات",
+    "personalInformation": "ذاتی معلومات",
+    "notifications": "اطلاعات",
+    "textSizeTimeZone": "متن کا سائز اور ٹائم زون",
+    "siriShortcuts": "Siri اور شارٹ کٹس",
+    "paymentBilling": "ادائیگی اور بلنگ",
+    "developerSpace": "ڈیولپر اسپیس",
+    "helpSupport": "مدد اور سپورٹ"
+  },
+  "language": {
+    "title": "زبان",
+    "automatic": "فون کی زبان",
+    "automaticDetail": "آپ کے فون کی زبان: {{language}}",
+    "automaticNotSupported": "آپ کے فون کی زبان ابھی دستیاب نہیں، اس لیے ایپ انگریزی استعمال کرتی ہے۔",
+    "choose": "زبانیں",
+    "footer": "ایپ کے مینو اور بٹن، ریم کے پیغامات اور آواز بدل جاتے ہیں۔ پہلے بنائی گئی یاد دہانیاں اپنے الفاظ رکھتی ہیں؛ نئی یاد دہانیاں نئی زبان میں ہوں گی۔"
+  },
+  "home": {
+    "niceWork": "شاباش! ✅",
+    "loggedThisReminderWillClear": "درج ہو گیا! یہ یاد دہانی 24 گھنٹے میں ہٹ جائے گی۔",
+    "reminderCompleted": "یاد دہانی مکمل",
+    "greatJobGettingItDone": "زبردست، کام ہو گیا!",
+    "error": "خرابی",
+    "failedToMarkReminderAs": "یاد دہانی کو مکمل نشان زد نہیں کیا جا سکا",
+    "logged": "درج ہو گیا 💪",
+    "tomorrowIsANewChance": "کل نیا موقع ہے۔ یہ یاد دہانی 24 گھنٹے میں ہٹ جائے گی۔",
+    "failedToLogReminder": "یاد دہانی درج نہیں ہو سکی",
+    "create": "بنائیں",
+    "analytics": "تجزیہ",
+    "manage": "انتظام",
+    "rewardEarned": "انعام مل گیا! 🎁",
+    "youVeEarned3Extra": "آپ کو اس مہینے 3 اضافی یاد دہانیاں مل گئیں! مزید انعامات کے لیے مزید اشتہار دیکھیں۔",
+    "rewardEarned2": "انعام مل گیا! 🔊",
+    "youVeUnlockedPremiumVoices": "پریمیم آوازیں 30 منٹ کے لیے کھل گئیں! جدید آواز والے کرداروں کے ساتھ یاد دہانیاں بنائیں۔"
+  },
+  "header": {
+    "hey": "السلام علیکم {{name}}",
+    "premium": "پریمیم 👑",
+    "free": "مفت",
+    "sendReemBack": "ریم کو واپس بھیجیں",
+    "there": "دوست"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "پروفائل",
+    "areYouSureYouWant": "کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟",
+    "youLlNeedToSign": "اپنی یاد دہانیاں دیکھنے کے لیے دوبارہ سائن ان کرنا ہوگا۔",
+    "cancel": "منسوخ",
+    "logOut": "لاگ آؤٹ"
+  },
+  "usage": {
+    "freePlanUsage": "مفت پلان کا استعمال",
+    "remindersThisMonth": "اس مہینے {{used}}/{{limit}} یاد دہانیاں",
+    "bonus": "+{{count}} بونس",
+    "remindersUsed": "استعمال شدہ یاد دہانیاں",
+    "upgrade": "اپ گریڈ"
+  },
+  "form": {
+    "messageRequired": "پیغام ضروری ہے",
+    "pleaseEnterWhatYouNeed": "پہلے لکھیں کہ آپ کو کس بات کی یاد دہانی چاہیے",
+    "quickReminderCreated": "فوری یاد دہانی بن گئی",
+    "whatDoYouNeedTo": "آپ کو کس بات کی یاد دہانی چاہیے؟",
+    "writeYourReminderHere": "✏️ اپنی یاد دہانی یہاں لکھیں...",
+    "creatingReminder": "یاد دہانی بن رہی ہے...",
+    "createReminder": "یاد دہانی بنائیں",
+    "quickReminderSetFor": "یاد دہانی {{time}} پر ({{when}} بعد)"
+  },
+  "schedule": {
+    "lv": "🔔 درجہ",
+    "voice": "آواز",
+    "daysSelected": "{{count}} دن منتخب"
+  },
+  "features": {
+    "goPremium": "🔒 پریمیم لیں",
+    "voice": "آواز",
+    "photo": "تصویر",
+    "quotes": "اقوال",
+    "voiceCharacter": "آواز کا کردار",
+    "selectVoice": "آواز منتخب کریں",
+    "addPhotos": "تصاویر شامل کریں ({{count}}/{{max}})",
+    "tapToAddPhoto": "تصویر شامل کرنے کے لیے ٹیپ کریں",
+    "motivationStyle": "حوصلہ افزائی کا انداز",
+    "chooseAMotivationStyle": "حوصلہ افزائی کا انداز چنیں…",
+    "aMotivationalQuoteFromYour": "آپ کی منتخب کیٹیگری سے ایک حوصلہ افزا قول آپ کی یاد دہانی میں شامل کیا جائے گا۔"
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "مفت حد پوری ہو گئی",
+    "youVeUsedAllYour": "آپ نے اس مہینے کی تمام مفت یاد دہانیاں استعمال کر لیں۔ یہ مہینے کی پہلی تاریخ کو دوبارہ ملیں گی، یا پریمیم لیں اور ہر مہینے 120 کے ساتھ تمام فیچرز پائیں۔",
+    "upgradeToPremium": "پریمیم لیں",
+    "maybeLater": "شاید بعد میں"
+  },
+  "quick": {
+    "quickReminder": "فوری یاد دہانی",
+    "t": {
+      "10s": "10 سیکنڈ",
+      "5m": "5 منٹ",
+      "15m": "15 منٹ",
+      "30m": "30 منٹ"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "آپ کا آنے والا ہفتہ",
+    "swipeToOpen": "کھولنے کے لیے سوائپ کریں",
+    "today": "آج",
+    "openCover": "کور کھولیں",
+    "deselect": "ہٹائیں",
+    "select": "منتخب کریں",
+    "clear": "صاف کریں"
+  },
+  "manage": {
+    "reminderCompleted": "یاد دہانی مکمل!",
+    "greatJobKeepUpThe": "زبردست! ایسے ہی جاری رکھیں۔",
+    "unauthorized": "اجازت نہیں",
+    "youAreLoggedOutLogging": "آپ لاگ آؤٹ ہو گئے ہیں۔ دوبارہ لاگ ان ہو رہا ہے...",
+    "error": "خرابی",
+    "failedToCompleteReminder": "یاد دہانی مکمل نہیں ہو سکی۔",
+    "deleted": "حذف ہو گئی!",
+    "reminderHasBeenDeleted": "یاد دہانی حذف کر دی گئی۔",
+    "failedToDeleteReminder": "یاد دہانی حذف نہیں ہو سکی۔",
+    "noted": "نوٹ کر لیا",
+    "trackingWhatDidnTGet": "جو کام نہیں ہوا اسے درج کرنا بھی شعور بڑھاتا ہے۔",
+    "failedToMarkReminder": "یاد دہانی نشان زد نہیں ہو سکی۔",
+    "loadingYourReminders": "آپ کی یاد دہانیاں لوڈ ہو رہی ہیں...",
+    "past": "گزشتہ ({{count}})",
+    "upcoming": "آنے والی ({{count}})",
+    "searchReminders": "یاد دہانیاں تلاش کریں...",
+    "tapAReminderToOpen": "کھولنے کے لیے یاد دہانی پر ٹیپ کریں، یا جو ہوا درج کرنے کے لیے 😊 یا 😔 پر ٹیپ کریں",
+    "rudy": "ریم",
+    "firstTimeHereTheEmoji": "پہلی بار آئے ہیں؟ ایموجی بٹن آپ کی عادتوں کا حساب رکھتے ہیں۔ سبز یعنی ہو گیا۔ سرخ یعنی رہ گیا۔ آپ کا گراف خود اپ ڈیٹ ہوتا ہے۔",
+    "noMatchingReminders": "کوئی ملتی جلتی یاد دہانی نہیں",
+    "nothingScheduledYet": "ابھی کچھ طے نہیں",
+    "noPastReminders": "کوئی گزشتہ یاد دہانی نہیں",
+    "keptFor24hAfterLogging": "درج کرنے کے بعد 24 گھنٹے رہتی ہے",
+    "pastRemindersAreKeptFor": "گزشتہ یاد دہانیاں 24 گھنٹے رہتی ہیں",
+    "logItAsDoneOr": "اسے ہو گیا ✅ یا رہ گیا ❌ درج کریں، یہ 24 گھنٹے بعد خود ہٹ جائے گی۔",
+    "done": "ہو گیا",
+    "missed": "رہ گیا",
+    "clearsIn": "{{hours}} گھنٹے {{minutes}} منٹ میں ہٹ جائے گی ⏱",
+    "didIt": "کر لیا!",
+    "didnTDoIt": "نہیں کیا",
+    "keptFor24HoursAfter": "درج کرنے کے بعد 24 گھنٹے رہتی ہے",
+    "deleteReminder": "یاد دہانی حذف کریں",
+    "itSDone": "ہو گیا ✅",
+    "iSlacked": "سستی کر گیا 😬",
+    "overdue": "تاخیر"
+  },
+  "analyticsLocked": {
+    "completions": "مکمل کام",
+    "youReCrushingItKeep": "آپ کمال کر رہے ہیں، یہ لکیر اوپر جاتی رہے! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "تجزیہ مقفل ہے",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders اپنی طرز کی پہلی عادت بنانے والی ایپ ہے۔ یہ تجزیہ آپ کو دکھاتا ہے کہ آپ کتنے مستقل مزاج ہیں: سلسلے، تکمیل کی شرح اور آپ کے بہترین دن۔ کیونکہ جو ناپا جائے وہی ہوتا ہے۔",
+    "unlockAnalytics": "تجزیہ کھولیں"
+  },
+  "rudeness": {
+    "title": "بدتمیزی کا درجہ",
+    "l1": "ہمدرد",
+    "l2": "حوصلہ افزا",
+    "l3": "طنزیہ",
+    "l4": "سخت",
+    "l5": "بے رحم"
+  },
+  "tip": {
+    "firstReminder": "<b>پہلی یاد دہانی؟</b> نیچے لکھیں کہ آپ کو کس بات کی یاد دہانی چاہیے، تاریخ، گھنٹہ اور منٹ چننے کے لیے کتاب کھولیں، بدتمیزی کو ہمدرد سے بے رحم تک سرکائیں، پھر چاہیں تو تصویر، آواز یا قول شامل کریں۔ تیار ہوں تو <b>یاد دہانی بنائیں</b> دبائیں۔",
+    "dismiss": "مشورہ بند کریں"
+  },
+  "share": {
+    "share": "شیئر",
+    "sharing": "شیئر ہو رہا ہے..."
+  }
+}

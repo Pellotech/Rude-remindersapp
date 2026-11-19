@@ -21,6 +21,7 @@ import { RudenessSlider } from "./RudenessSlider";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookDatePicker } from "./BookDatePicker";
 import { format } from "date-fns";
+import { formatDate } from "@/i18n/dates";
 import { getPlatformInfo, supportsCamera } from "@/utils/platformDetection";
 import { useAuth } from "@/hooks/useAuth";
 import { usePaywallGate } from "@/components/PaywallGate";
@@ -35,6 +36,7 @@ import { FeatureTabs } from "./reminder-form/FeatureTabs";
 import { FreeLimitModal } from "./reminder-form/FreeLimitModal";
 import { QuickReminder } from "./reminder-form/QuickReminder";
 
+import { tr } from "@/i18n";
 // ─────────────────────────────────────────────────────────────────────────────
 // The Create Reminder card on Home. This file puts the pieces together:
 //   message box → book date picker → (rudeness slider) → summary bar →
@@ -306,8 +308,8 @@ export default function ReminderForm({
     const currentMessage = form.watch("originalMessage");
     if (!currentMessage || currentMessage.trim() === "") {
       toast({
-        title: "Message Required",
-        description: "Please enter what you need to be reminded about first",
+        title: tr("form.messageRequired"),
+        description: tr("form.pleaseEnterWhatYouNeed"),
         variant: "destructive",
       });
       return;
@@ -338,8 +340,8 @@ export default function ReminderForm({
     createReminderMutation.mutate(quickReminderData);
 
     toast({
-      title: "Quick Reminder Created",
-      description: `Reminder set for ${format(newTime, "h:mm a")} (${shortLabel} from now)`,
+      title: tr("form.quickReminderCreated"),
+      description: tr("form.quickReminderSetFor", { time: formatDate(newTime, "h:mm a"), when: tr(`quick.t.${shortLabel}`) }),
     });
   };
 
@@ -354,10 +356,10 @@ export default function ReminderForm({
               name="originalMessage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="dark:text-white">What do you need to be reminded about?</FormLabel>
+                  <FormLabel className="dark:text-white">{tr("form.whatDoYouNeedTo")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="✏️ Write your reminder here..."
+                      placeholder={tr("form.writeYourReminderHere")}
                       className="bg-reem-cream border-2 border-reem-gold focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] h-[50px] py-3 text-reem-ink placeholder:text-reem-ink/50 dark:bg-reem-concrete-light dark:border-reem-concrete-light"
                       {...field}
                     />
@@ -487,10 +489,10 @@ export default function ReminderForm({
               {createReminderMutation.isPending ? (
                 <>
                   <RoseSpinner size={20} className="mr-2" />
-                  Creating Reminder...
+                  {tr("form.creatingReminder")}
                 </>
               ) : (
-                "Create Reminder"
+                tr("form.createReminder")
               )}
             </Button>
 

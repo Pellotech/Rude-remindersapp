@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "Einstellungen",
+    "home": "Start",
+    "savesAutomatically": "Änderungen werden automatisch gespeichert."
+  },
+  "settingsLanding": {
+    "language": "Sprache",
+    "back": "Zurück",
+    "settings": "Einstellungen",
+    "personalInformation": "Persönliche Daten",
+    "notifications": "Mitteilungen",
+    "textSizeTimeZone": "Textgröße & Zeitzone",
+    "siriShortcuts": "Siri & Kurzbefehle",
+    "paymentBilling": "Zahlung & Abrechnung",
+    "developerSpace": "Entwicklerbereich",
+    "helpSupport": "Hilfe & Support"
+  },
+  "language": {
+    "title": "Sprache",
+    "automatic": "Sprache des Telefons",
+    "automaticDetail": "Wie dein Telefon: {{language}}",
+    "automaticNotSupported": "Die Sprache deines Telefons gibt es noch nicht, daher nutzt die App Englisch.",
+    "choose": "Sprachen",
+    "footer": "Ändert Menüs und Buttons der App, Reems Nachrichten und die Stimme. Bereits erstellte Erinnerungen behalten ihren Text; neue nutzen die neue Sprache."
+  },
+  "home": {
+    "niceWork": "Stark! ✅",
+    "loggedThisReminderWillClear": "Eingetragen! Diese Erinnerung verschwindet in 24 Stunden.",
+    "reminderCompleted": "Erinnerung erledigt",
+    "greatJobGettingItDone": "Super, erledigt!",
+    "error": "Fehler",
+    "failedToMarkReminderAs": "Erinnerung konnte nicht als erledigt markiert werden",
+    "logged": "Eingetragen 💪",
+    "tomorrowIsANewChance": "Morgen ist eine neue Chance. Diese Erinnerung verschwindet in 24 Stunden.",
+    "failedToLogReminder": "Erinnerung konnte nicht eingetragen werden",
+    "create": "Erstellen",
+    "analytics": "Statistik",
+    "manage": "Verwalten",
+    "rewardEarned": "Belohnung verdient! 🎁",
+    "youVeEarned3Extra": "Du hast diesen Monat 3 Extra-Erinnerungen verdient! Sieh dir mehr Werbung an für weitere Belohnungen.",
+    "rewardEarned2": "Belohnung verdient! 🔊",
+    "youVeUnlockedPremiumVoices": "Premium-Stimmen für 30 Minuten freigeschaltet! Erstelle Erinnerungen mit besonderen Stimmen."
+  },
+  "header": {
+    "hey": "Hey {{name}}",
+    "premium": "Premium 👑",
+    "free": "Gratis",
+    "sendReemBack": "Reem zurückschicken",
+    "there": "du"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Profil",
+    "areYouSureYouWant": "Willst du dich wirklich abmelden?",
+    "youLlNeedToSign": "Du musst dich wieder anmelden, um deine Erinnerungen zu sehen.",
+    "cancel": "Abbrechen",
+    "logOut": "Abmelden"
+  },
+  "usage": {
+    "freePlanUsage": "Nutzung Gratis-Tarif",
+    "remindersThisMonth": "{{used}}/{{limit}} Erinnerungen diesen Monat",
+    "bonus": "+{{count}} Bonus",
+    "remindersUsed": "Genutzte Erinnerungen",
+    "upgrade": "Upgrade"
+  },
+  "form": {
+    "messageRequired": "Text fehlt",
+    "pleaseEnterWhatYouNeed": "Schreib zuerst, woran du erinnert werden willst",
+    "quickReminderCreated": "Schnell-Erinnerung erstellt",
+    "whatDoYouNeedTo": "Woran soll ich dich erinnern?",
+    "writeYourReminderHere": "✏️ Schreib deine Erinnerung hier...",
+    "creatingReminder": "Erinnerung wird erstellt...",
+    "createReminder": "Erinnerung erstellen",
+    "quickReminderSetFor": "Erinnerung um {{time}} (in {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 St.",
+    "voice": "Stimme",
+    "daysSelected": "{{count}} Tage gewählt",
+    "daysSelected_one": "{{count}} Tag gewählt"
+  },
+  "features": {
+    "goPremium": "🔒 Premium holen",
+    "voice": "Stimme",
+    "photo": "Foto",
+    "quotes": "Zitate",
+    "voiceCharacter": "Stimmfigur",
+    "selectVoice": "Stimme wählen",
+    "addPhotos": "Fotos hinzufügen ({{count}}/{{max}})",
+    "tapToAddPhoto": "Tippen, um ein Foto hinzuzufügen",
+    "motivationStyle": "Motivationsstil",
+    "chooseAMotivationStyle": "Wähle einen Motivationsstil…",
+    "aMotivationalQuoteFromYour": "Ein motivierendes Zitat aus der gewählten Kategorie wird deiner Erinnerung hinzugefügt."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Gratis-Limit erreicht",
+    "youVeUsedAllYour": "Du hast alle Gratis-Erinnerungen für diesen Monat genutzt. Am 1. gibt es neue – oder hol dir Premium mit 120 pro Monat und allen Funktionen.",
+    "upgradeToPremium": "Premium holen",
+    "maybeLater": "Vielleicht später"
+  },
+  "quick": {
+    "quickReminder": "Schnell-Erinnerung",
+    "t": {
+      "10s": "10 Sek.",
+      "5m": "5 Min.",
+      "15m": "15 Min.",
+      "30m": "30 Min."
+    }
+  },
+  "book": {
+    "yourWeekAhead": "deine Woche",
+    "swipeToOpen": "zum Öffnen wischen",
+    "today": "Heute",
+    "openCover": "Aufschlagen",
+    "deselect": "Abwählen",
+    "select": "Wählen",
+    "clear": "Leeren"
+  },
+  "manage": {
+    "reminderCompleted": "Erinnerung erledigt!",
+    "greatJobKeepUpThe": "Super! Weiter so.",
+    "unauthorized": "Nicht angemeldet",
+    "youAreLoggedOutLogging": "Du bist abgemeldet. Melde neu an...",
+    "error": "Fehler",
+    "failedToCompleteReminder": "Erinnerung konnte nicht erledigt werden.",
+    "deleted": "Gelöscht!",
+    "reminderHasBeenDeleted": "Die Erinnerung wurde gelöscht.",
+    "failedToDeleteReminder": "Erinnerung konnte nicht gelöscht werden.",
+    "noted": "Notiert",
+    "trackingWhatDidnTGet": "Auch festzuhalten, was liegen blieb, macht dir Gewohnheiten bewusst.",
+    "failedToMarkReminder": "Erinnerung konnte nicht markiert werden.",
+    "loadingYourReminders": "Deine Erinnerungen werden geladen...",
+    "past": "Vergangen ({{count}})",
+    "upcoming": "Anstehend ({{count}})",
+    "searchReminders": "Erinnerungen suchen...",
+    "tapAReminderToOpen": "Tippe auf eine Erinnerung, um sie zu öffnen, oder auf 😊 oder 😔, um einzutragen, wie es lief",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "Zum ersten Mal hier? Die Emoji-Buttons verfolgen deine Gewohnheiten. Grün heißt erledigt. Rot heißt verpasst. Deine Grafik aktualisiert sich von selbst.",
+    "noMatchingReminders": "Keine passenden Erinnerungen",
+    "nothingScheduledYet": "Noch nichts geplant",
+    "noPastReminders": "Keine vergangenen Erinnerungen",
+    "keptFor24hAfterLogging": "Bleibt 24 Std. nach dem Eintragen",
+    "pastRemindersAreKeptFor": "Vergangene Erinnerungen bleiben 24 Std.",
+    "logItAsDoneOr": "Trag sie als erledigt ✅ oder verpasst ❌ ein, dann verschwindet sie nach 24 Stunden von selbst.",
+    "done": "Erledigt",
+    "missed": "Verpasst",
+    "clearsIn": "Verschwindet in {{hours}} Std. {{minutes}} Min. ⏱",
+    "didIt": "Geschafft!",
+    "didnTDoIt": "Nicht gemacht",
+    "keptFor24HoursAfter": "Bleibt 24 Stunden nach dem Eintragen",
+    "deleteReminder": "Erinnerung löschen",
+    "itSDone": "Erledigt ✅",
+    "iSlacked": "Gefaulenzt 😬",
+    "overdue": "Überfällig"
+  },
+  "analyticsLocked": {
+    "completions": "Erledigt",
+    "youReCrushingItKeep": "Du rockst das – lass die Kurve weiter steigen! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Statistik gesperrt",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders ist eine einzigartige App für Gewohnheiten. Diese Statistik zeigt dir genau, wie beständig du bist: Serien, Erfolgsquote und deine besten Tage. Denn was gemessen wird, wird erledigt.",
+    "unlockAnalytics": "Statistik freischalten"
+  },
+  "rudeness": {
+    "title": "Frechheitsstufe",
+    "l1": "Mitfühlend",
+    "l2": "Motivierend",
+    "l3": "Sarkastisch",
+    "l4": "Hart",
+    "l5": "Gnadenlos"
+  },
+  "tip": {
+    "firstReminder": "<b>Erste Erinnerung?</b> Schreib unten, woran du erinnert werden willst, öffne das Buch, um Datum, Stunde und Minute zu wählen, stell die Frechheit von Mitfühlend bis Gnadenlos ein und füge bei Bedarf ein Foto, eine Stimme oder ein Zitat hinzu. Tippe auf <b>Erinnerung erstellen</b>, wenn du so weit bist.",
+    "dismiss": "Tipp schließen"
+  },
+  "share": {
+    "share": "Teilen",
+    "sharing": "Wird geteilt..."
+  }
+}

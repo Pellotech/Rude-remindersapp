@@ -1,6 +1,7 @@
 import { TrendingUp } from "lucide-react";
 import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 
+import { tr } from "@/i18n";
 /**
  * AnalyticsLocked — the free plan's Analytics tab.
  *
@@ -25,7 +26,7 @@ export function AnalyticsLocked({ onUpgrade }: AnalyticsLockedProps) {
         <div className="border border-reem-gold rounded-xl p-4 bg-white">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="h-4 w-4 text-reem-gold" />
-            <span className="text-sm font-semibold text-gray-900">Completions</span>
+            <span className="text-sm font-semibold text-gray-900">{tr("analyticsLocked.completions")}</span>
           </div>
           <div className="flex rounded-xl border-2 border-reem-gold overflow-hidden mb-4">
             {["This Week", "This Year", "10 Weeks"].map((label, i) => (
@@ -47,7 +48,7 @@ export function AnalyticsLocked({ onUpgrade }: AnalyticsLockedProps) {
         </div>
         {/* Fake encouragement */}
         <div className="border border-reem-gold bg-reem-cream-light rounded-xl p-3 text-center">
-          <p className="text-sm text-gray-700 font-medium">You're crushing it — keep that line climbing! 🔥</p>
+          <p className="text-sm text-gray-700 font-medium">{tr("analyticsLocked.youReCrushingItKeep")}</p>
         </div>
         {/* Fake stats grid */}
         <div className="grid grid-cols-2 gap-3">
@@ -71,14 +72,14 @@ export function AnalyticsLocked({ onUpgrade }: AnalyticsLockedProps) {
       {/* Upgrade overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="bg-white border-2 border-reem-gold rounded-2xl shadow-xl px-6 py-6 text-center max-w-xs mx-auto">
-          <img src={rudeRemindersLogo} alt="Reems Rude Reminders" className="w-12 h-12 mx-auto object-contain mb-3" />
-          <h3 className="font-bold text-gray-900 text-base mb-1">Analytics Locked</h3>
-          <p className="text-sm text-gray-500 mb-4">Reems Rude Reminders is the first of its kind habit-building app. These analytics show you exactly how consistent you're being — streaks, completion rates, and your best days. Because what gets measured, gets done.</p>
+          <img src={rudeRemindersLogo} alt={tr("analyticsLocked.reemsRudeReminders")} className="w-12 h-12 mx-auto object-contain mb-3" />
+          <h3 className="font-bold text-gray-900 text-base mb-1">{tr("analyticsLocked.analyticsLocked")}</h3>
+          <p className="text-sm text-gray-500 mb-4">{tr("analyticsLocked.reemsRudeRemindersIsThe")}</p>
           <button
             onClick={onUpgrade}
             className="w-full bg-reem-red hover:bg-reem-red-dark text-white font-semibold py-2.5 px-6 rounded-full text-sm transition-colors"
           >
-            Unlock Analytics
+            {tr("analyticsLocked.unlockAnalytics")}
           </button>
         </div>
       </div>

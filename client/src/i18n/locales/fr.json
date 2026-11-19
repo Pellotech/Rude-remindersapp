@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "Réglages",
+    "home": "Accueil",
+    "savesAutomatically": "Les changements sont enregistrés automatiquement."
+  },
+  "settingsLanding": {
+    "language": "Langue",
+    "back": "Retour",
+    "settings": "Réglages",
+    "personalInformation": "Informations personnelles",
+    "notifications": "Notifications",
+    "textSizeTimeZone": "Taille du texte et fuseau horaire",
+    "siriShortcuts": "Siri et Raccourcis",
+    "paymentBilling": "Paiement et facturation",
+    "developerSpace": "Espace développeur",
+    "helpSupport": "Aide et assistance"
+  },
+  "language": {
+    "title": "Langue",
+    "automatic": "Langue du téléphone",
+    "automaticDetail": "Utilise celle du téléphone : {{language}}",
+    "automaticNotSupported": "La langue de votre téléphone n'est pas encore disponible, l'app utilise donc l'anglais.",
+    "choose": "Langues",
+    "footer": "Change les menus et boutons de l'app, les messages de Reem et la voix. Les rappels déjà créés gardent leurs mots ; les nouveaux utilisent la nouvelle langue."
+  },
+  "home": {
+    "niceWork": "Bien joué ! ✅",
+    "loggedThisReminderWillClear": "Enregistré ! Ce rappel disparaîtra dans 24 heures.",
+    "reminderCompleted": "Rappel terminé",
+    "greatJobGettingItDone": "Bravo, c'est fait !",
+    "error": "Erreur",
+    "failedToMarkReminderAs": "Impossible de marquer le rappel comme terminé",
+    "logged": "Enregistré 💪",
+    "tomorrowIsANewChance": "Demain est une nouvelle chance. Ce rappel disparaît dans 24 heures.",
+    "failedToLogReminder": "Impossible d'enregistrer le rappel",
+    "create": "Créer",
+    "analytics": "Statistiques",
+    "manage": "Gérer",
+    "rewardEarned": "Récompense gagnée ! 🎁",
+    "youVeEarned3Extra": "Vous avez gagné 3 rappels de plus ce mois-ci ! Regardez d'autres pubs pour plus de récompenses.",
+    "rewardEarned2": "Récompense gagnée ! 🔊",
+    "youVeUnlockedPremiumVoices": "Voix premium débloquées pendant 30 minutes ! Créez des rappels avec des personnages vocaux avancés."
+  },
+  "header": {
+    "hey": "Salut {{name}}",
+    "premium": "Premium 👑",
+    "free": "Gratuit",
+    "sendReemBack": "Renvoyer Reem",
+    "there": "toi"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Profil",
+    "areYouSureYouWant": "Voulez-vous vraiment vous déconnecter ?",
+    "youLlNeedToSign": "Vous devrez vous reconnecter pour voir vos rappels.",
+    "cancel": "Annuler",
+    "logOut": "Se déconnecter"
+  },
+  "usage": {
+    "freePlanUsage": "Utilisation du forfait gratuit",
+    "remindersThisMonth": "{{used}}/{{limit}} rappels ce mois-ci",
+    "bonus": "+{{count}} bonus",
+    "remindersUsed": "Rappels utilisés",
+    "upgrade": "Passer à Premium"
+  },
+  "form": {
+    "messageRequired": "Message requis",
+    "pleaseEnterWhatYouNeed": "Écrivez d'abord ce que vous voulez vous rappeler",
+    "quickReminderCreated": "Rappel rapide créé",
+    "whatDoYouNeedTo": "De quoi devez-vous vous souvenir ?",
+    "writeYourReminderHere": "✏️ Écrivez votre rappel ici...",
+    "creatingReminder": "Création du rappel...",
+    "createReminder": "Créer le rappel",
+    "quickReminderSetFor": "Rappel prévu à {{time}} (dans {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 Niv.",
+    "voice": "Voix",
+    "daysSelected": "{{count}} jours sélectionnés",
+    "daysSelected_one": "{{count}} jour sélectionné"
+  },
+  "features": {
+    "goPremium": "🔒 Passer à Premium",
+    "voice": "Voix",
+    "photo": "Photo",
+    "quotes": "Citations",
+    "voiceCharacter": "Personnage vocal",
+    "selectVoice": "Choisir une voix",
+    "addPhotos": "Ajouter des photos ({{count}}/{{max}})",
+    "tapToAddPhoto": "Touchez pour ajouter une photo",
+    "motivationStyle": "Style de motivation",
+    "chooseAMotivationStyle": "Choisissez un style de motivation…",
+    "aMotivationalQuoteFromYour": "Une citation motivante de la catégorie choisie sera ajoutée à votre rappel."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Limite gratuite atteinte",
+    "youVeUsedAllYour": "Vous avez utilisé tous vos rappels gratuits ce mois-ci. Ils reviennent le 1er, ou passez à Premium pour 120 par mois et toutes les fonctions.",
+    "upgradeToPremium": "Passer à Premium",
+    "maybeLater": "Plus tard"
+  },
+  "quick": {
+    "quickReminder": "Rappel rapide",
+    "t": {
+      "10s": "10 s",
+      "5m": "5 min",
+      "15m": "15 min",
+      "30m": "30 min"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "votre semaine",
+    "swipeToOpen": "glissez pour ouvrir",
+    "today": "Aujourd'hui",
+    "openCover": "Ouvrir",
+    "deselect": "Retirer",
+    "select": "Choisir",
+    "clear": "Effacer"
+  },
+  "manage": {
+    "reminderCompleted": "Rappel terminé !",
+    "greatJobKeepUpThe": "Bravo ! Continuez comme ça.",
+    "unauthorized": "Non autorisé",
+    "youAreLoggedOutLogging": "Vous êtes déconnecté. Reconnexion...",
+    "error": "Erreur",
+    "failedToCompleteReminder": "Impossible de terminer le rappel.",
+    "deleted": "Supprimé !",
+    "reminderHasBeenDeleted": "Le rappel a été supprimé.",
+    "failedToDeleteReminder": "Impossible de supprimer le rappel.",
+    "noted": "Noté",
+    "trackingWhatDidnTGet": "Noter ce qui n'a pas été fait aide aussi à en prendre conscience.",
+    "failedToMarkReminder": "Impossible de marquer le rappel.",
+    "loadingYourReminders": "Chargement de vos rappels...",
+    "past": "Passés ({{count}})",
+    "upcoming": "À venir ({{count}})",
+    "searchReminders": "Rechercher des rappels...",
+    "tapAReminderToOpen": "Touchez un rappel pour l'ouvrir, ou touchez 😊 ou 😔 pour noter ce qui s'est passé",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "Première visite ? Les boutons emoji suivent vos habitudes. Vert = fait. Rouge = raté. Votre graphique se met à jour tout seul.",
+    "noMatchingReminders": "Aucun rappel correspondant",
+    "nothingScheduledYet": "Rien de prévu pour l'instant",
+    "noPastReminders": "Aucun rappel passé",
+    "keptFor24hAfterLogging": "Gardé 24 h après l'enregistrement",
+    "pastRemindersAreKeptFor": "Les rappels passés sont gardés 24 h",
+    "logItAsDoneOr": "Marquez-le fait ✅ ou raté ❌ et il disparaît tout seul après 24 heures.",
+    "done": "Fait",
+    "missed": "Raté",
+    "clearsIn": "Disparaît dans {{hours}} h {{minutes}} min ⏱",
+    "didIt": "C'est fait !",
+    "didnTDoIt": "Pas fait",
+    "keptFor24HoursAfter": "Gardé 24 heures après l'enregistrement",
+    "deleteReminder": "Supprimer le rappel",
+    "itSDone": "C'est fait ✅",
+    "iSlacked": "J'ai flemmardé 😬",
+    "overdue": "En retard"
+  },
+  "analyticsLocked": {
+    "completions": "Réussites",
+    "youReCrushingItKeep": "Vous assurez ! Faites grimper cette courbe 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Statistiques verrouillées",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders est une app d'habitudes unique en son genre. Ces statistiques montrent précisément votre régularité : séries, taux de réussite et meilleurs jours. Parce que ce qui se mesure se fait.",
+    "unlockAnalytics": "Débloquer les statistiques"
+  },
+  "rudeness": {
+    "title": "Niveau d'impolitesse",
+    "l1": "Compatissant",
+    "l2": "Motivant",
+    "l3": "Sarcastique",
+    "l4": "Dur",
+    "l5": "Sans pitié"
+  },
+  "tip": {
+    "firstReminder": "<b>Premier rappel ?</b> Écrivez ci-dessous ce que vous voulez vous rappeler, ouvrez le livre pour choisir la date, l'heure et la minute, réglez l'impolitesse de Compatissant à Sans pitié, puis ajoutez une photo, une voix ou une citation si vous voulez. Touchez <b>Créer le rappel</b> quand vous êtes prêt.",
+    "dismiss": "Fermer l'astuce"
+  },
+  "share": {
+    "share": "Partager",
+    "sharing": "Partage..."
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "Pengaturan",
+    "home": "Beranda",
+    "savesAutomatically": "Perubahan tersimpan otomatis."
+  },
+  "settingsLanding": {
+    "language": "Bahasa",
+    "back": "Kembali",
+    "settings": "Pengaturan",
+    "personalInformation": "Informasi pribadi",
+    "notifications": "Notifikasi",
+    "textSizeTimeZone": "Ukuran teks & zona waktu",
+    "siriShortcuts": "Siri & Pintasan",
+    "paymentBilling": "Pembayaran & tagihan",
+    "developerSpace": "Ruang pengembang",
+    "helpSupport": "Bantuan & dukungan"
+  },
+  "language": {
+    "title": "Bahasa",
+    "automatic": "Bahasa ponsel",
+    "automaticDetail": "Mengikuti ponsel: {{language}}",
+    "automaticNotSupported": "Bahasa ponselmu belum tersedia, jadi aplikasi memakai bahasa Inggris.",
+    "choose": "Bahasa",
+    "footer": "Mengubah menu dan tombol aplikasi, pesan Reem, dan suara. Pengingat yang sudah dibuat tetap seperti semula; pengingat baru memakai bahasa baru."
+  },
+  "home": {
+    "niceWork": "Mantap! ✅",
+    "loggedThisReminderWillClear": "Tercatat! Pengingat ini akan hilang dalam 24 jam.",
+    "reminderCompleted": "Pengingat selesai",
+    "greatJobGettingItDone": "Keren, berhasil!",
+    "error": "Galat",
+    "failedToMarkReminderAs": "Gagal menandai pengingat sebagai selesai",
+    "logged": "Tercatat 💪",
+    "tomorrowIsANewChance": "Besok kesempatan baru. Pengingat ini hilang dalam 24 jam.",
+    "failedToLogReminder": "Gagal mencatat pengingat",
+    "create": "Buat",
+    "analytics": "Statistik",
+    "manage": "Kelola",
+    "rewardEarned": "Dapat hadiah! 🎁",
+    "youVeEarned3Extra": "Kamu dapat 3 pengingat tambahan bulan ini! Tonton iklan lagi untuk hadiah lainnya.",
+    "rewardEarned2": "Dapat hadiah! 🔊",
+    "youVeUnlockedPremiumVoices": "Suara premium terbuka selama 30 menit! Buat pengingat dengan karakter suara spesial."
+  },
+  "header": {
+    "hey": "Hai {{name}}",
+    "premium": "Premium 👑",
+    "free": "Gratis",
+    "sendReemBack": "Kembalikan Reem",
+    "there": "kamu"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Profil",
+    "areYouSureYouWant": "Yakin mau keluar?",
+    "youLlNeedToSign": "Kamu perlu masuk lagi untuk melihat pengingatmu.",
+    "cancel": "Batal",
+    "logOut": "Keluar"
+  },
+  "usage": {
+    "freePlanUsage": "Pemakaian paket gratis",
+    "remindersThisMonth": "{{used}}/{{limit}} pengingat bulan ini",
+    "bonus": "+{{count}} bonus",
+    "remindersUsed": "Pengingat terpakai",
+    "upgrade": "Upgrade"
+  },
+  "form": {
+    "messageRequired": "Pesan diperlukan",
+    "pleaseEnterWhatYouNeed": "Tulis dulu apa yang perlu diingatkan",
+    "quickReminderCreated": "Pengingat cepat dibuat",
+    "whatDoYouNeedTo": "Apa yang perlu diingatkan?",
+    "writeYourReminderHere": "✏️ Tulis pengingatmu di sini...",
+    "creatingReminder": "Membuat pengingat...",
+    "createReminder": "Buat pengingat",
+    "quickReminderSetFor": "Pengingat pukul {{time}} ({{when}} lagi)"
+  },
+  "schedule": {
+    "lv": "🔔 Lv.",
+    "voice": "Suara",
+    "daysSelected": "{{count}} hari dipilih"
+  },
+  "features": {
+    "goPremium": "🔒 Ambil Premium",
+    "voice": "Suara",
+    "photo": "Foto",
+    "quotes": "Kutipan",
+    "voiceCharacter": "Karakter suara",
+    "selectVoice": "Pilih suara",
+    "addPhotos": "Tambah foto ({{count}}/{{max}})",
+    "tapToAddPhoto": "Ketuk untuk menambah foto",
+    "motivationStyle": "Gaya motivasi",
+    "chooseAMotivationStyle": "Pilih gaya motivasi…",
+    "aMotivationalQuoteFromYour": "Kutipan motivasi dari kategori pilihanmu akan ditambahkan ke pengingat."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Batas gratis tercapai",
+    "youVeUsedAllYour": "Kamu sudah memakai semua pengingat gratis bulan ini. Akan direset tanggal 1, atau ambil Premium untuk 120 per bulan dan semua fitur.",
+    "upgradeToPremium": "Ambil Premium",
+    "maybeLater": "Nanti saja"
+  },
+  "quick": {
+    "quickReminder": "Pengingat cepat",
+    "t": {
+      "10s": "10 dtk",
+      "5m": "5 mnt",
+      "15m": "15 mnt",
+      "30m": "30 mnt"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "minggu depanmu",
+    "swipeToOpen": "geser untuk membuka",
+    "today": "Hari ini",
+    "openCover": "Buka sampul",
+    "deselect": "Batal pilih",
+    "select": "Pilih",
+    "clear": "Hapus"
+  },
+  "manage": {
+    "reminderCompleted": "Pengingat selesai!",
+    "greatJobKeepUpThe": "Mantap! Pertahankan.",
+    "unauthorized": "Tidak diizinkan",
+    "youAreLoggedOutLogging": "Kamu sudah keluar. Masuk lagi...",
+    "error": "Galat",
+    "failedToCompleteReminder": "Gagal menyelesaikan pengingat.",
+    "deleted": "Dihapus!",
+    "reminderHasBeenDeleted": "Pengingat sudah dihapus.",
+    "failedToDeleteReminder": "Gagal menghapus pengingat.",
+    "noted": "Dicatat",
+    "trackingWhatDidnTGet": "Mencatat yang belum dikerjakan juga membangun kesadaran.",
+    "failedToMarkReminder": "Gagal menandai pengingat.",
+    "loadingYourReminders": "Memuat pengingatmu...",
+    "past": "Lewat ({{count}})",
+    "upcoming": "Mendatang ({{count}})",
+    "searchReminders": "Cari pengingat...",
+    "tapAReminderToOpen": "Ketuk pengingat untuk membukanya, atau ketuk 😊 atau 😔 untuk mencatat yang terjadi",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "Baru pertama kali? Tombol emoji melacak kebiasaanmu. Hijau berarti selesai. Merah berarti terlewat. Grafikmu diperbarui otomatis.",
+    "noMatchingReminders": "Tidak ada pengingat yang cocok",
+    "nothingScheduledYet": "Belum ada jadwal",
+    "noPastReminders": "Tidak ada pengingat yang lewat",
+    "keptFor24hAfterLogging": "Disimpan 24 jam setelah dicatat",
+    "pastRemindersAreKeptFor": "Pengingat yang lewat disimpan 24 jam",
+    "logItAsDoneOr": "Catat sebagai selesai ✅ atau terlewat ❌ dan akan hilang otomatis setelah 24 jam.",
+    "done": "Selesai",
+    "missed": "Terlewat",
+    "clearsIn": "Hilang dalam {{hours}} j {{minutes}} m ⏱",
+    "didIt": "Berhasil!",
+    "didnTDoIt": "Tidak kulakukan",
+    "keptFor24HoursAfter": "Disimpan 24 jam setelah dicatat",
+    "deleteReminder": "Hapus pengingat",
+    "itSDone": "Beres ✅",
+    "iSlacked": "Aku malas 😬",
+    "overdue": "Terlambat"
+  },
+  "analyticsLocked": {
+    "completions": "Selesai",
+    "youReCrushingItKeep": "Kamu luar biasa, terus naikkan garis itu! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Statistik terkunci",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders adalah aplikasi pembentuk kebiasaan pertama di jenisnya. Statistik ini menunjukkan seberapa konsisten kamu: rangkaian hari, tingkat penyelesaian, dan hari terbaikmu. Karena yang diukur, akan dikerjakan.",
+    "unlockAnalytics": "Buka statistik"
+  },
+  "rudeness": {
+    "title": "Tingkat kekasaran",
+    "l1": "Simpati",
+    "l2": "Memotivasi",
+    "l3": "Sarkastis",
+    "l4": "Keras",
+    "l5": "Sadis"
+  },
+  "tip": {
+    "firstReminder": "<b>Pengingat pertama?</b> Tulis di bawah apa yang ingin diingatkan, buka buku untuk memilih tanggal, jam, dan menit, geser kekasaran dari Simpati sampai Sadis, lalu tambahkan foto, suara, atau kutipan jika mau. Ketuk <b>Buat pengingat</b> kalau sudah siap.",
+    "dismiss": "Tutup tips"
+  },
+  "share": {
+    "share": "Bagikan",
+    "sharing": "Membagikan..."
+  }
+}

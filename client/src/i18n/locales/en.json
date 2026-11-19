@@ -5,7 +5,16 @@
     "savesAutomatically": "Changes save automatically."
   },
   "settingsLanding": {
-    "language": "Language"
+    "language": "Language",
+    "back": "Back",
+    "settings": "Settings",
+    "personalInformation": "Personal Information",
+    "notifications": "Notifications",
+    "textSizeTimeZone": "Text Size & Time Zone",
+    "siriShortcuts": "Siri & Shortcuts",
+    "paymentBilling": "Payment & Billing",
+    "developerSpace": "Developer Space",
+    "helpSupport": "Help & Support"
   },
   "language": {
     "title": "Language",
@@ -14,5 +23,160 @@
     "automaticNotSupported": "Your phone's language isn't available yet, so the app uses English.",
     "choose": "Languages",
     "footer": "Changes the app's menus and buttons, Reem's messages and the spoken voice. Reminders you already made keep their words; new ones use the new language."
+  },
+  "home": {
+    "niceWork": "Nice work! ✅",
+    "loggedThisReminderWillClear": "Logged! This reminder will clear in 24 hours.",
+    "reminderCompleted": "Reminder Completed",
+    "greatJobGettingItDone": "Great job getting it done!",
+    "error": "Error",
+    "failedToMarkReminderAs": "Failed to mark reminder as complete",
+    "logged": "Logged 💪",
+    "tomorrowIsANewChance": "Tomorrow is a new chance. This reminder clears in 24 hours.",
+    "failedToLogReminder": "Failed to log reminder",
+    "create": "Create",
+    "analytics": "Analytics",
+    "manage": "Manage",
+    "rewardEarned": "Reward Earned! 🎁",
+    "youVeEarned3Extra": "You've earned 3 extra reminders this month! Watch more ads for additional rewards.",
+    "rewardEarned2": "Reward Earned! 🔊",
+    "youVeUnlockedPremiumVoices": "You've unlocked premium voices for 30 minutes! Create reminders with advanced voice characters."
+  },
+  "header": {
+    "hey": "Hey {{name}}",
+    "premium": "Premium 👑",
+    "free": "Free",
+    "sendReemBack": "Send Reem back",
+    "there": "there"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Profile",
+    "areYouSureYouWant": "Are you sure you want to log out?",
+    "youLlNeedToSign": "You'll need to sign back in to see your reminders.",
+    "cancel": "Cancel",
+    "logOut": "Log out"
+  },
+  "usage": {
+    "freePlanUsage": "Free Plan Usage",
+    "remindersThisMonth": "{{used}}/{{limit}} reminders this month",
+    "bonus": "+{{count}} bonus",
+    "remindersUsed": "Reminders Used",
+    "upgrade": "Upgrade"
+  },
+  "form": {
+    "messageRequired": "Message Required",
+    "pleaseEnterWhatYouNeed": "Please enter what you need to be reminded about first",
+    "quickReminderCreated": "Quick Reminder Created",
+    "whatDoYouNeedTo": "What do you need to be reminded about?",
+    "writeYourReminderHere": "✏️ Write your reminder here...",
+    "creatingReminder": "Creating Reminder...",
+    "createReminder": "Create Reminder",
+    "quickReminderSetFor": "Reminder set for {{time}} ({{when}} from now)"
+  },
+  "schedule": {
+    "lv": "🔔 Lv.",
+    "voice": "Voice",
+    "daysSelected": "{{count}} days selected",
+    "daysSelected_one": "{{count}} day selected"
+  },
+  "features": {
+    "goPremium": "🔒 Go Premium",
+    "voice": "Voice",
+    "photo": "Photo",
+    "quotes": "Quotes",
+    "voiceCharacter": "Voice Character",
+    "selectVoice": "Select voice",
+    "addPhotos": "Add Photos ({{count}}/{{max}})",
+    "tapToAddPhoto": "Tap to add photo",
+    "motivationStyle": "Motivation Style",
+    "chooseAMotivationStyle": "Choose a motivation style…",
+    "aMotivationalQuoteFromYour": "A motivational quote from your chosen category will be added to your reminder."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Free Limit Reached",
+    "youVeUsedAllYour": "You've used all your free reminders for this month. They reset on the 1st — or go Premium for 120 a month plus every feature.",
+    "upgradeToPremium": "Upgrade to Premium",
+    "maybeLater": "Maybe Later"
+  },
+  "quick": {
+    "quickReminder": "Quick Reminder",
+    "t": {
+      "10s": "10s",
+      "5m": "5m",
+      "15m": "15m",
+      "30m": "30m"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "your week ahead",
+    "swipeToOpen": "swipe to open",
+    "today": "Today",
+    "openCover": "Open cover",
+    "deselect": "Deselect",
+    "select": "Select",
+    "clear": "Clear"
+  },
+  "manage": {
+    "reminderCompleted": "Reminder completed!",
+    "greatJobKeepUpThe": "Great job! Keep up the good work.",
+    "unauthorized": "Unauthorized",
+    "youAreLoggedOutLogging": "You are logged out. Logging in again...",
+    "error": "Error",
+    "failedToCompleteReminder": "Failed to complete reminder.",
+    "deleted": "Deleted!",
+    "reminderHasBeenDeleted": "Reminder has been deleted.",
+    "failedToDeleteReminder": "Failed to delete reminder.",
+    "noted": "Noted",
+    "trackingWhatDidnTGet": "Tracking what didn't get done builds awareness too.",
+    "failedToMarkReminder": "Failed to mark reminder.",
+    "loadingYourReminders": "Loading your reminders...",
+    "past": "Past ({{count}})",
+    "upcoming": "Upcoming ({{count}})",
+    "searchReminders": "Search reminders...",
+    "tapAReminderToOpen": "Tap a reminder to open it, or tap 😊 or 😔 to log what happened",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "First time here? The emoji buttons track your habits. Green means done. Red means missed. Your graph updates automatically.",
+    "noMatchingReminders": "No matching reminders",
+    "nothingScheduledYet": "Nothing scheduled yet",
+    "noPastReminders": "No past reminders",
+    "keptFor24hAfterLogging": "Kept for 24h after logging",
+    "pastRemindersAreKeptFor": "Past reminders are kept for 24h",
+    "logItAsDoneOr": "Log it as done ✅ or missed ❌ and it clears automatically after 24 hours.",
+    "done": "Done",
+    "missed": "Missed",
+    "clearsIn": "Clears in {{hours}}h {{minutes}}m ⏱",
+    "didIt": "Did it!",
+    "didnTDoIt": "Didn't do it",
+    "keptFor24HoursAfter": "Kept for 24 hours after logging",
+    "deleteReminder": "Delete reminder",
+    "itSDone": "It's done ✅",
+    "iSlacked": "I slacked 😬",
+    "overdue": "Overdue"
+  },
+  "analyticsLocked": {
+    "completions": "Completions",
+    "youReCrushingItKeep": "You're crushing it — keep that line climbing! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Analytics Locked",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders is the first of its kind habit-building app. These analytics show you exactly how consistent you're being — streaks, completion rates, and your best days. Because what gets measured, gets done.",
+    "unlockAnalytics": "Unlock Analytics"
+  },
+  "rudeness": {
+    "title": "Rudeness Level",
+    "l1": "Sympathy",
+    "l2": "Motivational",
+    "l3": "Sarcastic",
+    "l4": "Harsh",
+    "l5": "Savage"
+  },
+  "tip": {
+    "firstReminder": "<b>First reminder?</b> Type what you want to be reminded about below, open the book to pick a date, hour and minute, slide the rudeness from Sympathy to Savage, then add a photo, voice or quote if you want. Hit <b>Create Reminder</b> when you're ready.",
+    "dismiss": "Dismiss tip"
+  },
+  "share": {
+    "share": "Share",
+    "sharing": "Sharing..."
   }
 }

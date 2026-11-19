@@ -22,6 +22,7 @@ import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
 import { ItHitToggle } from "./ItHitToggle";
 
 import { palette } from "@/lib/theme";
+import { tr } from "@/i18n";
 interface ShareButtonProps {
   reminder?: Partial<Reminder>;
   title?: string;
@@ -349,7 +350,7 @@ export function ShareButton({
         data-testid="button-share"
       >
         <Share2 className={iconOnly ? 'h-4 w-4' : 'h-3 w-3'} />
-        {!iconOnly && (isSharing ? "Sharing..." : "Share")}
+        {!iconOnly && (isSharing ? tr("share.sharing") : tr("share.share"))}
       </Button>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>

@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "الإعدادات",
+    "home": "الرئيسية",
+    "savesAutomatically": "تُحفظ التغييرات تلقائيًا."
+  },
+  "settingsLanding": {
+    "language": "اللغة",
+    "back": "رجوع",
+    "settings": "الإعدادات",
+    "personalInformation": "المعلومات الشخصية",
+    "notifications": "الإشعارات",
+    "textSizeTimeZone": "حجم النص والمنطقة الزمنية",
+    "siriShortcuts": "Siri والاختصارات",
+    "paymentBilling": "الدفع والفواتير",
+    "developerSpace": "مساحة المطوّر",
+    "helpSupport": "المساعدة والدعم"
+  },
+  "language": {
+    "title": "اللغة",
+    "automatic": "لغة الهاتف",
+    "automaticDetail": "يستخدم لغة هاتفك: {{language}}",
+    "automaticNotSupported": "لغة هاتفك غير متاحة بعد، لذلك يستخدم التطبيق الإنجليزية.",
+    "choose": "اللغات",
+    "footer": "تغيّر قوائم التطبيق وأزراره ورسائل ريم والصوت. التذكيرات التي أنشأتها تبقى بكلماتها، والجديدة تستخدم اللغة الجديدة."
+  },
+  "home": {
+    "niceWork": "أحسنت! ✅",
+    "loggedThisReminderWillClear": "تم التسجيل! سيختفي هذا التذكير بعد 24 ساعة.",
+    "reminderCompleted": "اكتمل التذكير",
+    "greatJobGettingItDone": "عمل رائع، أنجزتها!",
+    "error": "خطأ",
+    "failedToMarkReminderAs": "تعذّر تعليم التذكير كمكتمل",
+    "logged": "تم التسجيل 💪",
+    "tomorrowIsANewChance": "الغد فرصة جديدة. سيختفي هذا التذكير بعد 24 ساعة.",
+    "failedToLogReminder": "تعذّر تسجيل التذكير",
+    "create": "إنشاء",
+    "analytics": "الإحصاءات",
+    "manage": "إدارة",
+    "rewardEarned": "حصلت على مكافأة! 🎁",
+    "youVeEarned3Extra": "حصلت على 3 تذكيرات إضافية هذا الشهر! شاهد المزيد من الإعلانات لمكافآت أكثر.",
+    "rewardEarned2": "حصلت على مكافأة! 🔊",
+    "youVeUnlockedPremiumVoices": "فتحت الأصوات المميزة لمدة 30 دقيقة! أنشئ تذكيرات بشخصيات صوتية متقدمة."
+  },
+  "header": {
+    "hey": "أهلًا {{name}}",
+    "premium": "مميز 👑",
+    "free": "مجاني",
+    "sendReemBack": "أرجِع ريم",
+    "there": "يا صديقي"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "الملف الشخصي",
+    "areYouSureYouWant": "هل تريد تسجيل الخروج فعلًا؟",
+    "youLlNeedToSign": "ستحتاج لتسجيل الدخول مجددًا لرؤية تذكيراتك.",
+    "cancel": "إلغاء",
+    "logOut": "تسجيل الخروج"
+  },
+  "usage": {
+    "freePlanUsage": "استخدام الخطة المجانية",
+    "remindersThisMonth": "{{used}}/{{limit}} تذكيرات هذا الشهر",
+    "bonus": "+{{count}} إضافية",
+    "remindersUsed": "التذكيرات المستخدمة",
+    "upgrade": "ترقية"
+  },
+  "form": {
+    "messageRequired": "الرسالة مطلوبة",
+    "pleaseEnterWhatYouNeed": "اكتب أولًا ما تريد أن نذكّرك به",
+    "quickReminderCreated": "تم إنشاء تذكير سريع",
+    "whatDoYouNeedTo": "بماذا تريد أن نذكّرك؟",
+    "writeYourReminderHere": "✏️ اكتب تذكيرك هنا...",
+    "creatingReminder": "جارٍ إنشاء التذكير...",
+    "createReminder": "إنشاء تذكير",
+    "quickReminderSetFor": "تم ضبط التذكير على {{time}} (بعد {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 مستوى",
+    "voice": "الصوت",
+    "daysSelected": "تم اختيار {{count}} أيام",
+    "daysSelected_one": "تم اختيار يوم واحد"
+  },
+  "features": {
+    "goPremium": "🔒 اشترك في المميز",
+    "voice": "صوت",
+    "photo": "صورة",
+    "quotes": "اقتباسات",
+    "voiceCharacter": "الشخصية الصوتية",
+    "selectVoice": "اختر صوتًا",
+    "addPhotos": "إضافة صور ({{count}}/{{max}})",
+    "tapToAddPhoto": "اضغط لإضافة صورة",
+    "motivationStyle": "أسلوب التحفيز",
+    "chooseAMotivationStyle": "اختر أسلوب التحفيز…",
+    "aMotivationalQuoteFromYour": "سيُضاف إلى تذكيرك اقتباس تحفيزي من الفئة التي تختارها."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "وصلت إلى الحد المجاني",
+    "youVeUsedAllYour": "استخدمت كل تذكيراتك المجانية لهذا الشهر. تتجدد في أول الشهر، أو اشترك في المميز لتحصل على 120 شهريًا وكل الميزات.",
+    "upgradeToPremium": "الترقية إلى المميز",
+    "maybeLater": "ربما لاحقًا"
+  },
+  "quick": {
+    "quickReminder": "تذكير سريع",
+    "t": {
+      "10s": "10 ث",
+      "5m": "5 د",
+      "15m": "15 د",
+      "30m": "30 د"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "أسبوعك القادم",
+    "swipeToOpen": "اسحب للفتح",
+    "today": "اليوم",
+    "openCover": "افتح الغلاف",
+    "deselect": "إلغاء الاختيار",
+    "select": "اختيار",
+    "clear": "مسح"
+  },
+  "manage": {
+    "reminderCompleted": "اكتمل التذكير!",
+    "greatJobKeepUpThe": "رائع! استمر هكذا.",
+    "unauthorized": "غير مصرّح",
+    "youAreLoggedOutLogging": "تم تسجيل خروجك. جارٍ تسجيل الدخول مجددًا...",
+    "error": "خطأ",
+    "failedToCompleteReminder": "تعذّر إكمال التذكير.",
+    "deleted": "تم الحذف!",
+    "reminderHasBeenDeleted": "تم حذف التذكير.",
+    "failedToDeleteReminder": "تعذّر حذف التذكير.",
+    "noted": "تم التدوين",
+    "trackingWhatDidnTGet": "تسجيل ما لم يُنجز يزيد وعيك أيضًا.",
+    "failedToMarkReminder": "تعذّر تعليم التذكير.",
+    "loadingYourReminders": "جارٍ تحميل تذكيراتك...",
+    "past": "السابقة ({{count}})",
+    "upcoming": "القادمة ({{count}})",
+    "searchReminders": "ابحث في التذكيرات...",
+    "tapAReminderToOpen": "اضغط على تذكير لفتحه، أو اضغط 😊 أو 😔 لتسجيل ما حدث",
+    "rudy": "ريم",
+    "firstTimeHereTheEmoji": "أول مرة هنا؟ أزرار الإيموجي تتابع عاداتك. الأخضر يعني أنجزت، والأحمر يعني فاتك. رسمك البياني يتحدّث تلقائيًا.",
+    "noMatchingReminders": "لا توجد تذكيرات مطابقة",
+    "nothingScheduledYet": "لا شيء مجدول بعد",
+    "noPastReminders": "لا توجد تذكيرات سابقة",
+    "keptFor24hAfterLogging": "يبقى 24 ساعة بعد التسجيل",
+    "pastRemindersAreKeptFor": "تبقى التذكيرات السابقة 24 ساعة",
+    "logItAsDoneOr": "سجّله كمُنجز ✅ أو فائت ❌ وسيختفي تلقائيًا بعد 24 ساعة.",
+    "done": "مُنجز",
+    "missed": "فائت",
+    "clearsIn": "يختفي بعد {{hours}} س {{minutes}} د ⏱",
+    "didIt": "أنجزتها!",
+    "didnTDoIt": "لم أنجزها",
+    "keptFor24HoursAfter": "يبقى 24 ساعة بعد التسجيل",
+    "deleteReminder": "حذف التذكير",
+    "itSDone": "تم ✅",
+    "iSlacked": "تكاسلت 😬",
+    "overdue": "متأخر"
+  },
+  "analyticsLocked": {
+    "completions": "الإنجازات",
+    "youReCrushingItKeep": "أداؤك رائع، خلّي هذا الخط يصعد! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "الإحصاءات مقفلة",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders تطبيق فريد من نوعه لبناء العادات. تُظهر لك هذه الإحصاءات مدى التزامك بالضبط: السلاسل، ونسبة الإنجاز، وأفضل أيامك. لأن ما يُقاس يُنجَز.",
+    "unlockAnalytics": "افتح الإحصاءات"
+  },
+  "rudeness": {
+    "title": "مستوى الوقاحة",
+    "l1": "متعاطف",
+    "l2": "محفّز",
+    "l3": "ساخر",
+    "l4": "قاسٍ",
+    "l5": "متوحش"
+  },
+  "tip": {
+    "firstReminder": "<b>أول تذكير؟</b> اكتب في الأسفل ما تريد أن نذكّرك به، وافتح الكتاب لاختيار التاريخ والساعة والدقيقة، وحرّك الوقاحة من متعاطف إلى متوحش، ثم أضف صورة أو صوتًا أو اقتباسًا إن أردت. اضغط <b>إنشاء تذكير</b> عندما تكون جاهزًا.",
+    "dismiss": "إغلاق النصيحة"
+  },
+  "share": {
+    "share": "مشاركة",
+    "sharing": "جارٍ المشاركة..."
+  }
+}

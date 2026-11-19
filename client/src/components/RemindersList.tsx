@@ -17,11 +17,12 @@ import { useMobileNotifications } from "./MobileNotifications";
 import { supportsNotifications } from "@/utils/platformDetection";
 import { SwipeableReminderCard } from "./SwipeableReminderCard";
 import { playCompletedSound, playNotAccomplishedSound } from "@/lib/soundEffects";
-import { format } from "date-fns";
+import { formatDate } from "@/i18n/dates";
 import RoseSpinner from "@/components/RoseSpinner";
 import { useNotificationContext } from "./NotificationProvider";
 
 import { palette } from "@/lib/theme";
+import { tr } from "@/i18n";
 const rudenessLevelColors = {
   1: "bg-reem-cream-light text-reem-gold border border-reem-gold",
   2: "bg-reem-cream-light text-reem-gold border border-reem-gold",
@@ -43,9 +44,9 @@ const formatShortDate = (scheduledFor: string | Date) => {
   const now = new Date();
   const isOverdue = date < now;
   const shown = toZoned(date); // clock time in the user's chosen zone
-  const dateStr = format(shown, "MMM d");
-  const timeStr = format(shown, "h:mm a");
-  return isOverdue ? `${dateStr} • Overdue` : `${dateStr} • ${timeStr}`;
+  const dateStr = formatDate(shown, "MMM d");
+  const timeStr = formatDate(shown, "h:mm a");
+  return isOverdue ? `${dateStr} • ${tr("manage.overdue")}` : `${dateStr} • ${timeStr}`;
 };
 
 interface RemindersListProps {
@@ -96,17 +97,17 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       if (supportsNotifications()) {
         try { await cancelNativeNotification(id); } catch {}
       }
-      toast({ title: "Reminder completed!", description: "Great job! Keep up the good work." });
+      toast({ title: tr("manage.reminderCompleted"), description: tr("manage.greatJobKeepUpThe") });
       queryClient.invalidateQueries({ queryKey: ["/api/reminders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
-        toast({ title: "Unauthorized", description: "You are logged out. Logging in again...", variant: "destructive" });
+        toast({ title: tr("manage.unauthorized"), description: tr("manage.youAreLoggedOutLogging"), variant: "destructive" });
         setTimeout(() => setLocation("/login"), 500);
         return;
       }
-      toast({ title: "Error", description: "Failed to complete reminder.", variant: "destructive" });
+      toast({ title: tr("manage.error"), description: tr("manage.failedToCompleteReminder"), variant: "destructive" });
     },
   });
 
@@ -119,17 +120,17 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       if (supportsNotifications()) {
         try { await cancelNativeNotification(id); } catch {}
       }
-      toast({ title: "Deleted!", description: "Reminder has been deleted." });
+      toast({ title: tr("manage.deleted"), description: tr("manage.reminderHasBeenDeleted") });
       await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
       await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
-        toast({ title: "Unauthorized", description: "You are logged out. Logging in again...", variant: "destructive" });
+        toast({ title: tr("manage.unauthorized"), description: tr("manage.youAreLoggedOutLogging"), variant: "destructive" });
         setTimeout(() => setLocation("/login"), 500);
         return;
       }
-      toast({ title: "Error", description: "Failed to delete reminder.", variant: "destructive" });
+      toast({ title: tr("manage.error"), description: tr("manage.failedToDeleteReminder"), variant: "destructive" });
     },
   });
 
@@ -143,17 +144,17 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       if (supportsNotifications()) {
         try { await cancelNativeNotification(id); } catch {}
       }
-      toast({ title: "Noted", description: "Tracking what didn't get done builds awareness too." });
+      toast({ title: tr("manage.noted"), description: tr("manage.trackingWhatDidnTGet") });
       await queryClient.refetchQueries({ queryKey: ["/api/reminders"] });
       await queryClient.refetchQueries({ queryKey: ["/api/stats"] });
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
-        toast({ title: "Unauthorized", description: "You are logged out. Logging in again...", variant: "destructive" });
+        toast({ title: tr("manage.unauthorized"), description: tr("manage.youAreLoggedOutLogging"), variant: "destructive" });
         setTimeout(() => setLocation("/login"), 500);
         return;
       }
-      toast({ title: "Error", description: "Failed to mark reminder.", variant: "destructive" });
+      toast({ title: tr("manage.error"), description: tr("manage.failedToMarkReminder"), variant: "destructive" });
     },
   });
 
@@ -184,7 +185,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       <Card className="border border-reem-gold bg-reem-cream dark:bg-reem-concrete-widget dark:border-reem-concrete-edge">
         <CardContent className="p-12 text-center">
           <RoseSpinner size={36} className="mx-auto mb-4" />
-          <p className="text-gray-500">Loading your reminders...</p>
+          <p className="text-gray-500">{tr("manage.loadingYourReminders")}</p>
         </CardContent>
       </Card>
     );
@@ -204,7 +205,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                 : "bg-white text-reem-ink hover:bg-reem-cream-light"
             }`}
           >
-            Past ({past.length})
+            {tr("manage.past", { count: past.length })}
           </button>
           <button
             type="button"
@@ -215,14 +216,14 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                 : "bg-white text-reem-ink hover:bg-reem-cream-light"
             }`}
           >
-            Upcoming ({upcoming.length})
+            {tr("manage.upcoming", { count: upcoming.length })}
           </button>
         </div>
 
         {/* Search */}
         <div className="relative">
           <Input
-            placeholder="Search reminders..."
+            placeholder={tr("manage.searchReminders")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8 w-full bg-white border-2 border-reem-gold focus-visible:border-reem-gold h-8 text-xs dark:bg-reem-concrete-light dark:border-reem-concrete-light"
@@ -235,7 +236,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
         {/* Permanent instruction label — always visible on Past tab */}
         {tab === 'past' && (
           <p style={{ fontSize: '12px', color: 'var(--cg-muted, #888)', fontStyle: 'italic', textAlign: 'left', marginBottom: '8px' }}>
-            Tap a reminder to open it, or tap 😊 or 😔 to log what happened
+            {tr("manage.tapAReminderToOpen")}
           </p>
         )}
 
@@ -255,8 +256,8 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             marginBottom: '10px',
             position: 'relative',
           }}>
-            <img src="/rudy/Rudy_leaning_2_transparent.png" alt="Rudy" style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }} />
-            <span style={{ flex: 1 }}>First time here? The emoji buttons track your habits. Green means done. Red means missed. Your graph updates automatically.</span>
+            <img src="/rudy/Rudy_leaning_2_transparent.png" alt={tr("manage.rudy")} style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }} />
+            <span style={{ flex: 1 }}>{tr("manage.firstTimeHereTheEmoji")}</span>
             <button
               onClick={() => { localStorage.setItem('manage_tooltip_seen', 'true'); setShowRudyTooltip(false); }}
               style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', fontSize: '14px', cursor: 'pointer', color: '#999', lineHeight: 1 }}
@@ -269,10 +270,10 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             <Clock className="h-8 w-8 text-reem-gold opacity-40 mx-auto mb-2" />
             <p className="text-xs font-medium text-gray-500">
               {searchTerm
-                ? "No matching reminders"
+                ? tr("manage.noMatchingReminders")
                 : tab === "upcoming"
-                ? "Nothing scheduled yet"
-                : "No past reminders"}
+                ? tr("manage.nothingScheduledYet")
+                : tr("manage.noPastReminders")}
             </p>
           </div>
         ) : (
@@ -298,14 +299,14 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                     if (isPast) {
                       if (isLogged && clearTime) {
                         toast({
-                          title: "Kept for 24h after logging",
+                          title: tr("manage.keptFor24hAfterLogging"),
                           description: `Clears automatically in ${hoursLeft}h ${minutesLeft}m ⏱`,
                           duration: 3000,
                         });
                       } else {
                         toast({
-                          title: "Past reminders are kept for 24h",
-                          description: "Log it as done ✅ or missed ❌ and it clears automatically after 24 hours.",
+                          title: tr("manage.pastRemindersAreKeptFor"),
+                          description: tr("manage.logItAsDoneOr"),
                           duration: 3000,
                         });
                       }
@@ -344,16 +345,16 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                               {reminder.title}
                             </span>
                             <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-tiny px-1.5 py-0 font-medium flex-shrink-0`}>
-                              {rudenessLevelLabels[reminder.rudenessLevel as keyof typeof rudenessLevelLabels]}
+                              {tr(`rudeness.l${reminder.rudenessLevel}`)}
                             </Badge>
                             {reminder.completed && (
                               <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-tiny px-1.5 py-0 flex-shrink-0">
-                                Done
+                                {tr("manage.done")}
                               </Badge>
                             )}
                             {(reminder as any).notAccomplished && !reminder.completed && (
                               <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-300 text-tiny px-1.5 py-0 flex-shrink-0">
-                                Missed
+                                {tr("manage.missed")}
                               </Badge>
                             )}
                           </div>
@@ -363,7 +364,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                           </div>
                           {isPast && isLogged && remainingMs > 0 && (
                             <div className="text-tiny text-gray-400 italic mt-0.5">
-                              Clears in {hoursLeft}h {minutesLeft}m ⏱
+                              {tr("manage.clearsIn", { hours: hoursLeft, minutes: minutesLeft })}
                             </div>
                           )}
                         </div>
@@ -395,7 +396,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                                   completeReminderMutation.mutate(reminder.id);
                                 }}
                                 disabled={completeReminderMutation.isPending}
-                                title="Did it!"
+                                title={tr("manage.didIt")}
                                 data-testid={`button-accomplish-${reminder.id}`}
                               >
                                 😊
@@ -411,7 +412,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                                   markNotAccomplishedMutation.mutate(reminder.id);
                                 }}
                                 disabled={markNotAccomplishedMutation.isPending}
-                                title="Didn't do it"
+                                title={tr("manage.didnTDoIt")}
                                 data-testid={`button-not-accomplish-${reminder.id}`}
                               >
                                 😞
@@ -428,19 +429,19 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                               onClick={() => {
                                 if (isLogged && clearTime) {
                                   toast({
-                                    title: "Kept for 24h after logging",
+                                    title: tr("manage.keptFor24hAfterLogging"),
                                     description: `Clears automatically in ${hoursLeft}h ${minutesLeft}m ⏱`,
                                     duration: 3000,
                                   });
                                 } else {
                                   toast({
-                                    title: "Past reminders are kept for 24h",
-                                    description: "Log it as done ✅ or missed ❌ and it clears automatically after 24 hours.",
+                                    title: tr("manage.pastRemindersAreKeptFor"),
+                                    description: tr("manage.logItAsDoneOr"),
                                     duration: 3000,
                                   });
                                 }
                               }}
-                              title="Kept for 24 hours after logging"
+                              title={tr("manage.keptFor24HoursAfter")}
                               data-testid={`button-delete-${reminder.id}`}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -452,7 +453,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                               className="h-7 w-7 p-0 text-reem-red hover:text-reem-red hover:bg-red-50"
                               onClick={() => deleteReminderMutation.mutate(reminder.id)}
                               disabled={deleteReminderMutation.isPending}
-                              title="Delete reminder"
+                              title={tr("manage.deleteReminder")}
                               data-testid={`button-delete-${reminder.id}`}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -487,7 +488,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             pointerEvents: 'none',
           }}
         >
-          {emojiToast.type === 'did' ? "It's done ✅" : "I slacked 😬"}
+          {emojiToast.type === 'did' ? tr("manage.itSDone") : tr("manage.iSlacked")}
         </div>
       )}
     </Card>

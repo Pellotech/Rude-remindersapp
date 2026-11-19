@@ -17,6 +17,7 @@ import type { User } from "@shared/schema";
 import logoImage from "@assets/reems_logo_trimmed.png";
 import { clearAuthToken, apiRequest, queryClient } from "@/lib/queryClient";
 
+import { tr } from "@/i18n";
 export default function Navigation() {
   const { user } = useAuth() as { user: User | undefined };
   const [location, navigate] = useLocation();
@@ -48,7 +49,7 @@ export default function Navigation() {
             <Link href="/">
               <img 
                 src={logoImage} 
-                alt="Reems Rude Reminders" 
+                alt={tr("nav.reemsRudeReminders")} 
                 className="h-[120px] sm:h-[140px] w-auto object-contain cursor-pointer"
                 data-testid="nav-logo"
               />
@@ -75,7 +76,7 @@ export default function Navigation() {
               {user?.profileImageUrl && (
                 <img
                   src={user.profileImageUrl}
-                  alt="Profile"
+                  alt={tr("nav.profile")}
                   className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
                 />
               )}
@@ -102,19 +103,19 @@ export default function Navigation() {
                 </AlertDialogTrigger>
                 <AlertDialogContent className="bg-reem-cream">
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+                    <AlertDialogTitle>{tr("nav.areYouSureYouWant")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      You'll need to sign back in to see your reminders.
+                      {tr("nav.youLlNeedToSign")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel data-testid="button-logout-cancel">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel data-testid="button-logout-cancel">{tr("nav.cancel")}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleLogout}
                       className="bg-reem-red text-white hover:bg-[#a82f2f]"
                       data-testid="button-logout-confirm"
                     >
-                      Log out
+                      {tr("nav.logOut")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

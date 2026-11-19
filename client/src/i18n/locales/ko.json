@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "설정",
+    "home": "홈",
+    "savesAutomatically": "변경 사항은 자동으로 저장돼요."
+  },
+  "settingsLanding": {
+    "language": "언어",
+    "back": "뒤로",
+    "settings": "설정",
+    "personalInformation": "개인 정보",
+    "notifications": "알림",
+    "textSizeTimeZone": "글자 크기 및 시간대",
+    "siriShortcuts": "Siri 및 단축어",
+    "paymentBilling": "결제 및 청구",
+    "developerSpace": "개발자 공간",
+    "helpSupport": "도움말 및 지원"
+  },
+  "language": {
+    "title": "언어",
+    "automatic": "휴대폰 언어",
+    "automaticDetail": "휴대폰 설정 사용: {{language}}",
+    "automaticNotSupported": "휴대폰 언어를 아직 지원하지 않아 영어로 표시돼요.",
+    "choose": "언어",
+    "footer": "앱의 메뉴와 버튼, Reem의 메시지, 음성이 바뀌어요. 이미 만든 리마인더는 그대로이고, 새 리마인더는 새 언어로 만들어져요."
+  },
+  "home": {
+    "niceWork": "잘했어요! ✅",
+    "loggedThisReminderWillClear": "기록했어요! 이 리마인더는 24시간 후에 사라져요.",
+    "reminderCompleted": "리마인더 완료",
+    "greatJobGettingItDone": "해냈네요, 최고예요!",
+    "error": "오류",
+    "failedToMarkReminderAs": "리마인더를 완료로 표시하지 못했어요",
+    "logged": "기록 완료 💪",
+    "tomorrowIsANewChance": "내일은 새로운 기회예요. 이 리마인더는 24시간 후에 사라져요.",
+    "failedToLogReminder": "리마인더를 기록하지 못했어요",
+    "create": "만들기",
+    "analytics": "통계",
+    "manage": "관리",
+    "rewardEarned": "보상 획득! 🎁",
+    "youVeEarned3Extra": "이번 달 리마인더 3개를 추가로 받았어요! 광고를 더 보면 보상이 더 있어요.",
+    "rewardEarned2": "보상 획득! 🔊",
+    "youVeUnlockedPremiumVoices": "프리미엄 음성이 30분 동안 열렸어요! 특별한 음성 캐릭터로 리마인더를 만들어 보세요."
+  },
+  "header": {
+    "hey": "안녕, {{name}}",
+    "premium": "프리미엄 👑",
+    "free": "무료",
+    "sendReemBack": "Reem 돌려보내기",
+    "there": "친구"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "프로필",
+    "areYouSureYouWant": "정말 로그아웃할까요?",
+    "youLlNeedToSign": "리마인더를 보려면 다시 로그인해야 해요.",
+    "cancel": "취소",
+    "logOut": "로그아웃"
+  },
+  "usage": {
+    "freePlanUsage": "무료 요금제 사용량",
+    "remindersThisMonth": "이번 달 {{used}}/{{limit}}개",
+    "bonus": "+{{count}} 보너스",
+    "remindersUsed": "사용한 리마인더",
+    "upgrade": "업그레이드"
+  },
+  "form": {
+    "messageRequired": "내용이 필요해요",
+    "pleaseEnterWhatYouNeed": "먼저 무엇을 알려 드릴지 적어 주세요",
+    "quickReminderCreated": "빠른 리마인더를 만들었어요",
+    "whatDoYouNeedTo": "무엇을 알려 드릴까요?",
+    "writeYourReminderHere": "✏️ 여기에 리마인더를 적어요...",
+    "creatingReminder": "리마인더 만드는 중...",
+    "createReminder": "리마인더 만들기",
+    "quickReminderSetFor": "{{time}}에 알림 ({{when}} 후)"
+  },
+  "schedule": {
+    "lv": "🔔 단계",
+    "voice": "음성",
+    "daysSelected": "{{count}}일 선택됨"
+  },
+  "features": {
+    "goPremium": "🔒 프리미엄 시작",
+    "voice": "음성",
+    "photo": "사진",
+    "quotes": "명언",
+    "voiceCharacter": "음성 캐릭터",
+    "selectVoice": "음성 선택",
+    "addPhotos": "사진 추가 ({{count}}/{{max}})",
+    "tapToAddPhoto": "눌러서 사진 추가",
+    "motivationStyle": "동기부여 스타일",
+    "chooseAMotivationStyle": "동기부여 스타일을 고르세요…",
+    "aMotivationalQuoteFromYour": "고른 카테고리의 명언이 리마인더에 추가돼요."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "무료 한도에 도달했어요",
+    "youVeUsedAllYour": "이번 달 무료 리마인더를 모두 썼어요. 매달 1일에 초기화돼요. 프리미엄이면 매달 120개와 모든 기능을 쓸 수 있어요.",
+    "upgradeToPremium": "프리미엄으로 업그레이드",
+    "maybeLater": "나중에"
+  },
+  "quick": {
+    "quickReminder": "빠른 리마인더",
+    "t": {
+      "10s": "10초",
+      "5m": "5분",
+      "15m": "15분",
+      "30m": "30분"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "다가오는 한 주",
+    "swipeToOpen": "밀어서 열기",
+    "today": "오늘",
+    "openCover": "표지 열기",
+    "deselect": "선택 해제",
+    "select": "선택",
+    "clear": "지우기"
+  },
+  "manage": {
+    "reminderCompleted": "리마인더 완료!",
+    "greatJobKeepUpThe": "멋져요! 이대로 계속해요.",
+    "unauthorized": "권한 없음",
+    "youAreLoggedOutLogging": "로그아웃되었어요. 다시 로그인하는 중...",
+    "error": "오류",
+    "failedToCompleteReminder": "리마인더를 완료하지 못했어요.",
+    "deleted": "삭제했어요!",
+    "reminderHasBeenDeleted": "리마인더를 삭제했어요.",
+    "failedToDeleteReminder": "리마인더를 삭제하지 못했어요.",
+    "noted": "기록했어요",
+    "trackingWhatDidnTGet": "못 한 일을 기록하는 것도 스스로를 아는 데 도움이 돼요.",
+    "failedToMarkReminder": "리마인더를 기록하지 못했어요.",
+    "loadingYourReminders": "리마인더를 불러오는 중...",
+    "past": "지난 일 ({{count}})",
+    "upcoming": "다가오는 일 ({{count}})",
+    "searchReminders": "리마인더 검색...",
+    "tapAReminderToOpen": "리마인더를 눌러 열거나, 😊 또는 😔를 눌러 결과를 기록하세요",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "처음이세요? 이모지 버튼으로 습관을 기록해요. 초록은 완료, 빨강은 놓침이에요. 그래프는 자동으로 업데이트돼요.",
+    "noMatchingReminders": "일치하는 리마인더가 없어요",
+    "nothingScheduledYet": "아직 예정된 일이 없어요",
+    "noPastReminders": "지난 리마인더가 없어요",
+    "keptFor24hAfterLogging": "기록 후 24시간 보관",
+    "pastRemindersAreKeptFor": "지난 리마인더는 24시간 보관돼요",
+    "logItAsDoneOr": "완료 ✅ 또는 놓침 ❌으로 기록하면 24시간 후 자동으로 사라져요.",
+    "done": "완료",
+    "missed": "놓침",
+    "clearsIn": "{{hours}}시간 {{minutes}}분 후 사라짐 ⏱",
+    "didIt": "해냈어요!",
+    "didnTDoIt": "안 했어요",
+    "keptFor24HoursAfter": "기록 후 24시간 보관",
+    "deleteReminder": "리마인더 삭제",
+    "itSDone": "완료 ✅",
+    "iSlacked": "게을렀어요 😬",
+    "overdue": "기한 지남"
+  },
+  "analyticsLocked": {
+    "completions": "완료 횟수",
+    "youReCrushingItKeep": "최고예요, 이 선을 계속 올려요! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "통계 잠김",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders는 새로운 방식의 습관 만들기 앱이에요. 이 통계는 연속 기록, 완료율, 가장 잘한 날까지 얼마나 꾸준한지 정확히 보여 줘요. 측정하는 것은 해내게 되니까요.",
+    "unlockAnalytics": "통계 잠금 해제"
+  },
+  "rudeness": {
+    "title": "무례함 단계",
+    "l1": "다정하게",
+    "l2": "응원",
+    "l3": "비꼬기",
+    "l4": "독하게",
+    "l5": "인정사정없이"
+  },
+  "tip": {
+    "firstReminder": "<b>첫 리마인더인가요?</b> 아래에 알려 드릴 내용을 적고, 책을 열어 날짜와 시간을 고른 뒤, 무례함을 '다정하게'부터 '인정사정없이'까지 조절하세요. 원하면 사진, 음성, 명언도 추가할 수 있어요. 준비되면 <b>리마인더 만들기</b>를 누르세요.",
+    "dismiss": "팁 닫기"
+  },
+  "share": {
+    "share": "공유",
+    "sharing": "공유 중..."
+  }
+}

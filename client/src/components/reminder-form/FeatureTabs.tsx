@@ -10,6 +10,7 @@ import { MobileCamera } from "../MobileCamera";
 import { motivationCategories, type ReminderFormData } from "./schema";
 import type { useReminderAttachments } from "./useReminderAttachments";
 
+import { tr } from "@/i18n";
 export function FeatureTabs({
   form, voiceCharacters, setSelectedVoice, hasProAccess, isFreePlan, isMobileWithCamera,
   gateAttachments, gateQuotes, attachments, selectedCategory, onCategorySelect,
@@ -62,7 +63,7 @@ export function FeatureTabs({
             zIndex: 50,
             pointerEvents: 'none',
           }}>
-            🔒 Go Premium
+            {tr("features.goPremium")}
           </div>
         )}
       <div className="flex rounded-xl overflow-hidden border border-reem-gold dark:border-reem-concrete-edge">
@@ -78,7 +79,7 @@ export function FeatureTabs({
           }`}
         >
           <Volume2 className="h-5 w-5" />
-          Voice
+          {tr("features.voice")}
           <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-reem-charcoal dark:bg-white' : 'bg-transparent'}`} />
         </button>
 
@@ -95,7 +96,7 @@ export function FeatureTabs({
             }`}
           >
             <Camera className="h-5 w-5" />
-            Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
+            {tr("features.photo")}{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
             {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50 dark:text-white/60" />}
             <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-reem-charcoal dark:bg-white' : 'bg-transparent'}`} />
           </button>
@@ -114,7 +115,7 @@ export function FeatureTabs({
             }`}
           >
             <Quote className="h-5 w-5" />
-            Quotes
+            {tr("features.quotes")}
             {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50 dark:text-white/60" />}
             <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-reem-charcoal dark:bg-white' : 'bg-transparent'}`} />
           </button>
@@ -129,7 +130,7 @@ export function FeatureTabs({
           {/* Voice panel */}
           {activeFeatureTab === 'voice' && (
             <div className="space-y-3">
-              <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">Voice Character</p>
+              <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">{tr("features.voiceCharacter")}</p>
               <Select
                 value={form.watch("voiceCharacter")}
                 onValueChange={(value) => {
@@ -143,8 +144,8 @@ export function FeatureTabs({
                 }}
               >
                 <SelectTrigger className="w-full text-body-sm h-10 bg-reem-cream-deep border-reem-gold rounded-lg text-reem-charcoal">
-                  <SelectValue placeholder="Select voice">
-                    {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || "Select voice"}
+                  <SelectValue placeholder={tr("features.selectVoice")}>
+                    {voiceCharacters.find((v: any) => v.id === form.watch("voiceCharacter"))?.name || tr("features.selectVoice")}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -169,7 +170,7 @@ export function FeatureTabs({
           {activeFeatureTab === 'photo' && (
             <div className="space-y-3">
               <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">
-                Add Photos ({selectedAttachments.length}/{isFreePlan ? 1 : 5})
+                {tr("features.addPhotos", { count: selectedAttachments.length, max: isFreePlan ? 1 : 5 })}
               </p>
               {isMobileWithCamera ? (
                 <MobileCamera
@@ -191,7 +192,7 @@ export function FeatureTabs({
                     className="w-full h-16 rounded-xl border-2 border-dashed border-reem-gold bg-reem-cream-deep flex items-center justify-center gap-2 text-xs text-reem-gold font-medium hover:bg-[#EDE0CF] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   >
                     <Camera className="h-4 w-4" />
-                    Tap to add photo
+                    {tr("features.tapToAddPhoto")}
                   </button>
                 </>
               )}
@@ -212,10 +213,10 @@ export function FeatureTabs({
           {/* Quotes panel */}
           {activeFeatureTab === 'quotes' && (
             <div className="space-y-3">
-              <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">Motivation Style</p>
+              <p className="text-note font-semibold text-reem-charcoal uppercase tracking-wide">{tr("features.motivationStyle")}</p>
               <Select value={selectedCategory} onValueChange={onCategorySelect}>
                 <SelectTrigger className="w-full text-body-sm h-10 bg-reem-cream-deep border-reem-gold rounded-lg text-reem-charcoal">
-                  <SelectValue placeholder="Choose a motivation style…" />
+                  <SelectValue placeholder={tr("features.chooseAMotivationStyle")} />
                 </SelectTrigger>
                 <SelectContent>
                   {motivationCategories.map((category) => {
@@ -231,7 +232,7 @@ export function FeatureTabs({
                   })}
                 </SelectContent>
               </Select>
-              <p className="text-caption text-reem-charcoal">A motivational quote from your chosen category will be added to your reminder.</p>
+              <p className="text-caption text-reem-charcoal">{tr("features.aMotivationalQuoteFromYour")}</p>
             </div>
           )}
         </div>

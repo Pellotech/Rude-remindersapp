@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "Impostazioni",
+    "home": "Home",
+    "savesAutomatically": "Le modifiche si salvano automaticamente."
+  },
+  "settingsLanding": {
+    "language": "Lingua",
+    "back": "Indietro",
+    "settings": "Impostazioni",
+    "personalInformation": "Informazioni personali",
+    "notifications": "Notifiche",
+    "textSizeTimeZone": "Dimensione testo e fuso orario",
+    "siriShortcuts": "Siri e Comandi rapidi",
+    "paymentBilling": "Pagamenti e fatturazione",
+    "developerSpace": "Area sviluppatore",
+    "helpSupport": "Aiuto e assistenza"
+  },
+  "language": {
+    "title": "Lingua",
+    "automatic": "Lingua del telefono",
+    "automaticDetail": "Usa quella del telefono: {{language}}",
+    "automaticNotSupported": "La lingua del tuo telefono non è ancora disponibile, quindi l'app usa l'inglese.",
+    "choose": "Lingue",
+    "footer": "Cambia menu e pulsanti dell'app, i messaggi di Reem e la voce. I promemoria già creati mantengono le loro parole; quelli nuovi usano la nuova lingua."
+  },
+  "home": {
+    "niceWork": "Ottimo lavoro! ✅",
+    "loggedThisReminderWillClear": "Registrato! Questo promemoria sparirà tra 24 ore.",
+    "reminderCompleted": "Promemoria completato",
+    "greatJobGettingItDone": "Grande, fatto!",
+    "error": "Errore",
+    "failedToMarkReminderAs": "Impossibile segnare il promemoria come completato",
+    "logged": "Registrato 💪",
+    "tomorrowIsANewChance": "Domani è una nuova occasione. Questo promemoria sparisce tra 24 ore.",
+    "failedToLogReminder": "Impossibile registrare il promemoria",
+    "create": "Crea",
+    "analytics": "Statistiche",
+    "manage": "Gestisci",
+    "rewardEarned": "Premio ottenuto! 🎁",
+    "youVeEarned3Extra": "Hai ottenuto 3 promemoria extra questo mese! Guarda altri annunci per altri premi.",
+    "rewardEarned2": "Premio ottenuto! 🔊",
+    "youVeUnlockedPremiumVoices": "Voci premium sbloccate per 30 minuti! Crea promemoria con personaggi vocali avanzati."
+  },
+  "header": {
+    "hey": "Ciao {{name}}",
+    "premium": "Premium 👑",
+    "free": "Gratis",
+    "sendReemBack": "Rimanda indietro Reem",
+    "there": "tu"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Profilo",
+    "areYouSureYouWant": "Vuoi davvero uscire?",
+    "youLlNeedToSign": "Dovrai accedere di nuovo per vedere i tuoi promemoria.",
+    "cancel": "Annulla",
+    "logOut": "Esci"
+  },
+  "usage": {
+    "freePlanUsage": "Uso del piano gratuito",
+    "remindersThisMonth": "{{used}}/{{limit}} promemoria questo mese",
+    "bonus": "+{{count}} bonus",
+    "remindersUsed": "Promemoria usati",
+    "upgrade": "Passa a Premium"
+  },
+  "form": {
+    "messageRequired": "Manca il messaggio",
+    "pleaseEnterWhatYouNeed": "Scrivi prima cosa devi ricordare",
+    "quickReminderCreated": "Promemoria rapido creato",
+    "whatDoYouNeedTo": "Cosa devi ricordare?",
+    "writeYourReminderHere": "✏️ Scrivi qui il tuo promemoria...",
+    "creatingReminder": "Creazione promemoria...",
+    "createReminder": "Crea promemoria",
+    "quickReminderSetFor": "Promemoria alle {{time}} (tra {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 Liv.",
+    "voice": "Voce",
+    "daysSelected": "{{count}} giorni selezionati",
+    "daysSelected_one": "{{count}} giorno selezionato"
+  },
+  "features": {
+    "goPremium": "🔒 Passa a Premium",
+    "voice": "Voce",
+    "photo": "Foto",
+    "quotes": "Citazioni",
+    "voiceCharacter": "Personaggio vocale",
+    "selectVoice": "Scegli una voce",
+    "addPhotos": "Aggiungi foto ({{count}}/{{max}})",
+    "tapToAddPhoto": "Tocca per aggiungere una foto",
+    "motivationStyle": "Stile di motivazione",
+    "chooseAMotivationStyle": "Scegli uno stile di motivazione…",
+    "aMotivationalQuoteFromYour": "Al tuo promemoria verrà aggiunta una citazione motivazionale della categoria scelta."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Limite gratuito raggiunto",
+    "youVeUsedAllYour": "Hai usato tutti i promemoria gratuiti di questo mese. Si rinnovano il 1°, oppure passa a Premium per averne 120 al mese e tutte le funzioni.",
+    "upgradeToPremium": "Passa a Premium",
+    "maybeLater": "Magari dopo"
+  },
+  "quick": {
+    "quickReminder": "Promemoria rapido",
+    "t": {
+      "10s": "10 s",
+      "5m": "5 min",
+      "15m": "15 min",
+      "30m": "30 min"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "la tua settimana",
+    "swipeToOpen": "scorri per aprire",
+    "today": "Oggi",
+    "openCover": "Apri copertina",
+    "deselect": "Togli",
+    "select": "Scegli",
+    "clear": "Svuota"
+  },
+  "manage": {
+    "reminderCompleted": "Promemoria completato!",
+    "greatJobKeepUpThe": "Ottimo! Continua così.",
+    "unauthorized": "Non autorizzato",
+    "youAreLoggedOutLogging": "Sei uscito. Nuovo accesso in corso...",
+    "error": "Errore",
+    "failedToCompleteReminder": "Impossibile completare il promemoria.",
+    "deleted": "Eliminato!",
+    "reminderHasBeenDeleted": "Il promemoria è stato eliminato.",
+    "failedToDeleteReminder": "Impossibile eliminare il promemoria.",
+    "noted": "Annotato",
+    "trackingWhatDidnTGet": "Anche segnare ciò che non hai fatto ti aiuta a prenderne coscienza.",
+    "failedToMarkReminder": "Impossibile segnare il promemoria.",
+    "loadingYourReminders": "Caricamento dei promemoria...",
+    "past": "Passati ({{count}})",
+    "upcoming": "In arrivo ({{count}})",
+    "searchReminders": "Cerca promemoria...",
+    "tapAReminderToOpen": "Tocca un promemoria per aprirlo, o tocca 😊 o 😔 per segnare com'è andata",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "Prima volta qui? I pulsanti emoji tengono traccia delle tue abitudini. Verde vuol dire fatto. Rosso vuol dire saltato. Il grafico si aggiorna da solo.",
+    "noMatchingReminders": "Nessun promemoria trovato",
+    "nothingScheduledYet": "Ancora niente in programma",
+    "noPastReminders": "Nessun promemoria passato",
+    "keptFor24hAfterLogging": "Resta 24 h dopo la registrazione",
+    "pastRemindersAreKeptFor": "I promemoria passati restano 24 h",
+    "logItAsDoneOr": "Segnalo come fatto ✅ o saltato ❌ e sparisce da solo dopo 24 ore.",
+    "done": "Fatto",
+    "missed": "Saltato",
+    "clearsIn": "Sparisce tra {{hours}} h {{minutes}} min ⏱",
+    "didIt": "Fatto!",
+    "didnTDoIt": "Non l'ho fatto",
+    "keptFor24HoursAfter": "Resta 24 ore dopo la registrazione",
+    "deleteReminder": "Elimina promemoria",
+    "itSDone": "Fatto ✅",
+    "iSlacked": "Ho battuto la fiacca 😬",
+    "overdue": "Scaduto"
+  },
+  "analyticsLocked": {
+    "completions": "Completati",
+    "youReCrushingItKeep": "Stai spaccando, fai salire quella linea! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Statistiche bloccate",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders è un'app unica per costruire abitudini. Queste statistiche ti mostrano esattamente quanto sei costante: serie, percentuale di completamento e i tuoi giorni migliori. Perché ciò che si misura, si fa.",
+    "unlockAnalytics": "Sblocca statistiche"
+  },
+  "rudeness": {
+    "title": "Livello di scortesia",
+    "l1": "Comprensivo",
+    "l2": "Motivante",
+    "l3": "Sarcastico",
+    "l4": "Duro",
+    "l5": "Spietato"
+  },
+  "tip": {
+    "firstReminder": "<b>Primo promemoria?</b> Scrivi qui sotto cosa vuoi ricordare, apri il libro per scegliere data, ora e minuto, regola la scortesia da Comprensivo a Spietato e, se vuoi, aggiungi una foto, una voce o una citazione. Tocca <b>Crea promemoria</b> quando sei pronto.",
+    "dismiss": "Chiudi suggerimento"
+  },
+  "share": {
+    "share": "Condividi",
+    "sharing": "Condivisione..."
+  }
+}

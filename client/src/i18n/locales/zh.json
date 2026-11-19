@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "设置",
+    "home": "首页",
+    "savesAutomatically": "更改会自动保存。"
+  },
+  "settingsLanding": {
+    "language": "语言",
+    "back": "返回",
+    "settings": "设置",
+    "personalInformation": "个人信息",
+    "notifications": "通知",
+    "textSizeTimeZone": "字体大小和时区",
+    "siriShortcuts": "Siri 与快捷指令",
+    "paymentBilling": "付款与账单",
+    "developerSpace": "开发者空间",
+    "helpSupport": "帮助与支持"
+  },
+  "language": {
+    "title": "语言",
+    "automatic": "手机语言",
+    "automaticDetail": "跟随手机：{{language}}",
+    "automaticNotSupported": "暂不支持你手机的语言，所以应用使用英语。",
+    "choose": "语言",
+    "footer": "会改变应用的菜单和按钮、Reem 的消息和语音。已创建的提醒保留原来的文字；新提醒使用新语言。"
+  },
+  "home": {
+    "niceWork": "干得好！✅",
+    "loggedThisReminderWillClear": "已记录！这条提醒会在 24 小时后清除。",
+    "reminderCompleted": "提醒已完成",
+    "greatJobGettingItDone": "太棒了，搞定了！",
+    "error": "出错了",
+    "failedToMarkReminderAs": "无法将提醒标记为完成",
+    "logged": "已记录 💪",
+    "tomorrowIsANewChance": "明天又是新的机会。这条提醒会在 24 小时后清除。",
+    "failedToLogReminder": "无法记录提醒",
+    "create": "创建",
+    "analytics": "统计",
+    "manage": "管理",
+    "rewardEarned": "获得奖励！🎁",
+    "youVeEarned3Extra": "本月你获得了 3 条额外提醒！多看广告还能获得更多奖励。",
+    "rewardEarned2": "获得奖励！🔊",
+    "youVeUnlockedPremiumVoices": "已解锁高级语音 30 分钟！用高级语音角色创建提醒吧。"
+  },
+  "header": {
+    "hey": "嘿，{{name}}",
+    "premium": "高级版 👑",
+    "free": "免费",
+    "sendReemBack": "让 Reem 回去",
+    "there": "朋友"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "个人资料",
+    "areYouSureYouWant": "确定要退出登录吗？",
+    "youLlNeedToSign": "你需要重新登录才能看到提醒。",
+    "cancel": "取消",
+    "logOut": "退出登录"
+  },
+  "usage": {
+    "freePlanUsage": "免费版用量",
+    "remindersThisMonth": "本月 {{used}}/{{limit}} 条提醒",
+    "bonus": "+{{count}} 奖励",
+    "remindersUsed": "已用提醒",
+    "upgrade": "升级"
+  },
+  "form": {
+    "messageRequired": "需要填写内容",
+    "pleaseEnterWhatYouNeed": "请先写下需要提醒你的事",
+    "quickReminderCreated": "已创建快速提醒",
+    "whatDoYouNeedTo": "需要提醒你什么？",
+    "writeYourReminderHere": "✏️ 在这里写下提醒...",
+    "creatingReminder": "正在创建提醒...",
+    "createReminder": "创建提醒",
+    "quickReminderSetFor": "提醒时间 {{time}}（{{when}}后）"
+  },
+  "schedule": {
+    "lv": "🔔 级别",
+    "voice": "语音",
+    "daysSelected": "已选 {{count}} 天"
+  },
+  "features": {
+    "goPremium": "🔒 开通高级版",
+    "voice": "语音",
+    "photo": "照片",
+    "quotes": "名言",
+    "voiceCharacter": "语音角色",
+    "selectVoice": "选择语音",
+    "addPhotos": "添加照片（{{count}}/{{max}}）",
+    "tapToAddPhoto": "点按添加照片",
+    "motivationStyle": "激励风格",
+    "chooseAMotivationStyle": "选择激励风格…",
+    "aMotivationalQuoteFromYour": "会从你选的类别中挑一句励志名言加到提醒里。"
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "已达免费上限",
+    "youVeUsedAllYour": "你已用完本月的免费提醒。每月 1 日重置，或开通高级版，每月 120 条并解锁全部功能。",
+    "upgradeToPremium": "开通高级版",
+    "maybeLater": "以后再说"
+  },
+  "quick": {
+    "quickReminder": "快速提醒",
+    "t": {
+      "10s": "10 秒",
+      "5m": "5 分钟",
+      "15m": "15 分钟",
+      "30m": "30 分钟"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "你的一周",
+    "swipeToOpen": "滑动打开",
+    "today": "今天",
+    "openCover": "打开封面",
+    "deselect": "取消选择",
+    "select": "选择",
+    "clear": "清除"
+  },
+  "manage": {
+    "reminderCompleted": "提醒已完成！",
+    "greatJobKeepUpThe": "太棒了！继续保持。",
+    "unauthorized": "未授权",
+    "youAreLoggedOutLogging": "你已退出登录，正在重新登录...",
+    "error": "出错了",
+    "failedToCompleteReminder": "无法完成提醒。",
+    "deleted": "已删除！",
+    "reminderHasBeenDeleted": "提醒已删除。",
+    "failedToDeleteReminder": "无法删除提醒。",
+    "noted": "已记下",
+    "trackingWhatDidnTGet": "记录没做到的事，也能帮你更了解自己。",
+    "failedToMarkReminder": "无法标记提醒。",
+    "loadingYourReminders": "正在加载你的提醒...",
+    "past": "过去（{{count}}）",
+    "upcoming": "即将到来（{{count}}）",
+    "searchReminders": "搜索提醒...",
+    "tapAReminderToOpen": "点按提醒即可打开，或点 😊 或 😔 记录结果",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "第一次来？表情按钮会记录你的习惯。绿色表示完成，红色表示错过。你的图表会自动更新。",
+    "noMatchingReminders": "没有匹配的提醒",
+    "nothingScheduledYet": "还没有安排",
+    "noPastReminders": "没有过去的提醒",
+    "keptFor24hAfterLogging": "记录后保留 24 小时",
+    "pastRemindersAreKeptFor": "过去的提醒保留 24 小时",
+    "logItAsDoneOr": "标记为完成 ✅ 或错过 ❌，24 小时后会自动清除。",
+    "done": "完成",
+    "missed": "错过",
+    "clearsIn": "{{hours}} 小时 {{minutes}} 分钟后清除 ⏱",
+    "didIt": "做到了！",
+    "didnTDoIt": "没做",
+    "keptFor24HoursAfter": "记录后保留 24 小时",
+    "deleteReminder": "删除提醒",
+    "itSDone": "搞定了 ✅",
+    "iSlacked": "我偷懒了 😬",
+    "overdue": "已逾期"
+  },
+  "analyticsLocked": {
+    "completions": "完成次数",
+    "youReCrushingItKeep": "你太强了，让这条线继续往上走！🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "统计已锁定",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders 是首创的习惯养成应用。这些统计会准确显示你有多坚持：连续天数、完成率和你状态最好的日子。因为能被衡量的事，才会被完成。",
+    "unlockAnalytics": "解锁统计"
+  },
+  "rudeness": {
+    "title": "毒舌程度",
+    "l1": "体贴",
+    "l2": "鼓励",
+    "l3": "讽刺",
+    "l4": "严厉",
+    "l5": "毒舌"
+  },
+  "tip": {
+    "firstReminder": "<b>第一次提醒？</b>在下面写下要提醒你的事，打开书本选择日期、小时和分钟，把毒舌程度从“体贴”滑到“毒舌”，愿意的话再加上照片、语音或名言。准备好后点 <b>创建提醒</b>。",
+    "dismiss": "关闭提示"
+  },
+  "share": {
+    "share": "分享",
+    "sharing": "正在分享..."
+  }
+}

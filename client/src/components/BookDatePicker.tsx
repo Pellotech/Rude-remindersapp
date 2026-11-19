@@ -1,11 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { zonedNow, fromZoned } from "@/lib/timeZone";
-import { addDays, isSameDay, format } from "date-fns";
+import { addDays, isSameDay } from "date-fns";
+import { formatDate } from "@/i18n/dates";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import rudeRemindersLogo from '@assets/reems_logo_trimmed.png';
 
 import { palette } from "@/lib/theme";
+import { tr } from "@/i18n";
 interface ScheduleResult {
   scheduledFor?: string;
   isMultiDay: boolean;
@@ -290,14 +292,14 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
   };
 
   /* ─── helpers ─────────────────────────────────────────────────────────── */
-  const chipLabel = (d: Date) => `${format(d, 'EEE')} ${format(d, 'd')}`;
+  const chipLabel = (d: Date) => `${formatDate(d, 'EEE')} ${formatDate(d, 'd')}`;
 
   /* ghost page (left section of open book) */
   const ghostPage = displayIdx >= 2 ? getPageDate(displayIdx - 1) : null;
 
   /* ─── render ──────────────────────────────────────────────────────────── */
   return (
-    <div style={{ overflow: 'hidden' }} className="space-y-3">
+    <div style={{ overflow: 'hidden' }} className="space-y-3" dir="ltr">
 
       {/* ── keyframes ─────────────────────────────────────────────────── */}
       <style>{`
@@ -444,7 +446,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 <div style={{
                   color: 'rgba(201,160,99,0.5)', fontSize: isTablet ? 9 : 7,
                   letterSpacing: '0.07em', position: 'relative', zIndex: 1,
-                }}>your week ahead</div>
+                }}>{tr("book.yourWeekAhead")}</div>
 
                 {/* Right page edge — stacked vertical lines (uniform across phone/tablet) */}
                 <div style={{
@@ -511,7 +513,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 transition: 'opacity 0.5s ease',
                 opacity: showSwipeLabel ? 1 : 0,
                 pointerEvents: 'none',
-              }}>swipe to open</div>
+              }}>{tr("book.swipeToOpen")}</div>
             )}
 
           </div>
@@ -589,10 +591,10 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                 {ghostPage && (
                   <div style={{ position: 'relative', zIndex: 6, textAlign: 'center' }}>
                     <div style={{ fontSize: 32, fontWeight: 500, color: 'rgba(50,20,5,0.2)', lineHeight: 1 }}>
-                      {format(ghostPage, 'd')}
+                      {formatDate(ghostPage, 'd')}
                     </div>
                     <div style={{ fontSize: 10, color: 'rgba(50,20,5,0.15)', marginTop: 2 }}>
-                      {format(ghostPage, 'EEE')}
+                      {formatDate(ghostPage, 'EEE')}
                     </div>
                   </div>
                 )}
@@ -659,7 +661,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     fontSize: 9, fontWeight: 600,
                     padding: '2px 8px', borderRadius: 20,
                     whiteSpace: 'nowrap',
-                  }}>Today</div>
+                  }}>{tr("book.today")}</div>
                 )}
 
                 {/* Date content */}
@@ -676,7 +678,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     fontSize: isTablet ? 64 : 41, fontWeight: 500, lineHeight: 1,
                     color: palette.charcoal,
                   }}>
-                    {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'd') : ''}
+                    {getPageDate(displayIdx) ? formatDate(getPageDate(displayIdx)!, 'd') : ''}
                   </div>
                   {/* Day name */}
                   <div style={{
@@ -684,11 +686,11 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
                     color: isPageSelected(displayIdx) ? 'rgba(183,13,13,0.78)' : '#3d2010',
                     transition: 'color 0.2s',
                   }}>
-                    {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'EEEE') : ''}
+                    {getPageDate(displayIdx) ? formatDate(getPageDate(displayIdx)!, 'EEEE') : ''}
                   </div>
                   {/* Month */}
                   <div style={{ fontSize: isTablet ? 16 : 11, fontWeight: 500, color: palette.gold }}>
-                    {getPageDate(displayIdx) ? format(getPageDate(displayIdx)!, 'MMM') : ''}
+                    {getPageDate(displayIdx) ? formatDate(getPageDate(displayIdx)!, 'MMM') : ''}
                   </div>
                 </div>
 
@@ -801,8 +803,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
           }}
         >
           {displayIdx === 0
-            ? 'Open cover'
-            : currentDisplaySelected ? 'Deselect' : 'Select'}
+            ? tr("book.openCover")
+            : currentDisplaySelected ? tr("book.deselect") : tr("book.select")}
         </button>
 
         {/* Spacer (right) */}
@@ -845,7 +847,7 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
             pointerEvents: selectedDates.length > 0 ? 'auto' : 'none',
             transition: 'border 0.15s, background 0.15s, color 0.15s, opacity 0.15s',
           }}
-        >Clear</button>
+        >{tr("book.clear")}</button>
 
         {/* Progress dots — absolutely centered */}
         <div style={{

@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 import { palette } from "@/lib/theme";
+import { Trans } from "react-i18next";
+import { tr } from "@/i18n";
 const STORAGE_KEY = 'create_form_tooltip_seen';
 const FIRST_SEEN_KEY = 'create_form_tooltip_first_seen_at';
 const EXPIRY_MS = 3 * 24 * 60 * 60 * 1000; // stops showing 3 days after first seen
@@ -53,17 +55,17 @@ export function CreateTooltip({ onDismiss }: { onDismiss: () => void }) {
     }} data-testid="card-create-tooltip">
       <img
         src="/rudy/Rudy_leaning_2_transparent.png"
-        alt="Rudy"
+        alt="Reem"
         style={{ width: 36, height: 36, mixBlendMode: 'var(--cg-blend, multiply)' as any, flexShrink: 0 }}
       />
       <span style={{ flex: 1, paddingRight: 16 }}>
-        <strong>First reminder?</strong> Type what you want to be reminded about below, open the book to pick a date, hour and minute, slide the rudeness from Sympathy to Savage, then add a photo, voice or quote if you want. Hit <strong>Create Reminder</strong> when you're ready.
+        <Trans i18nKey="tip.firstReminder" components={{ b: <strong /> }} />
       </span>
       <button
         onClick={onDismiss}
         style={{ position: 'absolute', top: 6, right: 8, background: 'none', border: 'none', fontSize: '14px', cursor: 'pointer', color: '#999', lineHeight: 1 }}
         data-testid="button-dismiss-create-tooltip"
-        aria-label="Dismiss tip"
+        aria-label={tr("tip.dismiss")}
       >✕</button>
     </div>
   );

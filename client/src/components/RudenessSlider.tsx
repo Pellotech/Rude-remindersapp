@@ -4,6 +4,7 @@ import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 
 import { palette } from "@/lib/theme";
+import { tr } from "@/i18n";
 /**
  * RudenessSlider — self-contained rudeness level picker (1–5).
  *
@@ -49,7 +50,7 @@ interface RudenessSliderProps {
 export function RudenessSlider({
   value,
   onChange,
-  title = "Rudeness Level",
+  title,
   disableHaptics = false,
   className,
 }: RudenessSliderProps) {
@@ -70,11 +71,12 @@ export function RudenessSlider({
   return (
     <div
       className={cn("-mt-1", className)}
+      dir="ltr" // level 1 stays on the left in every language, matching the slider
       style={{ "--slider-color": color } as React.CSSProperties}
     >
       <div className="px-4 pt-3 pb-5 bg-reem-cream dark:bg-reem-concrete-widget dark:border dark:border-reem-concrete-edge rounded-lg">
         {title !== null && (
-          <p className="text-sm font-medium text-reem-charcoal dark:text-reem-concrete-text mb-3">{title}</p>
+          <p className="text-sm font-medium text-reem-charcoal dark:text-reem-concrete-text mb-3">{title ?? tr("rudeness.title")}</p>
         )}
         <Slider
           min={1}
@@ -102,7 +104,7 @@ export function RudenessSlider({
                   {item.emoji}
                 </span>
                 <span className={isSelected ? "font-bold" : ""}>
-                  {item.label}
+                  {tr(`rudeness.l${item.level}`)}
                 </span>
               </div>
             );

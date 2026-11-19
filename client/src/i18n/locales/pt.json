@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "Ajustes",
+    "home": "Início",
+    "savesAutomatically": "As alterações são salvas automaticamente."
+  },
+  "settingsLanding": {
+    "language": "Idioma",
+    "back": "Voltar",
+    "settings": "Ajustes",
+    "personalInformation": "Informações pessoais",
+    "notifications": "Notificações",
+    "textSizeTimeZone": "Tamanho do texto e fuso horário",
+    "siriShortcuts": "Siri e Atalhos",
+    "paymentBilling": "Pagamento e cobrança",
+    "developerSpace": "Espaço do desenvolvedor",
+    "helpSupport": "Ajuda e suporte"
+  },
+  "language": {
+    "title": "Idioma",
+    "automatic": "Idioma do celular",
+    "automaticDetail": "Usa o do seu celular: {{language}}",
+    "automaticNotSupported": "O idioma do seu celular ainda não está disponível, então o app usa inglês.",
+    "choose": "Idiomas",
+    "footer": "Muda os menus e botões do app, as mensagens da Reem e a voz. Lembretes que você já criou mantêm as palavras; os novos usam o novo idioma."
+  },
+  "home": {
+    "niceWork": "Mandou bem! ✅",
+    "loggedThisReminderWillClear": "Registrado! Este lembrete some em 24 horas.",
+    "reminderCompleted": "Lembrete concluído",
+    "greatJobGettingItDone": "Ótimo trabalho, você conseguiu!",
+    "error": "Erro",
+    "failedToMarkReminderAs": "Não foi possível marcar o lembrete como concluído",
+    "logged": "Registrado 💪",
+    "tomorrowIsANewChance": "Amanhã é uma nova chance. Este lembrete some em 24 horas.",
+    "failedToLogReminder": "Não foi possível registrar o lembrete",
+    "create": "Criar",
+    "analytics": "Estatísticas",
+    "manage": "Gerenciar",
+    "rewardEarned": "Recompensa ganha! 🎁",
+    "youVeEarned3Extra": "Você ganhou 3 lembretes extras este mês! Assista a mais anúncios para ganhar mais.",
+    "rewardEarned2": "Recompensa ganha! 🔊",
+    "youVeUnlockedPremiumVoices": "Vozes premium liberadas por 30 minutos! Crie lembretes com personagens de voz avançados."
+  },
+  "header": {
+    "hey": "Oi, {{name}}",
+    "premium": "Premium 👑",
+    "free": "Grátis",
+    "sendReemBack": "Mandar a Reem de volta",
+    "there": "você"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Perfil",
+    "areYouSureYouWant": "Tem certeza de que quer sair?",
+    "youLlNeedToSign": "Você vai precisar entrar de novo para ver seus lembretes.",
+    "cancel": "Cancelar",
+    "logOut": "Sair"
+  },
+  "usage": {
+    "freePlanUsage": "Uso do plano grátis",
+    "remindersThisMonth": "{{used}}/{{limit}} lembretes este mês",
+    "bonus": "+{{count}} bônus",
+    "remindersUsed": "Lembretes usados",
+    "upgrade": "Fazer upgrade"
+  },
+  "form": {
+    "messageRequired": "Falta a mensagem",
+    "pleaseEnterWhatYouNeed": "Primeiro escreva do que você precisa lembrar",
+    "quickReminderCreated": "Lembrete rápido criado",
+    "whatDoYouNeedTo": "Do que você precisa lembrar?",
+    "writeYourReminderHere": "✏️ Escreva seu lembrete aqui...",
+    "creatingReminder": "Criando lembrete...",
+    "createReminder": "Criar lembrete",
+    "quickReminderSetFor": "Lembrete para {{time}} (daqui a {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 Nív.",
+    "voice": "Voz",
+    "daysSelected": "{{count}} dias selecionados",
+    "daysSelected_one": "{{count}} dia selecionado"
+  },
+  "features": {
+    "goPremium": "🔒 Seja Premium",
+    "voice": "Voz",
+    "photo": "Foto",
+    "quotes": "Frases",
+    "voiceCharacter": "Personagem de voz",
+    "selectVoice": "Escolha uma voz",
+    "addPhotos": "Adicionar fotos ({{count}}/{{max}})",
+    "tapToAddPhoto": "Toque para adicionar uma foto",
+    "motivationStyle": "Estilo de motivação",
+    "chooseAMotivationStyle": "Escolha um estilo de motivação…",
+    "aMotivationalQuoteFromYour": "Uma frase motivacional da categoria escolhida será adicionada ao seu lembrete."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Limite grátis atingido",
+    "youVeUsedAllYour": "Você usou todos os lembretes grátis deste mês. Eles voltam no dia 1º, ou seja Premium para ter 120 por mês e todos os recursos.",
+    "upgradeToPremium": "Seja Premium",
+    "maybeLater": "Talvez depois"
+  },
+  "quick": {
+    "quickReminder": "Lembrete rápido",
+    "t": {
+      "10s": "10 s",
+      "5m": "5 min",
+      "15m": "15 min",
+      "30m": "30 min"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "sua semana",
+    "swipeToOpen": "deslize para abrir",
+    "today": "Hoje",
+    "openCover": "Abrir capa",
+    "deselect": "Desmarcar",
+    "select": "Escolher",
+    "clear": "Limpar"
+  },
+  "manage": {
+    "reminderCompleted": "Lembrete concluído!",
+    "greatJobKeepUpThe": "Ótimo! Continue assim.",
+    "unauthorized": "Não autorizado",
+    "youAreLoggedOutLogging": "Você saiu da conta. Entrando de novo...",
+    "error": "Erro",
+    "failedToCompleteReminder": "Não foi possível concluir o lembrete.",
+    "deleted": "Excluído!",
+    "reminderHasBeenDeleted": "O lembrete foi excluído.",
+    "failedToDeleteReminder": "Não foi possível excluir o lembrete.",
+    "noted": "Anotado",
+    "trackingWhatDidnTGet": "Registrar o que não foi feito também ajuda a criar consciência.",
+    "failedToMarkReminder": "Não foi possível marcar o lembrete.",
+    "loadingYourReminders": "Carregando seus lembretes...",
+    "past": "Passados ({{count}})",
+    "upcoming": "Próximos ({{count}})",
+    "searchReminders": "Buscar lembretes...",
+    "tapAReminderToOpen": "Toque em um lembrete para abrir, ou toque em 😊 ou 😔 para registrar o que aconteceu",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "Primeira vez aqui? Os botões de emoji acompanham seus hábitos. Verde é feito. Vermelho é perdido. Seu gráfico atualiza sozinho.",
+    "noMatchingReminders": "Nenhum lembrete encontrado",
+    "nothingScheduledYet": "Nada agendado ainda",
+    "noPastReminders": "Nenhum lembrete passado",
+    "keptFor24hAfterLogging": "Fica 24 h depois de registrar",
+    "pastRemindersAreKeptFor": "Lembretes passados ficam 24 h",
+    "logItAsDoneOr": "Marque como feito ✅ ou perdido ❌ e ele some sozinho depois de 24 horas.",
+    "done": "Feito",
+    "missed": "Perdido",
+    "clearsIn": "Some em {{hours}} h {{minutes}} min ⏱",
+    "didIt": "Fiz!",
+    "didnTDoIt": "Não fiz",
+    "keptFor24HoursAfter": "Fica 24 horas depois de registrar",
+    "deleteReminder": "Excluir lembrete",
+    "itSDone": "Feito ✅",
+    "iSlacked": "Dei uma vacilada 😬",
+    "overdue": "Atrasado"
+  },
+  "analyticsLocked": {
+    "completions": "Concluídos",
+    "youReCrushingItKeep": "Você está arrasando, continue subindo essa linha! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Estatísticas bloqueadas",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders é um app único para criar hábitos. Estas estatísticas mostram exatamente o quanto você é constante: sequências, taxa de conclusão e seus melhores dias. Porque o que é medido é feito.",
+    "unlockAnalytics": "Liberar estatísticas"
+  },
+  "rudeness": {
+    "title": "Nível de grosseria",
+    "l1": "Compreensivo",
+    "l2": "Motivador",
+    "l3": "Sarcástico",
+    "l4": "Duro",
+    "l5": "Selvagem"
+  },
+  "tip": {
+    "firstReminder": "<b>Primeiro lembrete?</b> Escreva abaixo do que quer lembrar, abra o livro para escolher data, hora e minuto, ajuste a grosseria de Compreensivo a Selvagem e, se quiser, adicione foto, voz ou frase. Toque em <b>Criar lembrete</b> quando estiver pronto.",
+    "dismiss": "Fechar dica"
+  },
+  "share": {
+    "share": "Compartilhar",
+    "sharing": "Compartilhando..."
+  }
+}

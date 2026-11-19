@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "Настройки",
+    "home": "Главная",
+    "savesAutomatically": "Изменения сохраняются автоматически."
+  },
+  "settingsLanding": {
+    "language": "Язык",
+    "back": "Назад",
+    "settings": "Настройки",
+    "personalInformation": "Личные данные",
+    "notifications": "Уведомления",
+    "textSizeTimeZone": "Размер текста и часовой пояс",
+    "siriShortcuts": "Siri и Быстрые команды",
+    "paymentBilling": "Оплата и счета",
+    "developerSpace": "Раздел разработчика",
+    "helpSupport": "Помощь и поддержка"
+  },
+  "language": {
+    "title": "Язык",
+    "automatic": "Язык телефона",
+    "automaticDetail": "Как на телефоне: {{language}}",
+    "automaticNotSupported": "Язык вашего телефона пока недоступен, поэтому приложение на английском.",
+    "choose": "Языки",
+    "footer": "Меняет меню и кнопки приложения, сообщения Reem и голос. Уже созданные напоминания сохраняют свои слова; новые будут на новом языке."
+  },
+  "home": {
+    "niceWork": "Отлично! ✅",
+    "loggedThisReminderWillClear": "Записано! Это напоминание исчезнет через 24 часа.",
+    "reminderCompleted": "Напоминание выполнено",
+    "greatJobGettingItDone": "Молодец, сделано!",
+    "error": "Ошибка",
+    "failedToMarkReminderAs": "Не удалось отметить напоминание выполненным",
+    "logged": "Записано 💪",
+    "tomorrowIsANewChance": "Завтра новый шанс. Это напоминание исчезнет через 24 часа.",
+    "failedToLogReminder": "Не удалось записать напоминание",
+    "create": "Создать",
+    "analytics": "Статистика",
+    "manage": "Управление",
+    "rewardEarned": "Награда получена! 🎁",
+    "youVeEarned3Extra": "Вы получили 3 дополнительных напоминания в этом месяце! Смотрите больше рекламы, чтобы получить ещё.",
+    "rewardEarned2": "Награда получена! 🔊",
+    "youVeUnlockedPremiumVoices": "Премиум-голоса открыты на 30 минут! Создавайте напоминания с особыми голосами."
+  },
+  "header": {
+    "hey": "Привет, {{name}}",
+    "premium": "Премиум 👑",
+    "free": "Бесплатно",
+    "sendReemBack": "Отправить Reem назад",
+    "there": "друг"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Профиль",
+    "areYouSureYouWant": "Точно выйти из аккаунта?",
+    "youLlNeedToSign": "Чтобы увидеть напоминания, нужно будет войти снова.",
+    "cancel": "Отмена",
+    "logOut": "Выйти"
+  },
+  "usage": {
+    "freePlanUsage": "Бесплатный тариф",
+    "remindersThisMonth": "{{used}}/{{limit}} напоминаний в этом месяце",
+    "bonus": "+{{count}} бонус",
+    "remindersUsed": "Использовано напоминаний",
+    "upgrade": "Улучшить"
+  },
+  "form": {
+    "messageRequired": "Нужен текст",
+    "pleaseEnterWhatYouNeed": "Сначала напишите, о чём напомнить",
+    "quickReminderCreated": "Быстрое напоминание создано",
+    "whatDoYouNeedTo": "О чём вам напомнить?",
+    "writeYourReminderHere": "✏️ Напишите напоминание здесь...",
+    "creatingReminder": "Создаём напоминание...",
+    "createReminder": "Создать напоминание",
+    "quickReminderSetFor": "Напоминание на {{time}} (через {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 Ур.",
+    "voice": "Голос",
+    "daysSelected": "Выбрано дней: {{count}}"
+  },
+  "features": {
+    "goPremium": "🔒 Получить Премиум",
+    "voice": "Голос",
+    "photo": "Фото",
+    "quotes": "Цитаты",
+    "voiceCharacter": "Голосовой персонаж",
+    "selectVoice": "Выберите голос",
+    "addPhotos": "Добавить фото ({{count}}/{{max}})",
+    "tapToAddPhoto": "Нажмите, чтобы добавить фото",
+    "motivationStyle": "Стиль мотивации",
+    "chooseAMotivationStyle": "Выберите стиль мотивации…",
+    "aMotivationalQuoteFromYour": "К напоминанию добавится мотивирующая цитата из выбранной категории."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Бесплатный лимит исчерпан",
+    "youVeUsedAllYour": "Вы использовали все бесплатные напоминания за этот месяц. Они обновятся 1-го числа, или оформите Премиум: 120 в месяц и все функции.",
+    "upgradeToPremium": "Получить Премиум",
+    "maybeLater": "Может, позже"
+  },
+  "quick": {
+    "quickReminder": "Быстрое напоминание",
+    "t": {
+      "10s": "10 с",
+      "5m": "5 мин",
+      "15m": "15 мин",
+      "30m": "30 мин"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "ваша неделя",
+    "swipeToOpen": "проведите, чтобы открыть",
+    "today": "Сегодня",
+    "openCover": "Открыть",
+    "deselect": "Убрать",
+    "select": "Выбрать",
+    "clear": "Очистить"
+  },
+  "manage": {
+    "reminderCompleted": "Напоминание выполнено!",
+    "greatJobKeepUpThe": "Отлично! Так держать.",
+    "unauthorized": "Нет доступа",
+    "youAreLoggedOutLogging": "Вы вышли из аккаунта. Входим снова...",
+    "error": "Ошибка",
+    "failedToCompleteReminder": "Не удалось выполнить напоминание.",
+    "deleted": "Удалено!",
+    "reminderHasBeenDeleted": "Напоминание удалено.",
+    "failedToDeleteReminder": "Не удалось удалить напоминание.",
+    "noted": "Записано",
+    "trackingWhatDidnTGet": "Записывать несделанное тоже полезно — так лучше понимаешь себя.",
+    "failedToMarkReminder": "Не удалось отметить напоминание.",
+    "loadingYourReminders": "Загружаем ваши напоминания...",
+    "past": "Прошедшие ({{count}})",
+    "upcoming": "Предстоящие ({{count}})",
+    "searchReminders": "Поиск напоминаний...",
+    "tapAReminderToOpen": "Нажмите на напоминание, чтобы открыть его, или на 😊 или 😔, чтобы отметить результат",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "Впервые здесь? Кнопки-эмодзи отслеживают ваши привычки. Зелёный — сделано. Красный — пропущено. График обновляется сам.",
+    "noMatchingReminders": "Ничего не найдено",
+    "nothingScheduledYet": "Пока ничего не запланировано",
+    "noPastReminders": "Прошедших напоминаний нет",
+    "keptFor24hAfterLogging": "Хранится 24 ч после отметки",
+    "pastRemindersAreKeptFor": "Прошедшие напоминания хранятся 24 ч",
+    "logItAsDoneOr": "Отметьте как сделано ✅ или пропущено ❌, и через 24 часа оно исчезнет само.",
+    "done": "Сделано",
+    "missed": "Пропущено",
+    "clearsIn": "Исчезнет через {{hours}} ч {{minutes}} мин ⏱",
+    "didIt": "Сделал!",
+    "didnTDoIt": "Не сделал",
+    "keptFor24HoursAfter": "Хранится 24 часа после отметки",
+    "deleteReminder": "Удалить напоминание",
+    "itSDone": "Сделано ✅",
+    "iSlacked": "Поленился 😬",
+    "overdue": "Просрочено"
+  },
+  "analyticsLocked": {
+    "completions": "Выполнено",
+    "youReCrushingItKeep": "Вы на высоте — пусть линия растёт дальше! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Статистика закрыта",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders — первое в своём роде приложение для привычек. Статистика точно показывает, насколько вы последовательны: серии, процент выполнения и ваши лучшие дни. Ведь что измеряется, то делается.",
+    "unlockAnalytics": "Открыть статистику"
+  },
+  "rudeness": {
+    "title": "Уровень грубости",
+    "l1": "Сочувствие",
+    "l2": "Мотивация",
+    "l3": "Сарказм",
+    "l4": "Жёстко",
+    "l5": "Беспощадно"
+  },
+  "tip": {
+    "firstReminder": "<b>Первое напоминание?</b> Напишите ниже, о чём напомнить, откройте книгу, чтобы выбрать дату, час и минуту, сдвиньте грубость от «Сочувствия» до «Беспощадно» и, если хотите, добавьте фото, голос или цитату. Нажмите <b>Создать напоминание</b>, когда будете готовы.",
+    "dismiss": "Закрыть подсказку"
+  },
+  "share": {
+    "share": "Поделиться",
+    "sharing": "Отправляем..."
+  }
+}

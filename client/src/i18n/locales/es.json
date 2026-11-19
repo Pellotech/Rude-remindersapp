@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "Ajustes",
+    "home": "Inicio",
+    "savesAutomatically": "Los cambios se guardan automáticamente."
+  },
+  "settingsLanding": {
+    "language": "Idioma",
+    "back": "Atrás",
+    "settings": "Ajustes",
+    "personalInformation": "Información personal",
+    "notifications": "Notificaciones",
+    "textSizeTimeZone": "Tamaño de texto y zona horaria",
+    "siriShortcuts": "Siri y Atajos",
+    "paymentBilling": "Pagos y facturación",
+    "developerSpace": "Espacio de desarrollador",
+    "helpSupport": "Ayuda y soporte"
+  },
+  "language": {
+    "title": "Idioma",
+    "automatic": "Idioma del teléfono",
+    "automaticDetail": "Usa el de tu teléfono: {{language}}",
+    "automaticNotSupported": "El idioma de tu teléfono aún no está disponible, así que la app usa inglés.",
+    "choose": "Idiomas",
+    "footer": "Cambia los menús y botones de la app, los mensajes de Reem y la voz. Los recordatorios que ya hiciste conservan sus palabras; los nuevos usan el nuevo idioma."
+  },
+  "home": {
+    "niceWork": "¡Bien hecho! ✅",
+    "loggedThisReminderWillClear": "¡Registrado! Este recordatorio se borrará en 24 horas.",
+    "reminderCompleted": "Recordatorio completado",
+    "greatJobGettingItDone": "¡Buen trabajo, lo lograste!",
+    "error": "Error",
+    "failedToMarkReminderAs": "No se pudo marcar el recordatorio como completado",
+    "logged": "Registrado 💪",
+    "tomorrowIsANewChance": "Mañana es una nueva oportunidad. Este recordatorio se borra en 24 horas.",
+    "failedToLogReminder": "No se pudo registrar el recordatorio",
+    "create": "Crear",
+    "analytics": "Estadísticas",
+    "manage": "Gestionar",
+    "rewardEarned": "¡Recompensa ganada! 🎁",
+    "youVeEarned3Extra": "¡Ganaste 3 recordatorios extra este mes! Mira más anuncios para más recompensas.",
+    "rewardEarned2": "¡Recompensa ganada! 🔊",
+    "youVeUnlockedPremiumVoices": "¡Desbloqueaste las voces premium por 30 minutos! Crea recordatorios con personajes de voz avanzados."
+  },
+  "header": {
+    "hey": "Hola, {{name}}",
+    "premium": "Premium 👑",
+    "free": "Gratis",
+    "sendReemBack": "Devolver a Reem",
+    "there": "tú"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "Perfil",
+    "areYouSureYouWant": "¿Seguro que quieres cerrar sesión?",
+    "youLlNeedToSign": "Tendrás que volver a iniciar sesión para ver tus recordatorios.",
+    "cancel": "Cancelar",
+    "logOut": "Cerrar sesión"
+  },
+  "usage": {
+    "freePlanUsage": "Uso del plan gratis",
+    "remindersThisMonth": "{{used}}/{{limit}} recordatorios este mes",
+    "bonus": "+{{count}} extra",
+    "remindersUsed": "Recordatorios usados",
+    "upgrade": "Mejorar"
+  },
+  "form": {
+    "messageRequired": "Falta el mensaje",
+    "pleaseEnterWhatYouNeed": "Primero escribe qué necesitas recordar",
+    "quickReminderCreated": "Recordatorio rápido creado",
+    "whatDoYouNeedTo": "¿Qué necesitas recordar?",
+    "writeYourReminderHere": "✏️ Escribe tu recordatorio aquí...",
+    "creatingReminder": "Creando recordatorio...",
+    "createReminder": "Crear recordatorio",
+    "quickReminderSetFor": "Recordatorio para las {{time}} (en {{when}})"
+  },
+  "schedule": {
+    "lv": "🔔 Nv.",
+    "voice": "Voz",
+    "daysSelected": "{{count}} días seleccionados",
+    "daysSelected_one": "{{count}} día seleccionado"
+  },
+  "features": {
+    "goPremium": "🔒 Hazte Premium",
+    "voice": "Voz",
+    "photo": "Foto",
+    "quotes": "Frases",
+    "voiceCharacter": "Personaje de voz",
+    "selectVoice": "Elige una voz",
+    "addPhotos": "Añadir fotos ({{count}}/{{max}})",
+    "tapToAddPhoto": "Toca para añadir una foto",
+    "motivationStyle": "Estilo de motivación",
+    "chooseAMotivationStyle": "Elige un estilo de motivación…",
+    "aMotivationalQuoteFromYour": "Se añadirá a tu recordatorio una frase motivadora de la categoría que elijas."
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "Llegaste al límite gratis",
+    "youVeUsedAllYour": "Usaste todos tus recordatorios gratis de este mes. Se renuevan el día 1, o hazte Premium para tener 120 al mes y todas las funciones.",
+    "upgradeToPremium": "Hazte Premium",
+    "maybeLater": "Quizás luego"
+  },
+  "quick": {
+    "quickReminder": "Recordatorio rápido",
+    "t": {
+      "10s": "10 s",
+      "5m": "5 min",
+      "15m": "15 min",
+      "30m": "30 min"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "tu semana",
+    "swipeToOpen": "desliza para abrir",
+    "today": "Hoy",
+    "openCover": "Abrir tapa",
+    "deselect": "Quitar",
+    "select": "Elegir",
+    "clear": "Borrar"
+  },
+  "manage": {
+    "reminderCompleted": "¡Recordatorio completado!",
+    "greatJobKeepUpThe": "¡Buen trabajo! Sigue así.",
+    "unauthorized": "Sin autorización",
+    "youAreLoggedOutLogging": "Cerraste sesión. Volviendo a iniciar...",
+    "error": "Error",
+    "failedToCompleteReminder": "No se pudo completar el recordatorio.",
+    "deleted": "¡Eliminado!",
+    "reminderHasBeenDeleted": "El recordatorio se eliminó.",
+    "failedToDeleteReminder": "No se pudo eliminar el recordatorio.",
+    "noted": "Anotado",
+    "trackingWhatDidnTGet": "Registrar lo que no se hizo también te ayuda a tomar conciencia.",
+    "failedToMarkReminder": "No se pudo marcar el recordatorio.",
+    "loadingYourReminders": "Cargando tus recordatorios...",
+    "past": "Pasados ({{count}})",
+    "upcoming": "Próximos ({{count}})",
+    "searchReminders": "Buscar recordatorios...",
+    "tapAReminderToOpen": "Toca un recordatorio para abrirlo, o toca 😊 o 😔 para registrar qué pasó",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "¿Primera vez aquí? Los botones de emoji registran tus hábitos. Verde es hecho. Rojo es no hecho. Tu gráfica se actualiza sola.",
+    "noMatchingReminders": "No hay recordatorios que coincidan",
+    "nothingScheduledYet": "Aún no hay nada programado",
+    "noPastReminders": "No hay recordatorios pasados",
+    "keptFor24hAfterLogging": "Se guarda 24 h después de registrarlo",
+    "pastRemindersAreKeptFor": "Los recordatorios pasados se guardan 24 h",
+    "logItAsDoneOr": "Márcalo como hecho ✅ o no hecho ❌ y se borra solo después de 24 horas.",
+    "done": "Hecho",
+    "missed": "No hecho",
+    "clearsIn": "Se borra en {{hours}} h {{minutes}} min ⏱",
+    "didIt": "¡Lo hice!",
+    "didnTDoIt": "No lo hice",
+    "keptFor24HoursAfter": "Se guarda 24 horas después de registrarlo",
+    "deleteReminder": "Eliminar recordatorio",
+    "itSDone": "Hecho ✅",
+    "iSlacked": "Me relajé 😬",
+    "overdue": "Vencido"
+  },
+  "analyticsLocked": {
+    "completions": "Completados",
+    "youReCrushingItKeep": "¡Vas con todo! Que esa línea siga subiendo 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "Estadísticas bloqueadas",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders es una app única para crear hábitos. Estas estadísticas te muestran exactamente qué tan constante eres: rachas, porcentaje de cumplimiento y tus mejores días. Porque lo que se mide, se hace.",
+    "unlockAnalytics": "Desbloquear estadísticas"
+  },
+  "rudeness": {
+    "title": "Nivel de grosería",
+    "l1": "Compasivo",
+    "l2": "Motivador",
+    "l3": "Sarcástico",
+    "l4": "Duro",
+    "l5": "Salvaje"
+  },
+  "tip": {
+    "firstReminder": "<b>¿Tu primer recordatorio?</b> Escribe abajo qué quieres recordar, abre el libro para elegir fecha, hora y minuto, desliza la grosería de Compasivo a Salvaje y, si quieres, añade una foto, voz o frase. Toca <b>Crear recordatorio</b> cuando estés listo.",
+    "dismiss": "Cerrar consejo"
+  },
+  "share": {
+    "share": "Compartir",
+    "sharing": "Compartiendo..."
+  }
+}

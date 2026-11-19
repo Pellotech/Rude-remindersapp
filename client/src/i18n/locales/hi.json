@@ -1,0 +1,182 @@
+{
+  "common": {
+    "settings": "सेटिंग्स",
+    "home": "होम",
+    "savesAutomatically": "बदलाव अपने आप सेव हो जाते हैं।"
+  },
+  "settingsLanding": {
+    "language": "भाषा",
+    "back": "वापस",
+    "settings": "सेटिंग्स",
+    "personalInformation": "निजी जानकारी",
+    "notifications": "सूचनाएँ",
+    "textSizeTimeZone": "टेक्स्ट साइज़ और टाइम ज़ोन",
+    "siriShortcuts": "Siri और शॉर्टकट",
+    "paymentBilling": "भुगतान और बिलिंग",
+    "developerSpace": "डेवलपर स्पेस",
+    "helpSupport": "मदद और सहायता"
+  },
+  "language": {
+    "title": "भाषा",
+    "automatic": "फ़ोन की भाषा",
+    "automaticDetail": "आपके फ़ोन की भाषा: {{language}}",
+    "automaticNotSupported": "आपके फ़ोन की भाषा अभी उपलब्ध नहीं है, इसलिए ऐप अंग्रेज़ी में है।",
+    "choose": "भाषाएँ",
+    "footer": "ऐप के मेन्यू और बटन, रीम के मैसेज और आवाज़ बदल जाते हैं। पहले बनाए रिमाइंडर के शब्द वही रहते हैं; नए रिमाइंडर नई भाषा में होंगे।"
+  },
+  "home": {
+    "niceWork": "शाबाश! ✅",
+    "loggedThisReminderWillClear": "दर्ज हो गया! यह रिमाइंडर 24 घंटे में हट जाएगा।",
+    "reminderCompleted": "रिमाइंडर पूरा",
+    "greatJobGettingItDone": "बढ़िया, काम हो गया!",
+    "error": "गड़बड़ी",
+    "failedToMarkReminderAs": "रिमाइंडर को पूरा नहीं किया जा सका",
+    "logged": "दर्ज हो गया 💪",
+    "tomorrowIsANewChance": "कल नया मौका है। यह रिमाइंडर 24 घंटे में हट जाएगा।",
+    "failedToLogReminder": "रिमाइंडर दर्ज नहीं हो सका",
+    "create": "बनाएँ",
+    "analytics": "आँकड़े",
+    "manage": "प्रबंधन",
+    "rewardEarned": "इनाम मिला! 🎁",
+    "youVeEarned3Extra": "आपको इस महीने 3 अतिरिक्त रिमाइंडर मिले! और इनाम के लिए और विज्ञापन देखें।",
+    "rewardEarned2": "इनाम मिला! 🔊",
+    "youVeUnlockedPremiumVoices": "प्रीमियम आवाज़ें 30 मिनट के लिए खुल गईं! खास आवाज़ वाले किरदारों के साथ रिमाइंडर बनाएँ।"
+  },
+  "header": {
+    "hey": "नमस्ते {{name}}",
+    "premium": "प्रीमियम 👑",
+    "free": "मुफ़्त",
+    "sendReemBack": "रीम को वापस भेजें",
+    "there": "दोस्त"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "प्रोफ़ाइल",
+    "areYouSureYouWant": "क्या आप सच में लॉग आउट करना चाहते हैं?",
+    "youLlNeedToSign": "अपने रिमाइंडर देखने के लिए फिर से साइन इन करना होगा।",
+    "cancel": "रद्द करें",
+    "logOut": "लॉग आउट"
+  },
+  "usage": {
+    "freePlanUsage": "मुफ़्त प्लान का इस्तेमाल",
+    "remindersThisMonth": "इस महीने {{used}}/{{limit}} रिमाइंडर",
+    "bonus": "+{{count}} बोनस",
+    "remindersUsed": "इस्तेमाल हुए रिमाइंडर",
+    "upgrade": "अपग्रेड"
+  },
+  "form": {
+    "messageRequired": "मैसेज ज़रूरी है",
+    "pleaseEnterWhatYouNeed": "पहले लिखें कि आपको किस बात का रिमाइंडर चाहिए",
+    "quickReminderCreated": "फटाफट रिमाइंडर बन गया",
+    "whatDoYouNeedTo": "आपको किस बात की याद दिलानी है?",
+    "writeYourReminderHere": "✏️ अपना रिमाइंडर यहाँ लिखें...",
+    "creatingReminder": "रिमाइंडर बन रहा है...",
+    "createReminder": "रिमाइंडर बनाएँ",
+    "quickReminderSetFor": "रिमाइंडर {{time}} पर ({{when}} बाद)"
+  },
+  "schedule": {
+    "lv": "🔔 स्तर",
+    "voice": "आवाज़",
+    "daysSelected": "{{count}} दिन चुने गए",
+    "daysSelected_one": "{{count}} दिन चुना गया"
+  },
+  "features": {
+    "goPremium": "🔒 प्रीमियम लें",
+    "voice": "आवाज़",
+    "photo": "फ़ोटो",
+    "quotes": "विचार",
+    "voiceCharacter": "आवाज़ का किरदार",
+    "selectVoice": "आवाज़ चुनें",
+    "addPhotos": "फ़ोटो जोड़ें ({{count}}/{{max}})",
+    "tapToAddPhoto": "फ़ोटो जोड़ने के लिए टैप करें",
+    "motivationStyle": "प्रेरणा का अंदाज़",
+    "chooseAMotivationStyle": "प्रेरणा का अंदाज़ चुनें…",
+    "aMotivationalQuoteFromYour": "आपकी चुनी हुई श्रेणी से एक प्रेरक विचार आपके रिमाइंडर में जोड़ा जाएगा।"
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "मुफ़्त सीमा पूरी",
+    "youVeUsedAllYour": "आपने इस महीने के सारे मुफ़्त रिमाइंडर इस्तेमाल कर लिए। ये महीने की 1 तारीख को फिर मिलेंगे, या प्रीमियम लें और हर महीने 120 रिमाइंडर और सारे फ़ीचर पाएँ।",
+    "upgradeToPremium": "प्रीमियम लें",
+    "maybeLater": "बाद में"
+  },
+  "quick": {
+    "quickReminder": "फटाफट रिमाइंडर",
+    "t": {
+      "10s": "10 सेकंड",
+      "5m": "5 मिनट",
+      "15m": "15 मिनट",
+      "30m": "30 मिनट"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "आपका आने वाला हफ़्ता",
+    "swipeToOpen": "खोलने के लिए स्वाइप करें",
+    "today": "आज",
+    "openCover": "कवर खोलें",
+    "deselect": "हटाएँ",
+    "select": "चुनें",
+    "clear": "साफ़ करें"
+  },
+  "manage": {
+    "reminderCompleted": "रिमाइंडर पूरा!",
+    "greatJobKeepUpThe": "बढ़िया! ऐसे ही करते रहें।",
+    "unauthorized": "अनुमति नहीं",
+    "youAreLoggedOutLogging": "आप लॉग आउट हो गए हैं। फिर से लॉग इन हो रहा है...",
+    "error": "गड़बड़ी",
+    "failedToCompleteReminder": "रिमाइंडर पूरा नहीं हो सका।",
+    "deleted": "हटा दिया!",
+    "reminderHasBeenDeleted": "रिमाइंडर हटा दिया गया।",
+    "failedToDeleteReminder": "रिमाइंडर हटाया नहीं जा सका।",
+    "noted": "नोट कर लिया",
+    "trackingWhatDidnTGet": "जो नहीं हुआ उसे दर्ज करना भी जागरूकता बढ़ाता है।",
+    "failedToMarkReminder": "रिमाइंडर दर्ज नहीं हो सका।",
+    "loadingYourReminders": "आपके रिमाइंडर लोड हो रहे हैं...",
+    "past": "पिछले ({{count}})",
+    "upcoming": "आने वाले ({{count}})",
+    "searchReminders": "रिमाइंडर खोजें...",
+    "tapAReminderToOpen": "खोलने के लिए रिमाइंडर पर टैप करें, या क्या हुआ दर्ज करने के लिए 😊 या 😔 दबाएँ",
+    "rudy": "रीम",
+    "firstTimeHereTheEmoji": "पहली बार आए हैं? इमोजी बटन आपकी आदतों का हिसाब रखते हैं। हरा मतलब हो गया। लाल मतलब छूट गया। आपका ग्राफ़ अपने आप अपडेट होता है।",
+    "noMatchingReminders": "कोई मिलता-जुलता रिमाइंडर नहीं",
+    "nothingScheduledYet": "अभी कुछ तय नहीं",
+    "noPastReminders": "कोई पिछला रिमाइंडर नहीं",
+    "keptFor24hAfterLogging": "दर्ज करने के बाद 24 घंटे रहता है",
+    "pastRemindersAreKeptFor": "पिछले रिमाइंडर 24 घंटे रहते हैं",
+    "logItAsDoneOr": "इसे हो गया ✅ या छूट गया ❌ दर्ज करें, यह 24 घंटे बाद अपने आप हट जाएगा।",
+    "done": "हो गया",
+    "missed": "छूट गया",
+    "clearsIn": "{{hours}} घं {{minutes}} मि में हटेगा ⏱",
+    "didIt": "कर लिया!",
+    "didnTDoIt": "नहीं किया",
+    "keptFor24HoursAfter": "दर्ज करने के बाद 24 घंटे रहता है",
+    "deleteReminder": "रिमाइंडर हटाएँ",
+    "itSDone": "हो गया ✅",
+    "iSlacked": "आलस कर गया 😬",
+    "overdue": "देर हो गई"
+  },
+  "analyticsLocked": {
+    "completions": "पूरे काम",
+    "youReCrushingItKeep": "कमाल कर रहे हो, यह लाइन ऊपर जाती रहे! 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "आँकड़े लॉक हैं",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders अपनी तरह का पहला आदत बनाने वाला ऐप है। ये आँकड़े दिखाते हैं कि आप कितने नियमित हैं: लगातार दिन, पूरा करने की दर और आपके सबसे अच्छे दिन। क्योंकि जो मापा जाता है, वही होता है।",
+    "unlockAnalytics": "आँकड़े खोलें"
+  },
+  "rudeness": {
+    "title": "बदतमीज़ी का स्तर",
+    "l1": "हमदर्द",
+    "l2": "प्रेरक",
+    "l3": "व्यंग्य",
+    "l4": "सख़्त",
+    "l5": "बेरहम"
+  },
+  "tip": {
+    "firstReminder": "<b>पहला रिमाइंडर?</b> नीचे लिखें कि आपको किस बात की याद दिलानी है, तारीख़, घंटा और मिनट चुनने के लिए किताब खोलें, बदतमीज़ी को हमदर्द से बेरहम तक खिसकाएँ, फिर चाहें तो फ़ोटो, आवाज़ या विचार जोड़ें। तैयार हों तो <b>रिमाइंडर बनाएँ</b> दबाएँ।",
+    "dismiss": "सुझाव बंद करें"
+  },
+  "share": {
+    "share": "शेयर",
+    "sharing": "शेयर हो रहा है..."
+  }
+}

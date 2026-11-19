@@ -1,0 +1,181 @@
+{
+  "common": {
+    "settings": "設定",
+    "home": "ホーム",
+    "savesAutomatically": "変更は自動で保存されます。"
+  },
+  "settingsLanding": {
+    "language": "言語",
+    "back": "戻る",
+    "settings": "設定",
+    "personalInformation": "個人情報",
+    "notifications": "通知",
+    "textSizeTimeZone": "文字サイズとタイムゾーン",
+    "siriShortcuts": "Siri とショートカット",
+    "paymentBilling": "支払いと請求",
+    "developerSpace": "開発者スペース",
+    "helpSupport": "ヘルプとサポート"
+  },
+  "language": {
+    "title": "言語",
+    "automatic": "端末の言語",
+    "automaticDetail": "端末の設定を使用：{{language}}",
+    "automaticNotSupported": "端末の言語にはまだ対応していないため、英語で表示します。",
+    "choose": "言語",
+    "footer": "アプリのメニューとボタン、Reem のメッセージ、音声が切り替わります。作成済みのリマインダーはそのまま、新しいものは新しい言語になります。"
+  },
+  "home": {
+    "niceWork": "よくやった！✅",
+    "loggedThisReminderWillClear": "記録しました！このリマインダーは 24 時間後に消えます。",
+    "reminderCompleted": "リマインダー完了",
+    "greatJobGettingItDone": "やり遂げたね、すごい！",
+    "error": "エラー",
+    "failedToMarkReminderAs": "リマインダーを完了にできませんでした",
+    "logged": "記録しました 💪",
+    "tomorrowIsANewChance": "明日は新しいチャンス。このリマインダーは 24 時間後に消えます。",
+    "failedToLogReminder": "リマインダーを記録できませんでした",
+    "create": "作成",
+    "analytics": "分析",
+    "manage": "管理",
+    "rewardEarned": "ご褒美ゲット！🎁",
+    "youVeEarned3Extra": "今月のリマインダーが 3 件増えました！広告をもっと見るとさらにご褒美がもらえます。",
+    "rewardEarned2": "ご褒美ゲット！🔊",
+    "youVeUnlockedPremiumVoices": "プレミアム音声が 30 分間使えます！特別なボイスキャラでリマインダーを作ろう。"
+  },
+  "header": {
+    "hey": "やあ、{{name}}",
+    "premium": "プレミアム 👑",
+    "free": "無料",
+    "sendReemBack": "Reem を戻す",
+    "there": "あなた"
+  },
+  "nav": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "profile": "プロフィール",
+    "areYouSureYouWant": "本当にログアウトしますか？",
+    "youLlNeedToSign": "リマインダーを見るには再度サインインが必要です。",
+    "cancel": "キャンセル",
+    "logOut": "ログアウト"
+  },
+  "usage": {
+    "freePlanUsage": "無料プランの利用状況",
+    "remindersThisMonth": "今月 {{used}}/{{limit}} 件",
+    "bonus": "+{{count}} ボーナス",
+    "remindersUsed": "使用済みリマインダー",
+    "upgrade": "アップグレード"
+  },
+  "form": {
+    "messageRequired": "内容を入力してください",
+    "pleaseEnterWhatYouNeed": "まず何をリマインドしてほしいか書いてください",
+    "quickReminderCreated": "クイックリマインダーを作成しました",
+    "whatDoYouNeedTo": "何をリマインドしましょうか？",
+    "writeYourReminderHere": "✏️ ここにリマインダーを書く...",
+    "creatingReminder": "リマインダーを作成中...",
+    "createReminder": "リマインダーを作成",
+    "quickReminderSetFor": "{{time}} にリマインド（{{when}}後）"
+  },
+  "schedule": {
+    "lv": "🔔 Lv.",
+    "voice": "音声",
+    "daysSelected": "{{count}} 日選択中"
+  },
+  "features": {
+    "goPremium": "🔒 プレミアムにする",
+    "voice": "音声",
+    "photo": "写真",
+    "quotes": "名言",
+    "voiceCharacter": "ボイスキャラ",
+    "selectVoice": "音声を選ぶ",
+    "addPhotos": "写真を追加（{{count}}/{{max}}）",
+    "tapToAddPhoto": "タップして写真を追加",
+    "motivationStyle": "やる気スタイル",
+    "chooseAMotivationStyle": "やる気スタイルを選ぶ…",
+    "aMotivationalQuoteFromYour": "選んだカテゴリーの名言がリマインダーに追加されます。"
+  },
+  "freeLimit": {
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "freeLimitReached": "無料枠の上限です",
+    "youVeUsedAllYour": "今月の無料リマインダーを使い切りました。毎月 1 日にリセットされます。プレミアムなら月 120 件とすべての機能が使えます。",
+    "upgradeToPremium": "プレミアムにする",
+    "maybeLater": "あとで"
+  },
+  "quick": {
+    "quickReminder": "クイックリマインダー",
+    "t": {
+      "10s": "10秒",
+      "5m": "5分",
+      "15m": "15分",
+      "30m": "30分"
+    }
+  },
+  "book": {
+    "yourWeekAhead": "これからの一週間",
+    "swipeToOpen": "スワイプで開く",
+    "today": "今日",
+    "openCover": "表紙を開く",
+    "deselect": "選択解除",
+    "select": "選択",
+    "clear": "クリア"
+  },
+  "manage": {
+    "reminderCompleted": "リマインダー完了！",
+    "greatJobKeepUpThe": "すごい！その調子。",
+    "unauthorized": "認証されていません",
+    "youAreLoggedOutLogging": "ログアウトしました。再ログイン中...",
+    "error": "エラー",
+    "failedToCompleteReminder": "リマインダーを完了できませんでした。",
+    "deleted": "削除しました！",
+    "reminderHasBeenDeleted": "リマインダーを削除しました。",
+    "failedToDeleteReminder": "リマインダーを削除できませんでした。",
+    "noted": "記録しました",
+    "trackingWhatDidnTGet": "できなかったことを記録するのも、気づきにつながります。",
+    "failedToMarkReminder": "リマインダーを記録できませんでした。",
+    "loadingYourReminders": "リマインダーを読み込み中...",
+    "past": "過去（{{count}}）",
+    "upcoming": "今後（{{count}}）",
+    "searchReminders": "リマインダーを検索...",
+    "tapAReminderToOpen": "リマインダーをタップして開くか、😊 か 😔 をタップして結果を記録",
+    "rudy": "Reem",
+    "firstTimeHereTheEmoji": "はじめて？絵文字ボタンで習慣を記録できます。緑はできた、赤はできなかった。グラフは自動で更新されます。",
+    "noMatchingReminders": "一致するリマインダーはありません",
+    "nothingScheduledYet": "まだ予定はありません",
+    "noPastReminders": "過去のリマインダーはありません",
+    "keptFor24hAfterLogging": "記録後 24 時間残ります",
+    "pastRemindersAreKeptFor": "過去のリマインダーは 24 時間残ります",
+    "logItAsDoneOr": "できた ✅ かできなかった ❌ を記録すると、24 時間後に自動で消えます。",
+    "done": "できた",
+    "missed": "できなかった",
+    "clearsIn": "あと {{hours}} 時間 {{minutes}} 分で消えます ⏱",
+    "didIt": "やった！",
+    "didnTDoIt": "やらなかった",
+    "keptFor24HoursAfter": "記録後 24 時間残ります",
+    "deleteReminder": "リマインダーを削除",
+    "itSDone": "完了 ✅",
+    "iSlacked": "サボった 😬",
+    "overdue": "期限切れ"
+  },
+  "analyticsLocked": {
+    "completions": "達成数",
+    "youReCrushingItKeep": "絶好調！このグラフを上げ続けよう 🔥",
+    "reemsRudeReminders": "Reems Rude Reminders",
+    "analyticsLocked": "分析はロック中",
+    "reemsRudeRemindersIsThe": "Reems Rude Reminders は新しいタイプの習慣づくりアプリ。この分析で、連続記録、達成率、調子のいい曜日など、あなたの継続ぶりが一目でわかります。測れることは、やり遂げられる。",
+    "unlockAnalytics": "分析をアンロック"
+  },
+  "rudeness": {
+    "title": "毒舌レベル",
+    "l1": "やさしく",
+    "l2": "はげまし",
+    "l3": "皮肉",
+    "l4": "きびしく",
+    "l5": "容赦なし"
+  },
+  "tip": {
+    "firstReminder": "<b>はじめてのリマインダー？</b>下にリマインドしてほしいことを書き、本を開いて日付と時刻を選び、毒舌レベルを「やさしく」から「容赦なし」まで調整。必要なら写真・音声・名言も追加できます。準備ができたら <b>リマインダーを作成</b> をタップ。",
+    "dismiss": "ヒントを閉じる"
+  },
+  "share": {
+    "share": "シェア",
+    "sharing": "シェア中..."
+  }
+}
