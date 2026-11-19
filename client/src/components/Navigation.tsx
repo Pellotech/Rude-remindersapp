@@ -41,7 +41,7 @@ export default function Navigation() {
 
   return (
     <>
-      <header className="bg-reem-gold relative z-50 safe-area-header">
+      <header className="bg-reem-gold dark:bg-reem-concrete-light relative z-50 safe-area-header">
         <div className="relative max-w-7xl mx-auto px-4 pt-4 pb-4">
           {/* Centered logo — no bottom margin so header ends at logo bottom */}
           <div className="flex justify-center">

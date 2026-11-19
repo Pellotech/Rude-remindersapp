@@ -40,12 +40,12 @@ export function useCreateTooltip() {
 export function CreateTooltip({ onDismiss }: { onDismiss: () => void }) {
   return (
     <div style={{
-      background: 'white',
+      background: 'var(--cg-widget, white)',
       border: `2px solid ${palette.gold}`,
       borderRadius: '12px',
       padding: '10px 12px',
       fontSize: '11px',
-      color: '#333',
+      color: 'var(--cg-text, #333)',
       display: 'flex',
       alignItems: 'flex-start',
       gap: '8px',
@@ -54,7 +54,7 @@ export function CreateTooltip({ onDismiss }: { onDismiss: () => void }) {
       <img
         src="/rudy/Rudy_leaning_2_transparent.png"
         alt="Rudy"
-        style={{ width: 36, height: 36, mixBlendMode: 'multiply', flexShrink: 0 }}
+        style={{ width: 36, height: 36, mixBlendMode: 'var(--cg-blend, multiply)' as any, flexShrink: 0 }}
       />
       <span style={{ flex: 1, paddingRight: 16 }}>
         <strong>First reminder?</strong> Type what you want to be reminded about below, open the book to pick a date, hour and minute, slide the rudeness from Sympathy to Savage, then add a photo, voice or quote if you want. Hit <strong>Create Reminder</strong> when you're ready.

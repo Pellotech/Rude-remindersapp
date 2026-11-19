@@ -344,7 +344,7 @@ export default function ReminderForm({
   };
 
   return (
-    <Card className="mt-4 bg-white border-2 border-reem-cream rounded-[24px] shadow-[var(--rr-card-shadow)] dark:bg-transparent dark:border-transparent dark:shadow-none">
+    <Card className="mt-4 bg-white border-2 border-reem-cream rounded-[24px] shadow-[var(--rr-card-shadow)] dark:bg-reem-concrete-widget dark:border-reem-concrete-edge dark:shadow-none">
       <CardContent className="pt-5">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
@@ -358,7 +358,7 @@ export default function ReminderForm({
                   <FormControl>
                     <Input
                       placeholder="✏️ Write your reminder here..."
-                      className="bg-reem-cream border-2 border-reem-gold focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] h-[50px] py-3 text-reem-ink placeholder:text-reem-ink/50"
+                      className="bg-reem-cream border-2 border-reem-gold focus:border-[#EF4444] focus-visible:ring-0 focus-visible:border-[#EF4444] rounded-[14px] h-[50px] py-3 text-reem-ink placeholder:text-reem-ink/50 dark:bg-reem-concrete-light dark:border-reem-concrete-light"
                       {...field}
                     />
                   </FormControl>
@@ -475,7 +475,7 @@ export default function ReminderForm({
             <Button
               ref={createButtonRef}
               type="submit"
-              className="w-full bg-reem-navy hover:bg-[#152347] border-2 border-[#F5B942] text-white font-semibold py-8 px-6 text-lg disabled:opacity-100 disabled:cursor-default"
+              className="w-full bg-reem-navy hover:bg-[#152347] border-2 border-[#F5B942] dark:bg-reem-concrete-ocean dark:hover:bg-[#2457B8] dark:border-reem-concrete-ocean text-white font-semibold py-8 px-6 text-lg disabled:opacity-100 disabled:cursor-default"
               style={{
                 // Hidden while Reem "has" it, then pops back in
                 opacity: carryRect ? 0 : 1,

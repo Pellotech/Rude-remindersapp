@@ -181,7 +181,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
 
   if (isLoading) {
     return (
-      <Card className="border border-reem-gold bg-reem-cream">
+      <Card className="border border-reem-gold bg-reem-cream dark:bg-reem-concrete-widget dark:border-reem-concrete-edge">
         <CardContent className="p-12 text-center">
           <RoseSpinner size={36} className="mx-auto mb-4" />
           <p className="text-gray-500">Loading your reminders...</p>
@@ -191,7 +191,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
   }
 
   return (
-    <Card className="border border-reem-gold bg-reem-cream">
+    <Card className="border border-reem-gold bg-reem-cream dark:bg-reem-concrete-widget dark:border-reem-concrete-edge">
       <CardHeader className="pb-2 pt-3 px-3">
         {/* Tab switcher */}
         <div className="flex rounded-xl border-2 border-reem-gold overflow-hidden mb-2">
@@ -225,7 +225,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
             placeholder="Search reminders..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8 w-full bg-white border-2 border-reem-gold focus-visible:border-reem-gold h-8 text-xs"
+            className="pl-8 w-full bg-white border-2 border-reem-gold focus-visible:border-reem-gold h-8 text-xs dark:bg-reem-concrete-light dark:border-reem-concrete-light"
           />
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-reem-gold h-3.5 w-3.5" />
         </div>
@@ -234,7 +234,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
       <CardContent className="px-3 pb-3 pt-0">
         {/* Permanent instruction label — always visible on Past tab */}
         {tab === 'past' && (
-          <p style={{ fontSize: '12px', color: '#888', fontStyle: 'italic', textAlign: 'left', marginBottom: '8px' }}>
+          <p style={{ fontSize: '12px', color: 'var(--cg-muted, #888)', fontStyle: 'italic', textAlign: 'left', marginBottom: '8px' }}>
             Tap a reminder to open it, or tap 😊 or 😔 to log what happened
           </p>
         )}
@@ -340,7 +340,7 @@ export default function RemindersList({ onEvent }: RemindersListProps = {}) {
                           (reminder.completed || (reminder as any).notAccomplished) && "opacity-60"
                         )}>
                           <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
+                            <span className="text-sm font-semibold text-gray-900 truncate max-w-[160px]">
                               {reminder.title}
                             </span>
                             <Badge className={`${rudenessLevelColors[reminder.rudenessLevel as keyof typeof rudenessLevelColors]} text-tiny px-1.5 py-0 font-medium flex-shrink-0`}>

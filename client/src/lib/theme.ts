@@ -51,6 +51,15 @@ export const palette = {
   uiLabel3: "#AEAEB2",
   uiLabel4: "#E5E5EA",
   uiLink: "#0A84FF",      // blue Back / links
+
+  // ── Concrete Grey (the optional dark main screen; was "Zero Dark Thirty") ─
+  concreteWall: "#25292E",   // page background: darkest grey-black
+  concreteWidget: "#0E254A", // cards / widgets: deep navy blue
+  concreteEdge: "#1B4184",   // widget borders, Voice/Photo/Quotes buttons
+  concreteLight: "#CCCCCC",  // top banner, writing areas, Quick Reminder
+  concreteOcean: "#2B65CF",  // Create Reminder button, selected tab
+  concreteText: "#F7F8FA",   // text on widgets
+  concreteMuted: "#979DA4",  // secondary text on widgets
 } as const;
 
 export type PaletteName = keyof typeof palette;

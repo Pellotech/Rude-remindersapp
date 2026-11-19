@@ -65,7 +65,7 @@ export function FeatureTabs({
             🔒 Go Premium
           </div>
         )}
-      <div className="flex rounded-xl overflow-hidden border border-reem-gold">
+      <div className="flex rounded-xl overflow-hidden border border-reem-gold dark:border-reem-concrete-edge">
         <button
           type="button"
           onClick={() => {
@@ -74,12 +74,12 @@ export function FeatureTabs({
               if (opening) onVoiceTap?.();
             }}
           className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all focus:outline-none ${
-            activeFeatureTab === 'voice' ? 'bg-[#A07840] text-reem-charcoal' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark'
+            activeFeatureTab === 'voice' ? 'bg-[#A07840] text-reem-charcoal dark:bg-reem-concrete-ocean dark:text-white' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark dark:bg-reem-concrete-edge dark:text-white dark:hover:bg-[#22509F]'
           }`}
         >
           <Volume2 className="h-5 w-5" />
           Voice
-          <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-reem-charcoal' : 'bg-transparent'}`} />
+          <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'voice' ? 'bg-reem-charcoal dark:bg-white' : 'bg-transparent'}`} />
         </button>
 
         {!isFeatureDisabled('MEDIA_ATTACHMENTS') && (
@@ -90,14 +90,14 @@ export function FeatureTabs({
               if (activeFeatureTab === 'photo') { setActiveFeatureTab(null); }
               else { gateAttachments(() => { setActiveFeatureTab('photo'); onPhotoTap?.(); }); }
             }}
-            className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-reem-gold-dark transition-all relative focus:outline-none ${
-              activeFeatureTab === 'photo' ? 'bg-[#A07840] text-reem-charcoal' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark'
+            className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold border-l border-r border-reem-gold-dark dark:border-reem-concrete-widget transition-all relative focus:outline-none ${
+              activeFeatureTab === 'photo' ? 'bg-[#A07840] text-reem-charcoal dark:bg-reem-concrete-ocean dark:text-white' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark dark:bg-reem-concrete-edge dark:text-white dark:hover:bg-[#22509F]'
             }`}
           >
             <Camera className="h-5 w-5" />
             Photo{selectedAttachments.length > 0 ? ` (${selectedAttachments.length})` : ''}
-            {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50" />}
-            <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-reem-charcoal' : 'bg-transparent'}`} />
+            {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50 dark:text-white/60" />}
+            <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'photo' ? 'bg-reem-charcoal dark:bg-white' : 'bg-transparent'}`} />
           </button>
         )}
 
@@ -110,13 +110,13 @@ export function FeatureTabs({
               else { gateQuotes(() => { setActiveFeatureTab('quotes'); onQuotesTap?.(); }); }
             }}
             className={`flex-1 py-2.5 flex flex-col items-center gap-0.5 text-sm font-bold transition-all relative focus:outline-none ${
-              activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-reem-charcoal' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark'
+              activeFeatureTab === 'quotes' ? 'bg-[#A07840] text-reem-charcoal dark:bg-reem-concrete-ocean dark:text-white' : 'bg-reem-gold text-reem-charcoal hover:bg-reem-gold-dark dark:bg-reem-concrete-edge dark:text-white dark:hover:bg-[#22509F]'
             }`}
           >
             <Quote className="h-5 w-5" />
             Quotes
-            {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50" />}
-            <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-reem-charcoal' : 'bg-transparent'}`} />
+            {!hasProAccess && <Lock className="h-2.5 w-2.5 absolute top-1 right-1 text-reem-charcoal/50 dark:text-white/60" />}
+            <span className={`h-1 w-5 rounded-full mt-0.5 transition-all duration-200 ${activeFeatureTab === 'quotes' ? 'bg-reem-charcoal dark:bg-white' : 'bg-transparent'}`} />
           </button>
         )}
       </div>

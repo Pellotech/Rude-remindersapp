@@ -33,7 +33,7 @@ export function QuickReminder({ onPick }: { onPick: (option: (typeof QUICK_TIMES
         <Button
           type="button"
           variant="outline"
-          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-white text-reem-charcoal border border-reem-gold hover:bg-reem-cream hover:text-reem-charcoal focus-visible:ring-0 focus-visible:border-reem-gold"
+          className="w-full justify-between font-medium rounded-lg px-4 py-3 bg-white text-reem-charcoal border border-reem-gold dark:bg-reem-concrete-light dark:border-reem-concrete-light dark:hover:bg-[#BDBDBD] hover:bg-reem-cream hover:text-reem-charcoal focus-visible:ring-0 focus-visible:border-reem-gold"
           data-testid="button-quick-reminder"
         >
           <span className="flex items-center">

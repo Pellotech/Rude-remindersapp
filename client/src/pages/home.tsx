@@ -356,7 +356,7 @@ export default function Home({ isPremium }: HomeProps) {
   const createTooltip = useCreateTooltip();
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(to_bottom,#F2DFC0_0%,theme(colors.reem.cream)_320px,theme(colors.reem.cream)_100%)] dark:bg-black">
+    <div className="min-h-screen bg-[linear-gradient(to_bottom,#F2DFC0_0%,theme(colors.reem.cream)_320px,theme(colors.reem.cream)_100%)] dark:bg-none dark:bg-reem-concrete-wall">
       <IntroTour isOpen={showIntro} onClose={closeIntro} />
 
       {/* Premium-only: motivational popup */}
@@ -417,24 +417,24 @@ export default function Home({ isPremium }: HomeProps) {
             <CreateTooltip onDismiss={createTooltip.dismiss} />
           )}
 
-          <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0">
+          <TabsList className="grid w-full grid-cols-3 overflow-x-auto flex-shrink-0 dark:bg-reem-concrete-widget dark:border dark:border-reem-concrete-edge">
             <TabsTrigger
               value="create"
-              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream"
+              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream dark:data-[state=inactive]:bg-reem-concrete-widget dark:data-[state=inactive]:text-reem-concrete-muted dark:data-[state=active]:bg-reem-concrete-ocean dark:data-[state=active]:text-white"
             >
               <Bell className="h-4 w-4" />
               Create
             </TabsTrigger>
             <TabsTrigger
               value="analytics"
-              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream"
+              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream dark:data-[state=inactive]:bg-reem-concrete-widget dark:data-[state=inactive]:text-reem-concrete-muted dark:data-[state=active]:bg-reem-concrete-ocean dark:data-[state=active]:text-white"
             >
               <TrendingUp className="h-4 w-4" />
               Analytics
             </TabsTrigger>
             <TabsTrigger
               value="manage"
-              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream"
+              className="reem-tight-tab flex items-center gap-2 data-[state=inactive]:bg-reem-cream dark:data-[state=inactive]:bg-reem-concrete-widget dark:data-[state=inactive]:text-reem-concrete-muted dark:data-[state=active]:bg-reem-concrete-ocean dark:data-[state=active]:text-white"
             >
               <Target className="h-4 w-4" />
               Manage

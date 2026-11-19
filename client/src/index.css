@@ -104,6 +104,25 @@
   --rr-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* Concrete Grey: values for components that colour themselves with inline
+   styles (Reem card, first-reminder tip, book picker). They only exist in dark
+   mode, so each inline style falls back to its normal light colour. */
+html.dark {
+  --cg-wall: var(--reem-concrete-wall);
+  --cg-widget: var(--reem-concrete-widget);
+  --cg-edge: var(--reem-concrete-edge);
+  --cg-light: var(--reem-concrete-light);
+  --cg-text: var(--reem-concrete-text);
+  --cg-muted: var(--reem-concrete-muted);
+  --cg-blend: normal; /* "multiply" turns Reem black on a dark card */
+}
+html.dark body { background-color: var(--reem-concrete-wall); }
+
+/* Smooth fade when the backdrop switches (added for ~0.8s by useBackdropTheme). */
+html.theme-fading *, html.theme-fading *::before, html.theme-fading *::after {
+  transition: background-color 0.7s ease, color 0.7s ease, border-color 0.7s ease, fill 0.7s ease !important;
+}
+
 @layer base {
   * {
     @apply border-border;

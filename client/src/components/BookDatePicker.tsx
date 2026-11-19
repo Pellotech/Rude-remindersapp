@@ -338,8 +338,8 @@ export function BookDatePicker({ onScheduleChange, onDateEventFired }: BookDateP
 
       {/* ── OUTER CREAM WRAPPER ───────────────────────────────────────── */}
       <div style={{
-        background: palette.cream,
-        border: `1.5px solid ${palette.gold}`,
+        background: `var(--cg-light, ${palette.cream})`,
+        border: `1.5px solid var(--cg-light, ${palette.gold})`,
         borderRadius: 14,
         padding: '0 20px',
         display: 'flex',

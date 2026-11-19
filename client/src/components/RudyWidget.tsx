@@ -562,7 +562,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
       onClick={handleTap}
       style={{
         minHeight: "120px",
-        background: palette.cream,
+        background: `var(--cg-widget, ${palette.cream})`,
         border: `2px solid ${borderColor || palette.gold}`,
         borderRadius: "12px",
         transition: "border-color 0.3s ease",
@@ -587,7 +587,7 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
             width: "80px",
             height: "80px",
             objectFit: "contain",
-            mixBlendMode: "multiply",
+            mixBlendMode: "var(--cg-blend, multiply)" as any,
           }}
         />
         <img

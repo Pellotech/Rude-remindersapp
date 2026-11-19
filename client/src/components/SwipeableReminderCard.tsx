@@ -95,7 +95,7 @@ export function SwipeableReminderCard({ children, onDelete, disabled = false }: 
 
   return (
     <div
-      className="relative overflow-hidden"
+      className="relative overflow-hidden rounded-lg"
       data-testid="swipeable-reminder-card"
     >
       {/* Delete background */}
@@ -110,7 +110,7 @@ export function SwipeableReminderCard({ children, onDelete, disabled = false }: 
       <div
         ref={cardRef}
         className={cn(
-          "relative bg-white dark:bg-gray-800 select-none",
+          "relative bg-white select-none",
           isSwiping ? "cursor-grabbing touch-none" : "cursor-grab touch-pan-y"
         )}
         style={{

@@ -242,8 +242,8 @@ export default function Notifications() {
                 <p className="text-white text-body-lg mb-3">Backdrop</p>
                 <div style={{ display: 'flex', gap: 8 }}>
                   {(['light', 'dark', 'auto'] as const).map((theme) => {
-                    const labels = { light: 'Light', dark: 'Zero Dark Thirty', auto: 'Auto' };
-                    const swatches = { light: '#ffffff', dark: '#000000', auto: 'linear-gradient(135deg, #ffffff 50%, #000000 50%)' };
+                    const labels = { light: 'Light', dark: 'Concrete Grey', auto: 'Auto' };
+                    const swatches = { light: '#ffffff', dark: palette.concreteWall, auto: `linear-gradient(135deg, #ffffff 50%, ${palette.concreteWall} 50%)` };
                     const isSelected = currentSettings.backdropTheme === theme;
                     return (
                       <button
@@ -281,7 +281,7 @@ export default function Notifications() {
                   })}
                 </div>
                 <p style={{ fontSize: 12, color: palette.uiLabel2, marginTop: 8 }}>
-                  Changes the plain background on the main screen only — cards, buttons, and the header stay the same. Auto follows your device's light/dark setting.
+                  Concrete Grey gives the main screen a dark grey background, blue cards and a light grey banner. Auto switches to Concrete Grey from 7 PM to 7 AM, using your time zone.
                 </p>
               </div>
             </div>

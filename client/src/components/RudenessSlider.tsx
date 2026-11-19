@@ -72,9 +72,9 @@ export function RudenessSlider({
       className={cn("-mt-1", className)}
       style={{ "--slider-color": color } as React.CSSProperties}
     >
-      <div className="px-4 pt-3 pb-5 bg-reem-cream rounded-lg">
+      <div className="px-4 pt-3 pb-5 bg-reem-cream dark:bg-reem-concrete-widget dark:border dark:border-reem-concrete-edge rounded-lg">
         {title !== null && (
-          <p className="text-sm font-medium text-reem-charcoal mb-3">{title}</p>
+          <p className="text-sm font-medium text-reem-charcoal dark:text-reem-concrete-text mb-3">{title}</p>
         )}
         <Slider
           min={1}
@@ -86,7 +86,7 @@ export function RudenessSlider({
         />
 
         {/* Emoji labels */}
-        <div className="reem-tight-labels flex justify-between mt-3 text-xs text-reem-charcoal">
+        <div className="reem-tight-labels flex justify-between mt-3 text-xs text-reem-charcoal dark:text-reem-concrete-text">
           {RUDENESS_LABELS.map((item) => {
             const isSelected = value === item.level;
             return (
