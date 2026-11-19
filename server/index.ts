@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { db } from "./db";
 import { reminders, reminderEvents } from "@shared/schema";
 import { eq, and, isNotNull, sql } from "drizzle-orm";
-import { backfillUserCodes } from "./utils/userCode";
+import { backfillUserCodes, ensureUserCodeColumn } from "./utils/userCode";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -278,6 +278,9 @@ app.use("/api/auth/forgot-password", authLimiter);
 app.use("/api/auth/reset-password", authLimiter);
 
 (async () => {
+  // Must run before routes and background jobs start reading the users table
+  await ensureUserCodeColumn();
+
   const server = await registerRoutes(app);
 
   // Clean up duplicate reminder_events rows and ensure unique index exists

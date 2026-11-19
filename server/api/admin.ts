@@ -32,6 +32,7 @@ export function registerAdminRoutes(app: Express) {
         const isPremium = whitelisted || (u.subscriptionPlan === 'premium' && subActive);
         return {
           id: u.id,
+          userCode: u.userCode ?? null,
           email: u.email,
           firstName: u.firstName ?? null,
           lastName: u.lastName ?? null,
