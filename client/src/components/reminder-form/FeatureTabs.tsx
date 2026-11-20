@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Volume2, Camera, Quote, Lock } from "lucide-react";
 import { isFeatureDisabled } from "@/config/featureFlags";
 import { palette } from "@/lib/theme";
+import { getFullApiUrl } from "@/lib/queryClient";
 import { MobileCamera } from "../MobileCamera";
 import { motivationCategories, type ReminderFormData } from "./schema";
 import type { useReminderAttachments } from "./useReminderAttachments";
@@ -199,7 +200,7 @@ export function FeatureTabs({
               <div className="grid grid-cols-5 gap-1.5">
                 {selectedAttachments.map((attachment, index) => (
                   <div key={index} className="relative aspect-square">
-                    <img src={attachment} alt={`Attachment ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                    <img src={getFullApiUrl(attachment)} alt={`Attachment ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
                     <button type="button" onClick={() => removeAttachment(index)} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600">×</button>
                   </div>
                 ))}

@@ -23,6 +23,7 @@ import { ItHitToggle } from "./ItHitToggle";
 
 import { palette } from "@/lib/theme";
 import { tr } from "@/i18n";
+import { quoteForDisplay } from "@/lib/utils";
 interface ShareButtonProps {
   reminder?: Partial<Reminder>;
   title?: string;
@@ -427,7 +428,7 @@ export function ShareButton({
 
                 {motivationalQuote && (
                   <div className="p-2 rounded-lg bg-blue-50 border-l-4 border-blue-500">
-                    <p className="text-xs italic text-blue-800">"{motivationalQuote}"</p>
+                    <p className="text-xs italic text-blue-800">{quoteForDisplay(motivationalQuote)}</p>
                   </div>
                 )}
 

@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 
 
+import { quoteForDisplay } from "@/lib/utils";
 // Helper function to check if user has premium access - no dropdown dependencies
 const usePremiumStatus = (): {
   isPremium: boolean;
@@ -512,7 +513,7 @@ export default function DevPreview() {
                           ? 'text-purple-800'
                           : 'text-blue-800'
                       }`}>
-                        "{selectedReminder.motivationalQuote}"
+                        {quoteForDisplay(selectedReminder.motivationalQuote)}
                       </p>
                     </div>
                   </div>

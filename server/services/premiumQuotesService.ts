@@ -4,6 +4,8 @@ import { localizeText } from './localize';
 import { zonedHour } from "../utils/userTime";
 import { isUserPremium } from '../utils/premiumCheck.js';
 import { storage } from '../storage.js';
+// Same built-in quote lists the app uses (sports, historical, entrepreneurs, scientists, motivational)
+import { QuotesService } from '../../client/src/services/quotesService';
 
 interface QuoteGenerationContext {
   category?: string;
@@ -199,6 +201,12 @@ Generate ONE unique quote now:`;
       const quotes = culturalQuotes[ethnicity.toLowerCase()];
       const randomIndex = Math.floor(Math.random() * quotes.length);
       return quotes[randomIndex];
+    }
+
+    // The app's own categories (the Quotes tab): a quote from that category
+    if (category && QuotesService.getCategories().includes(category.toLowerCase())) {
+      const quote = QuotesService.getRandomQuote(category.toLowerCase());
+      if (quote) return QuotesService.formatQuote(quote);
     }
 
     // Try category quotes if category is specified

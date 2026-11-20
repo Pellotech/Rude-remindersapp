@@ -12,6 +12,12 @@ const twMerge = extendTailwindMerge({
   },
 })
 
+/** Quotes already arrive as "…" - Author; only add quotation marks if missing. */
+export function quoteForDisplay(quote: string): string {
+  const q = quote.trim();
+  return /^["“«„「『]/.test(q) ? q : `“${q}”`;
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

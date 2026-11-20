@@ -16,6 +16,7 @@ import { getPlatformInfo } from "@/utils/platformDetection";
 import { getRudyAvatarSrc } from "@/lib/rudyAvatar";
 
 import { palette } from "@/lib/theme";
+import { quoteForDisplay } from "@/lib/utils";
 const isImagePath = (path: string): boolean => {
   if (!path) return false;
   if (path.startsWith('blob:') || path.startsWith('data:image')) return true;
@@ -177,7 +178,7 @@ export function RichReminderNotification({
           {reminder.motivationalQuote && (
             <div className="p-2 rounded-xl bg-reem-cream">
               <p className="text-xs italic text-reem-charcoal">
-                "{reminder.motivationalQuote}"
+                {quoteForDisplay(reminder.motivationalQuote)}
               </p>
             </div>
           )}
