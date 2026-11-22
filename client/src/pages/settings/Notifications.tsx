@@ -44,7 +44,7 @@ export default function Notifications() {
     defaultRudenessLevel: parseInt(localStorage.getItem('default_rudeness_level') || '2'),
     defaultVoiceCharacter: localStorage.getItem('default_voice_character') || 'default',
     niceMode: localStorage.getItem('rudy_nice_mode') === 'true',
-    rudyWidgetVisible: localStorage.getItem('rudy_widget_visible') === 'true',
+    reemPopIn: localStorage.getItem('reem_pop_in') !== 'false', // on unless turned off
     backdropTheme: ((localStorage.getItem('backdrop_theme') as 'light' | 'dark' | 'auto') || 'light'),
     textSize: getTextSize() as TextSize, // phone-only; same setting as Text Size & Time Zone
   });
@@ -85,9 +85,8 @@ export default function Notifications() {
       localStorage.setItem('rudy_nice_mode', changes.niceMode ? 'true' : 'false');
       window.dispatchEvent(new CustomEvent('rudy_nice_mode_changed', { detail: changes.niceMode }));
     }
-    if (changes.rudyWidgetVisible !== undefined) {
-      localStorage.setItem('rudy_widget_visible', changes.rudyWidgetVisible ? 'true' : 'false');
-      window.dispatchEvent(new CustomEvent('rudy_widget_visibility_changed', { detail: changes.rudyWidgetVisible }));
+    if (changes.reemPopIn !== undefined) {
+      localStorage.setItem('reem_pop_in', changes.reemPopIn ? 'true' : 'false');
     }
     if (changes.textSize !== undefined) {
       setTextSize(changes.textSize); // whole app + reminder popup
@@ -215,10 +214,10 @@ export default function Notifications() {
               </div>
               <div className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-white text-body-lg">Floating Reem</p>
-                  <p className="text-ui-label-2 text-note mt-0.5">Reem follows you as you scroll — tap him to send him back</p>
+                  <p className="text-white text-body-lg">Reem Walks In</p>
+                  <p className="text-ui-label-2 text-note mt-0.5">Reem walks in from the side to react when you tap things. Off: he stays sitting on the banner (tap him to talk).</p>
                 </div>
-                <Toggle checked={!!currentSettings.rudyWidgetVisible} onChange={(v) => updateSetting("rudyWidgetVisible", v)} />
+                <Toggle checked={!!currentSettings.reemPopIn} onChange={(v) => updateSetting("reemPopIn", v)} />
               </div>
             </div>
           </div>

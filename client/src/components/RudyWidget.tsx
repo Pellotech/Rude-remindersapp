@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { tr } from "@/i18n";
 import { useQuery } from "@tanstack/react-query";
 
 import { palette } from "@/lib/theme";
@@ -20,15 +22,9 @@ const RUDY_IMAGES = {
   punching:                   "/rudy/Rudy_punching_forward_transparent.png",
 };
 
-const IDLE_CYCLE = [
-  RUDY_IMAGES.idle,
-  RUDY_IMAGES.sittingFloor,
-  RUDY_IMAGES.idleSwap,
-  RUDY_IMAGES.sittingForwardArmsCrossed,
-  RUDY_IMAGES.standingArmsCrossedSideways,
-  RUDY_IMAGES.fistBumpStandingSmirk,
-  RUDY_IMAGES.fistBumpStandingAngry,
-];
+// Reem sits here between reactions, and walks with this image
+const PERCH_IMAGE = RUDY_IMAGES.sittingUpright;
+const WALK_IMAGE = "/rudy/Rudy_walking_transparent.png";
 
 const RUDY_LINES = {
   idle: {
@@ -431,16 +427,40 @@ const EVENT_LINE_KEY: Record<NonNullable<RudyEventType>, keyof typeof RUDY_LINES
 const HIGH_PRIORITY = new Set<RudyEventType>(["reminder_created", "manage_did_it", "manage_didnt_do_it"]);
 
 export interface RudyWidgetProps {
+  /** Something the user just did (premium gets a matching reaction). */
   nudgeEvent?: RudyEventType;
   nudgeKey?: number;
   onNudgeHandled?: () => void;
-  showReactionBubble?: boolean;
-  showPremiumButton?: boolean;
+  /** Premium: event-specific reactions. Free: Reem's slogans plus the Go Premium button. */
+  isPremium?: boolean;
   onPremiumPress?: () => void;
+  /** Colour of the bubble edge (follows the rudeness level). */
   borderColor?: string;
 }
 
-export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showReactionBubble, showPremiumButton, onPremiumPress, borderColor }: RudyWidgetProps) {
+type Stage = "hidden" | "walkIn" | "talking" | "walkOut";
+
+const WALK_IN_MS = 700;
+const WALK_OUT_MS = 550;
+const TALK_MS = 7000;
+// Free users: walk in for page activity at most this often (taps on Reem always work)
+const FREE_EVENT_COOLDOWN_MS = 60_000;
+
+const popInEnabled = () => {
+  try { return localStorage.getItem('reem_pop_in') !== 'false'; } catch { return true; }
+};
+
+/**
+ * Reem: sits on the edge of the banner, and walks in from the left with a
+ * speech bubble when the user does something (or taps him), then walks back.
+ *
+ * Renders two things:
+ *  - the perch: small sitting Reem, absolutely placed so he sits on the line
+ *    where the banner meets the page (the parent must be position: relative
+ *    and start 32px below the banner — HomeHeader handles this)
+ *  - the pop-in: a fixed overlay on the left of the screen (portal to <body>)
+ */
+export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, isPremium = false, onPremiumPress, borderColor }: RudyWidgetProps) {
 
   // ─── Nice Mode ─────────────────────────────────────────────────────────────
   const [niceMode, setNiceMode] = useState(() => localStorage.getItem('rudy_nice_mode') === 'true');
@@ -454,276 +474,129 @@ export default function RudyWidget({ nudgeEvent, nudgeKey, onNudgeHandled, showR
   }, [(userData as any)?.niceMode]);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      setNiceMode((e as CustomEvent).detail);
-    };
+    const handler = (e: Event) => setNiceMode((e as CustomEvent).detail);
     window.addEventListener('rudy_nice_mode_changed', handler);
     return () => window.removeEventListener('rudy_nice_mode_changed', handler);
   }, []);
-  useEffect(() => {
-    const handleStorage = () => setNiceMode(localStorage.getItem('rudy_nice_mode') === 'true');
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
 
-  // ─── SYSTEM 3: Idle image cycle ────────────────────────────────────────────
-  const idleCycleIdxRef = useRef(0);
-  const isActiveRef     = useRef(false); // true while an event/tap image is showing
-  const [rudyImg, setRudyImg] = useState(IDLE_CYCLE[0]);
-
-  // ─── SYSTEM 1: Slogan — runs every 20s, never interrupted ──────────────────
-  const [sloganText, setSloganText] = useState(() => getRudyLine("idle", localStorage.getItem('rudy_nice_mode') === 'true'));
-
-  // ─── SYSTEM 2: Reaction — shows on trigger, hides after 8s ────────────────
-  const [reactionText, setReactionText]       = useState("");
-  const [reactionVisible, setReactionVisible] = useState(false);
-  const reactionTimerRef  = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastFireTimeRef   = useRef(0); // cooldown — prevents rapid-fire spam
-
-  // Keep onNudgeHandled in a ref so timers never close over a stale value
+  // ─── Pop-in state ──────────────────────────────────────────────────────────
+  const [stage, setStage] = useState<Stage>("hidden");
+  const stageRef = useRef<Stage>("hidden");
+  const [line, setLine] = useState("");
+  const [pose, setPose] = useState<string>(RUDY_IMAGES.idle);
+  const [withPremium, setWithPremium] = useState(false);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const lastFreeShowRef = useRef(0);
   const onNudgeHandledRef = useRef(onNudgeHandled);
   useEffect(() => { onNudgeHandledRef.current = onNudgeHandled; }, [onNudgeHandled]);
 
-  // ─── SYSTEM 1: Slogan interval ─────────────────────────────────────────────
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSloganText(getRudyLine("idle", niceMode));
-    }, 20000);
-    return () => clearInterval(interval);
-  }, [niceMode]);
+  const reducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-  // ─── SYSTEM 3: Idle image cycle interval ───────────────────────────────────
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isActiveRef.current) return;
-      const next = (idleCycleIdxRef.current + 1) % IDLE_CYCLE.length;
-      idleCycleIdxRef.current = next;
-      setRudyImg(IDLE_CYCLE[next]);
-    }, 12000);
-    return () => clearInterval(interval);
-  }, []);
+  const go = (next: Stage) => { stageRef.current = next; setStage(next); };
+  const clearTimers = () => { timersRef.current.forEach(clearTimeout); timersRef.current = []; };
+  const later = (fn: () => void, ms: number) => { timersRef.current.push(setTimeout(fn, ms)); };
 
-  // ─── SYSTEM 2: fireReaction helper ─────────────────────────────────────────
-  // image: optional Rudy image to show during reaction (restored after)
-  // callHandled: whether to call onNudgeHandled when reaction expires
-  // force: skip cooldown (used for important events like reminder_created)
-  function fireReaction(text: string, image?: string, callHandled = false, force = false) {
-    console.log('fireReaction called:', text, '| visible:', reactionVisible, '| force:', force);
-    const now = Date.now();
-    // 2-second cooldown — ignore rapid-fire taps and slider drags
-    if (!force && reactionVisible && now - lastFireTimeRef.current < 2000) {
-      console.log('fireReaction BLOCKED by cooldown');
+  const leave = () => {
+    clearTimers();
+    if (stageRef.current === "hidden") return;
+    go("walkOut");
+    later(() => { go("hidden"); onNudgeHandledRef.current?.(); }, reducedMotion ? 150 : WALK_OUT_MS);
+  };
+
+  /** Bring Reem in (or, if he's already out, just change what he says). */
+  const popIn = (text: string, image: string, premiumButton: boolean) => {
+    setLine(text);
+    setPose(image);
+    setWithPremium(premiumButton);
+    clearTimers();
+    if (stageRef.current === "talking" || stageRef.current === "walkIn") {
+      if (stageRef.current === "talking") later(leave, TALK_MS);
+      else later(() => { go("talking"); later(leave, TALK_MS); }, WALK_IN_MS);
       return;
     }
-    lastFireTimeRef.current = now;
-    if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
-    if (image) {
-      isActiveRef.current = true;
-      setRudyImg(image);
-    }
-    setReactionText(text);
-    setReactionVisible(true);
-    reactionTimerRef.current = setTimeout(() => {
-      setReactionVisible(false);
-      if (image) {
-        isActiveRef.current = false;
-        setRudyImg(IDLE_CYCLE[idleCycleIdxRef.current]);
-      }
-      if (callHandled) onNudgeHandledRef.current?.();
-    }, 8000);
-  }
+    go("walkIn");
+    later(() => { go("talking"); later(leave, TALK_MS); }, reducedMotion ? 50 : WALK_IN_MS);
+  };
 
-  // ─── Nudge events ──────────────────────────────────────────────────────────
+  // ─── Something happened on the page ────────────────────────────────────────
   useEffect(() => {
-    console.log('Rudy nudge fired:', nudgeEvent, nudgeKey);
     if (!nudgeEvent) return;
-    const line  = getRudyLine(EVENT_LINE_KEY[nudgeEvent], niceMode);
-    const force = HIGH_PRIORITY.has(nudgeEvent);
-    fireReaction(line, EVENT_IMAGE[nudgeEvent], true, force);
+    if (!popInEnabled()) { onNudgeHandledRef.current?.(); return; }
+    if (isPremium) {
+      popIn(getRudyLine(EVENT_LINE_KEY[nudgeEvent], niceMode), EVENT_IMAGE[nudgeEvent], false);
+    } else {
+      const now = Date.now();
+      if (now - lastFreeShowRef.current < FREE_EVENT_COOLDOWN_MS) { onNudgeHandledRef.current?.(); return; }
+      lastFreeShowRef.current = now;
+      popIn(getRudyLine("idle", niceMode), RUDY_IMAGES.idle, true);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nudgeEvent, nudgeKey]);
 
-  // ─── Cleanup ───────────────────────────────────────────────────────────────
-  useEffect(() => {
-    return () => {
-      if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
-    };
-  }, []);
+  useEffect(() => () => clearTimers(), []);
 
-  // ─── Tap handler ───────────────────────────────────────────────────────────
-  function handleTap() {
-    fireReaction("You gave me a fist bump, now let's get things done.", RUDY_IMAGES.fistBumpStandingSmirk, false);
-  }
+  // ─── Tapping the sitting Reem always brings him in ─────────────────────────
+  const handlePerchTap = () => {
+    popIn(
+      isPremium ? "You gave me a fist bump, now let's get things done." : getRudyLine("idle", niceMode),
+      isPremium ? RUDY_IMAGES.fistBumpStandingSmirk : RUDY_IMAGES.idle,
+      !isPremium,
+    );
+  };
 
-  // ─── Render ────────────────────────────────────────────────────────────────
-  const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768;
-  return (
-    <div
-      onClick={handleTap}
-      style={{
-        minHeight: "120px",
-        background: `var(--cg-widget, ${palette.cream})`,
-        border: `2px solid ${borderColor || palette.gold}`,
-        borderRadius: "12px",
-        transition: "border-color 0.3s ease",
-        padding: "10px 12px",
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: "10px",
-        position: "relative",
-        cursor: "pointer",
-        userSelect: "none",
-        marginTop: "8px",
-        ...(isTablet ? { width: "75%", maxWidth: "75%", alignSelf: "flex-start" } : {}),
-      }}
+  const edge = borderColor || "#111";
+  const visible = stage !== "hidden";
+  const walking = stage === "walkIn" || stage === "walkOut";
+
+  const perch = (
+    <button
+      type="button"
+      onClick={handlePerchTap}
+      aria-label="Reem"
+      data-testid="reem-perch"
+      className="reem-perch"
+      style={{ opacity: visible ? 0 : 1 }}
     >
-      {/* ── Rudy image + name tag ────────────────────────────────────────────── */}
-      <div style={{ position: "relative", width: "80px", height: "80px", flexShrink: 0, alignSelf: "center" }}>
-        <img
-          src={rudyImg}
-          alt="Reem"
-          style={{
-            width: "80px",
-            height: "80px",
-            objectFit: "contain",
-            mixBlendMode: "var(--cg-blend, multiply)" as any,
-          }}
-        />
-        <img
-          src="/rudy/reem_nametag.png"
-          alt="Reem"
-          style={{
-            position: "absolute",
-            bottom: "-20px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "68px",
-            objectFit: "contain",
-          }}
-        />
-      </div>
+      <img src={PERCH_IMAGE} alt="" draggable={false} />
+    </button>
+  );
 
-      {/* ── Bubble column ───────────────────────────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: 0 }}>
-
-        {/* SLOGAN BUBBLE — top, always visible, never interrupted */}
-        <div
-          style={{
-            position: "relative",
-            background: "white",
-            border: "2px solid black",
-            borderRadius: "12px",
-            padding: "8px 12px",
-          }}
-        >
-          {/* Triangle outer — black border */}
-          <div style={{
-            position: "absolute",
-            left: "-10px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 0,
-            height: 0,
-            borderTop: "8px solid transparent",
-            borderBottom: "8px solid transparent",
-            borderRight: "10px solid black",
-          }} />
-          {/* Triangle inner — white fill */}
-          <div style={{
-            position: "absolute",
-            left: "-7px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: 0,
-            height: 0,
-            borderTop: "6px solid transparent",
-            borderBottom: "6px solid transparent",
-            borderRight: "8px solid white",
-          }} />
-          <p style={{
-            fontSize: "12px",
-            color: "black",
-            fontStyle: "italic",
-            margin: 0,
-            lineHeight: "1.35",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical" as const,
-            overflow: "hidden",
-          }}>
-            {sloganText}
-          </p>
-        </div>
-
-        {/* REACTION BUBBLE / PREMIUM BUTTON — bottom slot */}
-        {showPremiumButton ? (
-          <div style={{ width: '100%', marginBottom: '16px' }}>
-            <div style={{ position: 'relative', background: 'white', border: '2px solid black', borderRadius: '12px', padding: '10px 12px 18px 12px', width: '100%' }}>
-              {/* Triangle outer — black border */}
-              <div style={{ position: 'absolute', left: '-10px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderRight: '10px solid black' }} />
-              {/* Triangle inner — white fill */}
-              <div style={{ position: 'absolute', left: '-7px', top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '6px solid transparent', borderBottom: '6px solid transparent', borderRight: '8px solid white' }} />
-              <p style={{ fontSize: '11px', color: palette.red, fontStyle: 'italic', margin: 0, lineHeight: '1.4' }}>
-                Find out what Reem really has to say about you..
-              </p>
+  const popInLayer = visible && typeof document !== 'undefined' ? createPortal(
+    <div className={`reem-pop reem-pop-${stage}`} dir="ltr" data-testid="reem-pop">
+      <img
+        src={walking ? WALK_IMAGE : pose}
+        alt="Reem"
+        className={`reem-pop-figure${stage === "walkOut" ? " reem-pop-flip" : ""}`}
+        onClick={() => stage === "talking" && handlePerchTap()}
+        draggable={false}
+      />
+      {stage === "talking" && (
+        <div className="reem-pop-bubble" style={{ borderColor: edge }} onClick={leave} role="status">
+          <span className="reem-pop-tail" style={{ borderRightColor: edge }} />
+          <span className="reem-pop-tail-inner" />
+          <p className="reem-pop-line" dir="auto">{line}</p>
+          {withPremium && (
+            <>
+              <p className="reem-pop-teaser">{tr("reem.teaser")}</p>
               <button
-                data-reem-keep-tap="true"
-                onClick={(e) => { e.stopPropagation(); onPremiumPress?.(); }}
-                style={{ position: 'absolute', bottom: '-14px', left: '50%', transform: 'translateX(-50%)', zIndex: 2, backgroundColor: palette.red, color: 'white', border: 'none', borderRadius: '20px', padding: '5px 14px', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                type="button"
+                className="reem-pop-premium"
+                onClick={(e) => { e.stopPropagation(); leave(); onPremiumPress?.(); }}
               >
-                🔥 Go Premium
+                {tr("reem.goPremium")}
               </button>
-            </div>
-          </div>
-        ) : showReactionBubble !== false ? (
-          <div
-            style={{
-              visibility: reactionVisible ? "visible" : "hidden",
-              position: "relative",
-              background: "white",
-              border: "2px solid black",
-              borderRadius: "12px",
-              padding: "8px 12px",
-            }}
-          >
-            {/* Triangle outer — black border */}
-            <div style={{
-              position: "absolute",
-              left: "-10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: 0,
-              height: 0,
-              borderTop: "8px solid transparent",
-              borderBottom: "8px solid transparent",
-              borderRight: "10px solid black",
-            }} />
-            {/* Triangle inner — white fill */}
-            <div style={{
-              position: "absolute",
-              left: "-7px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: 0,
-              height: 0,
-              borderTop: "6px solid transparent",
-              borderBottom: "6px solid transparent",
-              borderRight: "8px solid white",
-            }} />
-            <p style={{
-              fontSize: "12px",
-              color: palette.red,
-              fontWeight: "bold",
-              margin: 0,
-              lineHeight: "1.35",
-            }}>
-              {reactionText}
-            </p>
-          </div>
-        ) : null}
+            </>
+          )}
+        </div>
+      )}
+    </div>,
+    document.body,
+  ) : null;
 
-      </div>
-    </div>
+  return (
+    <>
+      {perch}
+      {popInLayer}
+    </>
   );
 }

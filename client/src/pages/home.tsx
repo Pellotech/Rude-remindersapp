@@ -134,7 +134,7 @@ export default function Home({ isPremium }: HomeProps) {
   const [lastEvent, setLastEvent] = useState<RudyEventType>(null);
   const [eventKey, setEventKey] = useState(0);
   const fireEvent = (e: RudyEventType) => {
-    if (!isPremium) return; // free Rudy is static
+    // Free: Reem walks in with a slogan + Go Premium now and then; premium: a reaction
     console.log("[home] fireEvent:", e);
     setLastEvent(e);
     setEventKey((k) => k + 1);
@@ -146,7 +146,6 @@ export default function Home({ isPremium }: HomeProps) {
 
   // Watch badgeRudenessLevel — only fires when value actually changes, never on mount
   useEffect(() => {
-    if (!isPremium) return;
     if (badgeRudenessLevel === prevRudenessRef.current) return;
     prevRudenessRef.current = badgeRudenessLevel;
     if (sliderRudyRef.current) clearTimeout(sliderRudyRef.current);
@@ -154,7 +153,7 @@ export default function Home({ isPremium }: HomeProps) {
       setLastEvent(`slider_${badgeRudenessLevel}` as RudyEventType);
       setEventKey((k) => k + 1);
     }, 800);
-  }, [badgeRudenessLevel, isPremium]);
+  }, [badgeRudenessLevel]);
 
   // ── Data ──
   // Premium keeps staleTime/refetchOnMount (preserved from home-premium.tsx)
@@ -388,9 +387,9 @@ export default function Home({ isPremium }: HomeProps) {
         <HomeHeader
           isPremium={isPremium}
           rudenessLevel={badgeRudenessLevel}
-          nudgeEvent={isPremium ? lastEvent : undefined}
-          nudgeKey={isPremium ? eventKey : undefined}
-          onNudgeHandled={isPremium ? () => setLastEvent(null) : undefined}
+          nudgeEvent={lastEvent}
+          nudgeKey={eventKey}
+          onNudgeHandled={() => setLastEvent(null)}
           onPremiumPress={
             !isPremium ? () => setLocation("/subscribe") : undefined
           }
