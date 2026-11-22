@@ -71,7 +71,7 @@ export function HomeHeader({
   );
 
   return (
-    <div className={cn("relative mb-4 sm:mb-6", className)}>
+    <div className={cn("relative pt-5 mb-4 sm:mb-6", className)}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 flex flex-wrap items-center gap-2">

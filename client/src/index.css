@@ -361,11 +361,12 @@ html[data-text-size="xlarge"] .reem-tight-tab { font-size: 0.76rem; gap: 0.25rem
 /* ── Reem (components/RudyWidget.tsx) ─────────────────────────────────────────
    The perch: small sitting Reem on the line where the banner meets the page.
    HomeHeader is position: relative and starts 32px below the banner, so
-   top: -32px is the banner's bottom edge; his seat sits on it, legs hang below. */
+   top: -32px is the banner's bottom edge. In the 72x96 box his seat (underside
+   of the thighs) is 71px down, so top: -103px puts the seat exactly on the line. */
 .reem-perch {
   position: absolute;
   left: -4px;
-  top: -94px;
+  top: -103px;
   z-index: 55;
   width: 72px;
   height: 96px;
