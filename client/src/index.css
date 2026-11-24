@@ -390,8 +390,8 @@ html[data-text-size="xlarge"] .reem-tight-tab { font-size: 0.76rem; gap: 0.25rem
 .reem-pop {
   position: fixed;
   left: 0;
-  /* Option B: 72px below the phone's status bar (clock/battery), in the upper part of the screen */
-  top: calc(max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px)) + 72px);
+  /* Option C: 120px below the phone's status bar (clock/battery), in the upper part of the screen */
+  top: calc(max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px)) + 120px);
   z-index: 70;
   display: flex;
   align-items: flex-start;
