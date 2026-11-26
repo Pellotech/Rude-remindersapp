@@ -181,5 +181,308 @@
   "reem": {
     "teaser": "Reem'in senin hakkında gerçekten ne düşündüğünü öğren..",
     "goPremium": "🔥 Premium'a geç"
+  },
+  "reemLines": {
+    "idle": {
+      "rude": [
+        "Vay be, geri geldin. Ne istiyorsun?",
+        "Hâlâ burada mısın? Cesur seçim.",
+        "*sana yargılayıcı gözlerle bakıyor*",
+        "Sen ve \"planların\"... tatlı.",
+        "Bana öyle bakma.",
+        "Bir hatırlatıcı daha mı? Tabii. Bu seni kesin düzeltir.",
+        "Çoğu uygulama sana hatırlatır. Biz seni hesaba çekeriz.",
+        "Seni en iyi haline gelene kadar yerden yere vuracağız."
+      ],
+      "positive": [
+        "Geldin. Bu seni zaten çoğu insanın önüne geçiriyor.",
+        "Seni görmek güzel. Şimdi bir şeyler yapalım.",
+        "Kurduğun her hatırlatıcı kendine verdiğin bir söz. Saygı.",
+        "Bir kahkahayla başladı. Alışkanlığa dönüştü.",
+        "Hedeflerin hafif bir dürtmeden fazlasını hak ediyor."
+      ]
+    },
+    "tapped": {
+      "rude": [
+        "Hey. Bana dokundun. Şimdi git bir şey yap.",
+        "Beni dürtmeyi bırak da görevlerini bitir.",
+        "Neyi bekliyorsun? Bir hatırlatıcı oluştur.",
+        "Seni izliyorum. Beni hayal kırıklığına uğratma.",
+        "Bunun bir oyun olduğunu mu sanıyorsun? Öyle. Ve kaybediyorsun."
+      ],
+      "positive": [
+        "Hey! Cesur hamle. Şimdi bu enerjiyi görevlerine aktar.",
+        "Beni buldun. Şimdi git motivasyonunu bul.",
+        "Şans için dokundun. Şimdi hak et."
+      ]
+    },
+    "creating_generic": {
+      "rude": [
+        "Yazmak seni yaptırmaz...",
+        "Vay canına, bir hatırlatıcı. Devrim niteliğinde.",
+        "Tabii, bir tane daha ekle. Tabii.",
+        "İkimiz de bunun nasıl biteceğini biliyoruz.",
+        "Ooh, hırslı. İyimserliğe bayıldım. Gerçekten."
+      ],
+      "positive": [
+        "Acele etme. İyi bir hatırlatıcı doğru kurulmaya değer.",
+        "Her büyük alışkanlık biri onu yazdığında başladı.",
+        "Böyle başlar. Her seferinde bir hatırlatıcı."
+      ]
+    },
+    "reminderCreated": {
+      "rude": [
+        "Güzel. Şimdi gerçekten yap.",
+        "Hatırlatıcı kuruldu. Artık bahane yok.",
+        "Sistemde. Ben izliyorum."
+      ],
+      "positive": [
+        "Sabitlendi. Geriye tek şey kaldı: gerçekten yapmak.",
+        "Kuruldu ve hazır. Gelecekteki sen teşekkür ediyor.",
+        "Bu ilk adım. Devam et."
+      ]
+    },
+    "managedidIt": {
+      "rude": [
+        "...Peki. Sanırım yaptın.",
+        "Tamam, itiraf edeceğim. Gerçekten yaptın.",
+        "Çok havalara girme. Yarın hâlâ var.",
+        "Biraz daha az hayal kırıklığına uğradım. Biraz.",
+        "Bir görev. Henüz kutlama yapma."
+      ],
+      "positive": [
+        "İşte bunu diyorum. Bu enerjiyi koru.",
+        "Gerçekten gurur duyuyorum. Kimseye söyleme.",
+        "Kendin için ortaya çıktın. Oyunun tamamı bu.",
+        "Bak sen, gerçekten yapıyorsun. Saygı."
+      ]
+    },
+    "manageDidntDoIt": {
+      "rude": [
+        "Demiştim.",
+        "Şoktayım. Gerçekten şoktayım. Değilim.",
+        "Ah hayır. Neyse.",
+        "Bu filmi daha önce izledim.",
+        "Bu benim şaşırmış yüzüm.",
+        "Tam \"beklenen\" havasında."
+      ],
+      "positive": [
+        "Hey. Dürüstçe kaydettin. Bunun için cesaret gerekir. Yarın.",
+        "Birini kaçırmak alışkanlığı bozmaz. Tekrar ayağa kalkmak onu kurar.",
+        "Dürüstlük ilk adım. Yarın hâlâ senin."
+      ]
+    },
+    "streak": {
+      "rude": [
+        "Bak sen. Neredeyse alışkanlık oluşturuyorsun.",
+        "Tutarlılık. Sende olduğunu düşünmemiştim."
+      ],
+      "positive": [
+        "Korumaya değer bir seri. Şimdi bozma.",
+        "Ortaya çıkmak böyle görünür. Devam et."
+      ]
+    },
+    "slider_1": {
+      "rude": [
+        "Şefkat modu. Peki, elini tutarım... sadece bu seferlik.",
+        "Kendine yumuşak mı davranıyorsun? İzin veriyorum. Bugün."
+      ],
+      "positive": [
+        "Zor bir gün mü? Yanındayım. Küçük adımlar da sayılır.",
+        "Kendine nazik olmak da ortaya çıkmaktır. Seninle gurur duyuyorum."
+      ]
+    },
+    "slider_2": {
+      "rude": [
+        "Tamam, hafif bir dürtme. Bebek adımları.",
+        "Motivasyonel. Kabalığın katılım ödülü."
+      ],
+      "positive": [
+        "Motivasyonel hafife alınıyor. Sabırla koruk helva olur.",
+        "Sürekli bir dürtme, tek seferlik itmeden iyidir. Akıllıca."
+      ]
+    },
+    "slider_3": {
+      "rude": [
+        "İşte şimdi konuşuyoruz. Vasatlık dedektörü devrede.",
+        "Alaycı. Yani gülümsemeyle dürüstlük istiyorsun. Akıllıca."
+      ],
+      "positive": [
+        "Alaycı ama etkili. Kendini bildiğin belli.",
+        "Seviye 3. Çoğu insan için tatlı nokta."
+      ]
+    },
+    "slider_4": {
+      "rude": [
+        "Ooh, biri sert sevgi istiyor. Saygı.",
+        "Sert mod. Sonunda gerçeğe dayanabilen biri."
+      ],
+      "positive": [
+        "Sert mod ciddi olduğun anlamına gelir. Buna saygı duyuyorum.",
+        "Gerçek hesap verebilirlik istiyorsun. Bu nadir."
+      ]
+    },
+    "slider_5": {
+      "rude": [
+        "VAHŞİ mod. Senden hoşlandım. Çıldırmışsın.",
+        "Tam vahşi. Gelecekteki sen şimdiden korkuyor."
+      ],
+      "positive": [
+        "Vahşi. Şaka yapmıyorsun. Ben de yapmayacağım.",
+        "Tam gaz. Kararlılığa saygı duyuyorum."
+      ]
+    },
+    "dateToday": {
+      "rude": [
+        "Bugüne mi bıraktın? Cesur. Ya da tembel. Muhtemelen tembel.",
+        "Bugün. Her zamanki gibi son dakika, değil mi."
+      ],
+      "positive": [
+        "Bugün garanti olan tek gün. Akıllıca.",
+        "Gecikme yok. Aciliyete saygı duyuyorum."
+      ]
+    },
+    "dateTomorrow": {
+      "rude": [
+        "Yarın. Bir şeylere başlamak için en popüler gün.",
+        "Ah evet. Yarın. Hayallerin erteleme yaptığı yer."
+      ],
+      "positive": [
+        "Bir gün önceden planlamak yine de planlamadır.",
+        "Yarın olur. Sadece gelecek haftaya dönüşmesin."
+      ]
+    },
+    "dateFuture": {
+      "rude": [
+        "Önceden mi planlıyorsun? Sen KİMSİN?",
+        "Bak sen, işleyen bir yetişkin gibi planlıyorsun. Şüpheli."
+      ],
+      "positive": [
+        "İleriyi planlamak. Bu gerçekten nadir. Devam et.",
+        "İleriyi düşünüyorsun. Belki bu işte gerçekten ciddisin."
+      ]
+    },
+    "multipleDaysOn": {
+      "rude": [
+        "Birden fazla gün mü? Bak sen, şimdiden fazla taahhüt veriyorsun.",
+        "Hırslı. Ne kadar süreceğini göreceğiz.",
+        "Birden fazla hatırlatıcı. Cesur strateji. Cayma.",
+        "Yani şimdi bunu her gün mü yapıyoruz? Sonuna kadar götürüp götüremeyeceğini görelim.",
+        "Birden fazla gün seçildi. Bahaneler şimdiden sıraya girdi."
+      ],
+      "positive": [
+        "Birden fazla gün. Alışkanlık böyle kurulur.",
+        "Bak sen önceden planlıyorsun. Gerçekten etkilendim.",
+        "Birden fazla gün seçildi. İş böyle yapılır.",
+        "Tutarlılık her şey. Bunu anladığını az önce kanıtladın.",
+        "Alışkanlıklar tam olarak böyle kurulur. Devam et."
+      ]
+    },
+    "multipleDaysOff": {
+      "rude": [
+        "Sadece bir gün mü? Her zamanki gibi garanticiliğe oynuyorsun.",
+        "Her seferinde bir gün. Başarılabilir. Zar zor.",
+        "Tek güne geri döndün. Kararlılık dahil değil.",
+        "Geri çektin demek. Beklenen."
+      ],
+      "positive": [
+        "Odaklı bir gün. Nicelikten çok nitelik. Akıllıca.",
+        "Bir gün, tam kararlılık. Bu da işe yarar.",
+        "Tek gün, tam odak. Hadi değerli kılalım.",
+        "Bazen bir tane yeter. Önemli olsun."
+      ]
+    },
+    "voice": {
+      "rude": [
+        "Bir ses seç. Sesli sesli ağzının payını almak kadar hesap verebilirliği hiçbir şey anlatmaz.",
+        "Sesli hatırlatıcılar. Ne kadar kaytardığını duyabilesin diye."
+      ],
+      "positive": [
+        "Sesli hatırlatıcı farklı vurur. İyi seçim.",
+        "Yüksek sesle duymak onu gerçek yapar. Akıllı hamle."
+      ]
+    },
+    "photo": {
+      "rude": [
+        "Bir fotoğraf ekle. Köpeğin senin motivasyonun olmayı istemedi ama işte buradayız.",
+        "Çocuğunu, evcil hayvanını, hayallerini paylaş. Onları yüzüstü bırakma. Ben izliyorum."
+      ],
+      "positive": [
+        "Fotoğraf her şeyi gerçek yapar. Akıllı psikolojik hamle.",
+        "Hedefe bir yüz koymak. Bu bir üst seviye."
+      ]
+    },
+    "quotes": {
+      "rude": [
+        "Motivasyon sözü mü? Tabii. Sözler hiç kimseyi ertelemekten alıkoymadı.",
+        "Bir söz seç. İlham al. Yine de hiçbir şey yapma. Klasik."
+      ],
+      "positive": [
+        "İyi bir söz tüm zihniyetini değiştirebilir. Güzel dokunuş.",
+        "Sözler önemli. Eylemle birleştir, durdurulamaz olursun."
+      ]
+    },
+    "manageLoad": {
+      "rude": [
+        "İşte geçmişin. Doğruyu söyle. Ben izliyorum.",
+        "Yönet sekmesi. Bahanelerin öldüğü yer.",
+        "Tüm hatırlatıcıların. Tüm seçimlerin. Sahip çık."
+      ],
+      "positive": [
+        "Geçmişin burada. Her kayda sahip çık.",
+        "Her kayıt bir veridir. Daha iyi olmak için kullan.",
+        "Tüm seçimlerin burada. Değerli kıl."
+      ]
+    },
+    "manageOverdue": {
+      "rude": [
+        "Şu gecikmiş. Onun hakkında konuşmuyoruz.",
+        "Hâlâ orada bitmeden mi duruyor? Cesur strateji. Ama işe yaramıyor."
+      ],
+      "positive": [
+        "Gecikmiş sadece bitmemiş demek, imkânsız değil.",
+        "Çok geç değil. Kaydet ve ilerle."
+      ]
+    },
+    "analyticsThisWeek": {
+      "rude": [
+        "Bir hafta. Bana verdiğin tek şey bu. Bana bir şey göster.",
+        "Yedi günlük veri. Jüri senin hakkında hâlâ karar vermedi."
+      ],
+      "positive": [
+        "Bir haftalık veri. Şimdiden bir şey kuruyorsun.",
+        "Yedi gün oldu. Her seri burada başlar."
+      ]
+    },
+    "analytics10Weeks": {
+      "rude": [
+        "On hafta. Alışkanlıkların gerçekten kurulduğu yer burası. Dikkat et.",
+        "66 günlük pencere. Bilim burada oturduğunu söylüyor. Bozma."
+      ],
+      "positive": [
+        "On haftalık emek. Burası işlerin ciddileştiği yer.",
+        "Alışkanlık oluşturma bölgesindesin. Ortaya çıkmaya devam et."
+      ]
+    },
+    "analyticsThisYear": {
+      "rude": [
+        "Bir yıllık veri. Ya harika gidiyorsun ya da bana bir açıklama borçlusun.",
+        "Tam yıl görünümü. Bu senin mirasın. Bakmaya değer kıl."
+      ],
+      "positive": [
+        "Bir yıl boyunca ortaya çıkmak. Bu gerçekten nadir.",
+        "On iki aylık veri. Burada gerçek bir şey kurdun."
+      ]
+    },
+    "analyticsGraphDip": {
+      "rude": [
+        "Grafikteki o düşüş mü? Pes edişin bu. Düzelt.",
+        "Çizgi aşağı indi. Fark ettim. Sadece söylüyorum."
+      ],
+      "positive": [
+        "Her düşüş, gerçekleşmeyi bekleyen bir sıçramadır.",
+        "Düşüş seni tanımlamaz. Sonra ne yaptığın tanımlar."
+      ]
+    }
   }
 }

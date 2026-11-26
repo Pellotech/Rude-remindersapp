@@ -182,5 +182,308 @@
   "reem": {
     "teaser": "Descubre lo que Reem realmente piensa de ti..",
     "goPremium": "🔥 Hazte Premium"
+  },
+  "reemLines": {
+    "idle": {
+      "rude": [
+        "Vaya, ya volviste. ¿Qué quieres?",
+        "¿Sigues aquí? Valiente elección.",
+        "*te mira con juicio*",
+        "Tú y tus \"planes\"... qué monada.",
+        "No me mires así.",
+        "¿Otro recordatorio? Claro. Eso seguro que te arregla.",
+        "La mayoría de las apps te recuerdan. Nosotros te hacemos responder.",
+        "Te vamos a machacar a base de bromas hasta sacar tu mejor versión."
+      ],
+      "positive": [
+        "Apareciste. Eso ya te pone por delante de la mayoría.",
+        "Qué bueno verte. Ahora hagamos algo.",
+        "Cada recordatorio que creas es una promesa contigo mismo. Respeto.",
+        "Empezó con una risa. Se volvió hábito.",
+        "Tus metas merecen más que un empujoncito suave."
+      ]
+    },
+    "tapped": {
+      "rude": [
+        "Eh. Me tocaste. Ahora ve a hacer algo.",
+        "Deja de picarme y ve a terminar tus tareas.",
+        "¿Qué esperas? Crea un recordatorio.",
+        "Te estoy vigilando. No me decepciones.",
+        "¿Crees que esto es un juego? Lo es. Y vas perdiendo."
+      ],
+      "positive": [
+        "¡Eh! Atrevido. Ahora lleva esa energía a tus tareas.",
+        "Me encontraste. Ahora ve a encontrar tu motivación.",
+        "Tocaste para tener suerte. Ahora gánatela."
+      ]
+    },
+    "creating_generic": {
+      "rude": [
+        "Anotarlo no hará que lo hagas...",
+        "Ay, qué fuerte, un recordatorio. Revolucionario.",
+        "Claro, añade otro. Claro.",
+        "Los dos sabemos cómo acaba esto.",
+        "Uuuh, ambicioso. Me encanta el optimismo. En serio."
+      ],
+      "positive": [
+        "Tómate tu tiempo. Un buen recordatorio merece hacerse bien.",
+        "Todo gran hábito empezó con alguien que lo anotó.",
+        "Así empieza todo. Un recordatorio a la vez."
+      ]
+    },
+    "reminderCreated": {
+      "rude": [
+        "Buena esa. Ahora hazlo de verdad.",
+        "Recordatorio puesto. Ya no hay excusas.",
+        "Está en el sistema. Te vigilo."
+      ],
+      "positive": [
+        "Todo listo. Ahora solo falta hacerlo de verdad.",
+        "Listo y preparado. Tu yo del futuro te da las gracias.",
+        "Ese es el primer paso. Sigue así."
+      ]
+    },
+    "managedidIt": {
+      "rude": [
+        "...Bueno. Supongo que sí lo hiciste.",
+        "Vale, lo admito. De verdad lo hiciste.",
+        "No te creas tanto. Todavía queda mañana.",
+        "Estoy ligeramente menos decepcionado. Ligeramente.",
+        "Una tarea. Aún no celebres."
+      ],
+      "positive": [
+        "De eso hablo. Mantén esa energía.",
+        "Orgulloso de verdad. No le digas a nadie que lo dije.",
+        "Respondiste por ti mismo. Ese es todo el juego.",
+        "Mírate haciendo la cosa de verdad. Respeto."
+      ]
+    },
+    "manageDidntDoIt": {
+      "rude": [
+        "Lo sabía.",
+        "Sorprendido. Muy sorprendido. Ni de broma.",
+        "Ay no. En fin.",
+        "Ya vi esta película.",
+        "Esta es mi cara de sorpresa.",
+        "Qué previsible."
+      ],
+      "positive": [
+        "Oye. Lo registraste con honestidad. Eso requiere valor. Mañana.",
+        "Fallar una vez no rompe un hábito. Levantarte de nuevo, sí lo forma.",
+        "La honestidad es el primer paso. Mañana sigue siendo tuyo."
+      ]
+    },
+    "streak": {
+      "rude": [
+        "Mírate. Casi formando un hábito.",
+        "Constancia. No creí que la tuvieras."
+      ],
+      "positive": [
+        "Una racha que vale la pena proteger. No la arruines ahora.",
+        "Así se ve aparecer cada día. Sigue así."
+      ]
+    },
+    "slider_1": {
+      "rude": [
+        "Modo compasión. Vale, te daré la mano... solo esta vez.",
+        "¿Siendo blando contigo? Te lo permito. Hoy."
+      ],
+      "positive": [
+        "¿Día difícil? Aquí estoy. Los pasos pequeños también cuentan.",
+        "Ser amable contigo también es aparecer. Orgulloso de ti."
+      ]
+    },
+    "slider_2": {
+      "rude": [
+        "Vale, un empujoncito. Pasitos de bebé.",
+        "Motivacional. El trofeo de participación de la grosería."
+      ],
+      "positive": [
+        "El motivacional está infravalorado. Despacio se llega lejos.",
+        "Un empujón constante gana a un golpe único. Inteligente."
+      ]
+    },
+    "slider_3": {
+      "rude": [
+        "Ahora sí hablamos. Detector de mediocridad activado.",
+        "Sarcástico. O sea, quieres honestidad con una sonrisa. Listo."
+      ],
+      "positive": [
+        "Sarcástico pero efectivo. Se nota que te conoces.",
+        "Nivel 3. El punto dulce para la mayoría."
+      ]
+    },
+    "slider_4": {
+      "rude": [
+        "Uuuh, alguien quiere mano dura. Respeto.",
+        "Modo duro. Por fin alguien que aguanta la verdad."
+      ],
+      "positive": [
+        "El modo duro significa que vas en serio. Respeto eso.",
+        "Quieres responsabilidad de verdad. Eso es raro."
+      ]
+    },
+    "slider_5": {
+      "rude": [
+        "Modo SALVAJE. Me caes bien. Estás desquiciado.",
+        "Salvaje total. Tu yo del futuro ya tiene miedo."
+      ],
+      "positive": [
+        "Salvaje. Tú no juegas. Yo tampoco.",
+        "A por todas. Respeto el compromiso."
+      ]
+    },
+    "dateToday": {
+      "rude": [
+        "¿Dejarlo para hoy? Valiente. O flojo. Probablemente flojo.",
+        "Hoy. Justo a tiempo como siempre, ¿no?"
+      ],
+      "positive": [
+        "Hoy es el único día garantizado. Inteligente.",
+        "Sin demora. Respeto la urgencia."
+      ]
+    },
+    "dateTomorrow": {
+      "rude": [
+        "Mañana. El día más popular para empezar cosas.",
+        "Ah, sí. Mañana. Donde los sueños van a procrastinar."
+      ],
+      "positive": [
+        "Planear con un día de antelación también es planear.",
+        "Mañana vale. Solo no dejes que se convierta en la semana que viene."
+      ]
+    },
+    "dateFuture": {
+      "rude": [
+        "¿Planificando con tiempo? ¿Quién ERES?",
+        "Mírate, organizándote como un adulto funcional. Sospechoso."
+      ],
+      "positive": [
+        "Planear a futuro. Eso es muy raro. Sigue así.",
+        "Pensando a futuro. Igual sí vas en serio."
+      ]
+    },
+    "multipleDaysOn": {
+      "rude": [
+        "¿Varios días? Mírate, comprometiéndote de más ya.",
+        "Ambicioso. Veremos cuánto dura.",
+        "Varios recordatorios. Estrategia audaz. No te rajes.",
+        "¿Así que ahora esto es todos los días? A ver cómo cumples.",
+        "Varios días elegidos. Las excusas ya hacen fila."
+      ],
+      "positive": [
+        "Varios días. Así se construye un hábito.",
+        "Mírate planeando con tiempo. Impresionado de verdad.",
+        "Varios días elegidos. Así se hace.",
+        "La constancia lo es todo. Acabas de demostrar que lo entiendes.",
+        "Así exactamente se construyen los hábitos. Sigue."
+      ]
+    },
+    "multipleDaysOff": {
+      "rude": [
+        "¿Solo un día? Jugando seguro como siempre.",
+        "Un día a la vez. Manejable. Por poco.",
+        "De vuelta a un día. Compromiso no incluido.",
+        "Lo reduciste, ¿eh? Previsible."
+      ],
+      "positive": [
+        "Un día enfocado. Calidad sobre cantidad. Inteligente.",
+        "Un día, compromiso total. Eso también funciona.",
+        "Un solo día, enfoque total. Hagamos que cuente.",
+        "A veces con uno basta. Haz que importe."
+      ]
+    },
+    "voice": {
+      "rude": [
+        "Elige una voz. Nada dice responsabilidad como que te regañen en voz alta.",
+        "Recordatorios de voz. Para que oigas lo mal que estás flojeando."
+      ],
+      "positive": [
+        "Un recordatorio de voz pega distinto. Buena decisión.",
+        "Oírlo en voz alta lo hace real. Jugada inteligente."
+      ]
+    },
+    "photo": {
+      "rude": [
+        "Añade una foto. Tu perro no pidió ser tu motivación, pero aquí estamos.",
+        "Sube a tu hijo, tu mascota, tus sueños. No los defraudes. Te vigilo."
+      ],
+      "positive": [
+        "Una foto lo hace real. Jugada psicológica inteligente.",
+        "Ponerle cara a la meta. Eso es otro nivel."
+      ]
+    },
+    "quotes": {
+      "rude": [
+        "¿Una frase motivacional? Claro. Las palabras nunca han evitado que nadie procrastine.",
+        "Elige una frase. Inspírate. Sigue sin hacer nada. Clásico."
+      ],
+      "positive": [
+        "Una buena frase puede cambiar toda tu mentalidad. Buen detalle.",
+        "Las palabras importan. Únelas a la acción y serás imparable."
+      ]
+    },
+    "manageLoad": {
+      "rude": [
+        "Aquí está tu historial. Di la verdad. Te vigilo.",
+        "Pestaña Gestionar. Donde mueren las excusas.",
+        "Todos tus recordatorios. Todas tus decisiones. Hazte cargo."
+      ],
+      "positive": [
+        "Tu historial está aquí. Hazte cargo de cada entrada.",
+        "Cada entrada es información. Úsala para mejorar.",
+        "Todas tus decisiones están aquí. Haz que cuenten."
+      ]
+    },
+    "manageOverdue": {
+      "rude": [
+        "Ese está atrasado. De ese no hablamos.",
+        "¿Sigue ahí sin terminar? Estrategia audaz. Pero no funciona."
+      ],
+      "positive": [
+        "Atrasado solo significa sin terminar, no imposible.",
+        "No es tarde. Regístralo y sigue adelante."
+      ]
+    },
+    "analyticsThisWeek": {
+      "rude": [
+        "Una semana. Es todo lo que me has dado. Enséñame algo.",
+        "Siete días de datos. El jurado aún no decide sobre ti."
+      ],
+      "positive": [
+        "Una semana de datos. Ya estás construyendo algo.",
+        "Siete días. Toda racha empieza aquí."
+      ]
+    },
+    "analytics10Weeks": {
+      "rude": [
+        "Diez semanas. Aquí es donde de verdad se forman los hábitos. Presta atención.",
+        "La ventana de 66 días. La ciencia dice que aquí hace clic. No lo arruines."
+      ],
+      "positive": [
+        "Diez semanas de trabajo. Aquí se pone serio.",
+        "Estás en la zona de formación de hábitos. Sigue apareciendo."
+      ]
+    },
+    "analyticsThisYear": {
+      "rude": [
+        "Un año entero de datos. O lo estás rompiendo o me debes una explicación.",
+        "Vista de todo el año. Este es tu legado. Haz que valga la pena mirarlo."
+      ],
+      "positive": [
+        "Un año entero apareciendo. Eso es muy raro.",
+        "Doce meses de datos. Construiste algo real aquí."
+      ]
+    },
+    "analyticsGraphDip": {
+      "rude": [
+        "¿Esa caída en la gráfica? Eso eres tú rindiéndote. Arréglalo.",
+        "La línea bajó. Lo noté. Solo digo."
+      ],
+      "positive": [
+        "Toda caída es un rebote esperando a pasar.",
+        "La caída no te define. Lo que hagas después, sí."
+      ]
+    }
   }
 }

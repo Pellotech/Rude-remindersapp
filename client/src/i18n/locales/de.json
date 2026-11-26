@@ -182,5 +182,308 @@
   "reem": {
     "teaser": "Finde heraus, was Reem wirklich über dich denkt..",
     "goPremium": "🔥 Premium holen"
+  },
+  "reemLines": {
+    "idle": {
+      "rude": [
+        "Na toll, du bist wieder da. Was willst du?",
+        "Immer noch hier? Mutige Wahl.",
+        "*starrt dich vorwurfsvoll an*",
+        "Du und deine „Pläne“... niedlich.",
+        "Schau mich nicht so an.",
+        "Noch eine Erinnerung? Klar. Das wird dich bestimmt retten.",
+        "Die meisten Apps erinnern dich. Wir nehmen dich in die Pflicht.",
+        "Wir sticheln dich zu deinem besten Ich."
+      ],
+      "positive": [
+        "Du bist aufgetaucht. Damit bist du schon weiter als die meisten.",
+        "Schön, dich zu sehen. Jetzt lass uns was erledigen.",
+        "Jede Erinnerung, die du setzt, ist ein Versprechen an dich selbst. Respekt.",
+        "Mit einem Lachen angefangen. Eine Gewohnheit daraus gemacht.",
+        "Deine Ziele verdienen mehr als einen sanften Anstupser."
+      ]
+    },
+    "tapped": {
+      "rude": [
+        "Hey. Du hast mich angetippt. Jetzt geh was tun.",
+        "Hör auf, mich anzustupsen, und erledige deine Aufgaben.",
+        "Worauf wartest du? Erstell eine Erinnerung.",
+        "Ich beobachte dich. Enttäusch mich nicht.",
+        "Du denkst, das ist ein Spiel? Ist es. Und du verlierst."
+      ],
+      "positive": [
+        "Hey! Mutig. Jetzt steck diese Energie in deine Aufgaben.",
+        "Du hast mich gefunden. Jetzt finde deine Motivation.",
+        "Für Glück angetippt. Jetzt verdien es dir."
+      ]
+    },
+    "creating_generic": {
+      "rude": [
+        "Aufschreiben allein bringt dich nicht dazu, es zu tun...",
+        "Oh wow, eine Erinnerung. Revolutionär.",
+        "Klar, füg noch eine hinzu. Klar.",
+        "Wir wissen beide, wie das endet.",
+        "Ooh, ehrgeizig. Ich liebe den Optimismus. Echt jetzt."
+      ],
+      "positive": [
+        "Lass dir Zeit. Eine gute Erinnerung will richtig gesetzt sein.",
+        "Jede große Gewohnheit begann damit, dass jemand sie aufschrieb.",
+        "So fängt es an. Eine Erinnerung nach der anderen."
+      ]
+    },
+    "reminderCreated": {
+      "rude": [
+        "Gut gemacht. Jetzt tu es auch wirklich.",
+        "Erinnerung gesetzt. Jetzt gibt es keine Ausreden mehr.",
+        "Sie ist im System. Ich passe auf."
+      ],
+      "positive": [
+        "Fest eingetragen. Jetzt fehlt nur noch, es wirklich zu tun.",
+        "Gesetzt und bereit. Dein zukünftiges Ich sagt danke.",
+        "Das ist der erste Schritt. Mach weiter."
+      ]
+    },
+    "managedidIt": {
+      "rude": [
+        "...Na gut. Ich schätze, du hast es getan.",
+        "Okay, ich geb's zu. Du hast es wirklich getan.",
+        "Werd nicht überheblich. Es gibt noch morgen.",
+        "Ich bin leicht weniger enttäuscht. Leicht.",
+        "Eine Aufgabe. Feier noch nicht."
+      ],
+      "positive": [
+        "Genau darüber rede ich. Behalt diese Energie.",
+        "Echt stolz. Sag keinem, dass ich das gesagt habe.",
+        "Du hast dich für dich selbst eingesetzt. Das ist das ganze Spiel.",
+        "Schau dich an, wie du es wirklich tust. Respekt."
+      ]
+    },
+    "manageDidntDoIt": {
+      "rude": [
+        "Hab ich's doch gesagt.",
+        "Schockiert. Wirklich schockiert. Nicht.",
+        "Oh nein. Egal.",
+        "Den Film kenne ich schon.",
+        "Das ist mein überraschtes Gesicht.",
+        "Das gibt „erwartbar“."
+      ],
+      "positive": [
+        "Hey. Du hast es ehrlich eingetragen. Das braucht Mut. Morgen.",
+        "Eine zu verpassen zerstört keine Gewohnheit. Wieder aufstehen schon.",
+        "Ehrlichkeit ist der erste Schritt. Morgen gehört noch dir."
+      ]
+    },
+    "streak": {
+      "rude": [
+        "Schau dich an. Fast schon eine Gewohnheit.",
+        "Beständigkeit. Hätte nicht gedacht, dass du das drauf hast."
+      ],
+      "positive": [
+        "Eine Serie, die man schützen sollte. Vermassel sie jetzt nicht.",
+        "So sieht Dranbleiben aus. Mach weiter."
+      ]
+    },
+    "slider_1": {
+      "rude": [
+        "Mitgefühlsmodus. Na gut, ich halte dir die Hand... dieses eine Mal.",
+        "Du gehst sanft mit dir um? Erlaube ich. Heute."
+      ],
+      "positive": [
+        "Harter Tag? Ich bin da. Kleine Schritte zählen auch.",
+        "Freundlich zu dir selbst zu sein ist auch Dranbleiben. Stolz auf dich."
+      ]
+    },
+    "slider_2": {
+      "rude": [
+        "Okay, ein kleiner Anstupser. Babyschritte.",
+        "Motivierend. Der Teilnehmerpokal der Unhöflichkeit."
+      ],
+      "positive": [
+        "Motivierend wird unterschätzt. Stetig gewinnt das Rennen.",
+        "Ein stetiger Anstupser schlägt einen einmaligen Schubs. Clever."
+      ]
+    },
+    "slider_3": {
+      "rude": [
+        "Jetzt reden wir. Mittelmaß-Detektor aktiviert.",
+        "Sarkastisch. Also willst du Ehrlichkeit mit einem Lächeln. Clever."
+      ],
+      "positive": [
+        "Sarkastisch, aber wirksam. Du kennst dich offensichtlich.",
+        "Stufe 3. Der Sweet Spot für die meisten."
+      ]
+    },
+    "slider_4": {
+      "rude": [
+        "Ooh, jemand will harte Liebe. Respekt.",
+        "Harter Modus. Endlich jemand, der die Wahrheit verträgt."
+      ],
+      "positive": [
+        "Harter Modus heißt, du meinst es ernst. Respekt dafür.",
+        "Du willst echte Verantwortung. Das ist selten."
+      ]
+    },
+    "slider_5": {
+      "rude": [
+        "SAVAGE-Modus. Ich mag dich. Du bist unberechenbar.",
+        "Voll Savage. Dein zukünftiges Ich hat schon Angst."
+      ],
+      "positive": [
+        "Savage. Du machst keine halben Sachen. Ich auch nicht.",
+        "Volle Kraft voraus. Ich respektiere den Einsatz."
+      ]
+    },
+    "dateToday": {
+      "rude": [
+        "Auf heute verschoben? Mutig. Oder faul. Wahrscheinlich faul.",
+        "Heute. Wie immer auf den letzten Drücker, was."
+      ],
+      "positive": [
+        "Heute ist der einzige garantierte Tag. Clever.",
+        "Kein Aufschub. Ich respektiere die Dringlichkeit."
+      ]
+    },
+    "dateTomorrow": {
+      "rude": [
+        "Morgen. Der beliebteste Tag, um Dinge anzufangen.",
+        "Ah ja. Morgen. Wo Träume zum Aufschieben hingehen."
+      ],
+      "positive": [
+        "Einen Tag im Voraus zu planen zählt trotzdem als Planen.",
+        "Morgen geht. Lass es nur nicht zur nächsten Woche werden."
+      ]
+    },
+    "dateFuture": {
+      "rude": [
+        "Vorausplanen? Wer BIST du?",
+        "Schau dich an, du planst wie ein funktionierender Erwachsener. Verdächtig."
+      ],
+      "positive": [
+        "Vorausplanen. Das ist wirklich selten. Weiter so.",
+        "Du denkst voraus. Vielleicht meinst du es wirklich ernst."
+      ]
+    },
+    "multipleDaysOn": {
+      "rude": [
+        "Mehrere Tage? Schau dich an, schon jetzt übernimmst du dich.",
+        "Ehrgeizig. Mal sehen, wie lange das hält.",
+        "Mehrere Erinnerungen. Mutige Strategie. Zieh nicht den Schwanz ein.",
+        "Also machen wir das jetzt jeden Tag? Mal sehen, ob du durchhältst.",
+        "Mehrere Tage gewählt. Die Ausreden stehen schon Schlange."
+      ],
+      "positive": [
+        "Mehrere Tage. So baut man eine Gewohnheit auf.",
+        "Schau dich an, du planst voraus. Echt beeindruckt.",
+        "Mehrere Tage gewählt. So macht man das.",
+        "Beständigkeit ist alles. Du hast gerade bewiesen, dass du es verstehst.",
+        "Genau so entstehen Gewohnheiten. Mach weiter."
+      ]
+    },
+    "multipleDaysOff": {
+      "rude": [
+        "Nur ein Tag? Wie immer auf Nummer sicher.",
+        "Ein Tag nach dem anderen. Machbar. Gerade so.",
+        "Zurück auf einen Tag. Verbindlichkeit nicht inbegriffen.",
+        "Runtergeschraubt, was. War zu erwarten."
+      ],
+      "positive": [
+        "Ein fokussierter Tag. Qualität vor Quantität. Clever.",
+        "Ein Tag, volle Hingabe. Das funktioniert auch.",
+        "Ein einziger Tag, voller Fokus. Lass ihn zählen.",
+        "Manchmal reicht einer. Lass ihn wichtig sein."
+      ]
+    },
+    "voice": {
+      "rude": [
+        "Such eine Stimme aus. Nichts sagt Verantwortung wie laut ausgeschimpft zu werden.",
+        "Sprach-Erinnerungen. Damit du hörst, wie sehr du schlampst."
+      ],
+      "positive": [
+        "Eine Sprach-Erinnerung wirkt anders. Gute Entscheidung.",
+        "Es laut zu hören macht es real. Kluger Schachzug."
+      ]
+    },
+    "photo": {
+      "rude": [
+        "Füg ein Foto hinzu. Dein Hund wollte nicht deine Motivation sein, aber hier sind wir.",
+        "Poste dein Kind, dein Haustier, deine Träume. Enttäusche sie nicht. Ich schaue zu."
+      ],
+      "positive": [
+        "Ein Foto macht es real. Kluger psychologischer Zug.",
+        "Dem Ziel ein Gesicht geben. Das ist die nächste Stufe."
+      ]
+    },
+    "quotes": {
+      "rude": [
+        "Ein Motivationsspruch? Klar. Worte haben noch nie jemanden vom Aufschieben abgehalten.",
+        "Wähl ein Zitat. Fühl dich inspiriert. Tu trotzdem nichts. Klassiker."
+      ],
+      "positive": [
+        "Ein gutes Zitat kann deine ganze Einstellung verändern. Schöner Touch.",
+        "Worte zählen. Verbinde sie mit Taten und du bist nicht zu stoppen."
+      ]
+    },
+    "manageLoad": {
+      "rude": [
+        "Hier ist dein Verlauf. Sag die Wahrheit. Ich beobachte dich.",
+        "Registerkarte Verwalten. Wo Ausreden sterben.",
+        "Alle deine Erinnerungen. Alle deine Entscheidungen. Steh dazu."
+      ],
+      "positive": [
+        "Dein Verlauf ist genau hier. Steh zu jedem Eintrag.",
+        "Jeder Eintrag ist ein Datenpunkt. Nutze ihn, um besser zu werden.",
+        "Alle deine Entscheidungen sind hier. Lass sie zählen."
+      ]
+    },
+    "manageOverdue": {
+      "rude": [
+        "Die da ist überfällig. Über die sprechen wir nicht.",
+        "Immer noch unerledigt? Mutige Strategie. Funktioniert aber nicht."
+      ],
+      "positive": [
+        "Überfällig heißt nur unerledigt, nicht unmöglich.",
+        "Es ist nicht zu spät. Trag es ein und geh weiter."
+      ]
+    },
+    "analyticsThisWeek": {
+      "rude": [
+        "Eine Woche. Mehr hast du mir nicht gegeben. Zeig mir was.",
+        "Sieben Tage Daten. Über dich ist die Jury noch nicht entschieden."
+      ],
+      "positive": [
+        "Eine Woche Daten. Du baust schon etwas auf.",
+        "Sieben Tage drin. Jede Serie beginnt hier."
+      ]
+    },
+    "analytics10Weeks": {
+      "rude": [
+        "Zehn Wochen. Hier entstehen Gewohnheiten wirklich. Pass auf.",
+        "Das 66-Tage-Fenster. Die Wissenschaft sagt, hier macht es klick. Vermassel es nicht."
+      ],
+      "positive": [
+        "Zehn Wochen in der Mache. Hier wird es ernst.",
+        "Du bist in der Phase der Gewohnheitsbildung. Bleib dran."
+      ]
+    },
+    "analyticsThisYear": {
+      "rude": [
+        "Ein ganzes Jahr Daten. Entweder du rockst das, oder du schuldest mir eine Erklärung.",
+        "Ansicht des ganzen Jahres. Das ist dein Vermächtnis. Mach es anschauenswert."
+      ],
+      "positive": [
+        "Ein ganzes Jahr Dranbleiben. Das ist wirklich selten.",
+        "Zwölf Monate Daten. Du hast hier etwas Echtes aufgebaut."
+      ]
+    },
+    "analyticsGraphDip": {
+      "rude": [
+        "Dieser Einbruch im Diagramm? Das bist du, der aufgibt. Reparier das.",
+        "Die Linie ging runter. Ist mir aufgefallen. Nur so."
+      ],
+      "positive": [
+        "Jeder Einbruch ist nur ein Aufprall, der auf den Rebound wartet.",
+        "Der Einbruch definiert dich nicht. Was du als Nächstes tust, schon."
+      ]
+    }
   }
 }

@@ -181,5 +181,308 @@
   "reem": {
     "teaser": "Cari tahu apa yang sebenarnya Reem pikirkan tentangmu..",
     "goPremium": "🔥 Ambil Premium"
+  },
+  "reemLines": {
+    "idle": {
+      "rude": [
+        "Wah bagus, kamu balik lagi. Mau apa?",
+        "Masih di sini? Pilihan berani.",
+        "*menatapmu dengan penuh penghakiman*",
+        "Kamu dan \"rencana\"-mu... lucu.",
+        "Jangan lihat aku begitu.",
+        "Pengingat lagi? Tentu. Itu pasti memperbaikimu.",
+        "Kebanyakan aplikasi cuma mengingatkan. Kami menagih tanggung jawabmu.",
+        "Kami akan menggodamu sampai jadi versi terbaikmu."
+      ],
+      "positive": [
+        "Kamu datang. Itu sudah membuatmu lebih maju dari kebanyakan orang.",
+        "Senang melihatmu. Sekarang ayo selesaikan sesuatu.",
+        "Setiap pengingat yang kamu buat adalah janji pada diri sendiri. Salut.",
+        "Dimulai dengan tawa. Jadi kebiasaan.",
+        "Tujuanmu pantas mendapat lebih dari sekadar colekan lembut."
+      ]
+    },
+    "tapped": {
+      "rude": [
+        "Hei. Kamu menyentuhku. Sekarang pergi kerjakan sesuatu.",
+        "Berhenti mencolekku dan selesaikan tugasmu.",
+        "Tunggu apa lagi? Buat pengingat.",
+        "Aku mengawasimu. Jangan kecewakan aku.",
+        "Kamu pikir ini permainan? Memang. Dan kamu sedang kalah."
+      ],
+      "positive": [
+        "Hei! Berani juga. Sekarang salurkan energi itu ke tugasmu.",
+        "Kamu menemukanku. Sekarang temukan motivasimu.",
+        "Disentuh biar hoki. Sekarang buktikan."
+      ]
+    },
+    "creating_generic": {
+      "rude": [
+        "Menulisnya tidak akan membuatmu mengerjakannya...",
+        "Wow, pengingat. Revolusioner.",
+        "Ya, tambah satu lagi. Ya.",
+        "Kita berdua tahu ini akan berakhir bagaimana.",
+        "Ooh, ambisius. Aku suka optimismenya. Serius."
+      ],
+      "positive": [
+        "Santai saja. Pengingat yang bagus layak dibuat dengan benar.",
+        "Setiap kebiasaan hebat dimulai dari seseorang yang menuliskannya.",
+        "Begitulah awalnya. Satu pengingat dalam satu waktu."
+      ]
+    },
+    "reminderCreated": {
+      "rude": [
+        "Mantap. Sekarang benar-benar kerjakan.",
+        "Pengingat sudah dibuat. Tidak ada alasan lagi.",
+        "Sudah masuk sistem. Aku mengawasi."
+      ],
+      "positive": [
+        "Terkunci. Tinggal benar-benar mengerjakannya.",
+        "Siap dan terpasang. Dirimu di masa depan bilang terima kasih.",
+        "Itu langkah pertama. Lanjutkan."
+      ]
+    },
+    "managedidIt": {
+      "rude": [
+        "...Ya sudah. Kurasa kamu mengerjakannya.",
+        "Oke, kuakui. Kamu benar-benar melakukannya.",
+        "Jangan sombong dulu. Masih ada besok.",
+        "Aku sedikit kurang kecewa. Sedikit.",
+        "Satu tugas. Jangan rayakan dulu."
+      ],
+      "positive": [
+        "Itu yang kumaksud. Pertahankan energi itu.",
+        "Sungguh bangga. Jangan bilang siapa-siapa aku bilang begitu.",
+        "Kamu hadir untuk dirimu sendiri. Itulah seluruh permainannya.",
+        "Lihat kamu benar-benar mengerjakannya. Salut."
+      ]
+    },
+    "manageDidntDoIt": {
+      "rude": [
+        "Sudah kuduga.",
+        "Kaget. Benar-benar kaget. Bohong.",
+        "Oh tidak. Ya sudahlah.",
+        "Aku sudah pernah nonton film ini.",
+        "Ini wajah kagetku.",
+        "Kesannya \"sudah ketebak\"."
+      ],
+      "positive": [
+        "Hei. Kamu mencatatnya dengan jujur. Itu butuh nyali. Besok.",
+        "Melewatkan satu tidak merusak kebiasaan. Bangkit lagi yang membangunnya.",
+        "Kejujuran adalah langkah pertama. Besok masih milikmu."
+      ]
+    },
+    "streak": {
+      "rude": [
+        "Lihat kamu. Hampir membentuk kebiasaan.",
+        "Konsisten. Tak kusangka kamu mampu."
+      ],
+      "positive": [
+        "Rangkaian yang layak dijaga. Jangan rusak sekarang.",
+        "Begini rasanya hadir terus. Lanjutkan."
+      ]
+    },
+    "slider_1": {
+      "rude": [
+        "Mode simpati. Baiklah, kupegang tanganmu... sekali ini saja.",
+        "Lunak pada diri sendiri? Kuizinkan. Hari ini."
+      ],
+      "positive": [
+        "Hari yang berat? Aku di sini. Langkah kecil tetap berarti.",
+        "Baik pada diri sendiri juga berarti hadir. Bangga padamu."
+      ]
+    },
+    "slider_2": {
+      "rude": [
+        "Oke, colekan kecil. Langkah bayi.",
+        "Motivasi. Piala partisipasi dari kekasaran."
+      ],
+      "positive": [
+        "Motivasi itu diremehkan. Pelan-pelan tapi pasti menang.",
+        "Colekan yang konsisten mengalahkan dorongan sekali. Pintar."
+      ]
+    },
+    "slider_3": {
+      "rude": [
+        "Nah, begitu dong. Detektor biasa-biasa saja aktif.",
+        "Sarkastik. Jadi kamu mau kejujuran dengan senyuman. Pintar."
+      ],
+      "positive": [
+        "Sarkastik tapi efektif. Jelas kamu kenal dirimu.",
+        "Level 3. Titik pas untuk kebanyakan orang."
+      ]
+    },
+    "slider_4": {
+      "rude": [
+        "Ooh, ada yang mau cinta yang keras. Salut.",
+        "Mode keras. Akhirnya ada yang sanggup menerima kebenaran."
+      ],
+      "positive": [
+        "Mode keras berarti kamu serius. Aku hormati itu.",
+        "Kamu mau akuntabilitas sungguhan. Itu langka."
+      ]
+    },
+    "slider_5": {
+      "rude": [
+        "Mode BRUTAL. Aku suka kamu. Kamu gila.",
+        "Brutal penuh. Dirimu di masa depan sudah ketakutan."
+      ],
+      "positive": [
+        "Brutal. Kamu tidak main-main. Aku juga tidak.",
+        "Gaspol. Aku hormati komitmennya."
+      ]
+    },
+    "dateToday": {
+      "rude": [
+        "Ditunda sampai hari ini? Berani. Atau malas. Kemungkinan besar malas.",
+        "Hari ini. Mepet seperti biasa, ya."
+      ],
+      "positive": [
+        "Hari ini satu-satunya hari yang pasti. Pintar.",
+        "Tanpa menunda. Aku hormati rasa urgensinya."
+      ]
+    },
+    "dateTomorrow": {
+      "rude": [
+        "Besok. Hari paling populer untuk memulai sesuatu.",
+        "Ah ya. Besok. Tempat mimpi pergi menunda-nunda."
+      ],
+      "positive": [
+        "Merencanakan sehari sebelumnya tetap dihitung merencanakan.",
+        "Besok boleh. Asal jangan sampai jadi minggu depan."
+      ]
+    },
+    "dateFuture": {
+      "rude": [
+        "Merencanakan jauh-jauh hari? Kamu SIAPA?",
+        "Lihat kamu, menjadwalkan seperti orang dewasa yang berfungsi. Mencurigakan."
+      ],
+      "positive": [
+        "Merencanakan ke depan. Itu benar-benar langka. Pertahankan.",
+        "Berpikir ke depan. Mungkin kamu memang serius."
+      ]
+    },
+    "multipleDaysOn": {
+      "rude": [
+        "Beberapa hari? Lihat kamu, sudah kebanyakan janji.",
+        "Ambisius. Kita lihat berapa lama bertahan.",
+        "Beberapa pengingat. Strategi berani. Jangan kabur.",
+        "Jadi sekarang kita lakukan ini tiap hari? Mari lihat kamu menepatinya.",
+        "Beberapa hari dipilih. Alasan-alasan sudah antre."
+      ],
+      "positive": [
+        "Beberapa hari. Begitulah cara membangun kebiasaan.",
+        "Lihat kamu merencanakan ke depan. Sungguh terkesan.",
+        "Beberapa hari dipilih. Begini caranya.",
+        "Konsistensi adalah segalanya. Kamu baru saja membuktikan kamu paham.",
+        "Persis begitulah kebiasaan dibangun. Lanjutkan."
+      ]
+    },
+    "multipleDaysOff": {
+      "rude": [
+        "Cuma satu hari? Main aman seperti biasa.",
+        "Satu hari dalam satu waktu. Bisa dikelola. Nyaris.",
+        "Kembali ke satu hari. Komitmen tidak termasuk.",
+        "Dikurangi, ya. Sudah ketebak."
+      ],
+      "positive": [
+        "Satu hari fokus. Kualitas di atas kuantitas. Pintar.",
+        "Satu hari, komitmen penuh. Itu juga bisa.",
+        "Satu hari saja, fokus penuh. Mari buat berarti.",
+        "Kadang satu saja cukup. Buat itu berarti."
+      ]
+    },
+    "voice": {
+      "rude": [
+        "Pilih suara. Tidak ada yang bilang akuntabilitas seperti diomeli dengan suara keras.",
+        "Pengingat suara. Biar kamu dengar betapa malasnya dirimu."
+      ],
+      "positive": [
+        "Pengingat suara terasa beda. Pilihan bagus.",
+        "Mendengarnya keras-keras membuatnya nyata. Langkah pintar."
+      ]
+    },
+    "photo": {
+      "rude": [
+        "Tambahkan foto. Anjingmu tidak minta jadi motivasimu, tapi begitulah.",
+        "Pasang anakmu, hewan peliharaanmu, impianmu. Jangan kecewakan mereka. Aku mengawasi."
+      ],
+      "positive": [
+        "Foto membuatnya nyata. Langkah psikologis yang pintar.",
+        "Memberi wajah pada tujuan. Itu level berikutnya."
+      ]
+    },
+    "quotes": {
+      "rude": [
+        "Kutipan motivasi? Tentu. Kata-kata tidak pernah menghentikan siapa pun menunda.",
+        "Pilih kutipan. Merasa terinspirasi. Tetap tidak melakukan apa-apa. Klasik."
+      ],
+      "positive": [
+        "Kutipan bagus bisa mengubah seluruh pola pikirmu. Sentuhan manis.",
+        "Kata-kata penting. Padukan dengan tindakan dan kamu tak terhentikan."
+      ]
+    },
+    "manageLoad": {
+      "rude": [
+        "Ini riwayatmu. Katakan yang sebenarnya. Aku mengawasi.",
+        "Tab Kelola. Tempat alasan-alasan mati.",
+        "Semua pengingatmu. Semua pilihanmu. Akui itu."
+      ],
+      "positive": [
+        "Riwayatmu ada di sini. Akui setiap catatan.",
+        "Setiap catatan adalah data. Pakai untuk jadi lebih baik.",
+        "Semua pilihanmu ada di sini. Buat berarti."
+      ]
+    },
+    "manageOverdue": {
+      "rude": [
+        "Yang itu terlambat. Kita tidak membahas yang itu.",
+        "Masih terbengkalai? Strategi berani. Tapi tidak berhasil."
+      ],
+      "positive": [
+        "Terlambat hanya berarti belum selesai, bukan mustahil.",
+        "Belum terlambat. Catat dan lanjutkan."
+      ]
+    },
+    "analyticsThisWeek": {
+      "rude": [
+        "Satu minggu. Cuma itu yang kamu berikan. Tunjukkan sesuatu.",
+        "Tujuh hari data. Juri masih belum memutuskan soal dirimu."
+      ],
+      "positive": [
+        "Seminggu data. Kamu sudah membangun sesuatu.",
+        "Tujuh hari berjalan. Setiap rangkaian dimulai dari sini."
+      ]
+    },
+    "analytics10Weeks": {
+      "rude": [
+        "Sepuluh minggu. Di sinilah kebiasaan benar-benar terbentuk. Perhatikan.",
+        "Jendela 66 hari. Sains bilang di sinilah semuanya klik. Jangan rusak."
+      ],
+      "positive": [
+        "Sepuluh minggu dalam proses. Di sinilah mulai serius.",
+        "Kamu di zona pembentukan kebiasaan. Terus hadir."
+      ]
+    },
+    "analyticsThisYear": {
+      "rude": [
+        "Setahun penuh data. Entah kamu luar biasa atau berutang penjelasan padaku.",
+        "Tampilan setahun penuh. Ini warisanmu. Buat layak dilihat."
+      ],
+      "positive": [
+        "Setahun penuh hadir. Itu benar-benar langka.",
+        "Dua belas bulan data. Kamu membangun sesuatu yang nyata di sini."
+      ]
+    },
+    "analyticsGraphDip": {
+      "rude": [
+        "Penurunan di grafik itu? Itu kamu menyerah. Perbaiki.",
+        "Garisnya turun. Aku sadar. Cuma bilang."
+      ],
+      "positive": [
+        "Setiap penurunan hanyalah pantulan yang menunggu terjadi.",
+        "Penurunan tidak mendefinisikanmu. Yang kamu lakukan selanjutnya yang menentukan."
+      ]
+    }
   }
 }
