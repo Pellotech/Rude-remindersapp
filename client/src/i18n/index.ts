@@ -110,6 +110,12 @@ export function tr(key: string, options?: Record<string, unknown>): string {
   return i18n.t(key, options) as string;
 }
 
+/** A list of strings from the translations (empty if the key is missing). */
+export function trList(key: string): string[] {
+  const v = i18n.t(key, { returnObjects: true }) as unknown;
+  return Array.isArray(v) ? (v as unknown[]).filter((x): x is string => typeof x === "string") : [];
+}
+
 /** Changes whenever the language changes; App uses it to re-render everything. */
 export function useLanguageKey(): string {
   const [lang, setLang] = useState(getCurrentLanguage());

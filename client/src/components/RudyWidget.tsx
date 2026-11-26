@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { tr } from "@/i18n";
+import { tr, trList } from "@/i18n";
 import { useQuery } from "@tanstack/react-query";
 
 import { palette } from "@/lib/theme";
@@ -332,12 +332,16 @@ const RUDY_LINES = {
 
 const getRudyLine = (category: keyof typeof RUDY_LINES, niceMode = false): string => {
   const cat = RUDY_LINES[category];
+  const pick = (kind: "rude" | "positive"): string[] => {
+    const translated = trList(`reemLines.${category}.${kind}`);
+    return translated.length ? translated : cat[kind];
+  };
   if (niceMode) {
-    const pool = cat.positive;
+    const pool = pick("positive");
     return pool[Math.floor(Math.random() * pool.length)];
   }
   const useRude = Math.random() < 0.7;
-  const pool = useRude ? cat.rude : cat.positive;
+  const pool = pick(useRude ? "rude" : "positive");
   return pool[Math.floor(Math.random() * pool.length)];
 };
 
