@@ -396,11 +396,14 @@ export default function Home({ isPremium }: HomeProps) {
           className={isPremium ? undefined : "mb-3 sm:mb-4"}
         />
 
-        {/* Rudeness slider — page-level, sits right below Rudy */}
-        <RudenessSlider
-          value={badgeRudenessLevel}
-          onChange={setBadgeRudenessLevel}
-        />
+        {/* Rudeness slider — page-level, sits right below Rudy.
+            On the Create tab it moves into the rolodex as the first widget instead. */}
+        {activeTab !== "create" && (
+          <RudenessSlider
+            value={badgeRudenessLevel}
+            onChange={setBadgeRudenessLevel}
+          />
+        )}
 
         {/* Main Content Tabs */}
         <Tabs
@@ -449,6 +452,13 @@ export default function Home({ isPremium }: HomeProps) {
               }
               maxReminders={isPremium ? 999999 : freeUsage.effectiveLimit}
               externalRudenessLevel={badgeRudenessLevel}
+              rudenessSlot={
+                <RudenessSlider
+                  value={badgeRudenessLevel}
+                  onChange={setBadgeRudenessLevel}
+                />
+              }
+              bottomInset={isPremium ? (isAndroid ? 150 : 80) : (isAndroid ? 170 : 120)}
               onReminderCreated={() => {
                 if (isPremium) {
                   hasFiredCreatingRef.current = false;

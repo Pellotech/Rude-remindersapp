@@ -35,6 +35,7 @@ import { ScheduleSummary } from "./reminder-form/ScheduleSummary";
 import { FeatureTabs } from "./reminder-form/FeatureTabs";
 import { FreeLimitModal } from "./reminder-form/FreeLimitModal";
 import { QuickReminder } from "./reminder-form/QuickReminder";
+import { RolodexDeck } from "./RolodexDeck";
 
 import { tr } from "@/i18n";
 // ─────────────────────────────────────────────────────────────────────────────
@@ -58,6 +59,10 @@ interface ReminderFormProps {
   onMultiDayToggle?: (on: boolean) => void;
   /** When provided, the page owns the rudeness level: the in-form slider is hidden and the form follows this value. */
   externalRudenessLevel?: number;
+  /** The page's rudeness slider, shown as the first widget of the rolodex. */
+  rudenessSlot?: React.ReactNode;
+  /** Space kept free at the bottom of the screen for the ad banner / nav bar. */
+  bottomInset?: number;
 }
 
 
@@ -74,6 +79,8 @@ export default function ReminderForm({
   onRudenessChange,
   onMultiDayToggle,
   externalRudenessLevel,
+  rudenessSlot,
+  bottomInset,
 }: ReminderFormProps = {}) {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -345,12 +352,27 @@ export default function ReminderForm({
     });
   };
 
+  const widgetClass =
+    "bg-white border-2 border-reem-cream rounded-[28px] p-[18px] shadow-[var(--rr-card-shadow)] dark:bg-reem-concrete-widget dark:border-reem-concrete-edge dark:shadow-none";
+
+  // The Create screen is a rolodex of floating widgets (see RolodexDeck):
+  //   1 rudeness slider · 2 the main piece (message + book + hours) · 3 Voice/Photo/Quotes · 4 Create + Quick Reminder
+  const widgetNames = [
+    ...(rudenessSlot ? [tr("rudeness.title")] : []),
+    tr("form.whatDoYouNeedTo"),
+    ...(!isSimplifiedInterface ? [tr("form.createReminder")] : []),
+    tr("form.createReminder"),
+  ];
+
   return (
-    <Card className="mt-4 bg-white border-2 border-reem-cream rounded-[24px] shadow-[var(--rr-card-shadow)] dark:bg-reem-concrete-widget dark:border-reem-concrete-edge dark:shadow-none">
-      <CardContent className="pt-5">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-            {/* Message Field */}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4">
+        <RolodexDeck initialIndex={rudenessSlot ? 1 : 0} bottomInset={bottomInset} names={widgetNames}>
+          {/* Widget 1 — rudeness slider (owned by the page) */}
+          {rudenessSlot ? <div className={widgetClass}>{rudenessSlot}</div> : null}
+
+          {/* Widget 2 — the main piece */}
+          <div className={`${widgetClass} space-y-3`}>
             <FormField
               control={form.control}
               name="originalMessage"
@@ -369,10 +391,8 @@ export default function ReminderForm({
               )}
             />
 
-
-
             {/* Select Date Section */}
-            <FormItem>
+            <FormItem data-deck-control>
               <FormControl>
                 <BookDatePicker
                   onScheduleChange={(result) => {
@@ -403,9 +423,8 @@ export default function ReminderForm({
               </FormControl>
             </FormItem>
 
-            {/* Rudeness Level Slider — standalone component, movable anywhere.
-                Hidden when the page renders its own slider (externalRudenessLevel provided). */}
-            {externalRudenessLevel == null && (
+            {/* Rudeness slider inside the form only when the page does not own one */}
+            {externalRudenessLevel == null && !rudenessSlot && (
               <FormField
                 control={form.control}
                 name="rudenessLevel"
@@ -426,7 +445,7 @@ export default function ReminderForm({
               />
             )}
 
-            {/* Summary bubble — sits below Rudeness Level */}
+            {/* Summary bubble */}
             {scheduleValid && (
               <ScheduleSummary
                 form={form}
@@ -439,9 +458,11 @@ export default function ReminderForm({
 
             {/* Hidden context field — value set programmatically if needed */}
             <input type="hidden" {...form.register("context")} />
+          </div>
 
-            {/* Voice / Photo / Quotes unified tab section */}
-            {!isSimplifiedInterface && (
+          {/* Widget 3 — Voice / Photo / Quotes */}
+          {!isSimplifiedInterface ? (
+            <div className={widgetClass} data-deck-control>
               <FeatureTabs
                 form={form}
                 voiceCharacters={voiceCharacters as any[]}
@@ -458,22 +479,11 @@ export default function ReminderForm({
                 onPhotoTap={onPhotoTap}
                 onQuotesTap={onQuotesTap}
               />
-            )}
+            </div>
+          ) : null}
 
-            {attachmentsModal}
-            {quotesModal}
-
-            {/* Free reminder limit modal */}
-            {showLimitModal && (
-              <FreeLimitModal
-                onClose={() => setShowLimitModal(false)}
-                onUpgrade={() => { setShowLimitModal(false); setLocation('/subscribe'); }}
-              />
-            )}
-
-            {carryRect && <ReemCarryAnimation rect={carryRect} onDone={() => setCarryRect(null)} />}
-
-            {/* Submit Button */}
+          {/* Widget 4 — Create Reminder + Quick Reminder */}
+          <div className={`${widgetClass} space-y-3`}>
             <Button
               ref={createButtonRef}
               type="submit"
@@ -498,10 +508,23 @@ export default function ReminderForm({
 
             {/* Quick Reminder — always available (fires from right now, no date needed) */}
             <QuickReminder onPick={handleQuickReminder} />
+          </div>
+        </RolodexDeck>
 
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+        {/* Pop-ups live outside the deck so the deck's movement never shifts them */}
+        {attachmentsModal}
+        {quotesModal}
+
+        {/* Free reminder limit modal */}
+        {showLimitModal && (
+          <FreeLimitModal
+            onClose={() => setShowLimitModal(false)}
+            onUpgrade={() => { setShowLimitModal(false); setLocation('/subscribe'); }}
+          />
+        )}
+
+        {carryRect && <ReemCarryAnimation rect={carryRect} onDone={() => setCarryRect(null)} />}
+      </form>
+    </Form>
   );
 }

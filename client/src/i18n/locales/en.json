@@ -485,5 +485,8 @@
         "The dip doesn't define you. What you do next does."
       ]
     }
+  },
+  "rolodex": {
+    "widgets": "Widgets"
   }
 }

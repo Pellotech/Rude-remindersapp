@@ -456,3 +456,46 @@ html[data-text-size="xlarge"] .reem-tight-tab { font-size: 0.76rem; gap: 0.25rem
 @media (prefers-reduced-motion: reduce) {
   .reem-pop-walkIn, .reem-pop-walkOut, .reem-pop-walkIn .reem-pop-figure, .reem-pop-walkOut .reem-pop-figure, .reem-pop-bubble { animation: none; }
 }
+
+
+/* ── Rolodex: the Create screen as a stack of floating widgets (RolodexDeck) ── */
+.rolodex-stage {
+  position: relative;
+  overflow: clip;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.rolodex-stage input, .rolodex-stage textarea { -webkit-user-select: text; user-select: text; }
+.rolodex-card {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 94%;
+  max-width: 420px;
+  box-sizing: border-box;
+  transition: transform .45s cubic-bezier(.2, .8, .2, 1), opacity .35s ease, filter .35s ease;
+  will-change: transform;
+}
+.rolodex-card:not(.is-focus) { cursor: pointer; }
+.rolodex-card:not(.is-focus) * { pointer-events: none; }
+.rolodex-stage.dragging .rolodex-card { transition: none; }
+.rolodex-dots {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 50;
+}
+.rolodex-dots button {
+  width: 9px; height: 9px; border-radius: 9px; border: 0; padding: 0;
+  background: rgba(160, 120, 64, .35);
+  transition: height .25s ease, background .25s ease;
+}
+.rolodex-dots button.on { height: 24px; background: #A07840; }
+html.dark .rolodex-dots button { background: rgba(247, 248, 250, .3); }
+html.dark .rolodex-dots button.on { background: #2B65CF; }
+@media (prefers-reduced-motion: reduce) { .rolodex-card { transition: none; } }
